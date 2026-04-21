@@ -716,7 +716,8 @@ body {
 }
 
 .section-head > .tag,
-span.tag {
+.profile-content > .tag,
+.final-cta-box > .tag {
   display: inline-block;
   padding: 5px 14px;
   background: rgba(124,58,237,.1);
