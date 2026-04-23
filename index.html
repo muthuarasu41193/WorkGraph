@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WorkGraph â€” Your AI Career Intelligence Platform</title>
+  <title>WorkGraph - Your AI Career Intelligence Platform</title>
   <meta name="description" content="WorkGraph finds relevant jobs from LinkedIn, Reddit, Twitter & 100+ sources worldwide. Build your professional profile. Get matched. Get hired."/>
-  <meta property="og:title" content="WorkGraph â€” AI Job Hunting Copilot"/>
+  <meta property="og:title" content="WorkGraph - AI Job Hunting Copilot"/>
   <meta property="og:description" content="Stop manually searching for jobs. Let AI find them for you."/>
   <meta property="og:url" content="https://muthuarasu41193.github.io/WorkGraph/"/>
   <meta property="og:type" content="website"/>
@@ -172,7 +172,7 @@ body.loaded { opacity: 1; }
 }
 
 /* ============================================
-   NAVBAR â€” FIXED: Dynamic top offset via JS
+   NAVBAR  FIXED: Dynamic top offset via JS
    ============================================ */
 .navbar {
   position: fixed;
@@ -1106,7 +1106,7 @@ body.loaded { opacity: 1; }
 }
 
 .roadmap-list li::before {
-  content: 'â†’'; position: absolute; left: 0;
+  content: '->'; position: absolute; left: 0;
   color: var(--purple-l); font-size: 11px;
 }
 
@@ -1777,9 +1777,9 @@ body.loaded { opacity: 1; }
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar" id="announcementBar">
   <span class="announce-dot"></span>
-  <span>ðŸŽ‰ Early Access Open â€” First 500 users get
+  <span>Early Access Open - First 500 users get
   <strong>Pro plan free for 3 months</strong></span>
-  <a href="#waitlist" class="announce-cta">Claim Offer â†’</a>
+  <a href="#waitlist" class="announce-cta">Claim Offer -></a>
 </div>
 
 <!-- NAVBAR -->
@@ -1822,7 +1822,7 @@ body.loaded { opacity: 1; }
   <div class="container">
 
     <div class="hero-label" data-aos="fade-down">
-      <span>ðŸŒ</span>
+      <span>Global</span>
       <span>Trusted by <strong>50,000+</strong> job seekers worldwide</span>
     </div>
 
@@ -1834,9 +1834,9 @@ body.loaded { opacity: 1; }
 
     <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
       WorkGraph finds jobs from
-      <strong>LinkedIn, Reddit, Twitter/X, Indeed & 50+ global sources</strong> â€”
-      matches them to your resume â€”
-      shows your shortlist probability â€”
+      <strong>LinkedIn, Reddit, Twitter/X, Indeed & 50+ global sources</strong> -
+      matches them to your resume -
+      shows your shortlist probability -
       and tracks every application automatically.
     </p>
 
@@ -1867,7 +1867,7 @@ body.loaded { opacity: 1; }
     <div class="waitlist-box" id="waitlist" data-aos="fade-up" data-aos-delay="200">
 
       <div class="waitlist-header">
-        <h3>Join the Waitlist â€” It is Free</h3>
+        <h3>Join the Waitlist - It is Free</h3>
         <p>Be first to access WorkGraph when we launch</p>
       </div>
 
@@ -1875,12 +1875,38 @@ body.loaded { opacity: 1; }
         <!-- URGENCY BAR -->
         <div class="urgency-bar">
           <div class="urgency-left">
-            <span>ðŸ”¥</span>
+            <span>Limited</span>
             <span>Only <strong id="spotsLeft">247</strong> early access spots remaining</span>
           </div>
           <div class="urgency-progress">
             <div class="urgency-fill" style="width:75%"></div>
           </div>
+        </div>
+
+        <div class="simple-form-row">
+          <input
+            type="text"
+            id="firstName"
+            placeholder="Enter your full name"
+            class="form-input"
+            required
+          />
+          <input
+            type="text"
+            id="country"
+            placeholder="Country"
+            class="form-input"
+            required
+          />
+        </div>
+        <div class="simple-form-row">
+          <input
+            type="text"
+            id="jobField"
+            placeholder="Job field (Frontend, Data, Marketing, etc.)"
+            class="form-input"
+            required
+          />
         </div>
 
         <!-- EMAIL + BUTTON -->
@@ -1894,30 +1920,30 @@ body.loaded { opacity: 1; }
           />
           <button type="submit" class="cta-button big-cta" id="submitBtn">
             <span id="btnText">Get Early Access Free</span>
-            <span class="btn-arrow">â†’</span>
+            <span class="btn-arrow">></span>
             <div class="btn-shine"></div>
           </button>
         </div>
 
         <!-- TRUST SIGNALS -->
         <div class="trust-row">
-          <span>ðŸ”’ No spam ever</span>
-          <span>âœ… Free forever plan</span>
-          <span>âŒ No credit card</span>
-          <span>ðŸŒ Works worldwide</span>
+          <span>Secure signup</span>
+          <span>Free forever plan</span>
+          <span>No credit card</span>
+          <span>Works worldwide</span>
         </div>
       </form>
 
       <!-- SUCCESS STATE -->
       <div class="success-state" id="successState">
-        <div class="success-icon">ðŸŽ‰</div>
+        <div class="success-icon">OK</div>
         <h3>You are on the list!</h3>
         <p>You are <strong id="position">#248</strong> on the waitlist.<br/>
         Check your email for confirmation.</p>
 
         <div class="referral-box">
           <div class="referral-header">
-            <span>ðŸŽ</span>
+            <span>Bonus</span>
             <strong>Get Pro FREE for 3 months</strong>
           </div>
           <p>Share WorkGraph with friends. Every signup using your link moves you up the waitlist.</p>
@@ -1928,7 +1954,7 @@ body.loaded { opacity: 1; }
           </div>
 
           <div class="share-row">
-            <a id="shareWhatsApp" href="#" class="share-btn whatsapp-share-btn" target="_blank">ðŸ“± WhatsApp</a>
+            <a id="shareWhatsApp" href="#" class="share-btn whatsapp-share-btn" target="_blank">WhatsApp</a>
             <a id="shareLinkedIn" href="#" class="share-btn linkedin-btn" target="_blank">LinkedIn</a>
             <a id="shareTwitter" href="#" class="share-btn twitter-btn" target="_blank">Twitter / X</a>
           </div>
@@ -1936,7 +1962,7 @@ body.loaded { opacity: 1; }
           <div class="referral-progress">
             <div class="ref-step completed">
               <span class="ref-num">1</span>
-              <span>You joined âœ…</span>
+              <span>You joined</span>
             </div>
             <div class="ref-line"></div>
             <div class="ref-step">
@@ -1946,7 +1972,7 @@ body.loaded { opacity: 1; }
             <div class="ref-line"></div>
             <div class="ref-step">
               <span class="ref-num">3</span>
-              <span>Get Pro FREE ðŸŽ</span>
+              <span>Get Pro FREE</span>
             </div>
           </div>
         </div>
@@ -2003,7 +2029,7 @@ body.loaded { opacity: 1; }
                 <div class="co-logo google">G</div>
                 <div class="mj-info">
                   <div class="mj-title">Senior React Developer</div>
-                  <div class="mj-company">Google â€¢ Remote â€¢ $180K</div>
+                  <div class="mj-company">Google  Remote  $180K</div>
                   <div class="mj-tags">
                     <span class="job-tag linkedin">LinkedIn</span>
                     <span class="job-tag time">2h ago</span>
@@ -2018,7 +2044,7 @@ body.loaded { opacity: 1; }
                 <div class="co-logo meta">M</div>
                 <div class="mj-info">
                   <div class="mj-title">Frontend Engineer</div>
-                  <div class="mj-company">Meta â€¢ Hybrid â€¢ $160K</div>
+                  <div class="mj-company">Meta  Hybrid  $160K</div>
                   <div class="mj-tags">
                     <span class="job-tag reddit">Reddit</span>
                     <span class="job-tag time">5h ago</span>
@@ -2033,7 +2059,7 @@ body.loaded { opacity: 1; }
                 <div class="co-logo stripe">S</div>
                 <div class="mj-info">
                   <div class="mj-title">Full Stack Developer</div>
-                  <div class="mj-company">Stripe â€¢ Remote â€¢ $200K</div>
+                  <div class="mj-company">Stripe  Remote  $200K</div>
                   <div class="mj-tags">
                     <span class="job-tag twitter">Twitter/X</span>
                     <span class="job-tag time">1d ago</span>
@@ -2056,30 +2082,30 @@ body.loaded { opacity: 1; }
   <p class="marquee-label">Pulling live jobs from everywhere</p>
   <div class="marquee-wrap">
     <div class="marquee-track">
-      <span class="m-item">ðŸ’¼ LinkedIn</span>
-      <span class="m-item">ðŸ‘¾ Reddit</span>
-      <span class="m-item">ðŸ¦ Twitter / X</span>
-      <span class="m-item">ðŸ” Indeed</span>
-      <span class="m-item">ðŸŒ RemoteOK</span>
-      <span class="m-item">ðŸ’» HackerNews</span>
-      <span class="m-item">ðŸ¢ Glassdoor</span>
-      <span class="m-item">âš¡ AngelList</span>
-      <span class="m-item">ðŸŒ Arbeitnow</span>
-      <span class="m-item">ðŸŽ¯ The Muse</span>
-      <span class="m-item">ðŸš€ Wellfound</span>
-      <span class="m-item">ðŸ’Ž Levels.fyi</span>
-      <span class="m-item">ðŸ’¼ LinkedIn</span>
-      <span class="m-item">ðŸ‘¾ Reddit</span>
-      <span class="m-item">ðŸ¦ Twitter / X</span>
-      <span class="m-item">ðŸ” Indeed</span>
-      <span class="m-item">ðŸŒ RemoteOK</span>
-      <span class="m-item">ðŸ’» HackerNews</span>
-      <span class="m-item">ðŸ¢ Glassdoor</span>
-      <span class="m-item">âš¡ AngelList</span>
-      <span class="m-item">ðŸŒ Arbeitnow</span>
-      <span class="m-item">ðŸŽ¯ The Muse</span>
-      <span class="m-item">ðŸš€ Wellfound</span>
-      <span class="m-item">ðŸ’Ž Levels.fyi</span>
+      <span class="m-item"> LinkedIn</span>
+      <span class="m-item"> Reddit</span>
+      <span class="m-item"> Twitter / X</span>
+      <span class="m-item"> Indeed</span>
+      <span class="m-item"> RemoteOK</span>
+      <span class="m-item"> HackerNews</span>
+      <span class="m-item"> Glassdoor</span>
+      <span class="m-item"> AngelList</span>
+      <span class="m-item"> Arbeitnow</span>
+      <span class="m-item"> The Muse</span>
+      <span class="m-item"> Wellfound</span>
+      <span class="m-item"> Levels.fyi</span>
+      <span class="m-item"> LinkedIn</span>
+      <span class="m-item"> Reddit</span>
+      <span class="m-item"> Twitter / X</span>
+      <span class="m-item"> Indeed</span>
+      <span class="m-item"> RemoteOK</span>
+      <span class="m-item"> HackerNews</span>
+      <span class="m-item"> Glassdoor</span>
+      <span class="m-item"> AngelList</span>
+      <span class="m-item"> Arbeitnow</span>
+      <span class="m-item"> The Muse</span>
+      <span class="m-item"> Wellfound</span>
+      <span class="m-item"> Levels.fyi</span>
     </div>
   </div>
 </div>
@@ -2095,54 +2121,54 @@ body.loaded { opacity: 1; }
 
     <div class="features-grid">
       <div class="feat-card" data-aos="fade-up">
-        <div class="feat-icon icon-purple">ðŸ”</div>
-        <div class="live-badge">âœ… Live at Launch</div>
+        <div class="feat-icon icon-purple"></div>
+        <div class="live-badge"> Live at Launch</div>
         <h3>Global Job Intelligence</h3>
         <p>We scan LinkedIn posts, Reddit threads, Twitter/X, Indeed, RemoteOK and 50+ sources every 30 minutes. Find hidden jobs that most people never see.</p>
         <ul class="feat-list">
-          <li>âœ“ Real-time job discovery</li>
-          <li>âœ“ Social media job posts included</li>
-          <li>âœ“ 50+ global sources</li>
-          <li>âœ“ Updated every 30 minutes</li>
+          <li> Real-time job discovery</li>
+          <li> Social media job posts included</li>
+          <li> 50+ global sources</li>
+          <li> Updated every 30 minutes</li>
         </ul>
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
-        <div class="feat-icon icon-blue">ðŸŽ¯</div>
-        <div class="live-badge">âœ… Live at Launch</div>
+        <div class="feat-icon icon-blue"></div>
+        <div class="live-badge"> Live at Launch</div>
         <h3>AI Match Score</h3>
         <p>Every job gets a precise match score based on your resume. Hover any job to see exactly which skills are missing and how to fix them to increase your chances.</p>
         <ul class="feat-list">
-          <li>âœ“ 0 to 100 match percentage</li>
-          <li>âœ“ Missing skills shown on hover</li>
-          <li>âœ“ Shortlist probability rating</li>
-          <li>âœ“ AI improvement tips</li>
+          <li> 0 to 100 match percentage</li>
+          <li> Missing skills shown on hover</li>
+          <li> Shortlist probability rating</li>
+          <li> AI improvement tips</li>
         </ul>
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="feat-icon icon-green">ðŸ“„</div>
-        <div class="live-badge">âœ… Live at Launch</div>
+        <div class="feat-icon icon-green"></div>
+        <div class="live-badge"> Live at Launch</div>
         <h3>Smart Resume Parser</h3>
         <p>Upload your PDF or DOCX once. AI instantly reads your skills, experience and education then automatically matches you to the right jobs globally.</p>
         <ul class="feat-list">
-          <li>âœ“ PDF and DOCX support</li>
-          <li>âœ“ Auto skill extraction</li>
-          <li>âœ“ Experience analysis</li>
-          <li>âœ“ Secure and private storage</li>
+          <li> PDF and DOCX support</li>
+          <li> Auto skill extraction</li>
+          <li> Experience analysis</li>
+          <li> Secure and private storage</li>
         </ul>
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="300">
-        <div class="feat-icon icon-orange">ðŸ“Š</div>
-        <div class="live-badge">âœ… Live at Launch</div>
+        <div class="feat-icon icon-orange"></div>
+        <div class="live-badge"> Live at Launch</div>
         <h3>Application Tracker</h3>
         <p>Track every job application in one dashboard. Get notified instantly when jobs close, when employers view your profile, and when your status changes.</p>
         <ul class="feat-list">
-          <li>âœ“ Kanban board view</li>
-          <li>âœ“ Real-time status notifications</li>
-          <li>âœ“ Job closure alerts</li>
-          <li>âœ“ Follow-up reminders</li>
+          <li> Kanban board view</li>
+          <li> Real-time status notifications</li>
+          <li> Job closure alerts</li>
+          <li> Follow-up reminders</li>
         </ul>
       </div>
     </div>
@@ -2156,46 +2182,46 @@ body.loaded { opacity: 1; }
       <div class="profile-content" data-aos="fade-right">
         <span class="section-tag">Professional Profile</span>
         <h2>Build your complete<br/><span class="gradient-text">career identity</span></h2>
-        <p class="profile-sub">WorkGraph is not just a job finder. It is your complete professional profile that showcases everything you have built and achieved â€” all in one place.</p>
+        <p class="profile-sub">WorkGraph is not just a job finder. It is your complete professional profile that showcases everything you have built and achieved  all in one place.</p>
 
         <div class="profile-features">
           <div class="pf-item">
-            <div class="pf-icon">ðŸ‘¤</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>Professional Bio</strong>
               <p>Your story, headline and career summary</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">ðŸ”—</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>Social Media Profiles</strong>
               <p>Link LinkedIn, Twitter/X, Instagram, YouTube</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">ðŸ’»</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>GitHub Integration</strong>
               <p>Showcase repositories, contributions and open source work</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">ðŸŒ</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>Personal Website</strong>
               <p>Add your portfolio, blog or personal site link</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">ðŸ†</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>Projects and Work Samples</strong>
               <p>Showcase your best projects with links and descriptions</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">ðŸ“œ</div>
+            <div class="pf-icon"></div>
             <div>
               <strong>Certifications and Courses</strong>
               <p>AWS, Google, Coursera, Udemy and all your credentials</p>
@@ -2211,7 +2237,7 @@ body.loaded { opacity: 1; }
             <div class="pcm-info">
               <div class="pcm-name">Muthuarasu K.</div>
               <div class="pcm-role">Senior Full Stack Developer</div>
-              <div class="pcm-location">ðŸ“ India â€¢ Open to Remote</div>
+              <div class="pcm-location"> India  Open to Remote</div>
             </div>
             <div class="pcm-score">
               <div class="pcm-score-num">94</div>
@@ -2221,22 +2247,22 @@ body.loaded { opacity: 1; }
 
           <div class="pcm-links">
             <div class="link-item link-linkedin"><span>in</span> LinkedIn</div>
-            <div class="link-item link-github"><span>âŒ¥</span> GitHub</div>
-            <div class="link-item link-web"><span>ðŸŒ</span> Portfolio</div>
-            <div class="link-item link-twitter"><span>ð•</span> Twitter</div>
+            <div class="link-item link-github"><span></span> GitHub</div>
+            <div class="link-item link-web"><span></span> Portfolio</div>
+            <div class="link-item link-twitter"><span></span> Twitter</div>
           </div>
 
           <div class="pcm-section">
-            <div class="pcm-section-title">ðŸ“œ Certifications</div>
+            <div class="pcm-section-title"> Certifications</div>
             <div class="cert-list">
-              <div class="cert-item">âœ… AWS Solutions Architect</div>
-              <div class="cert-item">âœ… Google Cloud Professional</div>
-              <div class="cert-item">âœ… Meta React Developer</div>
+              <div class="cert-item"> AWS Solutions Architect</div>
+              <div class="cert-item"> Google Cloud Professional</div>
+              <div class="cert-item"> Meta React Developer</div>
             </div>
           </div>
 
           <div class="pcm-section">
-            <div class="pcm-section-title">ðŸ† Featured Projects</div>
+            <div class="pcm-section-title"> Featured Projects</div>
             <div class="project-list">
               <div class="project-item">
                 <div class="proj-name">WorkGraph</div>
@@ -2267,7 +2293,7 @@ body.loaded { opacity: 1; }
 <section class="section vault-section">
   <div class="container">
     <div class="section-head" data-aos="fade-up">
-      <span class="section-tag">ðŸ”’ Introducing Interview Vault</span>
+      <span class="section-tag"> Introducing Interview Vault</span>
       <h2>Learn from people who<br/><span class="gradient-text">actually got the job</span></h2>
       <p>WorkGraph users who land jobs share their exact interview experience. Buy their guide. Crack your dream company. <strong>Real people. Real interviews. Real results.</strong></p>
     </div>
@@ -2276,7 +2302,7 @@ body.loaded { opacity: 1; }
       <!-- SELLER SIDE -->
       <div class="vault-side seller-side" data-aos="fade-right">
         <div class="vault-side-header">
-          <span class="vault-emoji">ðŸŽ‰</span>
+          <span class="vault-emoji"></span>
           <h3>You Just Got Hired?</h3>
           <p>Turn your interview experience into passive income</p>
         </div>
@@ -2305,14 +2331,14 @@ body.loaded { opacity: 1; }
         </div>
         <div class="vault-earning">
           <span class="earning-label">Example earnings:</span>
-          <span class="earning-calc">$29 guide Ã— 50 buyers = <strong>$1,015 passive income</strong></span>
+          <span class="earning-calc">$29 guide  50 buyers = <strong>$1,015 passive income</strong></span>
         </div>
       </div>
 
       <!-- BUYER SIDE -->
       <div class="vault-side buyer-side" data-aos="fade-left">
         <div class="vault-side-header">
-          <span class="vault-emoji">ðŸŽ¯</span>
+          <span class="vault-emoji"></span>
           <h3>Dream Company Interview?</h3>
           <p>Buy the guide from someone who already cracked it</p>
         </div>
@@ -2325,17 +2351,17 @@ body.loaded { opacity: 1; }
                 <div class="guide-title">Google SDE Interview Guide</div>
                 <div class="guide-role">Senior Software Engineer L5</div>
               </div>
-              <div class="guide-verified">âœ… Verified</div>
+              <div class="guide-verified"> Verified</div>
             </div>
             <div class="guide-stats">
-              <span>â­ 4.9 (47 reviews)</span>
-              <span>ðŸ‘¥ 312 bought</span>
-              <span>ðŸ“… Jan 2026</span>
+              <span> 4.9 (47 reviews)</span>
+              <span> 312 bought</span>
+              <span> Jan 2026</span>
             </div>
             <div class="guide-preview">"5 rounds. System design was the hardest. Here are the exact questions I was asked..."</div>
             <div class="guide-footer">
               <span class="guide-price">$49</span>
-              <span class="guide-cta">Preview Guide â†’</span>
+              <span class="guide-cta">Preview Guide </span>
             </div>
           </div>
 
@@ -2346,17 +2372,17 @@ body.loaded { opacity: 1; }
                 <div class="guide-title">Meta PM Interview Blueprint</div>
                 <div class="guide-role">Product Manager, Growth Team</div>
               </div>
-              <div class="guide-verified">âœ… Verified</div>
+              <div class="guide-verified"> Verified</div>
             </div>
             <div class="guide-stats">
-              <span>â­ 4.8 (31 reviews)</span>
-              <span>ðŸ‘¥ 198 bought</span>
-              <span>ðŸ“… Feb 2026</span>
+              <span> 4.8 (31 reviews)</span>
+              <span> 198 bought</span>
+              <span> Feb 2026</span>
             </div>
             <div class="guide-preview">"4 rounds including a product case study. Here is exactly what they were looking for..."</div>
             <div class="guide-footer">
               <span class="guide-price">$39</span>
-              <span class="guide-cta">Preview Guide â†’</span>
+              <span class="guide-cta">Preview Guide </span>
             </div>
           </div>
 
@@ -2367,23 +2393,23 @@ body.loaded { opacity: 1; }
                 <div class="guide-title">Stripe Engineer Crack Sheet</div>
                 <div class="guide-role">Full Stack Engineer, Payments</div>
               </div>
-              <div class="guide-verified">âœ… Verified</div>
+              <div class="guide-verified"> Verified</div>
             </div>
             <div class="guide-stats">
-              <span>â­ 5.0 (22 reviews)</span>
-              <span>ðŸ‘¥ 156 bought</span>
-              <span>ðŸ“… Mar 2026</span>
+              <span> 5.0 (22 reviews)</span>
+              <span> 156 bought</span>
+              <span> Mar 2026</span>
             </div>
             <div class="guide-preview">"Stripe is different from other FAANG companies. Here is why and how to prepare..."</div>
             <div class="guide-footer">
               <span class="guide-price">$29</span>
-              <span class="guide-cta">Preview Guide â†’</span>
+              <span class="guide-cta">Preview Guide </span>
             </div>
           </div>
         </div>
 
         <div class="vault-coming-note">
-          ðŸ”’ Interview Vault launches with WorkGraph Pro. Join waitlist to get founding member access.
+           Interview Vault launches with WorkGraph Pro. Join waitlist to get founding member access.
         </div>
       </div>
     </div>
@@ -2391,19 +2417,19 @@ body.loaded { opacity: 1; }
     <!-- WIN WIN BANNER -->
     <div class="winwin-banner" data-aos="fade-up">
       <div class="winwin-item">
-        <span class="winwin-icon">ðŸ‘”</span>
+        <span class="winwin-icon"></span>
         <strong>Job Seekers</strong>
         <p>Get real insider knowledge from verified successful candidates</p>
       </div>
-      <div class="winwin-divider">â†’</div>
+      <div class="winwin-divider"></div>
       <div class="winwin-item">
-        <span class="winwin-icon">ðŸ’°</span>
+        <span class="winwin-icon"></span>
         <strong>Hired Candidates</strong>
         <p>Earn passive income by sharing your interview experience</p>
       </div>
-      <div class="winwin-divider">â†’</div>
+      <div class="winwin-divider"></div>
       <div class="winwin-item">
-        <span class="winwin-icon">ðŸŒ</span>
+        <span class="winwin-icon"></span>
         <strong>WorkGraph</strong>
         <p>Connects both sides and builds a thriving knowledge community</p>
       </div>
@@ -2422,8 +2448,8 @@ body.loaded { opacity: 1; }
 
     <div class="roadmap-grid">
       <div class="roadmap-card" data-aos="fade-up">
-        <div class="roadmap-badge badge-q1">ðŸš€ Coming Next â€” Q1 2026</div>
-        <div class="roadmap-icon">ðŸ“§</div>
+        <div class="roadmap-badge badge-q1"> Coming Next  Q1 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>Email Command Center</h3>
         <p>Connect your Gmail or Outlook and see all recruiter emails, interview invites and job alerts in one unified dashboard.</p>
         <ul class="roadmap-list">
@@ -2435,8 +2461,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="100">
-        <div class="roadmap-badge badge-q1">ðŸš€ Coming Next â€” Q1 2026</div>
-        <div class="roadmap-icon">ðŸ¤–</div>
+        <div class="roadmap-badge badge-q1"> Coming Next  Q1 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>AI Job Apply Autopilot</h3>
         <p>Set your preferences once and let WorkGraph AI automatically apply to matching jobs on your behalf. Wake up to interview invites.</p>
         <ul class="roadmap-list">
@@ -2448,8 +2474,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="roadmap-badge badge-q2">âš¡ Coming â€” Q2 2026</div>
-        <div class="roadmap-icon">ðŸ“</div>
+        <div class="roadmap-badge badge-q2"> Coming  Q2 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>AI Resume Optimizer</h3>
         <p>WorkGraph analyzes your resume against thousands of successful applications and gives you specific improvements.</p>
         <ul class="roadmap-list">
@@ -2461,8 +2487,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="300">
-        <div class="roadmap-badge badge-q2">âš¡ Coming â€” Q2 2026</div>
-        <div class="roadmap-icon">ðŸŽ¯</div>
+        <div class="roadmap-badge badge-q2"> Coming  Q2 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>Recruiter Intelligence</h3>
         <p>See the LinkedIn profile of who posted each job. Get AI-suggested personalized outreach messages to connect directly with hiring managers.</p>
         <ul class="roadmap-list">
@@ -2474,8 +2500,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="400">
-        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
-        <div class="roadmap-icon">ðŸŽ¤</div>
+        <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>AI Interview Coach</h3>
         <p>Practice interviews with our AI coach trained on thousands of real interview questions. Get instant feedback on your answers and confidence.</p>
         <ul class="roadmap-list">
@@ -2487,8 +2513,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="500">
-        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
-        <div class="roadmap-icon">ðŸ“Š</div>
+        <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>Salary Intelligence</h3>
         <p>Know your market value before every interview. Get real-time salary data by role, company, location and experience level.</p>
         <ul class="roadmap-list">
@@ -2500,10 +2526,10 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="600">
-        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
-        <div class="roadmap-icon">ðŸŒ</div>
+        <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>Public Profile Page</h3>
-        <p>Get a shareable WorkGraph profile URL like workgraph.ai/yourname â€” your complete professional identity for any recruiter worldwide.</p>
+        <p>Get a shareable WorkGraph profile URL like workgraph.ai/yourname  your complete professional identity for any recruiter worldwide.</p>
         <ul class="roadmap-list">
           <li>Custom profile URL</li>
           <li>Portfolio showcase</li>
@@ -2513,8 +2539,8 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="700">
-        <div class="roadmap-badge badge-q4">ðŸŒŸ Coming â€” Q4 2026</div>
-        <div class="roadmap-icon">ðŸ¢</div>
+        <div class="roadmap-badge badge-q4"> Coming  Q4 2026</div>
+        <div class="roadmap-icon"></div>
         <h3>Company Intelligence</h3>
         <p>Deep insights on every company before you apply. Culture scores, interview difficulty, hiring patterns and employee reviews.</p>
         <ul class="roadmap-list">
@@ -2527,12 +2553,12 @@ body.loaded { opacity: 1; }
     </div>
 
     <div class="feature-request-box" data-aos="fade-up">
-      <div class="frb-icon">ðŸ’¡</div>
+      <div class="frb-icon"></div>
       <div class="frb-content">
         <h3>Have a feature idea?</h3>
         <p>We are building WorkGraph based on what job seekers actually need. Tell us what would help you most.</p>
       </div>
-      <a href="mailto:hello@workgraph.ai" class="frb-btn">Suggest a Feature â†’</a>
+      <a href="mailto:hello@workgraph.ai" class="frb-btn">Suggest a Feature </a>
     </div>
   </div>
 </section>
@@ -2548,21 +2574,21 @@ body.loaded { opacity: 1; }
     <div class="steps-row">
       <div class="step-item" data-aos="fade-up">
         <div class="step-num">01</div>
-        <div class="step-icon">ðŸ“„</div>
+        <div class="step-icon"></div>
         <h3>Upload Your Resume</h3>
         <p>Drop your PDF or DOCX resume. AI instantly extracts your skills and experience and builds your professional profile in seconds.</p>
       </div>
-      <div class="step-arrow">â†’</div>
+      <div class="step-arrow"></div>
       <div class="step-item" data-aos="fade-up" data-aos-delay="100">
         <div class="step-num">02</div>
-        <div class="step-icon">ðŸ”</div>
+        <div class="step-icon"></div>
         <h3>We Find Your Jobs</h3>
         <p>WorkGraph scans 50+ sources every 30 minutes and shows only the jobs that actually match your profile with real match scores.</p>
       </div>
-      <div class="step-arrow">â†’</div>
+      <div class="step-arrow"></div>
       <div class="step-item" data-aos="fade-up" data-aos-delay="200">
         <div class="step-num">03</div>
-        <div class="step-icon">ðŸŽ¯</div>
+        <div class="step-icon"></div>
         <h3>Apply With Confidence</h3>
         <p>Know your shortlist probability before applying. Fix missing skills. Track every application. Land more interviews.</p>
       </div>
@@ -2580,7 +2606,7 @@ body.loaded { opacity: 1; }
 
     <div class="testimonials-grid">
       <div class="testi-card" data-aos="fade-up">
-        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <div class="stars"></div>
         <p>"I found a job posting on Reddit that I never would have seen otherwise. Got an interview within 3 days. WorkGraph actually works."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=15" alt="Rahul"/>
@@ -2592,7 +2618,7 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="testi-card featured-testi" data-aos="fade-up" data-aos-delay="100">
-        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <div class="stars"></div>
         <p>"The match score is a game changer. I stopped wasting time on jobs I had no chance at. Now I only apply where I score above 75%. Got 3 interviews this week."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=14" alt="Marcus"/>
@@ -2604,7 +2630,7 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="testi-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <div class="stars"></div>
         <p>"Finally. One place for ALL my job applications. WorkGraph shows me jobs from Reddit and Twitter I never knew to look for. Incredible tool."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=9" alt="Priya"/>
@@ -2635,38 +2661,38 @@ body.loaded { opacity: 1; }
           <span class="price-period">/month</span>
         </div>
         <ul class="plan-list">
-          <li>âœ“ Upload 1 resume</li>
-          <li>âœ“ 10 job matches per day</li>
-          <li>âœ“ Basic match score</li>
-          <li>âœ“ 2 job sources</li>
-          <li>âœ“ Basic profile page</li>
-          <li class="no">âœ— Skills gap analysis</li>
-          <li class="no">âœ— All 50+ job sources</li>
-          <li class="no">âœ— Application tracking</li>
+          <li> Upload 1 resume</li>
+          <li> 10 job matches per day</li>
+          <li> Basic match score</li>
+          <li> 2 job sources</li>
+          <li> Basic profile page</li>
+          <li class="no"> Skills gap analysis</li>
+          <li class="no"> All 50+ job sources</li>
+          <li class="no"> Application tracking</li>
         </ul>
         <a href="#waitlist" class="plan-btn btn-outline">Get Started Free</a>
       </div>
 
       <div class="price-card popular-card" data-aos="fade-up" data-aos-delay="100">
-        <div class="popular-tag">ðŸ”¥ Most Popular</div>
+        <div class="popular-tag"> Most Popular</div>
         <div class="plan-label">Pro</div>
         <div class="plan-amount">
           <span class="old-price">$29</span>
           <span class="price-num">$12</span>
           <span class="price-period">/month</span>
         </div>
-        <div class="early-tag">ðŸ”’ Early Access Price â€” Locked Forever</div>
+        <div class="early-tag"> Early Access Price  Locked Forever</div>
         <ul class="plan-list">
-          <li>âœ“ Unlimited job matches</li>
-          <li>âœ“ All 50+ job sources</li>
-          <li>âœ“ Full skills gap analysis</li>
-          <li>âœ“ Shortlist probability</li>
-          <li>âœ“ Application tracker</li>
-          <li>âœ“ Full profile builder</li>
-          <li>âœ“ GitHub integration</li>
-          <li>âœ“ Real-time notifications</li>
+          <li> Unlimited job matches</li>
+          <li> All 50+ job sources</li>
+          <li> Full skills gap analysis</li>
+          <li> Shortlist probability</li>
+          <li> Application tracker</li>
+          <li> Full profile builder</li>
+          <li> GitHub integration</li>
+          <li> Real-time notifications</li>
         </ul>
-        <a href="#waitlist" class="plan-btn btn-filled">Join Waitlist â€” Lock $12/mo</a>
+        <a href="#waitlist" class="plan-btn btn-filled">Join Waitlist  Lock $12/mo</a>
       </div>
 
       <div class="price-card" data-aos="fade-up" data-aos-delay="200">
@@ -2677,21 +2703,21 @@ body.loaded { opacity: 1; }
           <span class="price-period">/month</span>
         </div>
         <ul class="plan-list">
-          <li>âœ“ Everything in Pro</li>
-          <li>âœ“ Gmail integration</li>
-          <li>âœ“ AI Resume Optimizer</li>
-          <li>âœ“ Auto-apply (coming Q1 2026)</li>
-          <li>âœ“ Interview coach (coming Q3 2026)</li>
-          <li>âœ“ Salary intelligence</li>
-          <li>âœ“ Public profile URL</li>
-          <li>âœ“ Priority support</li>
+          <li> Everything in Pro</li>
+          <li> Gmail integration</li>
+          <li> AI Resume Optimizer</li>
+          <li> Auto-apply (coming Q1 2026)</li>
+          <li> Interview coach (coming Q3 2026)</li>
+          <li> Salary intelligence</li>
+          <li> Public profile URL</li>
+          <li> Priority support</li>
         </ul>
         <a href="#waitlist" class="plan-btn btn-outline">Join Waitlist</a>
       </div>
     </div>
 
     <div class="guarantee-box" data-aos="fade-up">
-      <span class="guarantee-icon">ðŸ›¡ï¸</span>
+      <span class="guarantee-icon"></span>
       <div>
         <strong>30-Day Money Back Guarantee</strong>
         <p>Not happy? Get a full refund. No questions asked. Zero risk.</p>
@@ -2717,14 +2743,14 @@ body.loaded { opacity: 1; }
           required
         />
         <button type="submit" class="cta-button">
-          <span>Get Early Access â†’</span>
+          <span>Get Early Access </span>
         </button>
       </form>
       <div class="fct-notes">
-        <span>âœ… Free plan available</span>
-        <span>âœ… No credit card needed</span>
-        <span>âœ… Cancel anytime</span>
-        <span>âœ… Works worldwide</span>
+        <span> Free plan available</span>
+        <span> No credit card needed</span>
+        <span> Cancel anytime</span>
+        <span> Works worldwide</span>
       </div>
     </div>
   </div>
@@ -2792,8 +2818,8 @@ body.loaded { opacity: 1; }
     </div>
 
     <div class="footer-bottom">
-      <p>Â© 2026 WorkGraph. Built with â¤ï¸ for job seekers worldwide.</p>
-      <p>ðŸŒ Serving job seekers in 50+ countries</p>
+      <p> 2026 WorkGraph. Built with  for job seekers worldwide.</p>
+      <p> Serving job seekers in 50+ countries</p>
     </div>
   </div>
 </footer>
@@ -2801,8 +2827,8 @@ body.loaded { opacity: 1; }
 <!-- EXIT INTENT POPUP -->
 <div class="exit-overlay" id="exitOverlay">
   <div class="exit-popup">
-    <button class="exit-close" onclick="closeExit()">âœ•</button>
-    <div class="exit-icon">âš¡</div>
+    <button class="exit-close" onclick="closeExit()"></button>
+    <div class="exit-icon"></div>
     <h3>Wait! Before you go.</h3>
     <p>Job seekers using WorkGraph get<br/><strong>3x more interviews</strong> than those who don't.</p>
     <div class="exit-offer">
@@ -2811,7 +2837,7 @@ body.loaded { opacity: 1; }
     </div>
     <form class="exit-form" id="exitForm">
       <input type="email" id="exitEmail" placeholder="Your email address" class="form-input" required/>
-      <button type="submit" class="cta-button">Claim My Free Pro Access â†’</button>
+      <button type="submit" class="cta-button">Claim My Free Pro Access </button>
     </form>
     <button class="exit-skip" onclick="closeExit()">No thanks, I prefer fewer interviews</button>
   </div>
@@ -2821,7 +2847,7 @@ body.loaded { opacity: 1; }
 <div class="activity-feed" id="activityFeed"></div>
 
 <!-- TOAST NOTIFICATION -->
-<div class="toast" id="toast">âœ… Email saved successfully!</div>
+<div class="toast" id="toast">Email saved successfully.</div>
 
 <script>
 // ============================================
@@ -2911,35 +2937,41 @@ function showToast(msg) {
 // HOW TO SETUP:
 // 1. Go to script.google.com
 // 2. Create new project
-// 3. Paste the Apps Script code (see below)
+// 3. Paste code from google-apps-script-waitlist.js as Code.gs
 // 4. Deploy as Web App
 // 5. Replace GOOGLE_APPS_SCRIPT_URL below
 // ============================================
 async function saveToWaitlist(data) {
   // This Web App endpoint should implement doPost(e).
   // Opening it directly in browser may show a doGet error, which is expected.
-  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxitDkG1ewvogM5vjucGBIsYQPBb4EQQyukkQuprSTFoRck1xKquALxiCYdxbniri_p/exec';
+  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbydOWkyb5-Iw0xGTbc7oI5RPJuUgcvmF7Rbr5FEm6-5t_Vk0B81T_hYR4OcgBjWoc-6/exec';
   // ^^^ REPLACE THIS with your actual URL
 
   // If not configured, just log and show success
   if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-    console.log('ðŸ“§ Would save:', data);
-    console.warn('âš ï¸ Set up Google Apps Script to actually save emails!');
+    console.log('Would save:', data);
+    console.warn('Set up Google Apps Script URL to save waitlist entries.');
     return true;
   }
 
   try {
+    const payload = {
+      firstName: data.firstName || '',
+      email: data.email || '',
+      jobField: data.jobField || '',
+      country: data.country || '',
+      source: data.source || 'landing_page',
+      timestamp: new Date().toISOString(),
+      page: window.location.href
+    };
+
     await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...data,
-        timestamp: new Date().toISOString(),
-        page: window.location.href
-      }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: new URLSearchParams(payload).toString(),
       mode: 'no-cors'
     });
-    console.log('âœ… Saved to Google Sheets');
+    console.log('Saved to Google Sheets');
     return true;
   } catch (err) {
     console.log('Save error:', err);
@@ -2959,8 +2991,15 @@ const submitBtn = document.getElementById('submitBtn');
 if (waitlistForm) {
   waitlistForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    if (!email) return;
+    const firstName = document.getElementById('firstName')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const jobField = document.getElementById('jobField')?.value.trim();
+    const country = document.getElementById('country')?.value.trim();
+
+    if (!firstName || !email || !jobField || !country) {
+      showToast('Please fill all waitlist details.');
+      return;
+    }
 
     // Loading state
     if (submitBtn) {
@@ -2971,7 +3010,26 @@ if (waitlistForm) {
       submitBtn.disabled = true;
     }
 
-    await saveToWaitlist({ email, source: 'main_hero_form' });
+    const saved = await saveToWaitlist({
+      firstName,
+      email,
+      jobField,
+      country,
+      source: 'main_hero_form'
+    });
+
+    if (!saved) {
+      if (submitBtn) {
+        submitBtn.innerHTML = `
+          <span id="btnText">Get Early Access Free</span>
+          <span class="btn-arrow">></span>
+          <div class="btn-shine"></div>
+        `;
+        submitBtn.disabled = false;
+      }
+      showToast('Unable to save right now. Please try again.');
+      return;
+    }
 
     position++;
 
@@ -2986,7 +3044,7 @@ if (waitlistForm) {
     }
 
     // Set share URLs
-    const shareText = 'I just joined WorkGraph â€” AI that finds jobs from LinkedIn, Reddit, Twitter & 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
+    const shareText = 'I just joined WorkGraph - AI that finds jobs from LinkedIn, Reddit, Twitter and 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
 
     const waBtn = document.getElementById('shareWhatsApp');
     if (waBtn) waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
@@ -3002,7 +3060,7 @@ if (waitlistForm) {
     if (successState) successState.classList.add('visible');
 
     // Show toast
-    showToast('ðŸŽ‰ You are on the waitlist! Check your email.');
+    showToast('You are on the waitlist! Check your email.');
 
     // Decrease spots
     spots = Math.max(spots - 1, 1);
@@ -3028,11 +3086,11 @@ if (finalForm) {
 
     await saveToWaitlist({ email, source: 'bottom_cta' });
 
-    btn.innerHTML = 'ðŸŽ‰ You are on the list!';
+    btn.innerHTML = 'You are on the list!';
     btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
     btn.disabled = false;
 
-    showToast('ðŸŽ‰ Added to waitlist successfully!');
+    showToast('Added to waitlist successfully.');
   });
 }
 
@@ -3053,7 +3111,7 @@ if (exitForm) {
 
     await saveToWaitlist({ email, source: 'exit_popup' });
 
-    btn.textContent = 'ðŸŽ‰ You are on the list!';
+    btn.textContent = 'You are on the list!';
     btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
 
     setTimeout(closeExit, 2000);
@@ -3139,9 +3197,9 @@ function copyReferral() {
   if (!refEl || !btn) return;
 
   navigator.clipboard.writeText(refEl.textContent.trim()).then(() => {
-    btn.textContent = 'âœ… Copied!';
+    btn.textContent = 'Copied!';
     btn.style.background = '#10B981';
-    showToast('ðŸ”— Referral link copied to clipboard!');
+    showToast('Referral link copied to clipboard.');
     setTimeout(() => {
       btn.textContent = 'Copy Link';
       btn.style.background = '';
@@ -3154,7 +3212,7 @@ function copyReferral() {
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    btn.textContent = 'âœ… Copied!';
+    btn.textContent = 'Copied!';
     setTimeout(() => { btn.textContent = 'Copy Link'; }, 2500);
   });
 }
