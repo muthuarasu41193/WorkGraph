@@ -1,26 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, 
-  initial-scale=1.0"/>
-  <title>WorkGraph — Your AI Career Intelligence Platform</title>
-  <meta name="description" content="WorkGraph finds relevant 
-  jobs from LinkedIn, Reddit, Twitter & 100+ sources worldwide. 
-  Build your professional profile. Get matched. Get hired."/>
-  <meta property="og:title" content="WorkGraph — 
-  AI Job Hunting Copilot"/>
-  <meta property="og:description" content="Stop manually 
-  searching for jobs. Let AI find them for you."/>
-  <meta property="og:url" 
-  content="https://muthuarasu41193.github.io/WorkGraph/"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkGraph â€” Your AI Career Intelligence Platform</title>
+  <meta name="description" content="WorkGraph finds relevant jobs from LinkedIn, Reddit, Twitter & 100+ sources worldwide. Build your professional profile. Get matched. Get hired."/>
+  <meta property="og:title" content="WorkGraph â€” AI Job Hunting Copilot"/>
+  <meta property="og:description" content="Stop manually searching for jobs. Let AI find them for you."/>
+  <meta property="og:url" content="https://muthuarasu41193.github.io/WorkGraph/"/>
   <meta property="og:type" content="website"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" 
-  crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:
-  wght@300;400;500;600;700;800;900&display=swap" 
-  rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 
 <style>
 /* ============================================
@@ -150,6 +141,7 @@ body.loaded { opacity: 1; }
   gap: 10px;
   position: relative; z-index: 998;
   flex-wrap: wrap;
+  min-height: 44px; /* FIX: consistent height */
 }
 
 .announce-dot {
@@ -180,7 +172,7 @@ body.loaded { opacity: 1; }
 }
 
 /* ============================================
-   NAVBAR
+   NAVBAR â€” FIXED: Dynamic top offset via JS
    ============================================ */
 .navbar {
   position: fixed;
@@ -257,9 +249,7 @@ body.loaded { opacity: 1; }
 
 .nav-cta {
   padding: 8px 18px;
-  background: linear-gradient(
-    135deg,var(--purple),var(--blue)
-  );
+  background: linear-gradient(135deg,var(--purple),var(--blue));
   border-radius: 8px;
   color: white; font-size: 14px; font-weight: 600;
   text-decoration: none;
@@ -297,9 +287,7 @@ body.loaded { opacity: 1; }
 }
 
 .gradient-text {
-  background: linear-gradient(
-    135deg,var(--purple-l) 0%,var(--blue-l) 100%
-  );
+  background: linear-gradient(135deg,var(--purple-l) 0%,var(--blue-l) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -334,9 +322,7 @@ body.loaded { opacity: 1; }
 .stat-big {
   font-size: 28px; font-weight: 900;
   letter-spacing: -1px;
-  background: linear-gradient(
-    135deg,var(--purple-l),var(--blue-l)
-  );
+  background: linear-gradient(135deg,var(--purple-l),var(--blue-l));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -439,9 +425,7 @@ body.loaded { opacity: 1; }
 
 .cta-button {
   width: 100%; padding: 15px 28px;
-  background: linear-gradient(
-    135deg,var(--purple),var(--blue)
-  );
+  background: linear-gradient(135deg,var(--purple),var(--blue));
   border: none; border-radius: 10px;
   color: white; font-size: 15px; font-weight: 600;
   cursor: pointer;
@@ -465,9 +449,7 @@ body.loaded { opacity: 1; }
 .btn-shine {
   position: absolute; top: 0; left: -100%;
   width: 60%; height: 100%;
-  background: linear-gradient(
-    90deg,transparent,rgba(255,255,255,.15),transparent
-  );
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
   animation: shine 3s ease-in-out infinite;
 }
 
@@ -517,9 +499,7 @@ body.loaded { opacity: 1; }
 
 /* REFERRAL BOX */
 .referral-box {
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.1),rgba(37,99,235,.05)
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.1),rgba(37,99,235,.05));
   border: 1px solid rgba(124,58,237,.25);
   border-radius: 16px; padding: 24px;
   text-align: left;
@@ -553,9 +533,7 @@ body.loaded { opacity: 1; }
 
 .copy-ref-btn {
   padding: 6px 14px;
-  background: linear-gradient(
-    135deg,var(--purple),var(--blue)
-  );
+  background: linear-gradient(135deg,var(--purple),var(--blue));
   border: none; border-radius: 6px;
   color: white; font-size: 12px; font-weight: 600;
   cursor: pointer; white-space: nowrap;
@@ -580,14 +558,9 @@ body.loaded { opacity: 1; }
 
 .whatsapp-share-btn { background: #25D366; color: white; }
 .linkedin-btn { background: #0A66C2; color: white; }
-.twitter-btn {
-  background: #000; color: white;
-  border: 1px solid #333;
-}
+.twitter-btn { background: #000; color: white; border: 1px solid #333; }
 
-.share-btn:hover {
-  transform: translateY(-2px); opacity: .9;
-}
+.share-btn:hover { transform: translateY(-2px); opacity: .9; }
 
 /* REFERRAL PROGRESS */
 .referral-progress {
@@ -652,9 +625,7 @@ body.loaded { opacity: 1; }
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%,-50%);
   width: 80%; height: 180px;
-  background: radial-gradient(
-    ellipse,rgba(124,58,237,.25) 0%,transparent 70%
-  );
+  background: radial-gradient(ellipse,rgba(124,58,237,.25) 0%,transparent 70%);
   pointer-events: none; filter: blur(40px);
 }
 
@@ -662,8 +633,7 @@ body.loaded { opacity: 1; }
   background: rgba(15,23,41,.9);
   border: 1px solid var(--border);
   border-radius: 14px; overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,.5),
-    0 0 0 1px rgba(255,255,255,.04);
+  box-shadow: 0 40px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.04);
 }
 
 .browser-top {
@@ -675,10 +645,7 @@ body.loaded { opacity: 1; }
 
 .dots { display: flex; gap: 5px; }
 
-.dot {
-  width: 11px; height: 11px; border-radius: 50%;
-}
-
+.dot { width: 11px; height: 11px; border-radius: 50%; }
 .dot-red { background: #FF5F56; }
 .dot-yellow { background: #FFBD2E; }
 .dot-green { background: #27C93F; }
@@ -713,9 +680,7 @@ body.loaded { opacity: 1; }
 }
 
 .mock-stat.highlight .ms-num {
-  background: linear-gradient(
-    135deg,var(--purple-l),var(--blue-l)
-  );
+  background: linear-gradient(135deg,var(--purple-l),var(--blue-l));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -726,9 +691,7 @@ body.loaded { opacity: 1; }
   text-transform: uppercase; letter-spacing: .5px;
 }
 
-.mock-jobs {
-  display: flex; flex-direction: column; gap: 7px;
-}
+.mock-jobs { display: flex; flex-direction: column; gap: 7px; }
 
 .mock-job {
   display: flex; align-items: center;
@@ -744,6 +707,9 @@ body.loaded { opacity: 1; }
 
 .mj-left { display: flex; align-items: center; gap: 10px; }
 
+/* FIX: Added missing .mj-info CSS */
+.mj-info { display: flex; flex-direction: column; gap: 3px; }
+
 .co-logo {
   width: 36px; height: 36px; border-radius: 8px;
   display: flex; align-items: center;
@@ -752,20 +718,12 @@ body.loaded { opacity: 1; }
   color: white; flex-shrink: 0;
 }
 
-.co-logo.google {
-  background: linear-gradient(135deg,#4285F4,#34A853);
-}
-.co-logo.meta {
-  background: linear-gradient(135deg,#1877F2,#42A5F5);
-}
-.co-logo.stripe {
-  background: linear-gradient(135deg,#635BFF,#80D0F0);
-}
+.co-logo.google { background: linear-gradient(135deg,#4285F4,#34A853); }
+.co-logo.meta { background: linear-gradient(135deg,#1877F2,#42A5F5); }
+.co-logo.stripe { background: linear-gradient(135deg,#635BFF,#80D0F0); }
 
 .mj-title { font-size: 13px; font-weight: 600; }
-.mj-company {
-  font-size: 11px; color: var(--muted); margin: 2px 0;
-}
+.mj-company { font-size: 11px; color: var(--muted); margin: 2px 0; }
 .mj-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
 .job-tag {
@@ -774,24 +732,12 @@ body.loaded { opacity: 1; }
   text-transform: uppercase;
 }
 
-.job-tag.linkedin {
-  background: rgba(10,102,194,.2); color: #60A5FA;
-}
-.job-tag.reddit {
-  background: rgba(255,69,0,.15); color: #FCA5A5;
-}
-.job-tag.twitter {
-  background: rgba(255,255,255,.07); color: #D1D5DB;
-}
-.job-tag.time {
-  background: rgba(255,255,255,.05); color: var(--muted);
-}
-.job-tag.high {
-  background: rgba(16,185,129,.15); color: var(--green);
-}
-.job-tag.medium {
-  background: rgba(245,158,11,.15); color: var(--orange);
-}
+.job-tag.linkedin { background: rgba(10,102,194,.2); color: #60A5FA; }
+.job-tag.reddit { background: rgba(255,69,0,.15); color: #FCA5A5; }
+.job-tag.twitter { background: rgba(255,255,255,.07); color: #D1D5DB; }
+.job-tag.time { background: rgba(255,255,255,.05); color: var(--muted); }
+.job-tag.high { background: rgba(16,185,129,.15); color: var(--green); }
+.job-tag.medium { background: rgba(245,158,11,.15); color: var(--orange); }
 
 .mj-score {
   font-size: 15px; font-weight: 800;
@@ -801,14 +747,8 @@ body.loaded { opacity: 1; }
   border: 2px solid; flex-shrink: 0;
 }
 
-.score-green {
-  color: var(--green); border-color: var(--green);
-  background: rgba(16,185,129,.1);
-}
-.score-orange {
-  color: var(--orange); border-color: var(--orange);
-  background: rgba(245,158,11,.1);
-}
+.score-green { color: var(--green); border-color: var(--green); background: rgba(16,185,129,.1); }
+.score-orange { color: var(--orange); border-color: var(--orange); background: rgba(245,158,11,.1); }
 
 /* ============================================
    MARQUEE
@@ -913,9 +853,7 @@ body.loaded { opacity: 1; }
 .feat-card::before {
   content: ''; position: absolute;
   top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(
-    90deg,transparent,rgba(124,58,237,.5),transparent
-  );
+  background: linear-gradient(90deg,transparent,rgba(124,58,237,.5),transparent);
   opacity: 0; transition: opacity .3s;
 }
 
@@ -934,30 +872,12 @@ body.loaded { opacity: 1; }
   font-size: 24px;
 }
 
-.icon-purple {
-  background: rgba(124,58,237,.15); color: var(--purple-l);
-  border: 1px solid rgba(124,58,237,.25);
-}
-.icon-blue {
-  background: rgba(37,99,235,.15); color: var(--blue-l);
-  border: 1px solid rgba(37,99,235,.25);
-}
-.icon-green {
-  background: rgba(16,185,129,.15); color: var(--green);
-  border: 1px solid rgba(16,185,129,.25);
-}
-.icon-orange {
-  background: rgba(245,158,11,.15); color: var(--orange);
-  border: 1px solid rgba(245,158,11,.25);
-}
-.icon-pink {
-  background: rgba(236,72,153,.15); color: var(--pink);
-  border: 1px solid rgba(236,72,153,.25);
-}
-.icon-teal {
-  background: rgba(20,184,166,.15); color: var(--teal);
-  border: 1px solid rgba(20,184,166,.25);
-}
+.icon-purple { background: rgba(124,58,237,.15); color: var(--purple-l); border: 1px solid rgba(124,58,237,.25); }
+.icon-blue { background: rgba(37,99,235,.15); color: var(--blue-l); border: 1px solid rgba(37,99,235,.25); }
+.icon-green { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
+.icon-orange { background: rgba(245,158,11,.15); color: var(--orange); border: 1px solid rgba(245,158,11,.25); }
+.icon-pink { background: rgba(236,72,153,.15); color: var(--pink); border: 1px solid rgba(236,72,153,.25); }
+.icon-teal { background: rgba(20,184,166,.15); color: var(--teal); border: 1px solid rgba(20,184,166,.25); }
 
 .live-badge {
   display: inline-block; padding: 3px 10px;
@@ -989,9 +909,7 @@ body.loaded { opacity: 1; }
    PROFILE SECTION
    ============================================ */
 .profile-section {
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.05) 0%,transparent 60%
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.05) 0%,transparent 60%);
 }
 
 .profile-grid {
@@ -1038,9 +956,7 @@ body.loaded { opacity: 1; }
   display: block; margin-bottom: 2px;
 }
 
-.pf-item p {
-  font-size: 13px; color: var(--muted); margin: 0;
-}
+.pf-item p { font-size: 13px; color: var(--muted); margin: 0; }
 
 /* PROFILE CARD MOCK */
 .profile-card-mock {
@@ -1057,26 +973,18 @@ body.loaded { opacity: 1; }
 
 .pcm-avatar {
   width: 52px; height: 52px; border-radius: 50%;
-  background: linear-gradient(
-    135deg,var(--purple),var(--blue)
-  );
+  background: linear-gradient(135deg,var(--purple),var(--blue));
   display: flex; align-items: center;
   justify-content: center;
   font-size: 22px; font-weight: 800;
   color: white; flex-shrink: 0;
 }
 
-.pcm-name {
-  font-size: 15px; font-weight: 700; margin-bottom: 2px;
-}
-.pcm-role {
-  font-size: 12px; color: var(--secondary); margin-bottom: 2px;
-}
+.pcm-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.pcm-role { font-size: 12px; color: var(--secondary); margin-bottom: 2px; }
 .pcm-location { font-size: 11px; color: var(--muted); }
 
-.pcm-score {
-  margin-left: auto; text-align: center; flex-shrink: 0;
-}
+.pcm-score { margin-left: auto; text-align: center; flex-shrink: 0; }
 
 .pcm-score-num {
   font-size: 28px; font-weight: 900; letter-spacing: -1px;
@@ -1086,10 +994,7 @@ body.loaded { opacity: 1; }
   background-clip: text;
 }
 
-.pcm-score-label {
-  font-size: 10px; color: var(--muted);
-  text-transform: uppercase;
-}
+.pcm-score-label { font-size: 10px; color: var(--muted); text-transform: uppercase; }
 
 .pcm-links {
   display: grid; grid-template-columns: repeat(4,1fr);
@@ -1107,22 +1012,10 @@ body.loaded { opacity: 1; }
 
 .link-item:hover { transform: translateY(-2px); }
 
-.link-linkedin {
-  background: rgba(10,102,194,.15); color: #60A5FA;
-  border: 1px solid rgba(10,102,194,.25);
-}
-.link-github {
-  background: rgba(255,255,255,.07); color: var(--text);
-  border: 1px solid var(--border);
-}
-.link-web {
-  background: rgba(16,185,129,.1); color: var(--green);
-  border: 1px solid rgba(16,185,129,.2);
-}
-.link-twitter {
-  background: rgba(255,255,255,.05); color: var(--secondary);
-  border: 1px solid var(--border);
-}
+.link-linkedin { background: rgba(10,102,194,.15); color: #60A5FA; border: 1px solid rgba(10,102,194,.25); }
+.link-github { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border); }
+.link-web { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
+.link-twitter { background: rgba(255,255,255,.05); color: var(--secondary); border: 1px solid var(--border); }
 
 .pcm-section { margin-bottom: 16px; }
 
@@ -1141,9 +1034,7 @@ body.loaded { opacity: 1; }
   border: 1px solid rgba(16,185,129,.15);
 }
 
-.project-list {
-  display: flex; flex-direction: column; gap: 6px;
-}
+.project-list { display: flex; flex-direction: column; gap: 6px; }
 
 .project-item {
   padding: 9px 12px; border-radius: 8px;
@@ -1154,9 +1045,7 @@ body.loaded { opacity: 1; }
 .proj-name { font-size: 13px; font-weight: 600; }
 .proj-desc { font-size: 11px; color: var(--muted); }
 
-.pcm-skills {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;
-}
+.pcm-skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 
 .skill-tag {
   padding: 4px 10px; border-radius: 5px;
@@ -1191,22 +1080,10 @@ body.loaded { opacity: 1; }
   margin-bottom: 14px;
 }
 
-.badge-q1 {
-  background: rgba(124,58,237,.15); color: var(--purple-l);
-  border: 1px solid rgba(124,58,237,.25);
-}
-.badge-q2 {
-  background: rgba(37,99,235,.15); color: var(--blue-l);
-  border: 1px solid rgba(37,99,235,.25);
-}
-.badge-q3 {
-  background: rgba(16,185,129,.1); color: var(--green);
-  border: 1px solid rgba(16,185,129,.2);
-}
-.badge-q4 {
-  background: rgba(245,158,11,.1); color: var(--orange);
-  border: 1px solid rgba(245,158,11,.2);
-}
+.badge-q1 { background: rgba(124,58,237,.15); color: var(--purple-l); border: 1px solid rgba(124,58,237,.25); }
+.badge-q2 { background: rgba(37,99,235,.15); color: var(--blue-l); border: 1px solid rgba(37,99,235,.25); }
+.badge-q3 { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
+.badge-q4 { background: rgba(245,158,11,.1); color: var(--orange); border: 1px solid rgba(245,158,11,.2); }
 
 .roadmap-icon { font-size: 28px; margin-bottom: 12px; }
 
@@ -1229,29 +1106,23 @@ body.loaded { opacity: 1; }
 }
 
 .roadmap-list li::before {
-  content: '→'; position: absolute; left: 0;
+  content: 'â†’'; position: absolute; left: 0;
   color: var(--purple-l); font-size: 11px;
 }
 
 .feature-request-box {
   display: flex; align-items: center;
   gap: 20px; padding: 28px 32px;
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.08),rgba(37,99,235,.05)
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.08),rgba(37,99,235,.05));
   border: 1px solid rgba(124,58,237,.2);
   border-radius: 16px; margin-top: 40px; flex-wrap: wrap;
 }
 
 .frb-icon { font-size: 32px; flex-shrink: 0; }
 
-.frb-content h3 {
-  font-size: 18px; font-weight: 700; margin-bottom: 4px;
-}
+.frb-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
 
-.frb-content p {
-  font-size: 14px; color: var(--secondary); margin: 0;
-}
+.frb-content p { font-size: 14px; color: var(--secondary); margin: 0; }
 
 .frb-btn {
   margin-left: auto; flex-shrink: 0;
@@ -1271,9 +1142,7 @@ body.loaded { opacity: 1; }
    HOW IT WORKS
    ============================================ */
 .how-section {
-  background: linear-gradient(
-    135deg,rgba(37,99,235,.04) 0%,transparent 60%
-  );
+  background: linear-gradient(135deg,rgba(37,99,235,.04) 0%,transparent 60%);
 }
 
 .steps-row {
@@ -1300,13 +1169,9 @@ body.loaded { opacity: 1; }
   margin-bottom: 8px; letter-spacing: -.5px;
 }
 
-.step-item p {
-  font-size: 14px; color: var(--secondary); line-height: 1.7;
-}
+.step-item p { font-size: 14px; color: var(--secondary); line-height: 1.7; }
 
-.step-arrow {
-  font-size: 24px; color: var(--muted); flex-shrink: 0;
-}
+.step-arrow { font-size: 24px; color: var(--muted); flex-shrink: 0; }
 
 /* ============================================
    TESTIMONIALS
@@ -1328,35 +1193,25 @@ body.loaded { opacity: 1; }
 }
 
 .featured-testi {
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.07),var(--card)
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.07),var(--card));
   border-color: rgba(124,58,237,.25);
 }
 
-.stars {
-  color: #F59E0B; font-size: 16px;
-  letter-spacing: 2px; margin-bottom: 14px;
-}
+.stars { color: #F59E0B; font-size: 16px; letter-spacing: 2px; margin-bottom: 14px; }
 
 .testi-card p {
   font-size: 14px; color: var(--secondary);
   line-height: 1.7; margin-bottom: 18px; font-style: italic;
 }
 
-.testi-author {
-  display: flex; align-items: center; gap: 10px;
-}
+.testi-author { display: flex; align-items: center; gap: 10px; }
 
 .testi-author img {
   width: 40px; height: 40px; border-radius: 50%;
   border: 2px solid var(--border);
 }
 
-.testi-author strong {
-  display: block; font-size: 13px; font-weight: 600;
-}
-
+.testi-author strong { display: block; font-size: 13px; font-weight: 600; }
 .testi-author span { font-size: 12px; color: var(--muted); }
 
 /* ============================================
@@ -1376,15 +1231,11 @@ body.loaded { opacity: 1; }
 .price-card:hover { transform: translateY(-4px); }
 
 .popular-card {
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.08),var(--card)
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.08),var(--card));
   border-color: rgba(124,58,237,.35); transform: scale(1.02);
 }
 
-.popular-card:hover {
-  transform: scale(1.02) translateY(-4px);
-}
+.popular-card:hover { transform: scale(1.02) translateY(-4px); }
 
 .popular-tag {
   position: absolute; top: -13px; left: 50%;
@@ -1406,15 +1257,8 @@ body.loaded { opacity: 1; }
   gap: 5px; margin-bottom: 8px;
 }
 
-.old-price {
-  font-size: 17px; color: var(--muted);
-  text-decoration: line-through;
-}
-
-.price-num {
-  font-size: 44px; font-weight: 900; letter-spacing: -2px;
-}
-
+.old-price { font-size: 17px; color: var(--muted); text-decoration: line-through; }
+.price-num { font-size: 44px; font-weight: 900; letter-spacing: -2px; }
 .price-period { font-size: 15px; color: var(--muted); }
 
 .early-tag {
@@ -1441,20 +1285,14 @@ body.loaded { opacity: 1; }
   font-family: 'Inter', sans-serif;
 }
 
-.btn-filled {
-  background: linear-gradient(135deg,var(--purple),var(--blue));
-  color: white; border: none;
-}
+.btn-filled { background: linear-gradient(135deg,var(--purple),var(--blue)); color: white; border: none; }
 
 .btn-filled:hover {
   box-shadow: 0 10px 28px rgba(124,58,237,.4);
   transform: translateY(-2px);
 }
 
-.btn-outline {
-  background: transparent; color: var(--text);
-  border: 1px solid var(--border);
-}
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
 
 .btn-outline:hover {
   border-color: rgba(124,58,237,.4);
@@ -1472,26 +1310,16 @@ body.loaded { opacity: 1; }
 
 .guarantee-icon { font-size: 28px; }
 
-.guarantee-box strong {
-  display: block; font-size: 15px; font-weight: 700;
-  margin-bottom: 2px;
-}
-
-.guarantee-box p {
-  font-size: 13px; color: var(--secondary); margin: 0;
-}
+.guarantee-box strong { display: block; font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.guarantee-box p { font-size: 13px; color: var(--secondary); margin: 0; }
 
 /* ============================================
    FINAL CTA
    ============================================ */
-.final-cta-section {
-  padding: 100px 0; position: relative; z-index: 1;
-}
+.final-cta-section { padding: 100px 0; position: relative; z-index: 1; }
 
 .final-cta-box {
-  background: linear-gradient(
-    135deg,rgba(124,58,237,.1),rgba(37,99,235,.05)
-  );
+  background: linear-gradient(135deg,rgba(124,58,237,.1),rgba(37,99,235,.05));
   border: 1px solid rgba(124,58,237,.25);
   border-radius: 24px; padding: 80px 60px;
   text-align: center; position: relative; overflow: hidden;
@@ -1499,9 +1327,7 @@ body.loaded { opacity: 1; }
 
 .fct-glow {
   position: absolute; width: 300px; height: 300px;
-  background: radial-gradient(
-    circle,rgba(124,58,237,.25),transparent
-  );
+  background: radial-gradient(circle,rgba(124,58,237,.25),transparent);
   top: -100px; right: -100px; border-radius: 50%;
   pointer-events: none;
 }
@@ -1524,9 +1350,7 @@ body.loaded { opacity: 1; }
   max-width: 480px; margin: 0 auto 18px; flex-wrap: wrap;
 }
 
-.final-form .cta-button {
-  width: auto; white-space: nowrap; padding: 13px 22px;
-}
+.final-form .cta-button { width: auto; white-space: nowrap; padding: 13px 22px; }
 
 .fct-notes {
   display: flex; gap: 20px; justify-content: center;
@@ -1572,10 +1396,7 @@ body.loaded { opacity: 1; }
 
 .exit-icon { font-size: 48px; margin-bottom: 16px; }
 
-.exit-popup h3 {
-  font-size: 24px; font-weight: 800;
-  margin-bottom: 8px; letter-spacing: -.5px;
-}
+.exit-popup h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.5px; }
 
 .exit-popup > p {
   font-size: 15px; color: var(--secondary);
@@ -1595,14 +1416,9 @@ body.loaded { opacity: 1; }
   color: white; margin-bottom: 8px;
 }
 
-.exit-offer p {
-  font-size: 14px; color: var(--secondary); margin: 0;
-}
+.exit-offer p { font-size: 14px; color: var(--secondary); margin: 0; }
 
-.exit-form {
-  display: flex; flex-direction: column;
-  gap: 10px; margin-bottom: 16px;
-}
+.exit-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 
 .exit-skip {
   background: none; border: none; color: var(--muted);
@@ -1647,10 +1463,7 @@ body.loaded { opacity: 1; }
 }
 
 .activity-text strong { color: var(--text); }
-
-.activity-time {
-  font-size: 11px; color: var(--muted); white-space: nowrap;
-}
+.activity-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
 
 /* ============================================
    FOOTER
@@ -1680,9 +1493,7 @@ body.loaded { opacity: 1; }
   border-radius: 6px; transition: all .2s;
 }
 
-.social-link:hover {
-  color: var(--text); border-color: rgba(124,58,237,.3);
-}
+.social-link:hover { color: var(--text); border-color: rgba(124,58,237,.3); }
 
 .footer-links-grid {
   display: grid; grid-template-columns: repeat(4,1fr);
@@ -1715,19 +1526,193 @@ body.loaded { opacity: 1; }
 /* ============================================
    SCROLL ANIMATIONS
    ============================================ */
-[data-aos] {
-  opacity: 0; transform: translateY(28px);
-  transition: all .7s ease;
-}
-[data-aos].aos-animate {
-  opacity: 1; transform: translateY(0);
-}
+[data-aos] { opacity: 0; transform: translateY(28px); transition: all .7s ease; }
+[data-aos].aos-animate { opacity: 1; transform: translateY(0); }
 [data-aos="fade-right"] { transform: translateX(-28px); }
 [data-aos="fade-right"].aos-animate { transform: translateX(0); }
 [data-aos="fade-left"] { transform: translateX(28px); }
 [data-aos="fade-left"].aos-animate { transform: translateX(0); }
 [data-aos="fade-down"] { transform: translateY(-28px); }
 [data-aos="fade-down"].aos-animate { transform: translateY(0); }
+
+/* ============================================
+   INTERVIEW VAULT SECTION
+   ============================================ */
+.vault-section {
+  background: linear-gradient(135deg,rgba(124,58,237,.05) 0%,rgba(37,99,235,.03) 100%);
+}
+
+.vault-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 40px; margin-bottom: 40px;
+}
+
+.vault-side {
+  border-radius: 20px; padding: 32px;
+  border: 1px solid var(--border);
+}
+
+.seller-side {
+  background: linear-gradient(135deg,rgba(16,185,129,.06),rgba(15,23,41,.8));
+  border-color: rgba(16,185,129,.2);
+}
+
+.buyer-side {
+  background: linear-gradient(135deg,rgba(124,58,237,.06),rgba(15,23,41,.8));
+  border-color: rgba(124,58,237,.2);
+}
+
+.vault-side-header { text-align: center; margin-bottom: 28px; }
+.vault-emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+
+.vault-side-header h3 {
+  font-size: 22px; font-weight: 800;
+  margin-bottom: 6px; letter-spacing: -.5px;
+}
+
+.vault-side-header p { font-size: 14px; color: var(--secondary); }
+
+.vault-steps { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+
+.vault-step { display: flex; gap: 14px; align-items: flex-start; }
+
+.vstep-num {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg,var(--green),var(--teal));
+  display: flex; align-items: center;
+  justify-content: center;
+  font-size: 13px; font-weight: 800;
+  color: white; flex-shrink: 0;
+}
+
+.vstep-text strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.vstep-text p { font-size: 13px; color: var(--secondary); margin: 0; }
+
+.vault-earning {
+  background: rgba(16,185,129,.08);
+  border: 1px solid rgba(16,185,129,.2);
+  border-radius: 12px; padding: 16px;
+}
+
+.earning-label {
+  display: block; font-size: 12px;
+  color: var(--muted); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+
+.earning-calc { font-size: 14px; color: var(--secondary); }
+.earning-calc strong { color: var(--green); }
+
+.guide-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+.guide-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; transition: all .3s;
+}
+
+.guide-card:hover { border-color: rgba(124,58,237,.3); transform: translateY(-2px); }
+
+.featured-guide {
+  background: rgba(124,58,237,.07);
+  border-color: rgba(124,58,237,.25);
+}
+
+.guide-company { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+
+.guide-logo {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center;
+  justify-content: center;
+  font-weight: 800; font-size: 15px;
+  color: white; flex-shrink: 0;
+}
+
+.google-logo { background: linear-gradient(135deg,#4285F4,#34A853); }
+.meta-logo { background: linear-gradient(135deg,#1877F2,#42A5F5); }
+.stripe-logo { background: linear-gradient(135deg,#635BFF,#80D0F0); }
+
+.guide-meta { flex: 1; }
+.guide-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.guide-role { font-size: 11px; color: var(--muted); }
+
+.guide-verified {
+  font-size: 11px; font-weight: 600; color: var(--green);
+  background: rgba(16,185,129,.1);
+  padding: 3px 8px; border-radius: 5px;
+  border: 1px solid rgba(16,185,129,.2);
+  white-space: nowrap;
+}
+
+.guide-stats { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+/* FIX: Standard line-clamp */
+.guide-preview {
+  font-size: 12px; color: var(--secondary);
+  font-style: italic; line-height: 1.5;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.guide-footer { display: flex; align-items: center; justify-content: space-between; }
+
+.guide-price {
+  font-size: 20px; font-weight: 900; letter-spacing: -1px;
+  background: linear-gradient(135deg,var(--purple-l),var(--blue-l));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.guide-cta { font-size: 13px; color: var(--purple-l); font-weight: 600; cursor: pointer; }
+
+.vault-coming-note {
+  text-align: center; font-size: 13px;
+  color: var(--muted); padding: 12px;
+  background: rgba(255,255,255,.03);
+  border-radius: 8px; border: 1px solid var(--border);
+}
+
+.winwin-banner {
+  display: flex; align-items: center;
+  justify-content: center;
+  gap: 20px; padding: 40px;
+  background: linear-gradient(135deg,rgba(124,58,237,.08),rgba(37,99,235,.05));
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 20px; flex-wrap: wrap;
+}
+
+.winwin-item { text-align: center; flex: 1; min-width: 200px; }
+.winwin-icon { font-size: 36px; display: block; margin-bottom: 10px; }
+.winwin-item strong { display: block; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.winwin-item p { font-size: 13px; color: var(--secondary); margin: 0; }
+.winwin-divider { font-size: 28px; color: var(--purple-l); font-weight: 700; flex-shrink: 0; }
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--card);
+  border: 1px solid var(--green);
+  border-radius: 12px; padding: 14px 20px;
+  font-size: 14px; color: var(--text);
+  z-index: 9998; display: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  animation: slideInRight .3s ease;
+  max-width: 300px;
+}
+
+.toast.visible { display: block; }
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
 
 /* ============================================
    RESPONSIVE
@@ -1751,15 +1736,14 @@ body.loaded { opacity: 1; }
   .footer-links-grid { grid-template-columns: repeat(2,1fr); }
   .hero-stats { flex-wrap: wrap; }
   .hero-stat { padding: 12px 16px; }
-  .feature-request-box {
-    flex-direction: column; text-align: center;
-  }
+  .feature-request-box { flex-direction: column; text-align: center; }
   .frb-btn { margin: 0; }
-  .guarantee-box {
-    flex-direction: column; text-align: center;
-  }
+  .guarantee-box { flex-direction: column; text-align: center; }
   .simple-form-row { flex-direction: column; }
   .big-cta { width: 100%; }
+  .vault-split { grid-template-columns: 1fr; }
+  .winwin-banner { flex-direction: column; }
+  .winwin-divider { transform: rotate(90deg); }
 }
 
 @media (max-width: 600px) {
@@ -1774,6 +1758,7 @@ body.loaded { opacity: 1; }
   .activity-feed { left: 12px; bottom: 12px; }
   .exit-popup { padding: 28px 20px; }
   .trust-row { gap: 8px; font-size: 11px; }
+  .toast { right: 12px; bottom: 80px; }
 }
 </style>
 </head>
@@ -1790,34 +1775,24 @@ body.loaded { opacity: 1; }
 </div>
 
 <!-- ANNOUNCEMENT BAR -->
-<div class="announcement-bar">
+<div class="announcement-bar" id="announcementBar">
   <span class="announce-dot"></span>
-  <span>🎉 Early Access Open — First 500 users get
+  <span>ðŸŽ‰ Early Access Open â€” First 500 users get
   <strong>Pro plan free for 3 months</strong></span>
-  <a href="#waitlist" class="announce-cta">
-    Claim Offer →
-  </a>
+  <a href="#waitlist" class="announce-cta">Claim Offer â†’</a>
 </div>
 
 <!-- NAVBAR -->
-<nav class="navbar">
+<nav class="navbar" id="navbar">
   <div class="nav-container">
-    <div class="nav-logo">
+    <a href="#" class="nav-logo">
       <div class="logo-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24"
-        fill="none">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"
-          stroke="url(#navgrad)" stroke-width="2"
-          stroke-linejoin="round"/>
-          <path d="M2 17l10 5 10-5"
-          stroke="url(#navgrad)" stroke-width="2"
-          stroke-linejoin="round"/>
-          <path d="M2 12l10 5 10-5"
-          stroke="url(#navgrad)" stroke-width="2"
-          stroke-linejoin="round"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="url(#navgrad)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M2 17l10 5 10-5" stroke="url(#navgrad)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M2 12l10 5 10-5" stroke="url(#navgrad)" stroke-width="2" stroke-linejoin="round"/>
           <defs>
-            <linearGradient id="navgrad"
-            x1="0" y1="0" x2="24" y2="24">
+            <linearGradient id="navgrad" x1="0" y1="0" x2="24" y2="24">
               <stop offset="0%" stop-color="#7C3AED"/>
               <stop offset="100%" stop-color="#2563EB"/>
             </linearGradient>
@@ -1825,7 +1800,7 @@ body.loaded { opacity: 1; }
         </svg>
       </div>
       <span class="logo-text">WorkGraph</span>
-    </div>
+    </a>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#profile">Profile</a>
@@ -1837,9 +1812,7 @@ body.loaded { opacity: 1; }
         <span class="badge-dot"></span>
         <span id="navSpots">247 spots left</span>
       </div>
-      <a href="#waitlist" class="nav-cta">
-        Get Early Access
-      </a>
+      <a href="#waitlist" class="nav-cta">Get Early Access</a>
     </div>
   </div>
 </nav>
@@ -1849,9 +1822,8 @@ body.loaded { opacity: 1; }
   <div class="container">
 
     <div class="hero-label" data-aos="fade-down">
-      <span>🌍</span>
-      <span>Trusted by <strong>50,000+</strong>
-      job seekers worldwide</span>
+      <span>ðŸŒ</span>
+      <span>Trusted by <strong>50,000+</strong> job seekers worldwide</span>
     </div>
 
     <h1 class="hero-title" data-aos="fade-up">
@@ -1860,19 +1832,16 @@ body.loaded { opacity: 1; }
       platform.
     </h1>
 
-    <p class="hero-subtitle" data-aos="fade-up"
-    data-aos-delay="100">
+    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
       WorkGraph finds jobs from
-      <strong>LinkedIn, Reddit, Twitter/X,
-      Indeed & 50+ global sources</strong> —
-      matches them to your resume —
-      shows your shortlist probability —
+      <strong>LinkedIn, Reddit, Twitter/X, Indeed & 50+ global sources</strong> â€”
+      matches them to your resume â€”
+      shows your shortlist probability â€”
       and tracks every application automatically.
     </p>
 
     <!-- HERO STATS -->
-    <div class="hero-stats" data-aos="fade-up"
-    data-aos-delay="150">
+    <div class="hero-stats" data-aos="fade-up" data-aos-delay="150">
       <div class="hero-stat">
         <span class="stat-big">50K+</span>
         <span class="stat-small">Active Job Seekers</span>
@@ -1895,26 +1864,22 @@ body.loaded { opacity: 1; }
     </div>
 
     <!-- WAITLIST FORM -->
-    <div class="waitlist-box" id="waitlist"
-    data-aos="fade-up" data-aos-delay="200">
+    <div class="waitlist-box" id="waitlist" data-aos="fade-up" data-aos-delay="200">
 
       <div class="waitlist-header">
-        <h3>Join the Waitlist — It is Free</h3>
+        <h3>Join the Waitlist â€” It is Free</h3>
         <p>Be first to access WorkGraph when we launch</p>
       </div>
 
       <form id="waitlistForm">
-
         <!-- URGENCY BAR -->
         <div class="urgency-bar">
           <div class="urgency-left">
-            <span>🔥</span>
-            <span>Only <strong id="spotsLeft">247</strong>
-            early access spots remaining</span>
+            <span>ðŸ”¥</span>
+            <span>Only <strong id="spotsLeft">247</strong> early access spots remaining</span>
           </div>
           <div class="urgency-progress">
-            <div class="urgency-fill"
-            style="width:75%"></div>
+            <div class="urgency-fill" style="width:75%"></div>
           </div>
         </div>
 
@@ -1927,73 +1892,51 @@ body.loaded { opacity: 1; }
             class="form-input big-input"
             required
           />
-          <button type="submit"
-          class="cta-button big-cta" id="submitBtn">
+          <button type="submit" class="cta-button big-cta" id="submitBtn">
             <span id="btnText">Get Early Access Free</span>
-            <span class="btn-arrow">→</span>
+            <span class="btn-arrow">â†’</span>
             <div class="btn-shine"></div>
           </button>
         </div>
 
         <!-- TRUST SIGNALS -->
         <div class="trust-row">
-          <span>🔒 No spam ever</span>
-          <span>✅ Free forever plan</span>
-          <span>❌ No credit card</span>
-          <span>🌍 Works worldwide</span>
+          <span>ðŸ”’ No spam ever</span>
+          <span>âœ… Free forever plan</span>
+          <span>âŒ No credit card</span>
+          <span>ðŸŒ Works worldwide</span>
         </div>
-
       </form>
 
       <!-- SUCCESS STATE -->
       <div class="success-state" id="successState">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon">ðŸŽ‰</div>
         <h3>You are on the list!</h3>
-        <p>You are <strong id="position">#248</strong>
-        on the waitlist.<br/>
+        <p>You are <strong id="position">#248</strong> on the waitlist.<br/>
         Check your email for confirmation.</p>
 
         <div class="referral-box">
           <div class="referral-header">
-            <span>🎁</span>
+            <span>ðŸŽ</span>
             <strong>Get Pro FREE for 3 months</strong>
           </div>
-          <p>Share WorkGraph with friends.
-          Every signup using your link
-          moves you up the waitlist.</p>
+          <p>Share WorkGraph with friends. Every signup using your link moves you up the waitlist.</p>
 
           <div class="share-link-box">
-            <span id="referralLink">
-              muthuarasu41193.github.io/WorkGraph/?ref=248
-            </span>
-            <button onclick="copyReferral()"
-            class="copy-ref-btn" id="copyRefBtn">
-              Copy Link
-            </button>
+            <span id="referralLink">muthuarasu41193.github.io/WorkGraph/?ref=248</span>
+            <button onclick="copyReferral()" class="copy-ref-btn" id="copyRefBtn">Copy Link</button>
           </div>
 
           <div class="share-row">
-            <a id="shareWhatsApp" href="#"
-            class="share-btn whatsapp-share-btn"
-            target="_blank">
-              📱 WhatsApp
-            </a>
-            <a id="shareLinkedIn" href="#"
-            class="share-btn linkedin-btn"
-            target="_blank">
-              LinkedIn
-            </a>
-            <a id="shareTwitter" href="#"
-            class="share-btn twitter-btn"
-            target="_blank">
-              Twitter / X
-            </a>
+            <a id="shareWhatsApp" href="#" class="share-btn whatsapp-share-btn" target="_blank">ðŸ“± WhatsApp</a>
+            <a id="shareLinkedIn" href="#" class="share-btn linkedin-btn" target="_blank">LinkedIn</a>
+            <a id="shareTwitter" href="#" class="share-btn twitter-btn" target="_blank">Twitter / X</a>
           </div>
 
           <div class="referral-progress">
             <div class="ref-step completed">
               <span class="ref-num">1</span>
-              <span>You joined ✅</span>
+              <span>You joined âœ…</span>
             </div>
             <div class="ref-line"></div>
             <div class="ref-step">
@@ -2003,7 +1946,7 @@ body.loaded { opacity: 1; }
             <div class="ref-line"></div>
             <div class="ref-step">
               <span class="ref-num">3</span>
-              <span>Get Pro FREE 🎁</span>
+              <span>Get Pro FREE ðŸŽ</span>
             </div>
           </div>
         </div>
@@ -2012,28 +1955,19 @@ body.loaded { opacity: 1; }
       <!-- SOCIAL PROOF -->
       <div class="social-proof-row">
         <div class="avatars">
-          <!-- All male photos with male names shown below -->
-          <img src="https://i.pravatar.cc/30?img=15"
-          alt="user"/>
-          <img src="https://i.pravatar.cc/30?img=14"
-          alt="user"/>
-          <img src="https://i.pravatar.cc/30?img=17"
-          alt="user"/>
-          <!-- Female photos -->
-          <img src="https://i.pravatar.cc/30?img=9"
-          alt="user"/>
-          <img src="https://i.pravatar.cc/30?img=10"
-          alt="user"/>
+          <img src="https://i.pravatar.cc/30?img=15" alt="user"/>
+          <img src="https://i.pravatar.cc/30?img=14" alt="user"/>
+          <img src="https://i.pravatar.cc/30?img=17" alt="user"/>
+          <img src="https://i.pravatar.cc/30?img=9" alt="user"/>
+          <img src="https://i.pravatar.cc/30?img=10" alt="user"/>
         </div>
-        <p><strong id="liveCount">2,847+</strong>
-        people already joined</p>
+        <p><strong id="liveCount">2,847+</strong> people already joined</p>
       </div>
 
     </div>
 
     <!-- DASHBOARD PREVIEW -->
-    <div class="preview-wrapper" data-aos="fade-up"
-    data-aos-delay="300">
+    <div class="preview-wrapper" data-aos="fade-up" data-aos-delay="300">
       <div class="preview-glow"></div>
       <div class="browser-mock">
         <div class="browser-top">
@@ -2042,9 +1976,7 @@ body.loaded { opacity: 1; }
             <span class="dot dot-yellow"></span>
             <span class="dot dot-green"></span>
           </div>
-          <div class="url-bar">
-            app.workgraph.ai/dashboard
-          </div>
+          <div class="url-bar">app.workgraph.ai/dashboard</div>
         </div>
         <div class="mock-body">
           <div class="mock-stats">
@@ -2070,20 +2002,12 @@ body.loaded { opacity: 1; }
               <div class="mj-left">
                 <div class="co-logo google">G</div>
                 <div class="mj-info">
-                  <div class="mj-title">
-                    Senior React Developer
-                  </div>
-                  <div class="mj-company">
-                    Google • Remote • $180K
-                  </div>
+                  <div class="mj-title">Senior React Developer</div>
+                  <div class="mj-company">Google â€¢ Remote â€¢ $180K</div>
                   <div class="mj-tags">
-                    <span class="job-tag linkedin">
-                      LinkedIn
-                    </span>
+                    <span class="job-tag linkedin">LinkedIn</span>
                     <span class="job-tag time">2h ago</span>
-                    <span class="job-tag high">
-                      High Chance
-                    </span>
+                    <span class="job-tag high">High Chance</span>
                   </div>
                 </div>
               </div>
@@ -2093,20 +2017,12 @@ body.loaded { opacity: 1; }
               <div class="mj-left">
                 <div class="co-logo meta">M</div>
                 <div class="mj-info">
-                  <div class="mj-title">
-                    Frontend Engineer
-                  </div>
-                  <div class="mj-company">
-                    Meta • Hybrid • $160K
-                  </div>
+                  <div class="mj-title">Frontend Engineer</div>
+                  <div class="mj-company">Meta â€¢ Hybrid â€¢ $160K</div>
                   <div class="mj-tags">
-                    <span class="job-tag reddit">
-                      Reddit
-                    </span>
+                    <span class="job-tag reddit">Reddit</span>
                     <span class="job-tag time">5h ago</span>
-                    <span class="job-tag medium">
-                      Medium Chance
-                    </span>
+                    <span class="job-tag medium">Medium Chance</span>
                   </div>
                 </div>
               </div>
@@ -2116,20 +2032,12 @@ body.loaded { opacity: 1; }
               <div class="mj-left">
                 <div class="co-logo stripe">S</div>
                 <div class="mj-info">
-                  <div class="mj-title">
-                    Full Stack Developer
-                  </div>
-                  <div class="mj-company">
-                    Stripe • Remote • $200K
-                  </div>
+                  <div class="mj-title">Full Stack Developer</div>
+                  <div class="mj-company">Stripe â€¢ Remote â€¢ $200K</div>
                   <div class="mj-tags">
-                    <span class="job-tag twitter">
-                      Twitter/X
-                    </span>
+                    <span class="job-tag twitter">Twitter/X</span>
                     <span class="job-tag time">1d ago</span>
-                    <span class="job-tag medium">
-                      Medium Chance
-                    </span>
+                    <span class="job-tag medium">Medium Chance</span>
                   </div>
                 </div>
               </div>
@@ -2145,36 +2053,33 @@ body.loaded { opacity: 1; }
 
 <!-- MARQUEE -->
 <div class="marquee-section">
-  <p class="marquee-label">
-    Pulling live jobs from everywhere
-  </p>
+  <p class="marquee-label">Pulling live jobs from everywhere</p>
   <div class="marquee-wrap">
     <div class="marquee-track">
-      <span class="m-item">💼 LinkedIn</span>
-      <span class="m-item">👾 Reddit</span>
-      <span class="m-item">🐦 Twitter / X</span>
-      <span class="m-item">🔍 Indeed</span>
-      <span class="m-item">🌐 RemoteOK</span>
-      <span class="m-item">💻 HackerNews</span>
-      <span class="m-item">🏢 Glassdoor</span>
-      <span class="m-item">⚡ AngelList</span>
-      <span class="m-item">🌍 Arbeitnow</span>
-      <span class="m-item">🎯 The Muse</span>
-      <span class="m-item">🚀 Wellfound</span>
-      <span class="m-item">💎 Levels.fyi</span>
-      <!-- Duplicate for seamless loop -->
-      <span class="m-item">💼 LinkedIn</span>
-      <span class="m-item">👾 Reddit</span>
-      <span class="m-item">🐦 Twitter / X</span>
-      <span class="m-item">🔍 Indeed</span>
-      <span class="m-item">🌐 RemoteOK</span>
-      <span class="m-item">💻 HackerNews</span>
-      <span class="m-item">🏢 Glassdoor</span>
-      <span class="m-item">⚡ AngelList</span>
-      <span class="m-item">🌍 Arbeitnow</span>
-      <span class="m-item">🎯 The Muse</span>
-      <span class="m-item">🚀 Wellfound</span>
-      <span class="m-item">💎 Levels.fyi</span>
+      <span class="m-item">ðŸ’¼ LinkedIn</span>
+      <span class="m-item">ðŸ‘¾ Reddit</span>
+      <span class="m-item">ðŸ¦ Twitter / X</span>
+      <span class="m-item">ðŸ” Indeed</span>
+      <span class="m-item">ðŸŒ RemoteOK</span>
+      <span class="m-item">ðŸ’» HackerNews</span>
+      <span class="m-item">ðŸ¢ Glassdoor</span>
+      <span class="m-item">âš¡ AngelList</span>
+      <span class="m-item">ðŸŒ Arbeitnow</span>
+      <span class="m-item">ðŸŽ¯ The Muse</span>
+      <span class="m-item">ðŸš€ Wellfound</span>
+      <span class="m-item">ðŸ’Ž Levels.fyi</span>
+      <span class="m-item">ðŸ’¼ LinkedIn</span>
+      <span class="m-item">ðŸ‘¾ Reddit</span>
+      <span class="m-item">ðŸ¦ Twitter / X</span>
+      <span class="m-item">ðŸ” Indeed</span>
+      <span class="m-item">ðŸŒ RemoteOK</span>
+      <span class="m-item">ðŸ’» HackerNews</span>
+      <span class="m-item">ðŸ¢ Glassdoor</span>
+      <span class="m-item">âš¡ AngelList</span>
+      <span class="m-item">ðŸŒ Arbeitnow</span>
+      <span class="m-item">ðŸŽ¯ The Muse</span>
+      <span class="m-item">ðŸš€ Wellfound</span>
+      <span class="m-item">ðŸ’Ž Levels.fyi</span>
     </div>
   </div>
 </div>
@@ -2184,84 +2089,62 @@ body.loaded { opacity: 1; }
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Core Features</span>
-      <h2>Everything you need to<br/>
-      <span class="gradient-text">
-        land your dream job faster
-      </span></h2>
-      <p>Built by someone who has reviewed
-      <strong>50,000+ resumes</strong>.
-      We know exactly what job seekers need.</p>
+      <h2>Everything you need to<br/><span class="gradient-text">land your dream job faster</span></h2>
+      <p>Built by someone who has reviewed <strong>50,000+ resumes</strong>. We know exactly what job seekers need.</p>
     </div>
 
     <div class="features-grid">
-
       <div class="feat-card" data-aos="fade-up">
-        <div class="feat-icon icon-purple">🔍</div>
-        <div class="live-badge">✅ Live at Launch</div>
+        <div class="feat-icon icon-purple">ðŸ”</div>
+        <div class="live-badge">âœ… Live at Launch</div>
         <h3>Global Job Intelligence</h3>
-        <p>We scan LinkedIn posts, Reddit threads,
-        Twitter/X, Indeed, RemoteOK and 50+ sources
-        every 30 minutes. Find hidden jobs that most
-        people never see.</p>
+        <p>We scan LinkedIn posts, Reddit threads, Twitter/X, Indeed, RemoteOK and 50+ sources every 30 minutes. Find hidden jobs that most people never see.</p>
         <ul class="feat-list">
-          <li>✓ Real-time job discovery</li>
-          <li>✓ Social media job posts included</li>
-          <li>✓ 50+ global sources</li>
-          <li>✓ Updated every 30 minutes</li>
+          <li>âœ“ Real-time job discovery</li>
+          <li>âœ“ Social media job posts included</li>
+          <li>âœ“ 50+ global sources</li>
+          <li>âœ“ Updated every 30 minutes</li>
         </ul>
       </div>
 
-      <div class="feat-card" data-aos="fade-up"
-      data-aos-delay="100">
-        <div class="feat-icon icon-blue">🎯</div>
-        <div class="live-badge">✅ Live at Launch</div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feat-icon icon-blue">ðŸŽ¯</div>
+        <div class="live-badge">âœ… Live at Launch</div>
         <h3>AI Match Score</h3>
-        <p>Every job gets a precise match score
-        based on your resume. Hover any job to see
-        exactly which skills are missing and how to
-        fix them to increase your chances.</p>
+        <p>Every job gets a precise match score based on your resume. Hover any job to see exactly which skills are missing and how to fix them to increase your chances.</p>
         <ul class="feat-list">
-          <li>✓ 0 to 100 match percentage</li>
-          <li>✓ Missing skills shown on hover</li>
-          <li>✓ Shortlist probability rating</li>
-          <li>✓ AI improvement tips</li>
+          <li>âœ“ 0 to 100 match percentage</li>
+          <li>âœ“ Missing skills shown on hover</li>
+          <li>âœ“ Shortlist probability rating</li>
+          <li>âœ“ AI improvement tips</li>
         </ul>
       </div>
 
-      <div class="feat-card" data-aos="fade-up"
-      data-aos-delay="200">
-        <div class="feat-icon icon-green">📄</div>
-        <div class="live-badge">✅ Live at Launch</div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feat-icon icon-green">ðŸ“„</div>
+        <div class="live-badge">âœ… Live at Launch</div>
         <h3>Smart Resume Parser</h3>
-        <p>Upload your PDF or DOCX once. AI instantly
-        reads your skills, experience and education
-        then automatically matches you to the right
-        jobs globally.</p>
+        <p>Upload your PDF or DOCX once. AI instantly reads your skills, experience and education then automatically matches you to the right jobs globally.</p>
         <ul class="feat-list">
-          <li>✓ PDF and DOCX support</li>
-          <li>✓ Auto skill extraction</li>
-          <li>✓ Experience analysis</li>
-          <li>✓ Secure and private storage</li>
+          <li>âœ“ PDF and DOCX support</li>
+          <li>âœ“ Auto skill extraction</li>
+          <li>âœ“ Experience analysis</li>
+          <li>âœ“ Secure and private storage</li>
         </ul>
       </div>
 
-      <div class="feat-card" data-aos="fade-up"
-      data-aos-delay="300">
-        <div class="feat-icon icon-orange">📊</div>
-        <div class="live-badge">✅ Live at Launch</div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="feat-icon icon-orange">ðŸ“Š</div>
+        <div class="live-badge">âœ… Live at Launch</div>
         <h3>Application Tracker</h3>
-        <p>Track every job application in one
-        dashboard. Get notified instantly when jobs
-        close, when employers view your profile,
-        and when your status changes.</p>
+        <p>Track every job application in one dashboard. Get notified instantly when jobs close, when employers view your profile, and when your status changes.</p>
         <ul class="feat-list">
-          <li>✓ Kanban board view</li>
-          <li>✓ Real-time status notifications</li>
-          <li>✓ Job closure alerts</li>
-          <li>✓ Follow-up reminders</li>
+          <li>âœ“ Kanban board view</li>
+          <li>âœ“ Real-time status notifications</li>
+          <li>âœ“ Job closure alerts</li>
+          <li>âœ“ Follow-up reminders</li>
         </ul>
       </div>
-
     </div>
   </div>
 </section>
@@ -2270,67 +2153,52 @@ body.loaded { opacity: 1; }
 <section class="section profile-section" id="profile">
   <div class="container">
     <div class="profile-grid">
-
       <div class="profile-content" data-aos="fade-right">
         <span class="section-tag">Professional Profile</span>
-        <h2>Build your complete<br/>
-        <span class="gradient-text">
-          career identity
-        </span></h2>
-        <p class="profile-sub">
-          WorkGraph is not just a job finder.
-          It is your complete professional profile
-          that showcases everything you have built
-          and achieved — all in one place.
-        </p>
+        <h2>Build your complete<br/><span class="gradient-text">career identity</span></h2>
+        <p class="profile-sub">WorkGraph is not just a job finder. It is your complete professional profile that showcases everything you have built and achieved â€” all in one place.</p>
 
         <div class="profile-features">
           <div class="pf-item">
-            <div class="pf-icon">👤</div>
+            <div class="pf-icon">ðŸ‘¤</div>
             <div>
               <strong>Professional Bio</strong>
-              <p>Your story, headline and
-              career summary</p>
+              <p>Your story, headline and career summary</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">🔗</div>
+            <div class="pf-icon">ðŸ”—</div>
             <div>
               <strong>Social Media Profiles</strong>
-              <p>Link LinkedIn, Twitter/X,
-              Instagram, YouTube</p>
+              <p>Link LinkedIn, Twitter/X, Instagram, YouTube</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">💻</div>
+            <div class="pf-icon">ðŸ’»</div>
             <div>
               <strong>GitHub Integration</strong>
-              <p>Showcase repositories,
-              contributions and open source work</p>
+              <p>Showcase repositories, contributions and open source work</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">🌐</div>
+            <div class="pf-icon">ðŸŒ</div>
             <div>
               <strong>Personal Website</strong>
-              <p>Add your portfolio, blog
-              or personal site link</p>
+              <p>Add your portfolio, blog or personal site link</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">🏆</div>
+            <div class="pf-icon">ðŸ†</div>
             <div>
               <strong>Projects and Work Samples</strong>
-              <p>Showcase your best projects
-              with links and descriptions</p>
+              <p>Showcase your best projects with links and descriptions</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon">📜</div>
+            <div class="pf-icon">ðŸ“œ</div>
             <div>
               <strong>Certifications and Courses</strong>
-              <p>AWS, Google, Coursera, Udemy
-              and all your credentials</p>
+              <p>AWS, Google, Coursera, Udemy and all your credentials</p>
             </div>
           </div>
         </div>
@@ -2342,69 +2210,41 @@ body.loaded { opacity: 1; }
             <div class="pcm-avatar">M</div>
             <div class="pcm-info">
               <div class="pcm-name">Muthuarasu K.</div>
-              <div class="pcm-role">
-                Senior Full Stack Developer
-              </div>
-              <div class="pcm-location">
-                📍 India • Open to Remote
-              </div>
+              <div class="pcm-role">Senior Full Stack Developer</div>
+              <div class="pcm-location">ðŸ“ India â€¢ Open to Remote</div>
             </div>
             <div class="pcm-score">
               <div class="pcm-score-num">94</div>
-              <div class="pcm-score-label">
-                Profile Score
-              </div>
+              <div class="pcm-score-label">Profile Score</div>
             </div>
           </div>
 
           <div class="pcm-links">
-            <div class="link-item link-linkedin">
-              <span>in</span> LinkedIn
-            </div>
-            <div class="link-item link-github">
-              <span>⌥</span> GitHub
-            </div>
-            <div class="link-item link-web">
-              <span>🌐</span> Portfolio
-            </div>
-            <div class="link-item link-twitter">
-              <span>𝕏</span> Twitter
-            </div>
+            <div class="link-item link-linkedin"><span>in</span> LinkedIn</div>
+            <div class="link-item link-github"><span>âŒ¥</span> GitHub</div>
+            <div class="link-item link-web"><span>ðŸŒ</span> Portfolio</div>
+            <div class="link-item link-twitter"><span>ð•</span> Twitter</div>
           </div>
 
           <div class="pcm-section">
-            <div class="pcm-section-title">
-              📜 Certifications
-            </div>
+            <div class="pcm-section-title">ðŸ“œ Certifications</div>
             <div class="cert-list">
-              <div class="cert-item">
-                ✅ AWS Solutions Architect
-              </div>
-              <div class="cert-item">
-                ✅ Google Cloud Professional
-              </div>
-              <div class="cert-item">
-                ✅ Meta React Developer
-              </div>
+              <div class="cert-item">âœ… AWS Solutions Architect</div>
+              <div class="cert-item">âœ… Google Cloud Professional</div>
+              <div class="cert-item">âœ… Meta React Developer</div>
             </div>
           </div>
 
           <div class="pcm-section">
-            <div class="pcm-section-title">
-              🏆 Featured Projects
-            </div>
+            <div class="pcm-section-title">ðŸ† Featured Projects</div>
             <div class="project-list">
               <div class="project-item">
                 <div class="proj-name">WorkGraph</div>
-                <div class="proj-desc">
-                  AI Job Intelligence Platform
-                </div>
+                <div class="proj-desc">AI Job Intelligence Platform</div>
               </div>
               <div class="project-item">
                 <div class="proj-name">ATS System</div>
-                <div class="proj-desc">
-                  50K+ Active Job Seekers
-                </div>
+                <div class="proj-desc">50K+ Active Job Seekers</div>
               </div>
             </div>
           </div>
@@ -2419,37 +2259,173 @@ body.loaded { opacity: 1; }
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ROADMAP — ALL DATES ARE 2026 -->
+<!-- INTERVIEW VAULT SECTION -->
+<section class="section vault-section">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <span class="section-tag">ðŸ”’ Introducing Interview Vault</span>
+      <h2>Learn from people who<br/><span class="gradient-text">actually got the job</span></h2>
+      <p>WorkGraph users who land jobs share their exact interview experience. Buy their guide. Crack your dream company. <strong>Real people. Real interviews. Real results.</strong></p>
+    </div>
+
+    <div class="vault-split">
+      <!-- SELLER SIDE -->
+      <div class="vault-side seller-side" data-aos="fade-right">
+        <div class="vault-side-header">
+          <span class="vault-emoji">ðŸŽ‰</span>
+          <h3>You Just Got Hired?</h3>
+          <p>Turn your interview experience into passive income</p>
+        </div>
+        <div class="vault-steps">
+          <div class="vault-step">
+            <div class="vstep-num">1</div>
+            <div class="vstep-text">
+              <strong>Create your guide</strong>
+              <p>Document your exact interview process, questions asked and preparation strategy</p>
+            </div>
+          </div>
+          <div class="vault-step">
+            <div class="vstep-num">2</div>
+            <div class="vstep-text">
+              <strong>Get verified</strong>
+              <p>Upload your offer letter. Get the Verified Hire badge. Build instant credibility.</p>
+            </div>
+          </div>
+          <div class="vault-step">
+            <div class="vstep-num">3</div>
+            <div class="vstep-text">
+              <strong>Earn money</strong>
+              <p>Set your price. Earn 70% of every sale. Help fellow job seekers crack the same company.</p>
+            </div>
+          </div>
+        </div>
+        <div class="vault-earning">
+          <span class="earning-label">Example earnings:</span>
+          <span class="earning-calc">$29 guide Ã— 50 buyers = <strong>$1,015 passive income</strong></span>
+        </div>
+      </div>
+
+      <!-- BUYER SIDE -->
+      <div class="vault-side buyer-side" data-aos="fade-left">
+        <div class="vault-side-header">
+          <span class="vault-emoji">ðŸŽ¯</span>
+          <h3>Dream Company Interview?</h3>
+          <p>Buy the guide from someone who already cracked it</p>
+        </div>
+
+        <div class="guide-cards">
+          <div class="guide-card">
+            <div class="guide-company">
+              <div class="guide-logo google-logo">G</div>
+              <div class="guide-meta">
+                <div class="guide-title">Google SDE Interview Guide</div>
+                <div class="guide-role">Senior Software Engineer L5</div>
+              </div>
+              <div class="guide-verified">âœ… Verified</div>
+            </div>
+            <div class="guide-stats">
+              <span>â­ 4.9 (47 reviews)</span>
+              <span>ðŸ‘¥ 312 bought</span>
+              <span>ðŸ“… Jan 2026</span>
+            </div>
+            <div class="guide-preview">"5 rounds. System design was the hardest. Here are the exact questions I was asked..."</div>
+            <div class="guide-footer">
+              <span class="guide-price">$49</span>
+              <span class="guide-cta">Preview Guide â†’</span>
+            </div>
+          </div>
+
+          <div class="guide-card featured-guide">
+            <div class="guide-company">
+              <div class="guide-logo meta-logo">M</div>
+              <div class="guide-meta">
+                <div class="guide-title">Meta PM Interview Blueprint</div>
+                <div class="guide-role">Product Manager, Growth Team</div>
+              </div>
+              <div class="guide-verified">âœ… Verified</div>
+            </div>
+            <div class="guide-stats">
+              <span>â­ 4.8 (31 reviews)</span>
+              <span>ðŸ‘¥ 198 bought</span>
+              <span>ðŸ“… Feb 2026</span>
+            </div>
+            <div class="guide-preview">"4 rounds including a product case study. Here is exactly what they were looking for..."</div>
+            <div class="guide-footer">
+              <span class="guide-price">$39</span>
+              <span class="guide-cta">Preview Guide â†’</span>
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-company">
+              <div class="guide-logo stripe-logo">S</div>
+              <div class="guide-meta">
+                <div class="guide-title">Stripe Engineer Crack Sheet</div>
+                <div class="guide-role">Full Stack Engineer, Payments</div>
+              </div>
+              <div class="guide-verified">âœ… Verified</div>
+            </div>
+            <div class="guide-stats">
+              <span>â­ 5.0 (22 reviews)</span>
+              <span>ðŸ‘¥ 156 bought</span>
+              <span>ðŸ“… Mar 2026</span>
+            </div>
+            <div class="guide-preview">"Stripe is different from other FAANG companies. Here is why and how to prepare..."</div>
+            <div class="guide-footer">
+              <span class="guide-price">$29</span>
+              <span class="guide-cta">Preview Guide â†’</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vault-coming-note">
+          ðŸ”’ Interview Vault launches with WorkGraph Pro. Join waitlist to get founding member access.
+        </div>
+      </div>
+    </div>
+
+    <!-- WIN WIN BANNER -->
+    <div class="winwin-banner" data-aos="fade-up">
+      <div class="winwin-item">
+        <span class="winwin-icon">ðŸ‘”</span>
+        <strong>Job Seekers</strong>
+        <p>Get real insider knowledge from verified successful candidates</p>
+      </div>
+      <div class="winwin-divider">â†’</div>
+      <div class="winwin-item">
+        <span class="winwin-icon">ðŸ’°</span>
+        <strong>Hired Candidates</strong>
+        <p>Earn passive income by sharing your interview experience</p>
+      </div>
+      <div class="winwin-divider">â†’</div>
+      <div class="winwin-item">
+        <span class="winwin-icon">ðŸŒ</span>
+        <strong>WorkGraph</strong>
+        <p>Connects both sides and builds a thriving knowledge community</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
 <section class="section" id="roadmap">
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Product Roadmap</span>
-      <h2>Powerful features<br/>
-      <span class="gradient-text">
-        launching very soon
-      </span></h2>
-      <p>We are building the most complete career
-      intelligence platform ever made.
-      Here is what is coming next.</p>
+      <h2>Powerful features<br/><span class="gradient-text">launching very soon</span></h2>
+      <p>We are building the most complete career intelligence platform ever made. Here is what is coming next.</p>
     </div>
 
     <div class="roadmap-grid">
-
       <div class="roadmap-card" data-aos="fade-up">
-        <div class="roadmap-badge badge-q1">
-          🚀 Coming Next — Q1 2026
-        </div>
-        <div class="roadmap-icon">📧</div>
+        <div class="roadmap-badge badge-q1">ðŸš€ Coming Next â€” Q1 2026</div>
+        <div class="roadmap-icon">ðŸ“§</div>
         <h3>Email Command Center</h3>
-        <p>Connect your Gmail or Outlook and see
-        all recruiter emails, interview invites
-        and job alerts in one unified dashboard.
-        Never miss an opportunity again.</p>
+        <p>Connect your Gmail or Outlook and see all recruiter emails, interview invites and job alerts in one unified dashboard.</p>
         <ul class="roadmap-list">
           <li>Gmail and Outlook integration</li>
           <li>AI email classification</li>
@@ -2458,17 +2434,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="100">
-        <div class="roadmap-badge badge-q1">
-          🚀 Coming Next — Q1 2026
-        </div>
-        <div class="roadmap-icon">🤖</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="roadmap-badge badge-q1">ðŸš€ Coming Next â€” Q1 2026</div>
+        <div class="roadmap-icon">ðŸ¤–</div>
         <h3>AI Job Apply Autopilot</h3>
-        <p>Set your preferences once and let
-        WorkGraph AI automatically apply to matching
-        jobs on your behalf.
-        Wake up to interview invites.</p>
+        <p>Set your preferences once and let WorkGraph AI automatically apply to matching jobs on your behalf. Wake up to interview invites.</p>
         <ul class="roadmap-list">
           <li>Auto-fill job applications</li>
           <li>Custom cover letter per job</li>
@@ -2477,17 +2447,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="200">
-        <div class="roadmap-badge badge-q2">
-          ⚡ Coming — Q2 2026
-        </div>
-        <div class="roadmap-icon">📝</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="roadmap-badge badge-q2">âš¡ Coming â€” Q2 2026</div>
+        <div class="roadmap-icon">ðŸ“</div>
         <h3>AI Resume Optimizer</h3>
-        <p>WorkGraph analyzes your resume against
-        thousands of successful applications and
-        gives you specific improvements to increase
-        your shortlist rate dramatically.</p>
+        <p>WorkGraph analyzes your resume against thousands of successful applications and gives you specific improvements.</p>
         <ul class="roadmap-list">
           <li>ATS score checker</li>
           <li>Keyword optimization</li>
@@ -2496,17 +2460,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="300">
-        <div class="roadmap-badge badge-q2">
-          ⚡ Coming — Q2 2026
-        </div>
-        <div class="roadmap-icon">🎯</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="roadmap-badge badge-q2">âš¡ Coming â€” Q2 2026</div>
+        <div class="roadmap-icon">ðŸŽ¯</div>
         <h3>Recruiter Intelligence</h3>
-        <p>See the LinkedIn profile of who posted
-        each job. Get AI-suggested personalized
-        outreach messages to connect directly with
-        hiring managers and recruiters.</p>
+        <p>See the LinkedIn profile of who posted each job. Get AI-suggested personalized outreach messages to connect directly with hiring managers.</p>
         <ul class="roadmap-list">
           <li>Job poster LinkedIn profiles</li>
           <li>Direct outreach templates</li>
@@ -2515,17 +2473,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="400">
-        <div class="roadmap-badge badge-q3">
-          🔮 Coming — Q3 2026
-        </div>
-        <div class="roadmap-icon">🎤</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="400">
+        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
+        <div class="roadmap-icon">ðŸŽ¤</div>
         <h3>AI Interview Coach</h3>
-        <p>Practice interviews with our AI coach
-        trained on thousands of real interview
-        questions. Get instant feedback on your
-        answers, tone and confidence level.</p>
+        <p>Practice interviews with our AI coach trained on thousands of real interview questions. Get instant feedback on your answers and confidence.</p>
         <ul class="roadmap-list">
           <li>Role-specific questions</li>
           <li>Voice and video practice</li>
@@ -2534,17 +2486,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="500">
-        <div class="roadmap-badge badge-q3">
-          🔮 Coming — Q3 2026
-        </div>
-        <div class="roadmap-icon">📊</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="500">
+        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
+        <div class="roadmap-icon">ðŸ“Š</div>
         <h3>Salary Intelligence</h3>
-        <p>Know your market value before every
-        interview. Get real-time salary data by
-        role, company, location and experience
-        level. Never undersell yourself again.</p>
+        <p>Know your market value before every interview. Get real-time salary data by role, company, location and experience level.</p>
         <ul class="roadmap-list">
           <li>Real-time salary data</li>
           <li>Company-specific ranges</li>
@@ -2553,17 +2499,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="600">
-        <div class="roadmap-badge badge-q3">
-          🔮 Coming — Q3 2026
-        </div>
-        <div class="roadmap-icon">🌐</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="600">
+        <div class="roadmap-badge badge-q3">ðŸ”® Coming â€” Q3 2026</div>
+        <div class="roadmap-icon">ðŸŒ</div>
         <h3>Public Profile Page</h3>
-        <p>Get a shareable WorkGraph profile URL
-        like workgraph.ai/yourname — your complete
-        professional identity that you can send
-        to any recruiter worldwide.</p>
+        <p>Get a shareable WorkGraph profile URL like workgraph.ai/yourname â€” your complete professional identity for any recruiter worldwide.</p>
         <ul class="roadmap-list">
           <li>Custom profile URL</li>
           <li>Portfolio showcase</li>
@@ -2572,17 +2512,11 @@ body.loaded { opacity: 1; }
         </ul>
       </div>
 
-      <div class="roadmap-card" data-aos="fade-up"
-      data-aos-delay="700">
-        <div class="roadmap-badge badge-q4">
-          🌟 Coming — Q4 2026
-        </div>
-        <div class="roadmap-icon">🏢</div>
+      <div class="roadmap-card" data-aos="fade-up" data-aos-delay="700">
+        <div class="roadmap-badge badge-q4">ðŸŒŸ Coming â€” Q4 2026</div>
+        <div class="roadmap-icon">ðŸ¢</div>
         <h3>Company Intelligence</h3>
-        <p>Deep insights on every company before
-        you apply. Culture scores, interview
-        difficulty, hiring patterns, employee
-        reviews and growth trajectory.</p>
+        <p>Deep insights on every company before you apply. Culture scores, interview difficulty, hiring patterns and employee reviews.</p>
         <ul class="roadmap-list">
           <li>Company culture scores</li>
           <li>Interview difficulty rating</li>
@@ -2590,23 +2524,16 @@ body.loaded { opacity: 1; }
           <li>Employee growth data</li>
         </ul>
       </div>
-
     </div>
 
     <div class="feature-request-box" data-aos="fade-up">
-      <div class="frb-icon">💡</div>
+      <div class="frb-icon">ðŸ’¡</div>
       <div class="frb-content">
         <h3>Have a feature idea?</h3>
-        <p>We are building WorkGraph based on what
-        job seekers actually need. Tell us what
-        would help you most.</p>
+        <p>We are building WorkGraph based on what job seekers actually need. Tell us what would help you most.</p>
       </div>
-      <a href="mailto:hello@workgraph.ai"
-      class="frb-btn">
-        Suggest a Feature →
-      </a>
+      <a href="mailto:hello@workgraph.ai" class="frb-btn">Suggest a Feature â†’</a>
     </div>
-
   </div>
 </section>
 
@@ -2615,75 +2542,48 @@ body.loaded { opacity: 1; }
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">How It Works</span>
-      <h2>From resume to interviews<br/>
-      <span class="gradient-text">
-        in 3 simple steps
-      </span></h2>
+      <h2>From resume to interviews<br/><span class="gradient-text">in 3 simple steps</span></h2>
     </div>
 
     <div class="steps-row">
       <div class="step-item" data-aos="fade-up">
         <div class="step-num">01</div>
-        <div class="step-icon">📄</div>
+        <div class="step-icon">ðŸ“„</div>
         <h3>Upload Your Resume</h3>
-        <p>Drop your PDF or DOCX resume.
-        AI instantly extracts your skills
-        and experience and builds your
-        professional profile in seconds.</p>
+        <p>Drop your PDF or DOCX resume. AI instantly extracts your skills and experience and builds your professional profile in seconds.</p>
       </div>
-
-      <div class="step-arrow">→</div>
-
-      <div class="step-item" data-aos="fade-up"
-      data-aos-delay="100">
+      <div class="step-arrow">â†’</div>
+      <div class="step-item" data-aos="fade-up" data-aos-delay="100">
         <div class="step-num">02</div>
-        <div class="step-icon">🔍</div>
+        <div class="step-icon">ðŸ”</div>
         <h3>We Find Your Jobs</h3>
-        <p>WorkGraph scans 50+ sources every
-        30 minutes and shows only the jobs
-        that actually match your profile
-        with real match scores.</p>
+        <p>WorkGraph scans 50+ sources every 30 minutes and shows only the jobs that actually match your profile with real match scores.</p>
       </div>
-
-      <div class="step-arrow">→</div>
-
-      <div class="step-item" data-aos="fade-up"
-      data-aos-delay="200">
+      <div class="step-arrow">â†’</div>
+      <div class="step-item" data-aos="fade-up" data-aos-delay="200">
         <div class="step-num">03</div>
-        <div class="step-icon">🎯</div>
+        <div class="step-icon">ðŸŽ¯</div>
         <h3>Apply With Confidence</h3>
-        <p>Know your shortlist probability
-        before applying. Fix missing skills.
-        Track every application.
-        Land more interviews.</p>
+        <p>Know your shortlist probability before applying. Fix missing skills. Track every application. Land more interviews.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS — VERIFIED: Names match photos -->
+<!-- TESTIMONIALS -->
 <section class="section">
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Early Feedback</span>
-      <h2>What beta users are<br/>
-      <span class="gradient-text">
-        saying about WorkGraph
-      </span></h2>
+      <h2>What beta users are<br/><span class="gradient-text">saying about WorkGraph</span></h2>
     </div>
 
     <div class="testimonials-grid">
-
-      <!-- Male name = Male photo (img=15 is male) -->
       <div class="testi-card" data-aos="fade-up">
-        <div class="stars">★★★★★</div>
-        <p>"I found a job posting on Reddit that
-        I never would have seen otherwise.
-        Got an interview within 3 days.
-        WorkGraph actually works."</p>
+        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <p>"I found a job posting on Reddit that I never would have seen otherwise. Got an interview within 3 days. WorkGraph actually works."</p>
         <div class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=15"
-          alt="Rahul"/>
+          <img src="https://i.pravatar.cc/44?img=15" alt="Rahul"/>
           <div>
             <strong>Rahul Sharma</strong>
             <span>Software Engineer, Bangalore</span>
@@ -2691,17 +2591,11 @@ body.loaded { opacity: 1; }
         </div>
       </div>
 
-      <!-- Male name = Male photo (img=14 is male) -->
-      <div class="testi-card featured-testi"
-      data-aos="fade-up" data-aos-delay="100">
-        <div class="stars">★★★★★</div>
-        <p>"The match score is a game changer.
-        I stopped wasting time on jobs I had no
-        chance at. Now I only apply where I score
-        above 75%. Got 3 interviews this week."</p>
+      <div class="testi-card featured-testi" data-aos="fade-up" data-aos-delay="100">
+        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <p>"The match score is a game changer. I stopped wasting time on jobs I had no chance at. Now I only apply where I score above 75%. Got 3 interviews this week."</p>
         <div class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=14"
-          alt="Marcus"/>
+          <img src="https://i.pravatar.cc/44?img=14" alt="Marcus"/>
           <div>
             <strong>Marcus Johnson</strong>
             <span>Product Manager, London</span>
@@ -2709,24 +2603,17 @@ body.loaded { opacity: 1; }
         </div>
       </div>
 
-      <!-- Female name = Female photo (img=9 is female) -->
-      <div class="testi-card" data-aos="fade-up"
-      data-aos-delay="200">
-        <div class="stars">★★★★★</div>
-        <p>"Finally. One place for ALL my job
-        applications. WorkGraph shows me jobs
-        from Reddit and Twitter I never knew
-        to look for. Incredible tool."</p>
+      <div class="testi-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+        <p>"Finally. One place for ALL my job applications. WorkGraph shows me jobs from Reddit and Twitter I never knew to look for. Incredible tool."</p>
         <div class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=9"
-          alt="Priya"/>
+          <img src="https://i.pravatar.cc/44?img=9" alt="Priya"/>
           <div>
             <strong>Priya Chen</strong>
             <span>Data Scientist, Singapore</span>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -2736,17 +2623,11 @@ body.loaded { opacity: 1; }
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Simple Pricing</span>
-      <h2>Affordable for every<br/>
-      <span class="gradient-text">
-        job seeker worldwide
-      </span></h2>
-      <p>Early access members lock in
-      <strong>50% off forever.</strong>
-      Price never increases for you.</p>
+      <h2>Affordable for every<br/><span class="gradient-text">job seeker worldwide</span></h2>
+      <p>Early access members lock in <strong>50% off forever.</strong> Price never increases for you.</p>
     </div>
 
     <div class="pricing-grid">
-
       <div class="price-card" data-aos="fade-up">
         <div class="plan-label">Free</div>
         <div class="plan-amount">
@@ -2754,49 +2635,41 @@ body.loaded { opacity: 1; }
           <span class="price-period">/month</span>
         </div>
         <ul class="plan-list">
-          <li>✓ Upload 1 resume</li>
-          <li>✓ 10 job matches per day</li>
-          <li>✓ Basic match score</li>
-          <li>✓ 2 job sources</li>
-          <li>✓ Basic profile page</li>
-          <li class="no">✗ Skills gap analysis</li>
-          <li class="no">✗ All 50+ job sources</li>
-          <li class="no">✗ Application tracking</li>
+          <li>âœ“ Upload 1 resume</li>
+          <li>âœ“ 10 job matches per day</li>
+          <li>âœ“ Basic match score</li>
+          <li>âœ“ 2 job sources</li>
+          <li>âœ“ Basic profile page</li>
+          <li class="no">âœ— Skills gap analysis</li>
+          <li class="no">âœ— All 50+ job sources</li>
+          <li class="no">âœ— Application tracking</li>
         </ul>
-        <a href="#waitlist" class="plan-btn btn-outline">
-          Get Started Free
-        </a>
+        <a href="#waitlist" class="plan-btn btn-outline">Get Started Free</a>
       </div>
 
-      <div class="price-card popular-card"
-      data-aos="fade-up" data-aos-delay="100">
-        <div class="popular-tag">🔥 Most Popular</div>
+      <div class="price-card popular-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="popular-tag">ðŸ”¥ Most Popular</div>
         <div class="plan-label">Pro</div>
         <div class="plan-amount">
           <span class="old-price">$29</span>
           <span class="price-num">$12</span>
           <span class="price-period">/month</span>
         </div>
-        <div class="early-tag">
-          🔒 Early Access Price — Locked Forever
-        </div>
+        <div class="early-tag">ðŸ”’ Early Access Price â€” Locked Forever</div>
         <ul class="plan-list">
-          <li>✓ Unlimited job matches</li>
-          <li>✓ All 50+ job sources</li>
-          <li>✓ Full skills gap analysis</li>
-          <li>✓ Shortlist probability</li>
-          <li>✓ Application tracker</li>
-          <li>✓ Full profile builder</li>
-          <li>✓ GitHub integration</li>
-          <li>✓ Real-time notifications</li>
+          <li>âœ“ Unlimited job matches</li>
+          <li>âœ“ All 50+ job sources</li>
+          <li>âœ“ Full skills gap analysis</li>
+          <li>âœ“ Shortlist probability</li>
+          <li>âœ“ Application tracker</li>
+          <li>âœ“ Full profile builder</li>
+          <li>âœ“ GitHub integration</li>
+          <li>âœ“ Real-time notifications</li>
         </ul>
-        <a href="#waitlist" class="plan-btn btn-filled">
-          Join Waitlist — Lock $12/mo
-        </a>
+        <a href="#waitlist" class="plan-btn btn-filled">Join Waitlist â€” Lock $12/mo</a>
       </div>
 
-      <div class="price-card" data-aos="fade-up"
-      data-aos-delay="200">
+      <div class="price-card" data-aos="fade-up" data-aos-delay="200">
         <div class="plan-label">Premium</div>
         <div class="plan-amount">
           <span class="old-price">$59</span>
@@ -2804,31 +2677,26 @@ body.loaded { opacity: 1; }
           <span class="price-period">/month</span>
         </div>
         <ul class="plan-list">
-          <li>✓ Everything in Pro</li>
-          <li>✓ Gmail integration</li>
-          <li>✓ AI Resume Optimizer</li>
-          <li>✓ Auto-apply (coming Q1 2026)</li>
-          <li>✓ Interview coach (coming Q3 2026)</li>
-          <li>✓ Salary intelligence</li>
-          <li>✓ Public profile URL</li>
-          <li>✓ Priority support</li>
+          <li>âœ“ Everything in Pro</li>
+          <li>âœ“ Gmail integration</li>
+          <li>âœ“ AI Resume Optimizer</li>
+          <li>âœ“ Auto-apply (coming Q1 2026)</li>
+          <li>âœ“ Interview coach (coming Q3 2026)</li>
+          <li>âœ“ Salary intelligence</li>
+          <li>âœ“ Public profile URL</li>
+          <li>âœ“ Priority support</li>
         </ul>
-        <a href="#waitlist" class="plan-btn btn-outline">
-          Join Waitlist
-        </a>
+        <a href="#waitlist" class="plan-btn btn-outline">Join Waitlist</a>
       </div>
-
     </div>
 
     <div class="guarantee-box" data-aos="fade-up">
-      <span class="guarantee-icon">🛡️</span>
+      <span class="guarantee-icon">ðŸ›¡ï¸</span>
       <div>
         <strong>30-Day Money Back Guarantee</strong>
-        <p>Not happy? Get a full refund.
-        No questions asked. Zero risk.</p>
+        <p>Not happy? Get a full refund. No questions asked. Zero risk.</p>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -2838,13 +2706,8 @@ body.loaded { opacity: 1; }
     <div class="final-cta-box" data-aos="fade-up">
       <div class="fct-glow"></div>
       <span class="section-tag">Join the Waitlist</span>
-      <h2>Your dream job is already<br/>
-      <span class="gradient-text">posted somewhere.</span>
-      <br/>Let us find it for you.</h2>
-      <p>Join <strong id="finalCount">2,847+</strong>
-      job seekers getting early access.
-      Launching soon. First 500 get Pro free
-      for 3 months.</p>
+      <h2>Your dream job is already<br/><span class="gradient-text">posted somewhere.</span><br/>Let us find it for you.</h2>
+      <p>Join <strong id="finalCount">2,847+</strong> job seekers getting early access. Launching soon. First 500 get Pro free for 3 months.</p>
       <form class="final-form" id="finalForm">
         <input
           type="email"
@@ -2854,52 +2717,41 @@ body.loaded { opacity: 1; }
           required
         />
         <button type="submit" class="cta-button">
-          <span>Get Early Access →</span>
+          <span>Get Early Access â†’</span>
         </button>
       </form>
       <div class="fct-notes">
-        <span>✅ Free plan available</span>
-        <span>✅ No credit card needed</span>
-        <span>✅ Cancel anytime</span>
-        <span>✅ Works worldwide</span>
+        <span>âœ… Free plan available</span>
+        <span>âœ… No credit card needed</span>
+        <span>âœ… Cancel anytime</span>
+        <span>âœ… Works worldwide</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER — YEAR IS 2026 -->
+<!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
         <div class="nav-logo">
           <div class="logo-icon">
-            <svg width="18" height="18"
-            viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"
-              stroke="url(#footergrad)" stroke-width="2"
-              stroke-linejoin="round"/>
-              <path d="M2 17l10 5 10-5"
-              stroke="url(#footergrad)" stroke-width="2"
-              stroke-linejoin="round"/>
-              <path d="M2 12l10 5 10-5"
-              stroke="url(#footergrad)" stroke-width="2"
-              stroke-linejoin="round"/>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="url(#footergrad)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M2 17l10 5 10-5" stroke="url(#footergrad)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M2 12l10 5 10-5" stroke="url(#footergrad)" stroke-width="2" stroke-linejoin="round"/>
               <defs>
-                <linearGradient id="footergrad"
-                x1="0" y1="0" x2="24" y2="24">
-                  <stop offset="0%"
-                  stop-color="#7C3AED"/>
-                  <stop offset="100%"
-                  stop-color="#2563EB"/>
+                <linearGradient id="footergrad" x1="0" y1="0" x2="24" y2="24">
+                  <stop offset="0%" stop-color="#7C3AED"/>
+                  <stop offset="100%" stop-color="#2563EB"/>
                 </linearGradient>
               </defs>
             </svg>
           </div>
           <span class="logo-text">WorkGraph</span>
         </div>
-        <p>Find hidden jobs. Build your profile.<br/>
-        Get hired faster.</p>
+        <p>Find hidden jobs. Build your profile.<br/>Get hired faster.</p>
         <div class="footer-social">
           <a href="#" class="social-link">LinkedIn</a>
           <a href="#" class="social-link">Twitter/X</a>
@@ -2926,9 +2778,7 @@ body.loaded { opacity: 1; }
           <h4>Company</h4>
           <a href="#">About</a>
           <a href="#">Blog</a>
-          <a href="mailto:hello@workgraph.ai">
-            Contact
-          </a>
+          <a href="mailto:hello@workgraph.ai">Contact</a>
           <a href="#">Careers</a>
         </div>
         <div class="footer-col">
@@ -2941,11 +2791,9 @@ body.loaded { opacity: 1; }
       </div>
     </div>
 
-    <!-- YEAR FIXED TO 2026 -->
     <div class="footer-bottom">
-      <p>© 2026 WorkGraph. Built with ❤️ for
-      job seekers worldwide.</p>
-      <p>🌍 Serving job seekers in 50+ countries</p>
+      <p>Â© 2026 WorkGraph. Built with â¤ï¸ for job seekers worldwide.</p>
+      <p>ðŸŒ Serving job seekers in 50+ countries</p>
     </div>
   </div>
 </footer>
@@ -2953,41 +2801,27 @@ body.loaded { opacity: 1; }
 <!-- EXIT INTENT POPUP -->
 <div class="exit-overlay" id="exitOverlay">
   <div class="exit-popup">
-    <button class="exit-close"
-    onclick="closeExit()">✕</button>
-    <div class="exit-icon">⚡</div>
+    <button class="exit-close" onclick="closeExit()">âœ•</button>
+    <div class="exit-icon">âš¡</div>
     <h3>Wait! Before you go.</h3>
-    <p>Job seekers using WorkGraph get<br/>
-    <strong>3x more interviews</strong>
-    than those who don't.</p>
+    <p>Job seekers using WorkGraph get<br/><strong>3x more interviews</strong> than those who don't.</p>
     <div class="exit-offer">
-      <span class="exit-offer-badge">
-        Limited Time Offer
-      </span>
-      <p>Join now and get
-      <strong>Pro plan FREE</strong>
-      for your first 3 months.</p>
+      <span class="exit-offer-badge">Limited Time Offer</span>
+      <p>Join now and get <strong>Pro plan FREE</strong> for your first 3 months.</p>
     </div>
     <form class="exit-form" id="exitForm">
-      <input
-        type="email"
-        id="exitEmail"
-        placeholder="Your email address"
-        class="form-input"
-        required
-      />
-      <button type="submit" class="cta-button">
-        Claim My Free Pro Access →
-      </button>
+      <input type="email" id="exitEmail" placeholder="Your email address" class="form-input" required/>
+      <button type="submit" class="cta-button">Claim My Free Pro Access â†’</button>
     </form>
-    <button class="exit-skip" onclick="closeExit()">
-      No thanks, I prefer fewer interviews
-    </button>
+    <button class="exit-skip" onclick="closeExit()">No thanks, I prefer fewer interviews</button>
   </div>
 </div>
 
 <!-- LIVE ACTIVITY FEED -->
 <div class="activity-feed" id="activityFeed"></div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast">âœ… Email saved successfully!</div>
 
 <script>
 // ============================================
@@ -2995,6 +2829,19 @@ body.loaded { opacity: 1; }
 // ============================================
 window.addEventListener('load', () => {
   document.body.classList.add('loaded');
+
+  // FIX: Dynamic navbar top based on announcement bar height
+  function adjustNavbar() {
+    const bar = document.getElementById('announcementBar');
+    const nav = document.getElementById('navbar');
+    if (bar && nav) {
+      const barH = bar.getBoundingClientRect().height;
+      nav.style.top = barH + 'px';
+    }
+  }
+
+  adjustNavbar();
+  window.addEventListener('resize', adjustNavbar);
 });
 
 // ============================================
@@ -3003,10 +2850,7 @@ window.addEventListener('load', () => {
 const observer = new IntersectionObserver(
   entries => entries.forEach(e => {
     if (e.isIntersecting) {
-      const delay =
-        parseInt(
-          e.target.getAttribute('data-aos-delay') || 0
-        );
+      const delay = parseInt(e.target.getAttribute('data-aos-delay') || 0);
       setTimeout(() => {
         e.target.classList.add('aos-animate');
       }, delay);
@@ -3015,35 +2859,22 @@ const observer = new IntersectionObserver(
   { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
 );
 
-document.querySelectorAll('[data-aos]')
-  .forEach(el => observer.observe(el));
+document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
 
 // ============================================
-// SPOTS COUNTER (Urgency)
+// SPOTS COUNTER
 // ============================================
 let spots = 247;
 
 function decreaseSpots() {
   if (spots > 10) {
     spots -= Math.floor(Math.random() * 2) + 1;
-    const els = [
-      document.getElementById('spotsLeft'),
-      document.getElementById('navSpots')
-    ];
-    els.forEach(el => {
-      if (el) {
-        if (el.id === 'navSpots') {
-          el.textContent = spots + ' spots left';
-        } else {
-          el.textContent = spots;
-        }
-      }
-    });
+    const spotsEl = document.getElementById('spotsLeft');
+    const navSpotsEl = document.getElementById('navSpots');
+    if (spotsEl) spotsEl.textContent = spots;
+    if (navSpotsEl) navSpotsEl.textContent = spots + ' spots left';
   }
-  setTimeout(
-    decreaseSpots,
-    Math.floor(Math.random() * 120000) + 60000
-  );
+  setTimeout(decreaseSpots, Math.floor(Math.random() * 120000) + 60000);
 }
 
 decreaseSpots();
@@ -3057,46 +2888,215 @@ function bumpCount() {
   count += Math.floor(Math.random() * 3) + 1;
   ['liveCount', 'finalCount'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) {
-      el.textContent = count.toLocaleString() + '+';
-    }
+    if (el) el.textContent = count.toLocaleString() + '+';
   });
-  setTimeout(
-    bumpCount,
-    Math.floor(Math.random() * 45000) + 15000
-  );
+  setTimeout(bumpCount, Math.floor(Math.random() * 45000) + 15000);
 }
 
 bumpCount();
 
 // ============================================
+// SHOW TOAST
+// ============================================
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 3500);
+}
+
+// ============================================
+// SAVE TO GOOGLE SHEETS
+// HOW TO SETUP:
+// 1. Go to script.google.com
+// 2. Create new project
+// 3. Paste the Apps Script code (see below)
+// 4. Deploy as Web App
+// 5. Replace GOOGLE_APPS_SCRIPT_URL below
+// ============================================
+async function saveToWaitlist(data) {
+  // This Web App endpoint should implement doPost(e).
+  // Opening it directly in browser may show a doGet error, which is expected.
+  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxitDkG1ewvogM5vjucGBIsYQPBb4EQQyukkQuprSTFoRck1xKquALxiCYdxbniri_p/exec';
+  // ^^^ REPLACE THIS with your actual URL
+
+  // If not configured, just log and show success
+  if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+    console.log('ðŸ“§ Would save:', data);
+    console.warn('âš ï¸ Set up Google Apps Script to actually save emails!');
+    return true;
+  }
+
+  try {
+    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...data,
+        timestamp: new Date().toISOString(),
+        page: window.location.href
+      }),
+      mode: 'no-cors'
+    });
+    console.log('âœ… Saved to Google Sheets');
+    return true;
+  } catch (err) {
+    console.log('Save error:', err);
+    return false;
+  }
+}
+
+// ============================================
+// MAIN WAITLIST FORM
+// ============================================
+let position = 247;
+
+const waitlistForm = document.getElementById('waitlistForm');
+const successState = document.getElementById('successState');
+const submitBtn = document.getElementById('submitBtn');
+
+if (waitlistForm) {
+  waitlistForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    if (!email) return;
+
+    // Loading state
+    if (submitBtn) {
+      submitBtn.innerHTML = `
+        <span>Saving...</span>
+        <div style="width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;"></div>
+      `;
+      submitBtn.disabled = true;
+    }
+
+    await saveToWaitlist({ email, source: 'main_hero_form' });
+
+    position++;
+
+    // Update position display
+    const posEl = document.getElementById('position');
+    if (posEl) posEl.textContent = '#' + position;
+
+    // Update referral link
+    const refEl = document.getElementById('referralLink');
+    if (refEl) {
+      refEl.textContent = 'muthuarasu41193.github.io/WorkGraph/?ref=' + position;
+    }
+
+    // Set share URLs
+    const shareText = 'I just joined WorkGraph â€” AI that finds jobs from LinkedIn, Reddit, Twitter & 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
+
+    const waBtn = document.getElementById('shareWhatsApp');
+    if (waBtn) waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+
+    const liBtn = document.getElementById('shareLinkedIn');
+    if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=https://muthuarasu41193.github.io/WorkGraph/';
+
+    const twBtn = document.getElementById('shareTwitter');
+    if (twBtn) twBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText);
+
+    // Show success
+    waitlistForm.style.display = 'none';
+    if (successState) successState.classList.add('visible');
+
+    // Show toast
+    showToast('ðŸŽ‰ You are on the waitlist! Check your email.');
+
+    // Decrease spots
+    spots = Math.max(spots - 1, 1);
+    const spotsEl = document.getElementById('spotsLeft');
+    if (spotsEl) spotsEl.textContent = spots;
+  });
+}
+
+// ============================================
+// FINAL CTA FORM
+// ============================================
+const finalForm = document.getElementById('finalForm');
+
+if (finalForm) {
+  finalForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('finalEmail').value.trim();
+    if (!email) return;
+
+    const btn = finalForm.querySelector('button');
+    btn.innerHTML = 'Saving...';
+    btn.disabled = true;
+
+    await saveToWaitlist({ email, source: 'bottom_cta' });
+
+    btn.innerHTML = 'ðŸŽ‰ You are on the list!';
+    btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
+    btn.disabled = false;
+
+    showToast('ðŸŽ‰ Added to waitlist successfully!');
+  });
+}
+
+// ============================================
+// EXIT FORM
+// ============================================
+const exitForm = document.getElementById('exitForm');
+
+if (exitForm) {
+  exitForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('exitEmail').value.trim();
+    if (!email) return;
+
+    const btn = exitForm.querySelector('button');
+    btn.textContent = 'Adding you...';
+    btn.disabled = true;
+
+    await saveToWaitlist({ email, source: 'exit_popup' });
+
+    btn.textContent = 'ðŸŽ‰ You are on the list!';
+    btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
+
+    setTimeout(closeExit, 2000);
+  });
+}
+
+// ============================================
+// EXIT INTENT POPUP
+// ============================================
+let exitShown = false;
+
+document.addEventListener('mouseleave', e => {
+  if (e.clientY <= 0 && !exitShown) {
+    exitShown = true;
+    document.getElementById('exitOverlay')?.classList.add('visible');
+  }
+});
+
+setTimeout(() => {
+  if (!exitShown) {
+    exitShown = true;
+    document.getElementById('exitOverlay')?.classList.add('visible');
+  }
+}, 40000);
+
+function closeExit() {
+  document.getElementById('exitOverlay')?.classList.remove('visible');
+}
+
+// ============================================
 // LIVE ACTIVITY NOTIFICATIONS
-// Verified: Male names with male avatars
-//           Female names with female avatars
 // ============================================
 const activities = [
-  // Male names with male avatar colors
-  { name: 'Rahul',   location: 'India',
-    initial: 'R', color: '#7C3AED' },
-  { name: 'Marcus',  location: 'London',
-    initial: 'M', color: '#2563EB' },
-  { name: 'James',   location: 'New York',
-    initial: 'J', color: '#0891B2' },
-  { name: 'Carlos',  location: 'Madrid',
-    initial: 'C', color: '#059669' },
-  { name: 'Ahmed',   location: 'Dubai',
-    initial: 'A', color: '#7C3AED' },
-  { name: 'Wei',     location: 'Singapore',
-    initial: 'W', color: '#2563EB' },
-  // Female names with female avatar colors
-  { name: 'Priya',   location: 'Bangalore',
-    initial: 'P', color: '#EC4899' },
-  { name: 'Sara',    location: 'Germany',
-    initial: 'S', color: '#F59E0B' },
-  { name: 'Fatima',  location: 'UAE',
-    initial: 'F', color: '#14B8A6' },
-  { name: 'Yuki',    location: 'Tokyo',
-    initial: 'Y', color: '#EC4899' },
+  { name: 'Rahul',   location: 'India',      initial: 'R', color: '#7C3AED' },
+  { name: 'Marcus',  location: 'London',     initial: 'M', color: '#2563EB' },
+  { name: 'James',   location: 'New York',   initial: 'J', color: '#0891B2' },
+  { name: 'Carlos',  location: 'Madrid',     initial: 'C', color: '#059669' },
+  { name: 'Ahmed',   location: 'Dubai',      initial: 'A', color: '#7C3AED' },
+  { name: 'Wei',     location: 'Singapore',  initial: 'W', color: '#2563EB' },
+  { name: 'Priya',   location: 'Bangalore',  initial: 'P', color: '#EC4899' },
+  { name: 'Sara',    location: 'Germany',    initial: 'S', color: '#F59E0B' },
+  { name: 'Fatima',  location: 'UAE',        initial: 'F', color: '#14B8A6' },
+  { name: 'Yuki',    location: 'Tokyo',      initial: 'Y', color: '#EC4899' },
 ];
 
 let actIndex = 0;
@@ -3110,17 +3110,8 @@ function showActivity() {
 
   feed.innerHTML = `
     <div class="activity-item">
-      <div class="activity-avatar"
-      style="background:linear-gradient(
-        135deg,${person.color},#2563EB
-      )">
-        ${person.initial}
-      </div>
-      <div class="activity-text">
-        <strong>${person.name}
-        from ${person.location}</strong>
-        just joined the waitlist
-      </div>
+      <div class="activity-avatar" style="background:linear-gradient(135deg,${person.color},#2563EB)">${person.initial}</div>
+      <div class="activity-text"><strong>${person.name} from ${person.location}</strong> just joined the waitlist</div>
       <div class="activity-time">just now</div>
     </div>
   `;
@@ -3131,241 +3122,40 @@ function showActivity() {
 
   setTimeout(() => {
     feed.style.opacity = '0';
-    setTimeout(() => {
-      feed.style.display = 'none';
-    }, 500);
+    setTimeout(() => { feed.style.display = 'none'; }, 500);
   }, 4000);
 
-  setTimeout(
-    showActivity,
-    Math.floor(Math.random() * 25000) + 15000
-  );
+  setTimeout(showActivity, Math.floor(Math.random() * 25000) + 15000);
 }
 
 setTimeout(showActivity, 5000);
 
 // ============================================
-// EXIT INTENT POPUP
-// ============================================
-let exitShown = false;
-
-document.addEventListener('mouseleave', e => {
-  if (e.clientY <= 0 && !exitShown) {
-    exitShown = true;
-    const overlay =
-      document.getElementById('exitOverlay');
-    if (overlay) overlay.classList.add('visible');
-  }
-});
-
-// Mobile fallback — show after 40 seconds
-setTimeout(() => {
-  if (!exitShown) {
-    exitShown = true;
-    const overlay =
-      document.getElementById('exitOverlay');
-    if (overlay) overlay.classList.add('visible');
-  }
-}, 40000);
-
-function closeExit() {
-  const overlay =
-    document.getElementById('exitOverlay');
-  if (overlay) overlay.classList.remove('visible');
-}
-
-// Exit form submission
-const exitForm = document.getElementById('exitForm');
-if (exitForm) {
-  exitForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email =
-      document.getElementById('exitEmail').value;
-    if (!email) return;
-    const btn = exitForm.querySelector('button');
-    btn.textContent = 'Adding you...';
-    btn.disabled = true;
-    await saveToWaitlist({
-      email, source: 'exit_popup'
-    });
-    btn.textContent = '🎉 You are on the list!';
-    btn.style.background =
-      'linear-gradient(135deg,#10B981,#059669)';
-    setTimeout(closeExit, 2000);
-  });
-}
-
-// ============================================
-// MAIN WAITLIST FORM
-// ============================================
-let position = 247;
-
-const waitlistForm =
-  document.getElementById('waitlistForm');
-const successState =
-  document.getElementById('successState');
-const submitBtn =
-  document.getElementById('submitBtn');
-
-if (waitlistForm) {
-  waitlistForm.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    const email =
-      document.getElementById('email').value;
-    if (!email) return;
-
-    // Show loading state
-    if (submitBtn) {
-      submitBtn.innerHTML = `
-        <span>Adding you...</span>
-        <div style="
-          width:18px;height:18px;
-          border:2px solid rgba(255,255,255,.3);
-          border-top-color:white;
-          border-radius:50%;
-          animation:spin .8s linear infinite;
-          flex-shrink:0;">
-        </div>
-      `;
-      submitBtn.disabled = true;
-    }
-
-    await saveToWaitlist({
-      email,
-      source: 'main_hero_form',
-      timestamp: new Date().toISOString()
-    });
-
-    position++;
-
-    // Update position
-    const posEl = document.getElementById('position');
-    if (posEl) posEl.textContent = '#' + position;
-
-    // Update referral link
-    const refEl =
-      document.getElementById('referralLink');
-    if (refEl) {
-      refEl.textContent =
-        'muthuarasu41193.github.io/WorkGraph' +
-        '/?ref=' + position;
-    }
-
-    // Set share URLs
-    const shareText =
-      'I just joined WorkGraph — AI that finds jobs ' +
-      'from LinkedIn, Reddit, Twitter & 50+ sources. ' +
-      'Matches them to your resume automatically. ' +
-      'Free early access: ' +
-      'https://muthuarasu41193.github.io/WorkGraph/';
-
-    const waBtn =
-      document.getElementById('shareWhatsApp');
-    if (waBtn) {
-      waBtn.href = 'https://wa.me/?text=' +
-        encodeURIComponent(shareText);
-    }
-
-    const liBtn =
-      document.getElementById('shareLinkedIn');
-    if (liBtn) {
-      liBtn.href =
-        'https://www.linkedin.com/sharing/' +
-        'share-offsite/?url=' +
-        'https://muthuarasu41193.github.io/WorkGraph/';
-    }
-
-    const twBtn =
-      document.getElementById('shareTwitter');
-    if (twBtn) {
-      twBtn.href =
-        'https://twitter.com/intent/tweet?text=' +
-        encodeURIComponent(shareText);
-    }
-
-    // Hide form show success
-    waitlistForm.style.display = 'none';
-    if (successState) {
-      successState.classList.add('visible');
-    }
-
-    // Decrease spots
-    spots = Math.max(spots - 1, 1);
-    const spotsEl =
-      document.getElementById('spotsLeft');
-    if (spotsEl) spotsEl.textContent = spots;
-  });
-}
-
-// ============================================
-// FINAL CTA FORM
-// ============================================
-const finalForm =
-  document.getElementById('finalForm');
-
-if (finalForm) {
-  finalForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email =
-      document.getElementById('finalEmail').value;
-    if (!email) return;
-    const btn = finalForm.querySelector('button');
-    btn.innerHTML = 'Adding you... ✓';
-    btn.disabled = true;
-    await saveToWaitlist({
-      email, source: 'bottom_cta'
-    });
-    btn.innerHTML = '🎉 You are on the list!';
-    btn.style.background =
-      'linear-gradient(135deg,#10B981,#059669)';
-  });
-}
-
-// ============================================
-// SAVE TO GOOGLE SHEETS
-// Replace YOUR_GOOGLE_APPS_SCRIPT_URL below
-// with your actual Apps Script URL
-// ============================================
-async function saveToWaitlist(data) {
-  try {
-    const SHEET_URL =
-      'YOUR_GOOGLE_APPS_SCRIPT_URL';
-
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data),
-      mode: 'no-cors'
-    });
-
-    console.log('Saved to Google Sheets ✅');
-  } catch (err) {
-    console.log('Save error:', err);
-  }
-}
-
-// ============================================
 // COPY REFERRAL LINK
 // ============================================
 function copyReferral() {
-  const refEl =
-    document.getElementById('referralLink');
-  const btn =
-    document.getElementById('copyRefBtn');
+  const refEl = document.getElementById('referralLink');
+  const btn = document.getElementById('copyRefBtn');
   if (!refEl || !btn) return;
 
-  navigator.clipboard.writeText(
-    refEl.textContent.trim()
-  ).then(() => {
-    btn.textContent = '✅ Copied!';
+  navigator.clipboard.writeText(refEl.textContent.trim()).then(() => {
+    btn.textContent = 'âœ… Copied!';
     btn.style.background = '#10B981';
+    showToast('ðŸ”— Referral link copied to clipboard!');
     setTimeout(() => {
       btn.textContent = 'Copy Link';
       btn.style.background = '';
     }, 2500);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = refEl.textContent.trim();
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'âœ… Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Link'; }, 2500);
   });
 }
 
@@ -3377,8 +3167,7 @@ if (navbar) {
   window.addEventListener('scroll', () => {
     if (window.scrollY > 60) {
       navbar.style.background = 'rgba(3,7,18,.97)';
-      navbar.style.boxShadow =
-        '0 4px 30px rgba(0,0,0,.4)';
+      navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,.4)';
     } else {
       navbar.style.background = 'rgba(3,7,18,.85)';
       navbar.style.boxShadow = 'none';
@@ -3389,27 +3178,19 @@ if (navbar) {
 // ============================================
 // SMOOTH SCROLL
 // ============================================
-document.querySelectorAll('a[href^="#"]')
-  .forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      const target = document.querySelector(
-        a.getAttribute('href')
-      );
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth', block: 'start'
-        });
-      }
-    });
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+});
 
 // ============================================
-// SPIN ANIMATION FOR LOADING BUTTON
+// SPIN ANIMATION
 // ============================================
 const spinStyle = document.createElement('style');
-spinStyle.textContent =
-  '@keyframes spin { to { transform: rotate(360deg); } }';
+spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
 document.head.appendChild(spinStyle);
 </script>
 
