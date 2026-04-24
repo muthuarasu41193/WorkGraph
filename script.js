@@ -99,35 +99,34 @@ if (finalForm) {
 
 // SAVE TO WAITLIST FUNCTION
 async function saveToWaitlist(data) {
-  console.log('Waitlist signup:', data);
+  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwl-i5MWIC05oZ7BASMRhjuBbykod28gf2sRnfb7OjwcPjXKTBP-2lpOymsFObpZJfv/exec';
 
-  /*
-  CONNECT TO BREVO:
-  await fetch('https://api.brevo.com/v3/contacts', {
+  const payload = {
+    firstName: data.firstName || '',
+    email: data.email || '',
+    jobField: data.jobField || '',
+    country: data.country || '',
+    source: data.source || 'landing_page',
+    timestamp: data.timestamp || new Date().toISOString(),
+    page: window.location.href
+  };
+
+  const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
     method: 'POST',
-    headers: {
-      'api-key': 'YOUR_BREVO_API_KEY',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email: data.email,
-      attributes: {
-        FIRSTNAME: data.firstName,
-        JOB_FIELD: data.jobField,
-        COUNTRY: data.country
-      },
-      listIds: [YOUR_LIST_ID],
-      updateEnabled: true
-    })
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+    body: new URLSearchParams(payload).toString()
   });
 
-  CONNECT TO SUPABASE:
-  const { error } = await supabase
-    .from('waitlist')
-    .insert([data]);
-  */
+  if (!response.ok) {
+    throw new Error('Failed to submit waitlist form: HTTP ' + response.status);
+  }
 
-  return new Promise(r => setTimeout(r, 1500));
+  const result = await response.json();
+  if (!result || result.ok !== true) {
+    throw new Error((result && result.error) || 'Waitlist save failed');
+  }
+
+  return true;
 }
 
 // COPY LINK
