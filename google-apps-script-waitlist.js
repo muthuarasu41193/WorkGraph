@@ -12,7 +12,7 @@
  */
 
 const SPREADSHEET_ID = ''; // Optional: set to your spreadsheet ID.
-const SHEET_NAME = 'Waitlist';
+const SHEET_NAME = 'WorkGraph Waitlist';
 const HEADER_ROW = [
   'createdAt',
   'firstName',

@@ -99,7 +99,7 @@ if (finalForm) {
 
 // SAVE TO WAITLIST FUNCTION
 async function saveToWaitlist(data) {
-  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwl-i5MWIC05oZ7BASMRhjuBbykod28gf2sRnfb7OjwcPjXKTBP-2lpOymsFObpZJfv/exec';
+  const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyt3tH5S-BRCFOHDwbj9DBEFhSprQFI9MpQzeqoLEBS8-cMBEZtCnutfApGzGh4nA8P/exec';
 
   const payload = {
     firstName: data.firstName || '',
