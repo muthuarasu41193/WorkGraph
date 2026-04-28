@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
   <title>WorkGraph - Your AI Career Intelligence Platform</title>
-  <meta name="description" content="WorkGraph finds relevant jobs from LinkedIn, Reddit, Twitter & 100+ sources worldwide. Build your professional profile. Get matched. Get hired."/>
+  <meta name="description" content="WorkGraph finds relevant jobs from professional networks, Reddit, Twitter & 100+ sources worldwide. Build your professional profile. Get matched. Get hired."/>
   <meta property="og:title" content="WorkGraph - AI Job Hunting Copilot"/>
   <meta property="og:description" content="Stop manually searching for jobs. Let AI find them for you."/>
   <meta property="og:url" content="https://muthuarasu41193.github.io/WorkGraph/"/>
@@ -12,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
 <style>
 /* ============================================
@@ -557,10 +561,11 @@ body.loaded { opacity: 1; }
 }
 
 .whatsapp-share-btn { background: #25D366; color: white; }
-.linkedin-btn { background: #0A66C2; color: white; }
+.email-share-btn { background: #0A66C2; color: white; }
 .twitter-btn { background: #000; color: white; border: 1px solid #333; }
 
 .share-btn:hover { transform: translateY(-2px); opacity: .9; }
+.share-btn i { margin-right: 6px; }
 
 /* REFERRAL PROGRESS */
 .referral-progress {
@@ -732,7 +737,7 @@ body.loaded { opacity: 1; }
   text-transform: uppercase;
 }
 
-.job-tag.linkedin { background: rgba(10,102,194,.2); color: #60A5FA; }
+.job-tag.network { background: rgba(10,102,194,.2); color: #60A5FA; }
 .job-tag.reddit { background: rgba(255,69,0,.15); color: #FCA5A5; }
 .job-tag.twitter { background: rgba(255,255,255,.07); color: #D1D5DB; }
 .job-tag.time { background: rgba(255,255,255,.05); color: var(--muted); }
@@ -871,6 +876,7 @@ body.loaded { opacity: 1; }
   justify-content: center; margin-bottom: 16px;
   font-size: 24px;
 }
+.feat-icon i { font-size: 20px; }
 
 .icon-purple { background: rgba(124,58,237,.15); color: var(--purple-l); border: 1px solid rgba(124,58,237,.25); }
 .icon-blue { background: rgba(37,99,235,.15); color: var(--blue-l); border: 1px solid rgba(37,99,235,.25); }
@@ -949,6 +955,10 @@ body.loaded { opacity: 1; }
   width: 40px; height: 40px;
   display: flex; align-items: center;
   justify-content: center;
+  color: var(--purple-l);
+  background: rgba(124,58,237,.12);
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 10px;
 }
 
 .pf-item strong {
@@ -1012,7 +1022,7 @@ body.loaded { opacity: 1; }
 
 .link-item:hover { transform: translateY(-2px); }
 
-.link-linkedin { background: rgba(10,102,194,.15); color: #60A5FA; border: 1px solid rgba(10,102,194,.25); }
+.link-network { background: rgba(10,102,194,.15); color: #60A5FA; border: 1px solid rgba(10,102,194,.25); }
 .link-github { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border); }
 .link-web { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
 .link-twitter { background: rgba(255,255,255,.05); color: var(--secondary); border: 1px solid var(--border); }
@@ -1198,6 +1208,7 @@ body.loaded { opacity: 1; }
 }
 
 .stars { color: #F59E0B; font-size: 16px; letter-spacing: 2px; margin-bottom: 14px; }
+.stars i { margin-right: 2px; }
 
 .testi-card p {
   font-size: 14px; color: var(--secondary);
@@ -1691,6 +1702,54 @@ body.loaded { opacity: 1; }
 .winwin-item strong { display: block; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
 .winwin-item p { font-size: 13px; color: var(--secondary); margin: 0; }
 .winwin-divider { font-size: 28px; color: var(--purple-l); font-weight: 700; flex-shrink: 0; }
+.winwin-divider i { color: var(--purple-l); }
+
+/* Icon theme utilities for stronger visual hierarchy */
+.icon-theme-blue i { color: var(--blue-l) !important; }
+.icon-theme-purple i { color: var(--purple-l) !important; }
+.icon-theme-green i { color: var(--green) !important; }
+
+/* Local icon fallback: renders even if Font Awesome CDN fails */
+i.fa-solid, i.fa-brands {
+  font-style: normal;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+i.fa-globe::before { content: '🌐'; }
+i.fa-bullseye::before { content: '🎯'; }
+i.fa-file-arrow-up::before { content: '📄'; }
+i.fa-diagram-project::before { content: '🗂'; }
+i.fa-id-badge::before { content: '🪪'; }
+i.fa-share-nodes::before { content: '🔗'; }
+i.fa-github::before { content: '🐙'; }
+i.fa-briefcase::before { content: '💼'; }
+i.fa-certificate::before { content: '🏅'; }
+i.fa-money-bill-trend-up::before { content: '💸'; }
+i.fa-key::before { content: '🔑'; }
+i.fa-user-check::before { content: '✅'; }
+i.fa-sack-dollar::before { content: '💰'; }
+i.fa-people-group::before { content: '👥'; }
+i.fa-handshake::before { content: '🤝'; }
+i.fa-users-viewfinder::before { content: '🧭'; }
+i.fa-store::before { content: '🏪'; }
+i.fa-address-card::before { content: '🪪'; }
+i.fa-shield-heart::before { content: '🛡'; }
+i.fa-microphone-lines::before { content: '🎤'; }
+i.fa-chart-line::before { content: '📈'; }
+i.fa-link::before { content: '🔗'; }
+i.fa-building-shield::before { content: '🏢'; }
+i.fa-lightbulb::before { content: '💡'; }
+i.fa-magnifying-glass-chart::before { content: '🔎'; }
+i.fa-circle-check::before { content: '✔'; }
+i.fa-arrow-right::before { content: '→'; }
+i.fa-star::before { content: '★'; }
+i.fa-whatsapp::before { content: '🟢'; font-size: 11px; }
+i.fa-envelope::before { content: '✉'; }
+i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
 
 /* ============================================
    TOAST NOTIFICATION
@@ -1834,7 +1893,7 @@ body.loaded { opacity: 1; }
 
     <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
       WorkGraph finds jobs from
-      <strong>LinkedIn, Reddit, Twitter/X, Indeed & 50+ global sources</strong> -
+      <strong>Professional networks, Reddit, Twitter/X, Indeed & 50+ global sources</strong> -
       matches them to your resume -
       shows your shortlist probability -
       and tracks every application automatically.
@@ -1954,9 +2013,9 @@ body.loaded { opacity: 1; }
           </div>
 
           <div class="share-row">
-            <a id="shareWhatsApp" href="#" class="share-btn whatsapp-share-btn" target="_blank">WhatsApp</a>
-            <a id="shareLinkedIn" href="#" class="share-btn linkedin-btn" target="_blank">LinkedIn</a>
-            <a id="shareTwitter" href="#" class="share-btn twitter-btn" target="_blank">Twitter / X</a>
+            <a id="shareWhatsApp" href="#" class="share-btn whatsapp-share-btn" target="_blank"><i class="fa-brands fa-whatsapp"></i>WhatsApp</a>
+            <a id="shareEmail" href="#" class="share-btn email-share-btn" target="_blank"><i class="fa-solid fa-envelope"></i>Email</a>
+            <a id="shareTwitter" href="#" class="share-btn twitter-btn" target="_blank"><i class="fa-brands fa-x-twitter"></i>Twitter / X</a>
           </div>
 
           <div class="referral-progress">
@@ -2031,7 +2090,7 @@ body.loaded { opacity: 1; }
                   <div class="mj-title">Senior React Developer</div>
                   <div class="mj-company">Google  Remote  $180K</div>
                   <div class="mj-tags">
-                    <span class="job-tag linkedin">LinkedIn</span>
+                    <span class="job-tag network">Pro Network</span>
                     <span class="job-tag time">2h ago</span>
                     <span class="job-tag high">High Chance</span>
                   </div>
@@ -2082,7 +2141,7 @@ body.loaded { opacity: 1; }
   <p class="marquee-label">Pulling live jobs from everywhere</p>
   <div class="marquee-wrap">
     <div class="marquee-track">
-      <span class="m-item"> LinkedIn</span>
+      <span class="m-item"> Pro Network</span>
       <span class="m-item"> Reddit</span>
       <span class="m-item"> Twitter / X</span>
       <span class="m-item"> Indeed</span>
@@ -2094,7 +2153,7 @@ body.loaded { opacity: 1; }
       <span class="m-item"> The Muse</span>
       <span class="m-item"> Wellfound</span>
       <span class="m-item"> Levels.fyi</span>
-      <span class="m-item"> LinkedIn</span>
+      <span class="m-item"> Pro Network</span>
       <span class="m-item"> Reddit</span>
       <span class="m-item"> Twitter / X</span>
       <span class="m-item"> Indeed</span>
@@ -2115,16 +2174,16 @@ body.loaded { opacity: 1; }
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Core Features</span>
-      <h2>Everything you need to<br/><span class="gradient-text">land your dream job faster</span></h2>
-      <p>Built by someone who has reviewed <strong>50,000+ resumes</strong>. We know exactly what job seekers need.</p>
+      <h2>Professional networking<br/><span class="gradient-text">plus what legacy platforms are missing</span></h2>
+      <p>WorkGraph is built for serious job seekers: discover opportunities, build proof-based profiles, and learn directly from people who already cracked the role.</p>
     </div>
 
     <div class="features-grid">
       <div class="feat-card" data-aos="fade-up">
-        <div class="feat-icon icon-purple"></div>
+        <div class="feat-icon icon-purple"><i class="fa-solid fa-globe"></i></div>
         <div class="live-badge"> Live at Launch</div>
         <h3>Global Job Intelligence</h3>
-        <p>We scan LinkedIn posts, Reddit threads, Twitter/X, Indeed, RemoteOK and 50+ sources every 30 minutes. Find hidden jobs that most people never see.</p>
+        <p>We scan professional network posts, Reddit threads, Twitter/X, Indeed, RemoteOK and 50+ sources every 30 minutes. Find hidden jobs that most people never see.</p>
         <ul class="feat-list">
           <li> Real-time job discovery</li>
           <li> Social media job posts included</li>
@@ -2134,7 +2193,7 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
-        <div class="feat-icon icon-blue"></div>
+        <div class="feat-icon icon-blue"><i class="fa-solid fa-bullseye"></i></div>
         <div class="live-badge"> Live at Launch</div>
         <h3>AI Match Score</h3>
         <p>Every job gets a precise match score based on your resume. Hover any job to see exactly which skills are missing and how to fix them to increase your chances.</p>
@@ -2147,7 +2206,7 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="feat-icon icon-green"></div>
+        <div class="feat-icon icon-green"><i class="fa-solid fa-file-arrow-up"></i></div>
         <div class="live-badge"> Live at Launch</div>
         <h3>Smart Resume Parser</h3>
         <p>Upload your PDF or DOCX once. AI instantly reads your skills, experience and education then automatically matches you to the right jobs globally.</p>
@@ -2160,15 +2219,15 @@ body.loaded { opacity: 1; }
       </div>
 
       <div class="feat-card" data-aos="fade-up" data-aos-delay="300">
-        <div class="feat-icon icon-orange"></div>
+        <div class="feat-icon icon-orange"><i class="fa-solid fa-diagram-project"></i></div>
         <div class="live-badge"> Live at Launch</div>
-        <h3>Application Tracker</h3>
-        <p>Track every job application in one dashboard. Get notified instantly when jobs close, when employers view your profile, and when your status changes.</p>
+        <h3>Application and Networking Tracker</h3>
+        <p>Track every job application, referral outreach, and recruiter conversation in one dashboard. Never lose follow-ups while building meaningful career connections.</p>
         <ul class="feat-list">
           <li> Kanban board view</li>
           <li> Real-time status notifications</li>
           <li> Job closure alerts</li>
-          <li> Follow-up reminders</li>
+          <li> Follow-up and referral reminders</li>
         </ul>
       </div>
     </div>
@@ -2181,50 +2240,50 @@ body.loaded { opacity: 1; }
     <div class="profile-grid">
       <div class="profile-content" data-aos="fade-right">
         <span class="section-tag">Professional Profile</span>
-        <h2>Build your complete<br/><span class="gradient-text">career identity</span></h2>
-        <p class="profile-sub">WorkGraph is not just a job finder. It is your complete professional profile that showcases everything you have built and achieved  all in one place.</p>
+        <h2>Build your own public<br/><span class="gradient-text">career identity profile</span></h2>
+        <p class="profile-sub">Every job seeker gets a separate WorkGraph profile to showcase skills, achievements, and proof of work in one trusted place beyond a standard resume.</p>
 
         <div class="profile-features">
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-blue"><i class="fa-solid fa-id-badge"></i></div>
             <div>
               <strong>Professional Bio</strong>
               <p>Your story, headline and career summary</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-blue"><i class="fa-solid fa-share-nodes"></i></div>
             <div>
-              <strong>Social Media Profiles</strong>
-              <p>Link LinkedIn, Twitter/X, Instagram, YouTube</p>
+              <strong>Social and Professional Links</strong>
+              <p>Link your professional network, GitHub, Twitter/X, YouTube and your personal website</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-purple"><i class="fa-brands fa-github"></i></div>
             <div>
               <strong>GitHub Integration</strong>
               <p>Showcase repositories, contributions and open source work</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-blue"><i class="fa-solid fa-globe"></i></div>
             <div>
               <strong>Personal Website</strong>
               <p>Add your portfolio, blog or personal site link</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-green"><i class="fa-solid fa-briefcase"></i></div>
             <div>
               <strong>Projects and Work Samples</strong>
-              <p>Showcase your best projects with links and descriptions</p>
+              <p>Share real project proof, impact highlights and portfolio links</p>
             </div>
           </div>
           <div class="pf-item">
-            <div class="pf-icon"></div>
+            <div class="pf-icon icon-theme-green"><i class="fa-solid fa-certificate"></i></div>
             <div>
-              <strong>Certifications and Courses</strong>
-              <p>AWS, Google, Coursera, Udemy and all your credentials</p>
+              <strong>Courses, Certificates and Achievements</strong>
+              <p>Show AWS, Google, Coursera, Udemy, hackathons and career milestones</p>
             </div>
           </div>
         </div>
@@ -2233,9 +2292,9 @@ body.loaded { opacity: 1; }
       <div class="profile-visual" data-aos="fade-left">
         <div class="profile-card-mock">
           <div class="pcm-top">
-            <div class="pcm-avatar">M</div>
+            <div class="pcm-avatar">R</div>
             <div class="pcm-info">
-              <div class="pcm-name">Muthuarasu K.</div>
+              <div class="pcm-name">Ronaldo K.</div>
               <div class="pcm-role">Senior Full Stack Developer</div>
               <div class="pcm-location"> India  Open to Remote</div>
             </div>
@@ -2246,7 +2305,7 @@ body.loaded { opacity: 1; }
           </div>
 
           <div class="pcm-links">
-            <div class="link-item link-linkedin"><span>in</span> LinkedIn</div>
+            <div class="link-item link-network"><span>PN</span> Pro Network</div>
             <div class="link-item link-github"><span></span> GitHub</div>
             <div class="link-item link-web"><span></span> Portfolio</div>
             <div class="link-item link-twitter"><span></span> Twitter</div>
@@ -2295,23 +2354,23 @@ body.loaded { opacity: 1; }
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag"> Introducing Interview Vault</span>
       <h2>Learn from people who<br/><span class="gradient-text">actually got the job</span></h2>
-      <p>WorkGraph users who land jobs share their exact interview experience. Buy their guide. Crack your dream company. <strong>Real people. Real interviews. Real results.</strong></p>
+      <p>Job seekers who get an offer can publish their interview secret recipe and get paid. Others can buy proven playbooks to crack the same role faster. <strong>A true win-win for both sides.</strong></p>
     </div>
 
     <div class="vault-split">
       <!-- SELLER SIDE -->
       <div class="vault-side seller-side" data-aos="fade-right">
         <div class="vault-side-header">
-          <span class="vault-emoji"></span>
+          <span class="vault-emoji icon-theme-green"><i class="fa-solid fa-money-bill-trend-up"></i></span>
           <h3>You Just Got Hired?</h3>
-          <p>Turn your interview experience into passive income</p>
+          <p>Turn your interview secret recipe into passive income</p>
         </div>
         <div class="vault-steps">
           <div class="vault-step">
             <div class="vstep-num">1</div>
             <div class="vstep-text">
-              <strong>Create your guide</strong>
-              <p>Document your exact interview process, questions asked and preparation strategy</p>
+              <strong>Create your secret recipe</strong>
+              <p>Document your exact rounds, questions asked, prep strategy and what helped you crack the offer</p>
             </div>
           </div>
           <div class="vault-step">
@@ -2324,8 +2383,8 @@ body.loaded { opacity: 1; }
           <div class="vault-step">
             <div class="vstep-num">3</div>
             <div class="vstep-text">
-              <strong>Earn money</strong>
-              <p>Set your price. Earn 70% of every sale. Help fellow job seekers crack the same company.</p>
+              <strong>Earn while helping others</strong>
+              <p>Set your price. Earn 70% of every sale while helping fellow job seekers crack the same company.</p>
             </div>
           </div>
         </div>
@@ -2338,9 +2397,9 @@ body.loaded { opacity: 1; }
       <!-- BUYER SIDE -->
       <div class="vault-side buyer-side" data-aos="fade-left">
         <div class="vault-side-header">
-          <span class="vault-emoji"></span>
+          <span class="vault-emoji icon-theme-blue"><i class="fa-solid fa-key"></i></span>
           <h3>Dream Company Interview?</h3>
-          <p>Buy the guide from someone who already cracked it</p>
+          <p>Buy the secret recipe from someone who already cracked it</p>
         </div>
 
         <div class="guide-cards">
@@ -2417,19 +2476,19 @@ body.loaded { opacity: 1; }
     <!-- WIN WIN BANNER -->
     <div class="winwin-banner" data-aos="fade-up">
       <div class="winwin-item">
-        <span class="winwin-icon"></span>
+        <span class="winwin-icon icon-theme-blue"><i class="fa-solid fa-user-check"></i></span>
         <strong>Job Seekers</strong>
         <p>Get real insider knowledge from verified successful candidates</p>
       </div>
-      <div class="winwin-divider"></div>
+      <div class="winwin-divider"><i class="fa-solid fa-handshake"></i></div>
       <div class="winwin-item">
-        <span class="winwin-icon"></span>
+        <span class="winwin-icon icon-theme-green"><i class="fa-solid fa-sack-dollar"></i></span>
         <strong>Hired Candidates</strong>
         <p>Earn passive income by sharing your interview experience</p>
       </div>
-      <div class="winwin-divider"></div>
+      <div class="winwin-divider"><i class="fa-solid fa-handshake"></i></div>
       <div class="winwin-item">
-        <span class="winwin-icon"></span>
+        <span class="winwin-icon icon-theme-purple"><i class="fa-solid fa-people-group"></i></span>
         <strong>WorkGraph</strong>
         <p>Connects both sides and builds a thriving knowledge community</p>
       </div>
@@ -2441,67 +2500,67 @@ body.loaded { opacity: 1; }
 <section class="section" id="roadmap">
   <div class="container">
     <div class="section-head" data-aos="fade-up">
-      <span class="section-tag">Product Roadmap</span>
-      <h2>Powerful features<br/><span class="gradient-text">launching very soon</span></h2>
-      <p>We are building the most complete career intelligence platform ever made. Here is what is coming next.</p>
+      <span class="section-tag">Upcoming Features</span>
+      <h2>The networking platform for job seekers<br/><span class="gradient-text">built beyond legacy platforms</span></h2>
+      <p>We are building the missing layer in professional networking: proof-based profiles, paid interview knowledge sharing, and a community where job seekers help job seekers.</p>
     </div>
 
     <div class="roadmap-grid">
       <div class="roadmap-card" data-aos="fade-up">
         <div class="roadmap-badge badge-q1"> Coming Next  Q1 2026</div>
-        <div class="roadmap-icon"></div>
-        <h3>Email Command Center</h3>
-        <p>Connect your Gmail or Outlook and see all recruiter emails, interview invites and job alerts in one unified dashboard.</p>
+        <div class="roadmap-icon icon-theme-blue"><i class="fa-solid fa-users-viewfinder"></i></div>
+        <h3>Career Networking Feed</h3>
+        <p>A focused networking feed for job seekers where referrals, hiring updates, and interview prep opportunities are highlighted ahead of generic social noise.</p>
         <ul class="roadmap-list">
-          <li>Gmail and Outlook integration</li>
-          <li>AI email classification</li>
-          <li>Smart reply templates</li>
-          <li>Interview invite detection</li>
+          <li>Referral-first discovery feed</li>
+          <li>Role and company based circles</li>
+          <li>Peer support threads</li>
+          <li>Verified hiring update posts</li>
         </ul>
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="100">
         <div class="roadmap-badge badge-q1"> Coming Next  Q1 2026</div>
-        <div class="roadmap-icon"></div>
-        <h3>AI Job Apply Autopilot</h3>
-        <p>Set your preferences once and let WorkGraph AI automatically apply to matching jobs on your behalf. Wake up to interview invites.</p>
+        <div class="roadmap-icon icon-theme-blue"><i class="fa-solid fa-store"></i></div>
+        <h3>Secret Recipe Marketplace 2.0</h3>
+        <p>Scale Interview Vault into a trusted marketplace where verified offer-holders sell complete interview playbooks and buyers get role-specific preparation paths.</p>
         <ul class="roadmap-list">
-          <li>Auto-fill job applications</li>
-          <li>Custom cover letter per job</li>
-          <li>Apply to 50+ jobs per day</li>
-          <li>Human review before submit</li>
+          <li>Offer-verified creator onboarding</li>
+          <li>Company and role-specific bundles</li>
+          <li>Buyer success ratings and reviews</li>
+          <li>Creator payouts and analytics</li>
         </ul>
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="200">
         <div class="roadmap-badge badge-q2"> Coming  Q2 2026</div>
-        <div class="roadmap-icon"></div>
-        <h3>AI Resume Optimizer</h3>
-        <p>WorkGraph analyzes your resume against thousands of successful applications and gives you specific improvements.</p>
+        <div class="roadmap-icon icon-theme-purple"><i class="fa-solid fa-address-card"></i></div>
+        <h3>Public Proof Profile</h3>
+        <p>Each job seeker gets a standalone profile page to showcase skills, social links, projects, certificates, courses and achievements in recruiter-ready format.</p>
         <ul class="roadmap-list">
-          <li>ATS score checker</li>
-          <li>Keyword optimization</li>
-          <li>Industry benchmarking</li>
-          <li>One-click improvements</li>
+          <li>Custom profile URL</li>
+          <li>Professional network and GitHub integration</li>
+          <li>Personal website and portfolio embeds</li>
+          <li>Course and certificate showcase</li>
         </ul>
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="300">
         <div class="roadmap-badge badge-q2"> Coming  Q2 2026</div>
-        <div class="roadmap-icon"></div>
-        <h3>Recruiter Intelligence</h3>
-        <p>See the LinkedIn profile of who posted each job. Get AI-suggested personalized outreach messages to connect directly with hiring managers.</p>
+        <div class="roadmap-icon icon-theme-green"><i class="fa-solid fa-shield-heart"></i></div>
+        <h3>Job Seeker Reputation Score</h3>
+        <p>A trust layer that rewards genuine contributions, verified outcomes, and community help so recruiters and peers can quickly spot credible candidates.</p>
         <ul class="roadmap-list">
-          <li>Job poster LinkedIn profiles</li>
-          <li>Direct outreach templates</li>
-          <li>Recruiter contact finder</li>
-          <li>Connection suggestions</li>
+          <li>Profile completeness and proof signals</li>
+          <li>Contribution and mentorship points</li>
+          <li>Verified interview outcome badges</li>
+          <li>Community trust indicators</li>
         </ul>
       </div>
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="400">
         <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
-        <div class="roadmap-icon"></div>
+        <div class="roadmap-icon icon-theme-purple"><i class="fa-solid fa-microphone-lines"></i></div>
         <h3>AI Interview Coach</h3>
         <p>Practice interviews with our AI coach trained on thousands of real interview questions. Get instant feedback on your answers and confidence.</p>
         <ul class="roadmap-list">
@@ -2514,7 +2573,7 @@ body.loaded { opacity: 1; }
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="500">
         <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
-        <div class="roadmap-icon"></div>
+        <div class="roadmap-icon icon-theme-green"><i class="fa-solid fa-chart-line"></i></div>
         <h3>Salary Intelligence</h3>
         <p>Know your market value before every interview. Get real-time salary data by role, company, location and experience level.</p>
         <ul class="roadmap-list">
@@ -2527,7 +2586,7 @@ body.loaded { opacity: 1; }
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="600">
         <div class="roadmap-badge badge-q3"> Coming  Q3 2026</div>
-        <div class="roadmap-icon"></div>
+        <div class="roadmap-icon icon-theme-blue"><i class="fa-solid fa-link"></i></div>
         <h3>Public Profile Page</h3>
         <p>Get a shareable WorkGraph profile URL like workgraph.ai/yourname  your complete professional identity for any recruiter worldwide.</p>
         <ul class="roadmap-list">
@@ -2540,7 +2599,7 @@ body.loaded { opacity: 1; }
 
       <div class="roadmap-card" data-aos="fade-up" data-aos-delay="700">
         <div class="roadmap-badge badge-q4"> Coming  Q4 2026</div>
-        <div class="roadmap-icon"></div>
+        <div class="roadmap-icon icon-theme-purple"><i class="fa-solid fa-building-shield"></i></div>
         <h3>Company Intelligence</h3>
         <p>Deep insights on every company before you apply. Culture scores, interview difficulty, hiring patterns and employee reviews.</p>
         <ul class="roadmap-list">
@@ -2553,7 +2612,7 @@ body.loaded { opacity: 1; }
     </div>
 
     <div class="feature-request-box" data-aos="fade-up">
-      <div class="frb-icon"></div>
+      <div class="frb-icon icon-theme-purple"><i class="fa-solid fa-lightbulb"></i></div>
       <div class="frb-content">
         <h3>Have a feature idea?</h3>
         <p>We are building WorkGraph based on what job seekers actually need. Tell us what would help you most.</p>
@@ -2574,21 +2633,21 @@ body.loaded { opacity: 1; }
     <div class="steps-row">
       <div class="step-item" data-aos="fade-up">
         <div class="step-num">01</div>
-        <div class="step-icon"></div>
+        <div class="step-icon icon-theme-blue"><i class="fa-solid fa-file-arrow-up"></i></div>
         <h3>Upload Your Resume</h3>
         <p>Drop your PDF or DOCX resume. AI instantly extracts your skills and experience and builds your professional profile in seconds.</p>
       </div>
-      <div class="step-arrow"></div>
+      <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
       <div class="step-item" data-aos="fade-up" data-aos-delay="100">
         <div class="step-num">02</div>
-        <div class="step-icon"></div>
+        <div class="step-icon icon-theme-purple"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
         <h3>We Find Your Jobs</h3>
         <p>WorkGraph scans 50+ sources every 30 minutes and shows only the jobs that actually match your profile with real match scores.</p>
       </div>
-      <div class="step-arrow"></div>
+      <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
       <div class="step-item" data-aos="fade-up" data-aos-delay="200">
         <div class="step-num">03</div>
-        <div class="step-icon"></div>
+        <div class="step-icon icon-theme-green"><i class="fa-solid fa-circle-check"></i></div>
         <h3>Apply With Confidence</h3>
         <p>Know your shortlist probability before applying. Fix missing skills. Track every application. Land more interviews.</p>
       </div>
@@ -2606,36 +2665,36 @@ body.loaded { opacity: 1; }
 
     <div class="testimonials-grid">
       <div class="testi-card" data-aos="fade-up">
-        <div class="stars"></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p>"I found a job posting on Reddit that I never would have seen otherwise. Got an interview within 3 days. WorkGraph actually works."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=15" alt="Rahul"/>
           <div>
-            <strong>Rahul Sharma</strong>
+            <strong>Priyanka Gupta</strong>
             <span>Software Engineer, Bangalore</span>
           </div>
         </div>
       </div>
 
       <div class="testi-card featured-testi" data-aos="fade-up" data-aos-delay="100">
-        <div class="stars"></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p>"The match score is a game changer. I stopped wasting time on jobs I had no chance at. Now I only apply where I score above 75%. Got 3 interviews this week."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=14" alt="Marcus"/>
           <div>
-            <strong>Marcus Johnson</strong>
+            <strong>Joseph McGarey</strong>
             <span>Product Manager, London</span>
           </div>
         </div>
       </div>
 
       <div class="testi-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="stars"></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
         <p>"Finally. One place for ALL my job applications. WorkGraph shows me jobs from Reddit and Twitter I never knew to look for. Incredible tool."</p>
         <div class="testi-author">
           <img src="https://i.pravatar.cc/44?img=9" alt="Priya"/>
           <div>
-            <strong>Priya Chen</strong>
+            <strong>Xiangyu Wang</strong>
             <span>Data Scientist, Singapore</span>
           </div>
         </div>
@@ -2779,7 +2838,7 @@ body.loaded { opacity: 1; }
         </div>
         <p>Find hidden jobs. Build your profile.<br/>Get hired faster.</p>
         <div class="footer-social">
-          <a href="#" class="social-link">LinkedIn</a>
+          <a href="#" class="social-link">Pro Network</a>
           <a href="#" class="social-link">Twitter/X</a>
           <a href="#" class="social-link">Reddit</a>
         </div>
@@ -3055,13 +3114,13 @@ if (waitlistForm) {
     }
 
     // Set share URLs
-    const shareText = 'I just joined WorkGraph - AI that finds jobs from LinkedIn, Reddit, Twitter and 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
+    const shareText = 'I just joined WorkGraph - AI that finds jobs from professional networks, Reddit, Twitter and 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
 
     const waBtn = document.getElementById('shareWhatsApp');
     if (waBtn) waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
 
-    const liBtn = document.getElementById('shareLinkedIn');
-    if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=https://muthuarasu41193.github.io/WorkGraph/';
+    const emailBtn = document.getElementById('shareEmail');
+    if (emailBtn) emailBtn.href = 'mailto:?subject=' + encodeURIComponent('Join me on WorkGraph') + '&body=' + encodeURIComponent(shareText);
 
     const twBtn = document.getElementById('shareTwitter');
     if (twBtn) twBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText);
