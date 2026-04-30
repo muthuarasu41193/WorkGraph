@@ -1,77 +1,147 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
+import { PDFParse } from "pdf-parse";
+import mammoth from "mammoth";
+import Groq from "groq-sdk";
 
-import { getGroqClient } from "../../../lib/groq";
-import { createServerSupabaseClient } from "../../../lib/supabase";
-import { extractTextFromFile } from "../../../utils/resumeParser";
+type ParsedEducation = {
+  degree: string;
+  institution: string;
+  year: string;
+};
+
+type ParsedWorkExperience = {
+  title: string;
+  company: string;
+  duration: string;
+  description: string;
+};
 
 type ParsedResume = {
   full_name: string;
-  email: string;
+  email: string | null;
+  phone: string | null;
+  location: string | null;
   headline: string;
+  summary: string | null;
+  years_of_experience: number;
   skills: string[];
-  experience: string[];
-  education: string[];
-  links: {
-    linkedin: string;
-    github: string;
-  };
+  education: ParsedEducation[];
+  work_experience: ParsedWorkExperience[];
+  certifications: string[];
+  linkedin_url: string | null;
+  github_url: string | null;
+  website_url: string | null;
 };
+
+function getRequiredEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing required environment variable: ${key}`);
+  return value;
+}
+
+function getAccessToken(request: Request, cookieStore: Awaited<ReturnType<typeof cookies>>): string | null {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.toLowerCase().startsWith("bearer ")) {
+    return authHeader.slice(7).trim();
+  }
+
+  const cookieToken = cookieStore.get("sb-access-token")?.value;
+  if (cookieToken) return cookieToken;
+
+  const legacyAuth = cookieStore.get("supabase-auth-token")?.value;
+  if (!legacyAuth) return null;
+
+  try {
+    const parsed = JSON.parse(legacyAuth) as [string, string] | string;
+    if (Array.isArray(parsed)) return parsed[0] ?? null;
+    if (typeof parsed === "string") return parsed;
+  } catch {
+    // ignore malformed cookie format
+  }
+
+  return null;
+}
 
 function normalizeParsedResume(data: unknown): ParsedResume {
   const fallback: ParsedResume = {
     full_name: "",
-    email: "",
+    email: null,
+    phone: null,
+    location: null,
     headline: "",
+    summary: null,
+    years_of_experience: 0,
     skills: [],
-    experience: [],
     education: [],
-    links: { linkedin: "", github: "" },
+    work_experience: [],
+    certifications: [],
+    linkedin_url: null,
+    github_url: null,
+    website_url: null,
   };
 
   if (!data || typeof data !== "object") return fallback;
   const obj = data as Record<string, unknown>;
-  const links = (obj.links ?? {}) as Record<string, unknown>;
 
   return {
     full_name: typeof obj.full_name === "string" ? obj.full_name.trim() : "",
-    email: typeof obj.email === "string" ? obj.email.trim() : "",
+    email: typeof obj.email === "string" ? obj.email.trim() : null,
+    phone: typeof obj.phone === "string" ? obj.phone.trim() : null,
+    location: typeof obj.location === "string" ? obj.location.trim() : null,
     headline: typeof obj.headline === "string" ? obj.headline.trim() : "",
+    summary: typeof obj.summary === "string" ? obj.summary.trim() : null,
+    years_of_experience:
+      typeof obj.years_of_experience === "number" && Number.isFinite(obj.years_of_experience)
+        ? obj.years_of_experience
+        : 0,
     skills: Array.isArray(obj.skills)
-      ? obj.skills.filter((v): v is string => typeof v === "string").map((v) => v.trim()).filter(Boolean)
-      : [],
-    experience: Array.isArray(obj.experience)
-      ? obj.experience.filter((v): v is string => typeof v === "string").map((v) => v.trim()).filter(Boolean)
+      ? obj.skills.filter((s): s is string => typeof s === "string").map((s) => s.trim()).filter(Boolean)
       : [],
     education: Array.isArray(obj.education)
-      ? obj.education.filter((v): v is string => typeof v === "string").map((v) => v.trim()).filter(Boolean)
+      ? obj.education
+          .filter((ed): ed is Record<string, unknown> => !!ed && typeof ed === "object")
+          .map((ed) => ({
+            degree: typeof ed.degree === "string" ? ed.degree.trim() : "",
+            institution: typeof ed.institution === "string" ? ed.institution.trim() : "",
+            year: typeof ed.year === "string" ? ed.year.trim() : "",
+          }))
       : [],
-    links: {
-      linkedin: typeof links.linkedin === "string" ? links.linkedin.trim() : "",
-      github: typeof links.github === "string" ? links.github.trim() : "",
-    },
+    work_experience: Array.isArray(obj.work_experience)
+      ? obj.work_experience
+          .filter((wx): wx is Record<string, unknown> => !!wx && typeof wx === "object")
+          .map((wx) => ({
+            title: typeof wx.title === "string" ? wx.title.trim() : "",
+            company: typeof wx.company === "string" ? wx.company.trim() : "",
+            duration: typeof wx.duration === "string" ? wx.duration.trim() : "",
+            description: typeof wx.description === "string" ? wx.description.trim() : "",
+          }))
+      : [],
+    certifications: Array.isArray(obj.certifications)
+      ? obj.certifications
+          .filter((c): c is string => typeof c === "string")
+          .map((c) => c.trim())
+          .filter(Boolean)
+      : [],
+    linkedin_url: typeof obj.linkedin_url === "string" ? obj.linkedin_url.trim() : null,
+    github_url: typeof obj.github_url === "string" ? obj.github_url.trim() : null,
+    website_url: typeof obj.website_url === "string" ? obj.website_url.trim() : null,
   };
 }
 
 function calculateProfileCompleteness(profile: ParsedResume): number {
   let score = 0;
-  const points = {
-    full_name: 15,
-    email: 20,
-    headline: 10,
-    skills: 20,
-    experience: 15,
-    education: 10,
-    links: 10,
-  };
 
-  if (profile.full_name) score += points.full_name;
-  if (profile.email) score += points.email;
-  if (profile.headline) score += points.headline;
-  if (profile.skills.length > 0) score += points.skills;
-  if (profile.experience.length > 0) score += points.experience;
-  if (profile.education.length > 0) score += points.education;
-  if (profile.links.linkedin || profile.links.github) score += points.links;
+  if (profile.full_name) score += 15;
+  if (profile.headline) score += 10;
+  if (profile.summary) score += 10;
+  if (profile.skills.length >= 3) score += 15;
+  if (profile.work_experience.length >= 1) score += 20;
+  if (profile.education.length >= 1) score += 15;
+  if (profile.phone) score += 5;
+  if (profile.location) score += 5;
+  if (profile.certifications.length > 0) score += 5;
 
   return Math.min(100, score);
 }
@@ -80,98 +150,168 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
-    const submittedEmail = String(formData.get("email") ?? "").trim();
 
     if (!(file instanceof File)) {
-      return NextResponse.json({ error: "No file uploaded. Use form-data key: file." }, { status: 400 });
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    const cookieStore = await cookies();
+    const accessToken = getAccessToken(request, cookieStore);
+    if (!accessToken) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const supabase = createClient(
+      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+      getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
+    );
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(accessToken);
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     const lowerName = file.name.toLowerCase();
-    if (!lowerName.endsWith(".pdf") && !lowerName.endsWith(".docx")) {
-      return NextResponse.json({ error: "Only PDF or DOCX resumes are supported." }, { status: 400 });
+    const buffer = Buffer.from(await file.arrayBuffer());
+    let resumeText = "";
+
+    if (lowerName.endsWith(".pdf") || file.type === "application/pdf") {
+      const parser = new PDFParse({ data: buffer });
+      const parsed = await parser.getText();
+      await parser.destroy();
+      resumeText = parsed.text?.trim() ?? "";
+    } else if (
+      lowerName.endsWith(".docx") ||
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const parsed = await mammoth.extractRawText({ buffer });
+      resumeText = parsed.value?.trim() ?? "";
+    } else {
+      return NextResponse.json({ error: "Only PDF and DOCX files are supported" }, { status: 400 });
     }
 
-    const resumeText = (await extractTextFromFile(file)).trim();
-
-    if (!resumeText) {
-      return NextResponse.json({ error: "Could not extract text from PDF." }, { status: 400 });
+    const storagePath = `${user.id}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const { error: uploadError } = await supabase.storage.from("resumes").upload(storagePath, file, {
+      upsert: false,
+    });
+    if (uploadError) {
+      return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
+    const { data: publicUrlData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
+    const resumeUrl = publicUrlData.publicUrl;
 
-    const prompt = `You are a resume parser.
-Extract structured data from the resume text below.
-Return ONLY valid JSON with this exact shape:
-{
-  "full_name": "",
-  "email": "",
-  "headline": "",
-  "skills": [],
-  "experience": [],
-  "education": [],
-  "links": { "linkedin": "", "github": "" }
-}
-If a field is missing, return empty string or empty array.
+    // exact Groq flow requested
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-Resume text:
-${resumeText}`;
-
-    const groq = getGroqClient();
     const completion = await groq.chat.completions.create({
       model: "llama-3.1-70b-versatile",
-      temperature: 0,
-      response_format: { type: "json_object" },
       messages: [
-        { role: "system", content: "You return strict JSON only." },
-        { role: "user", content: prompt },
+        {
+          role: "system",
+          content: `You are a professional resume parser.
+         You always respond with valid JSON only.
+         Never include markdown, code blocks, or explanations.`,
+        },
+        {
+          role: "user",
+          content: `Parse this resume and return ONLY this JSON structure
+         with no other text:
+         {
+           "full_name": "string",
+           "email": "string or null",
+           "phone": "string or null",
+           "location": "string or null",
+           "headline": "their professional job title",
+           "summary": "professional summary or null",
+           "years_of_experience": number,
+           "skills": ["skill1", "skill2"],
+           "education": [
+             {
+               "degree": "string",
+               "institution": "string",
+               "year": "string"
+             }
+           ],
+           "work_experience": [
+             {
+               "title": "string",
+               "company": "string",
+               "duration": "string",
+               "description": "string"
+             }
+           ],
+           "certifications": ["cert1", "cert2"],
+           "linkedin_url": "string or null",
+           "github_url": "string or null",
+           "website_url": "string or null"
+         }
+
+         Resume text:
+         ${resumeText}`,
+        },
       ],
+      temperature: 0.1,
+      max_tokens: 2000,
     });
 
     const content = completion.choices[0]?.message?.content ?? "{}";
-    const parsed = normalizeParsedResume(JSON.parse(content));
-    const profileEmail = submittedEmail || parsed.email;
-    if (!profileEmail) {
-      return NextResponse.json({ error: "Email is required to create profile." }, { status: 400 });
+
+    let parsedJson: ParsedResume;
+    try {
+      parsedJson = normalizeParsedResume(JSON.parse(content));
+    } catch {
+      return NextResponse.json({ error: "Failed to parse Groq JSON response" }, { status: 500 });
     }
 
-    const profile_completeness = calculateProfileCompleteness(parsed);
+    const profile_completeness = calculateProfileCompleteness(parsedJson);
 
-    const supabase = createServerSupabaseClient(await cookies());
-    const { data, error } = await supabase
-      .from("profiles")
-      .upsert(
-        {
-          email: profileEmail,
-          full_name: parsed.full_name || null,
-          headline: parsed.headline || null,
-          skills: parsed.skills,
-          experience: parsed.experience,
-          education: parsed.education,
-          linkedin_url: parsed.links.linkedin || null,
-          github_url: parsed.links.github || null,
-          resume_url: String(formData.get("resume_url") ?? "") || null,
-          resume_text: resumeText,
-          profile_completeness,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      )
-      .select()
-      .single();
+    const { error: upsertError } = await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        email: parsedJson.email ?? user.email ?? null,
+        full_name: parsedJson.full_name || null,
+        phone: parsedJson.phone,
+        location: parsedJson.location,
+        headline: parsedJson.headline || null,
+        summary: parsedJson.summary,
+        years_of_experience: parsedJson.years_of_experience ?? null,
+        skills: parsedJson.skills,
+        education: parsedJson.education,
+        work_experience: parsedJson.work_experience,
+        certifications: parsedJson.certifications,
+        linkedin_url: parsedJson.linkedin_url,
+        github_url: parsedJson.github_url,
+        website_url: parsedJson.website_url,
+        resume_raw_text: resumeText,
+        resume_url: resumeUrl,
+        profile_completeness,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" }
+    );
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (upsertError) {
+      return NextResponse.json({ error: upsertError.message }, { status: 500 });
     }
 
     return NextResponse.json(
       {
         success: true,
-        profile: data,
-        parsed_resume: parsed,
+        profile: {
+          ...parsedJson,
+          resume_url: resumeUrl,
+          resume_raw_text: resumeText,
+        },
         profile_completeness,
       },
       { status: 200 }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unexpected error parsing resume.";
+    const message = error instanceof Error ? error.message : "Unexpected parse error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
