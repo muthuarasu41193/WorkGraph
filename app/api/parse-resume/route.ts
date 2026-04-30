@@ -79,6 +79,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
+    const submittedEmail = String(formData.get("email") ?? "").trim();
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "No file uploaded. Use form-data key: file." }, { status: 400 });
@@ -129,6 +130,11 @@ ${resumeText}`;
 
     const content = completion.choices[0]?.message?.content ?? "{}";
     const parsed = normalizeParsedResume(JSON.parse(content));
+    const profileEmail = submittedEmail || parsed.email;
+    if (!profileEmail) {
+      return NextResponse.json({ error: "Email is required to create profile." }, { status: 400 });
+    }
+
     const profile_completeness = calculateProfileCompleteness(parsed);
 
     const supabase = createServerSupabaseClient();
@@ -136,7 +142,7 @@ ${resumeText}`;
       .from("profiles")
       .upsert(
         {
-          email: parsed.email || null,
+          email: profileEmail,
           full_name: parsed.full_name || null,
           headline: parsed.headline || null,
           skills: parsed.skills,
@@ -144,6 +150,7 @@ ${resumeText}`;
           education: parsed.education,
           linkedin_url: parsed.links.linkedin || null,
           github_url: parsed.links.github || null,
+          resume_text: resumeText,
           profile_completeness,
           updated_at: new Date().toISOString(),
         },

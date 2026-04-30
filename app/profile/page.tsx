@@ -41,20 +41,21 @@ function toStringList(value: unknown): string[] {
     : [];
 }
 
-async function getProfile(): Promise<ProfileViewModel> {
+async function getProfile(emailOverride?: string): Promise<ProfileViewModel> {
   const supabase = await createServerComponentSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user?.email) return emptyProfile;
+  const targetEmail = user?.email || emailOverride?.trim();
+  if (!targetEmail) return emptyProfile;
 
   const { data, error } = await supabase
     .from("profiles")
     .select(
       "full_name, headline, linkedin_url, github_url, skills, experience, education, ats_score, updated_at"
     )
-    .eq("email", user.email)
+    .eq("email", targetEmail)
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -107,8 +108,13 @@ function AtsScoreRing({ score }: { score: number }) {
   );
 }
 
-export default async function ProfilePage() {
-  const profile = await getProfile();
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ email?: string }>;
+}) {
+  const params = (await searchParams) ?? {};
+  const profile = await getProfile(params.email);
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] px-6 py-10 text-gray-900">
