@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Camera, MapPin } from "lucide-react";
+import Image from "next/image";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 
@@ -80,7 +81,14 @@ export default function ProfileHeader({ profile, userId }: Props) {
           className="group relative h-24 w-24 overflow-hidden rounded-full"
         >
           {photoUrl ? (
-            <img src={photoUrl} alt="Profile" className="h-full w-full object-cover" />
+            <Image
+              src={photoUrl}
+              alt="Profile"
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="96px"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-[#7C3AED] text-3xl font-bold text-white">
               {initials}

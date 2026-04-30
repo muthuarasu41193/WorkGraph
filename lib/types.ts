@@ -60,7 +60,7 @@ export interface JobApplication {
   source_url: string | null;
   match_score: number | null;
   shortlist_probability: string | null;
-  shortlist_reasons: any | null;
+  shortlist_reasons: unknown | null;
   missing_skills: string[];
   status: "saved" | "applied" | "interview" | "offer" | "rejected";
   applied_at: string | null;
