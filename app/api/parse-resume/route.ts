@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { PDFParse } from "pdf-parse";
 
 import { getGroqClient } from "../../../lib/groq";
 import { createServerSupabaseClient } from "../../../lib/supabase";
+import { extractTextFromFile } from "../../../utils/resumeParser";
 
 type ParsedResume = {
   full_name: string;
@@ -86,16 +86,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file uploaded. Use form-data key: file." }, { status: 400 });
     }
 
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      return NextResponse.json({ error: "Only PDF resumes are supported in this endpoint." }, { status: 400 });
+    const lowerName = file.name.toLowerCase();
+    if (!lowerName.endsWith(".pdf") && !lowerName.endsWith(".docx")) {
+      return NextResponse.json({ error: "Only PDF or DOCX resumes are supported." }, { status: 400 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const parser = new PDFParse({ data: buffer });
-    const extracted = await parser.getText();
-    await parser.destroy();
-    const resumeText = extracted.text?.trim();
+    const resumeText = (await extractTextFromFile(file)).trim();
 
     if (!resumeText) {
       return NextResponse.json({ error: "Could not extract text from PDF." }, { status: 400 });
@@ -151,6 +147,7 @@ ${resumeText}`;
           education: parsed.education,
           linkedin_url: parsed.links.linkedin || null,
           github_url: parsed.links.github || null,
+          resume_url: String(formData.get("resume_url") ?? "") || null,
           resume_text: resumeText,
           profile_completeness,
           updated_at: new Date().toISOString(),
