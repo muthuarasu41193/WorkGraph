@@ -35,17 +35,17 @@
   --orange: #F59E0B;
   --pink: #EC4899;
   --teal: #14B8A6;
-  --bg: #030712;
-  --card: #0F1729;
-  --border: #1E2D4A;
-  --text: #F9FAFB;
+  --bg: #FFFFFF;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #111827;
   --muted: #6B7280;
-  --secondary: #9CA3AF;
-  --surface: rgba(15,23,41,.86);
-  --surface-strong: rgba(15,23,41,.96);
-  --border-soft: rgba(167,139,250,.2);
-  --shadow-soft: 0 20px 45px rgba(2,6,23,.35);
-  --shadow-md: 0 16px 34px rgba(2,6,23,.45);
+  --secondary: #4B5563;
+  --surface: #FFFFFF;
+  --surface-strong: #FFFFFF;
+  --border-soft: #E5E7EB;
+  --shadow-soft: 0 1px 2px rgba(17,24,39,.06);
+  --shadow-md: 0 1px 2px rgba(17,24,39,.08);
   --radius-lg: 18px;
 }
 
@@ -53,10 +53,7 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Inter', sans-serif;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(124,58,237,.2) 0, transparent 34%),
-    radial-gradient(circle at 88% 4%, rgba(37,99,235,.16) 0, transparent 38%),
-    linear-gradient(180deg, #030712 0%, #060c1b 55%, #02040a 100%);
+  background: #FFFFFF;
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.65;
@@ -400,39 +397,6 @@ a, button, input, textarea {
   font-size: 14px; color: var(--muted);
 }
 
-/* URGENCY BAR */
-.urgency-bar {
-  background: rgba(239,68,68,.08);
-  border: 1px solid rgba(239,68,68,.2);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-}
-
-.urgency-left {
-  display: flex; align-items: center;
-  gap: 8px; font-size: 13px;
-  color: #FCA5A5; margin-bottom: 8px;
-}
-
-.urgency-progress {
-  height: 4px;
-  background: rgba(255,255,255,.08);
-  border-radius: 2px; overflow: hidden;
-}
-
-.urgency-fill {
-  height: 100%;
-  background: linear-gradient(90deg,#EF4444,#F59E0B);
-  border-radius: 2px;
-  animation: fillPulse 2s ease-in-out infinite;
-}
-
-@keyframes fillPulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: .7; }
-}
-
 /* FORM */
 .simple-form-row {
   display: flex; gap: 10px; margin-bottom: 12px;
@@ -481,18 +445,6 @@ a, button, input, textarea {
 .big-cta {
   width: auto; white-space: nowrap;
   padding: 16px 28px;
-}
-
-.btn-shine {
-  position: absolute; top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
-  animation: shine 3s ease-in-out infinite;
-}
-
-@keyframes shine {
-  0% { left: -100%; }
-  50%,100% { left: 150%; }
 }
 
 .btn-arrow { font-size: 18px; transition: transform .2s; }
@@ -1403,98 +1355,6 @@ a, button, input, textarea {
   flex-wrap: wrap; font-size: 13px; color: var(--muted);
 }
 
-/* ============================================
-   EXIT INTENT POPUP
-   ============================================ */
-.exit-overlay {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,.8); z-index: 9999;
-  display: none; align-items: center;
-  justify-content: center; padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.exit-overlay.visible { display: flex; }
-
-.exit-popup {
-  background: var(--card);
-  border: 1px solid rgba(124,58,237,.3);
-  border-radius: 20px; padding: 40px;
-  max-width: 460px; width: 100%;
-  text-align: center; position: relative;
-  animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(.8); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.exit-close {
-  position: absolute; top: 16px; right: 16px;
-  background: rgba(255,255,255,.08); border: none;
-  color: var(--muted); width: 28px; height: 28px;
-  border-radius: 50%; cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Inter', sans-serif;
-}
-
-.exit-icon { font-size: 48px; margin-bottom: 16px; }
-
-.exit-popup h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.5px; }
-
-.exit-popup > p {
-  font-size: 15px; color: var(--secondary);
-  margin-bottom: 20px; line-height: 1.6;
-}
-
-.exit-offer {
-  background: rgba(124,58,237,.1);
-  border: 1px solid rgba(124,58,237,.2);
-  border-radius: 12px; padding: 16px; margin-bottom: 20px;
-}
-
-.exit-offer-badge {
-  display: inline-block; padding: 3px 10px;
-  background: linear-gradient(135deg,var(--purple),var(--blue));
-  border-radius: 20px; font-size: 11px; font-weight: 700;
-  color: white; margin-bottom: 8px;
-}
-
-.exit-offer p { font-size: 14px; color: var(--secondary); margin: 0; }
-
-.exit-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-
-.exit-skip {
-  background: none; border: none; color: var(--muted);
-  font-size: 12px; cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  text-decoration: underline; padding: 0;
-}
-
-/* ============================================
-   LIVE ACTIVITY FEED
-   ============================================ */
-.activity-feed {
-  position: fixed; bottom: 24px; left: 24px;
-  z-index: 990; max-width: 300px; display: none;
-}
-
-.activity-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; background: rgba(15,23,41,.95);
-  border: 1px solid var(--border); border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.4);
-  animation: slideInLeft .4s ease;
-  backdrop-filter: blur(20px);
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-100%); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
 .activity-avatar {
   width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center;
@@ -1744,68 +1604,81 @@ a, button, input, textarea {
 .icon-theme-purple i { color: var(--purple-l) !important; }
 .icon-theme-green i { color: var(--green) !important; }
 
-/* Local icon fallback: renders even if Font Awesome CDN fails */
-i.fa-solid, i.fa-brands {
-  font-style: normal;
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 700;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* Light professional refresh */
+h1, h2, h3, h4, h5, h6 { font-weight: 600; color: #111827; }
+p, li, .section-head p, .hero-subtitle { color: #4B5563; }
+.section { padding: 124px 0; }
+.bg-gradient, .floating-orbs, .preview-glow, .fct-glow { display: none !important; }
+.gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
 }
-i.fa-globe::before { content: '🌐'; }
-i.fa-bullseye::before { content: '🎯'; }
-i.fa-file-arrow-up::before { content: '📄'; }
-i.fa-diagram-project::before { content: '🗂'; }
-i.fa-id-badge::before { content: '🪪'; }
-i.fa-share-nodes::before { content: '🔗'; }
-i.fa-github::before { content: '🐙'; }
-i.fa-briefcase::before { content: '💼'; }
-i.fa-certificate::before { content: '🏅'; }
-i.fa-money-bill-trend-up::before { content: '💸'; }
-i.fa-key::before { content: '🔑'; }
-i.fa-user-check::before { content: '✅'; }
-i.fa-sack-dollar::before { content: '💰'; }
-i.fa-people-group::before { content: '👥'; }
-i.fa-handshake::before { content: '🤝'; }
-i.fa-users-viewfinder::before { content: '🧭'; }
-i.fa-store::before { content: '🏪'; }
-i.fa-address-card::before { content: '🪪'; }
-i.fa-shield-heart::before { content: '🛡'; }
-i.fa-microphone-lines::before { content: '🎤'; }
-i.fa-chart-line::before { content: '📈'; }
-i.fa-link::before { content: '🔗'; }
-i.fa-building-shield::before { content: '🏢'; }
-i.fa-lightbulb::before { content: '💡'; }
-i.fa-magnifying-glass-chart::before { content: '🔎'; }
-i.fa-circle-check::before { content: '✔'; }
-i.fa-arrow-right::before { content: '→'; }
-i.fa-star::before { content: '★'; }
-i.fa-whatsapp::before { content: '🟢'; font-size: 11px; }
-i.fa-envelope::before { content: '✉'; }
-i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
-
-/* ============================================
-   TOAST NOTIFICATION
-   ============================================ */
-.toast {
-  position: fixed; bottom: 24px; right: 24px;
-  background: var(--card);
-  border: 1px solid var(--green);
-  border-radius: 12px; padding: 14px 20px;
-  font-size: 14px; color: var(--text);
-  z-index: 9998; display: none;
-  box-shadow: 0 8px 30px rgba(0,0,0,.4);
-  animation: slideInRight .3s ease;
-  max-width: 300px;
+.hero-title { font-weight: 600; letter-spacing: -1.5px; color: #111827; margin-bottom: 28px; }
+.hero-subtitle { max-width: 720px; margin-bottom: 44px; }
+.announcement-bar {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+  color: #4B5563;
 }
-
-.toast.visible { display: block; }
-
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(100%); }
-  to { opacity: 1; transform: translateX(0); }
+.announce-dot { background: #7C3AED; animation: none; }
+.announce-cta { color: #111827; border-color: #E5E7EB; }
+.navbar {
+  background: rgba(255,255,255,.9);
+  border-bottom: 1px solid #E5E7EB;
+  box-shadow: 0 1px 2px rgba(17,24,39,.06);
+}
+.logo-icon, .hero-label, .section-tag, .live-badge, .roadmap-badge, .popular-tag, .early-tag {
+  background: #F9FAFB !important;
+  border: 1px solid #E5E7EB !important;
+  color: #374151 !important;
+}
+.waitlist-box, .hero-stats, .feat-card, .roadmap-card, .step-item, .testi-card, .price-card, .final-cta-box, .profile-card-mock, .vault-side, .guide-card, .feature-request-box, .guarantee-box, .pcm-section, .mock-job, .mock-stat, .share-link-box {
+  background: #FFFFFF !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 1px 2px rgba(17,24,39,.06) !important;
+}
+.mock-stat.highlight, .active-job, .featured-guide, .featured-testi, .popular-card {
+  background: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+}
+.browser-mock {
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(17,24,39,.08);
+}
+.browser-top { background: #F3F4F6; border-bottom: 1px solid #E5E7EB; }
+.url-bar { background: #FFFFFF; border: 1px solid #E5E7EB; color: #6B7280; }
+.form-input {
+  background: #FFFFFF;
+  color: #111827;
+  border: 1px solid #D1D5DB;
+}
+.form-input:focus {
+  border-color: #7C3AED;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(124,58,237,.12);
+}
+.cta-button, .nav-cta, .btn-filled {
+  background: #7C3AED !important;
+  border: 1px solid #7C3AED !important;
+  box-shadow: 0 1px 2px rgba(124,58,237,.18) !important;
+}
+.cta-button:hover, .nav-cta:hover, .btn-filled:hover { transform: translateY(-1px); }
+.btn-shine { display: none !important; }
+.feat-icon, .pf-icon, .roadmap-icon, .step-icon, .frb-icon, .winwin-icon, .vault-emoji {
+  background: #F9FAFB !important;
+  border: 1px solid #E5E7EB !important;
+  color: #111827 !important;
+}
+i.fa-solid, i.fa-brands, .step-arrow i, .winwin-divider i {
+  color: #374151 !important;
+}
+.co-logo.google, .co-logo.meta, .co-logo.stripe, .google-logo, .meta-logo, .stripe-logo {
+  background: #F3F4F6 !important;
+  color: #111827 !important;
+  border: 1px solid #E5E7EB;
 }
 
 /* ============================================
@@ -1849,10 +1722,7 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
   .footer-bottom { text-align: center; }
   .final-cta-box { padding: 40px 20px; }
   .stat-divider { width: 80%; height: 1px; }
-  .activity-feed { left: 12px; bottom: 12px; }
-  .exit-popup { padding: 28px 20px; }
   .trust-row { gap: 8px; font-size: 11px; }
-  .toast { right: 12px; bottom: 80px; }
 }
 </style>
 </head>
@@ -1860,13 +1730,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
 <body>
 
 <!-- BACKGROUND -->
-<div class="bg-gradient"></div>
-<div class="floating-orbs">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-  <div class="orb orb-4"></div>
-</div>
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar" id="announcementBar">
@@ -1966,16 +1829,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
       </div>
 
       <form id="waitlistForm">
-        <!-- URGENCY BAR -->
-        <div class="urgency-bar">
-          <div class="urgency-left">
-            <span>Limited</span>
-            <span>Only <strong id="spotsLeft">247</strong> early access spots remaining</span>
-          </div>
-          <div class="urgency-progress">
-            <div class="urgency-fill" style="width:75%"></div>
-          </div>
-        </div>
 
         <div class="simple-form-row">
           <input
@@ -2015,7 +1868,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
           <button type="submit" class="cta-button big-cta" id="submitBtn">
             <span id="btnText">Get Early Access Free</span>
             <span class="btn-arrow">></span>
-            <div class="btn-shine"></div>
           </button>
         </div>
 
@@ -2088,7 +1940,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
 
     <!-- DASHBOARD PREVIEW -->
     <div class="preview-wrapper" data-aos="fade-up" data-aos-delay="300">
-      <div class="preview-glow"></div>
       <div class="browser-mock">
         <div class="browser-top">
           <div class="dots">
@@ -2824,7 +2675,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
 <section class="final-cta-section">
   <div class="container">
     <div class="final-cta-box" data-aos="fade-up">
-      <div class="fct-glow"></div>
       <span class="section-tag">Join the Waitlist</span>
       <h2>Your dream job is already<br/><span class="gradient-text">posted somewhere.</span><br/>Let us find it for you.</h2>
       <p>Join <strong id="finalCount">2,847+</strong> job seekers getting early access. Launching soon. First 500 get Pro free for 3 months.</p>
@@ -2918,31 +2768,6 @@ i.fa-x-twitter::before { content: '𝕏'; font-weight: 800; }
   </div>
 </footer>
 
-<!-- EXIT INTENT POPUP -->
-<div class="exit-overlay" id="exitOverlay">
-  <div class="exit-popup">
-    <button class="exit-close" onclick="closeExit()"></button>
-    <div class="exit-icon"></div>
-    <h3>Wait! Before you go.</h3>
-    <p>Job seekers using WorkGraph get<br/><strong>3x more interviews</strong> than those who don't.</p>
-    <div class="exit-offer">
-      <span class="exit-offer-badge">Limited Time Offer</span>
-      <p>Join now and get <strong>Pro plan FREE</strong> for your first 3 months.</p>
-    </div>
-    <form class="exit-form" id="exitForm">
-      <input type="email" id="exitEmail" placeholder="Your email address" class="form-input" required/>
-      <button type="submit" class="cta-button">Claim My Free Pro Access </button>
-    </form>
-    <button class="exit-skip" onclick="closeExit()">No thanks, I prefer fewer interviews</button>
-  </div>
-</div>
-
-<!-- LIVE ACTIVITY FEED -->
-<div class="activity-feed" id="activityFeed"></div>
-
-<!-- TOAST NOTIFICATION -->
-<div class="toast" id="toast">Email saved successfully.</div>
-
 <script>
 // ============================================
 // PAGE LOAD
@@ -2982,24 +2807,6 @@ const observer = new IntersectionObserver(
 document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
 
 // ============================================
-// SPOTS COUNTER
-// ============================================
-let spots = 247;
-
-function decreaseSpots() {
-  if (spots > 10) {
-    spots -= Math.floor(Math.random() * 2) + 1;
-    const spotsEl = document.getElementById('spotsLeft');
-    const navSpotsEl = document.getElementById('navSpots');
-    if (spotsEl) spotsEl.textContent = spots;
-    if (navSpotsEl) navSpotsEl.textContent = spots + ' spots left';
-  }
-  setTimeout(decreaseSpots, Math.floor(Math.random() * 120000) + 60000);
-}
-
-decreaseSpots();
-
-// ============================================
 // LIVE WAITLIST COUNTER
 // ============================================
 let count = 2847;
@@ -3014,17 +2821,6 @@ function bumpCount() {
 }
 
 bumpCount();
-
-// ============================================
-// SHOW TOAST
-// ============================================
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  if (!toast) return;
-  toast.textContent = msg;
-  toast.classList.add('visible');
-  setTimeout(() => toast.classList.remove('visible'), 3500);
-}
 
 // ============================================
 // SAVE TO GOOGLE SHEETS
@@ -3102,7 +2898,7 @@ if (waitlistForm) {
     const country = document.getElementById('country')?.value.trim();
 
     if (!firstName || !email || !jobField || !country) {
-      showToast('Please fill all waitlist details.');
+      alert('Please fill all waitlist details.');
       return;
     }
 
@@ -3128,11 +2924,10 @@ if (waitlistForm) {
         submitBtn.innerHTML = `
           <span id="btnText">Get Early Access Free</span>
           <span class="btn-arrow">></span>
-          <div class="btn-shine"></div>
         `;
         submitBtn.disabled = false;
       }
-      showToast('Unable to save right now. Please try again.');
+      alert('Unable to save right now. Please try again.');
       return;
     }
 
@@ -3164,13 +2959,7 @@ if (waitlistForm) {
     waitlistForm.style.display = 'none';
     if (successState) successState.classList.add('visible');
 
-    // Show toast
-    showToast('You are on the waitlist! Check your email.');
-
-    // Decrease spots
-    spots = Math.max(spots - 1, 1);
-    const spotsEl = document.getElementById('spotsLeft');
-    if (spotsEl) spotsEl.textContent = spots;
+    alert('You are on the waitlist! Check your email.');
   });
 }
 
@@ -3194,7 +2983,7 @@ if (finalForm) {
     if (!saved) {
       btn.innerHTML = 'Join Waitlist';
       btn.disabled = false;
-      showToast('Unable to save right now. Please try again.');
+      alert('Unable to save right now. Please try again.');
       return;
     }
 
@@ -3202,109 +2991,9 @@ if (finalForm) {
     btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
     btn.disabled = false;
 
-    showToast('Added to waitlist successfully.');
+    alert('Added to waitlist successfully.');
   });
 }
-
-// ============================================
-// EXIT FORM
-// ============================================
-const exitForm = document.getElementById('exitForm');
-
-if (exitForm) {
-  exitForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = document.getElementById('exitEmail').value.trim();
-    if (!email) return;
-
-    const btn = exitForm.querySelector('button');
-    btn.textContent = 'Adding you...';
-    btn.disabled = true;
-
-    const saved = await saveToWaitlist({ email, source: 'exit_popup' });
-    if (!saved) {
-      btn.textContent = 'Claim My Free Pro Access';
-      btn.disabled = false;
-      showToast('Unable to save right now. Please try again.');
-      return;
-    }
-
-    btn.textContent = 'You are on the list!';
-    btn.style.background = 'linear-gradient(135deg,#10B981,#059669)';
-
-    setTimeout(closeExit, 2000);
-  });
-}
-
-// ============================================
-// EXIT INTENT POPUP
-// ============================================
-let exitShown = false;
-
-document.addEventListener('mouseleave', e => {
-  if (e.clientY <= 0 && !exitShown) {
-    exitShown = true;
-    document.getElementById('exitOverlay')?.classList.add('visible');
-  }
-});
-
-setTimeout(() => {
-  if (!exitShown) {
-    exitShown = true;
-    document.getElementById('exitOverlay')?.classList.add('visible');
-  }
-}, 40000);
-
-function closeExit() {
-  document.getElementById('exitOverlay')?.classList.remove('visible');
-}
-
-// ============================================
-// LIVE ACTIVITY NOTIFICATIONS
-// ============================================
-const activities = [
-  { name: 'Rahul',   location: 'India',      initial: 'R', color: '#7C3AED' },
-  { name: 'Marcus',  location: 'London',     initial: 'M', color: '#2563EB' },
-  { name: 'James',   location: 'New York',   initial: 'J', color: '#0891B2' },
-  { name: 'Carlos',  location: 'Madrid',     initial: 'C', color: '#059669' },
-  { name: 'Ahmed',   location: 'Dubai',      initial: 'A', color: '#7C3AED' },
-  { name: 'Wei',     location: 'Singapore',  initial: 'W', color: '#2563EB' },
-  { name: 'Priya',   location: 'Bangalore',  initial: 'P', color: '#EC4899' },
-  { name: 'Sara',    location: 'Germany',    initial: 'S', color: '#F59E0B' },
-  { name: 'Fatima',  location: 'UAE',        initial: 'F', color: '#14B8A6' },
-  { name: 'Yuki',    location: 'Tokyo',      initial: 'Y', color: '#EC4899' },
-];
-
-let actIndex = 0;
-
-function showActivity() {
-  const feed = document.getElementById('activityFeed');
-  if (!feed) return;
-
-  const person = activities[actIndex % activities.length];
-  actIndex++;
-
-  feed.innerHTML = `
-    <div class="activity-item">
-      <div class="activity-avatar" style="background:linear-gradient(135deg,${person.color},#2563EB)">${person.initial}</div>
-      <div class="activity-text"><strong>${person.name} from ${person.location}</strong> just joined the waitlist</div>
-      <div class="activity-time">just now</div>
-    </div>
-  `;
-
-  feed.style.display = 'block';
-  feed.style.opacity = '1';
-  feed.style.transition = 'opacity 0.5s ease';
-
-  setTimeout(() => {
-    feed.style.opacity = '0';
-    setTimeout(() => { feed.style.display = 'none'; }, 500);
-  }, 4000);
-
-  setTimeout(showActivity, Math.floor(Math.random() * 25000) + 15000);
-}
-
-setTimeout(showActivity, 5000);
 
 // ============================================
 // COPY REFERRAL LINK
@@ -3317,7 +3006,7 @@ function copyReferral() {
   navigator.clipboard.writeText(refEl.textContent.trim()).then(() => {
     btn.textContent = 'Copied!';
     btn.style.background = '#10B981';
-    showToast('Referral link copied to clipboard.');
+    alert('Referral link copied to clipboard.');
     setTimeout(() => {
       btn.textContent = 'Copy Link';
       btn.style.background = '';
@@ -3342,10 +3031,10 @@ const navbar = document.querySelector('.navbar');
 if (navbar) {
   window.addEventListener('scroll', () => {
     if (window.scrollY > 60) {
-      navbar.style.background = 'rgba(3,7,18,.97)';
-      navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,.4)';
+      navbar.style.background = 'rgba(255,255,255,.98)';
+      navbar.style.boxShadow = '0 1px 2px rgba(17,24,39,.06)';
     } else {
-      navbar.style.background = 'rgba(3,7,18,.85)';
+      navbar.style.background = 'rgba(255,255,255,.9)';
       navbar.style.boxShadow = 'none';
     }
   }, { passive: true });
