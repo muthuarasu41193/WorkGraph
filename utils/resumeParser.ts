@@ -1,29 +1,35 @@
 import mammoth from "mammoth";
 import { PDFParse } from "pdf-parse";
 
-export type ResumeFileType = "pdf" | "docx";
+export async function extractTextFromFile(file: File): Promise<string> {
+  try {
+    const lowerName = file.name.toLowerCase();
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-function detectResumeType(fileName: string): ResumeFileType {
-  const normalized = fileName.toLowerCase();
-  if (normalized.endsWith(".pdf")) return "pdf";
-  if (normalized.endsWith(".docx")) return "docx";
+    if (file.type === "application/pdf" || lowerName.endsWith(".pdf")) {
+      const parser = new PDFParse({ data: buffer });
+      const parsed = await parser.getText();
+      await parser.destroy();
+      return parsed.text.trim();
+    }
 
-  throw new Error("Unsupported resume file type. Upload PDF or DOCX.");
+    if (
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      lowerName.endsWith(".docx")
+    ) {
+      const parsed = await mammoth.extractRawText({ buffer });
+      return parsed.value.trim();
+    }
+
+    throw new Error("Unsupported file type. Please upload a PDF or DOCX file.");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to extract text from file.";
+    throw new Error(`Resume parsing failed: ${message}`);
+  }
 }
 
-export async function extractResumeText(
-  fileBuffer: Buffer,
-  fileName: string
-): Promise<string> {
-  const fileType = detectResumeType(fileName);
-
-  if (fileType === "pdf") {
-    const parser = new PDFParse({ data: fileBuffer });
-    const parsed = await parser.getText();
-    await parser.destroy();
-    return parsed.text.trim();
-  }
-
-  const parsed = await mammoth.extractRawText({ buffer: fileBuffer });
-  return parsed.value.trim();
+export async function extractResumeText(fileBuffer: Buffer, fileName: string): Promise<string> {
+  const fallbackFile = new File([new Uint8Array(fileBuffer)], fileName);
+  return extractTextFromFile(fallbackFile);
 }

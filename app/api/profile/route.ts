@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { createServerSupabaseClient } from "../../../lib/supabase";
 
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
     };
 
     const profile_completeness = calculateCompleteness(payload);
-    const supabase = createServerSupabaseClient();
+    const supabase = createServerSupabaseClient(await cookies());
     const { data, error } = await supabase
       .from("profiles")
       .upsert(

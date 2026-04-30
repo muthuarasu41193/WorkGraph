@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { getGroqClient } from "../../../lib/groq";
 import { createServerSupabaseClient } from "../../../lib/supabase";
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createServerSupabaseClient();
+    const supabase = createServerSupabaseClient(await cookies());
     let query = supabase
       .from("profiles")
       .select("id, email, full_name, headline, skills, experience, education, resume_text");

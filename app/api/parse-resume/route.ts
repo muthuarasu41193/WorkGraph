@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { PDFParse } from "pdf-parse";
 
 import { getGroqClient } from "../../../lib/groq";
@@ -137,7 +138,7 @@ ${resumeText}`;
 
     const profile_completeness = calculateProfileCompleteness(parsed);
 
-    const supabase = createServerSupabaseClient();
+    const supabase = createServerSupabaseClient(await cookies());
     const { data, error } = await supabase
       .from("profiles")
       .upsert(
