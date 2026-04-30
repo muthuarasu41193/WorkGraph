@@ -1,0 +1,45 @@
+{
+  "name": "landing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "google-apps-script-waitlist.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muthuarasu41193/WorkGraph.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/muthuarasu41193/WorkGraph/issues"
+  },
+  "homepage": "https://github.com/muthuarasu41193/WorkGraph#readme",
+  "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.1",
+    "groq-sdk": "^1.1.2",
+    "lucide-react": "^1.14.0",
+    "mammoth": "^1.12.0",
+    "next": "^16.2.4",
+    "pdf-parse": "^2.4.5",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3"
+  }
+}
