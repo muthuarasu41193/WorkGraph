@@ -855,6 +855,42 @@ a, button, input, textarea {
   line-height: 1.7; margin-bottom: 32px;
 }
 
+.profile-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: -6px 0 26px;
+}
+
+.profile-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--border);
+}
+
+.profile-cta-btn.primary {
+  color: #fff;
+  border: 0;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+}
+
+.profile-cta-btn.secondary {
+  color: var(--text);
+  background: #fff;
+}
+
+.profile-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
 .profile-features {
   display: flex; flex-direction: column; gap: 14px;
 }
@@ -2223,6 +2259,10 @@ body {
         <span class="section-tag">Professional Profile</span>
         <h2>Build your own public<br/><span class="gradient-text">career identity profile</span></h2>
         <p class="profile-sub">Every job seeker gets a separate WorkGraph profile to showcase skills, achievements, and proof of work in one trusted place beyond a standard resume.</p>
+        <div class="profile-cta-row">
+          <a class="profile-cta-btn primary" href="/login">Create Your Profile</a>
+          <a class="profile-cta-btn secondary" href="/profile">View Profile Demo</a>
+        </div>
 
         <div class="profile-features">
           <div class="pf-item">
