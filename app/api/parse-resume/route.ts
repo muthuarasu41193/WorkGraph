@@ -187,12 +187,9 @@ export async function POST(request: Request) {
     let resumeText = "";
 
     if (lowerName.endsWith(".pdf") || file.type === "application/pdf") {
-      // Lazy-load pdf-parse so this route module can initialize on Vercel without pulling
-      // pdfjs-dist into the cold-start graph for non-PDF requests (avoids HTML 500 pages).
-      const { PDFParse } = await import("pdf-parse");
-      const parser = new PDFParse({ data: buffer });
-      const parsed = await parser.getText();
-      await parser.destroy();
+      // Lazy-load pdf-parse only when needed to keep cold starts lighter.
+      const pdfParse = (await import("pdf-parse")).default;
+      const parsed = await pdfParse(buffer);
       resumeText = parsed.text?.trim() ?? "";
     } else if (
       lowerName.endsWith(".docx") ||
