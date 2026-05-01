@@ -18,6 +18,7 @@ import {
   readApiJson,
   withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
+import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 type ManualState = {
   email: string;
@@ -67,6 +68,18 @@ export default function CreateProfilePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  async function requireSignedInUser() {
+    const supabase = createBrowserSupabaseClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      throw new Error("Not authenticated. Please sign in first, then try creating your profile again.");
+    }
+  }
+
   const acceptedTypes = useMemo(
     () => ({
       "application/pdf": [".pdf"],
@@ -105,6 +118,7 @@ export default function CreateProfilePage() {
     setError("");
     setMessage("");
     try {
+      await requireSignedInUser();
       const data = new FormData();
       data.append("file", file);
       if (uploadEmail.trim()) data.append("email", uploadEmail.trim());
@@ -152,6 +166,7 @@ export default function CreateProfilePage() {
     setError("");
     setMessage("");
     try {
+      await requireSignedInUser();
       const payload = {
         email: manual.email.trim(),
         full_name: manual.full_name.trim(),

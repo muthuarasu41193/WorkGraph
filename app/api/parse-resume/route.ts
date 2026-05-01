@@ -176,7 +176,10 @@ export async function POST(request: Request) {
     }
 
     if (!userId) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Not authenticated. Please sign in and try again." },
+        { status: 401 }
+      );
     }
 
     const lowerName = file.name.toLowerCase();
