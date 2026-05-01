@@ -98,8 +98,8 @@ export default async function ProfilePage() {
             <ProfileHeader profile={profile} userId={user.id} />
             <LinksSection profile={profile} userId={user.id} />
             <SkillsSection userId={user.id} initialSkills={profile.skills} />
-            <ExperienceTimeline experience={profile.work_experience} />
-            <EducationSection education={profile.education} />
+            <ExperienceTimeline userId={user.id} experience={profile.work_experience} />
+            <EducationSection userId={user.id} education={profile.education} />
           </section>
 
           <aside className="space-y-6">
