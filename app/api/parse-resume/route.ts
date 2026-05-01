@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { PDFParse } from "pdf-parse";
 import mammoth from "mammoth";
 import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
@@ -9,6 +8,8 @@ import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "../../../lib/u
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+/** Resume parsing + Groq can exceed default hobby limits; raise where your plan allows. */
+export const maxDuration = 60;
 
 type ParsedEducation = {
   degree: string;
@@ -183,6 +184,9 @@ export async function POST(request: Request) {
     let resumeText = "";
 
     if (lowerName.endsWith(".pdf") || file.type === "application/pdf") {
+      // Lazy-load pdf-parse so this route module can initialize on Vercel without pulling
+      // pdfjs-dist into the cold-start graph for non-PDF requests (avoids HTML 500 pages).
+      const { PDFParse } = await import("pdf-parse");
       const parser = new PDFParse({ data: buffer });
       const parsed = await parser.getText();
       await parser.destroy();
