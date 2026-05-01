@@ -48,6 +48,15 @@ async function readJsonSafely(response: Response) {
   try {
     return raw ? JSON.parse(raw) : {};
   } catch {
+    const looksLikeHosted404 =
+      response.status === 404 ||
+      /\bNOT_FOUND\b/i.test(raw) ||
+      /the page could not be found/i.test(raw);
+    if (looksLikeHosted404) {
+      throw new Error(
+        "The resume API was not found. Use profile setup from this same site while the Next.js app is running (e.g. open /create-profile on your deployment or localhost:3000), not a standalone HTML preview server."
+      );
+    }
     const short = raw.slice(0, 140).replace(/\s+/g, " ").trim();
     throw new Error(
       short
