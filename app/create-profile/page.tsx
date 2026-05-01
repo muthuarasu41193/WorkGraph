@@ -16,6 +16,7 @@ import {
   MAX_RESUME_UPLOAD_LABEL,
   apiErrorMessage,
   readApiJson,
+  withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
 
 type ManualState = {
@@ -110,6 +111,7 @@ export default function CreateProfilePage() {
 
       const parseRes = await fetch("/api/parse-resume", {
         method: "POST",
+        headers: await withSupabaseAuthHeaders(),
         body: data,
         credentials: "include",
       });
@@ -128,7 +130,7 @@ export default function CreateProfilePage() {
       if (email) {
         await fetch("/api/ats-score", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
           body: JSON.stringify({ email }),
         });
@@ -163,7 +165,7 @@ export default function CreateProfilePage() {
 
       const saveRes = await fetch("/api/profile", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
         credentials: "include",
         body: JSON.stringify(payload),
       });
@@ -172,7 +174,7 @@ export default function CreateProfilePage() {
 
       await fetch("/api/ats-score", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
         credentials: "include",
         body: JSON.stringify({ email: payload.email }),
       });

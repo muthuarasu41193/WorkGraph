@@ -17,6 +17,7 @@ import {
   MAX_RESUME_UPLOAD_LABEL,
   apiErrorMessage,
   readApiJson,
+  withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
 
 type UploadStatus = "default" | "selected" | "uploading" | "parsing" | "success" | "error";
@@ -131,6 +132,7 @@ export default function ResumeUploader() {
 
       const parseRes = await fetch("/api/parse-resume", {
         method: "POST",
+        headers: await withSupabaseAuthHeaders(),
         body: formData,
         credentials: "include",
       });
@@ -144,7 +146,7 @@ export default function ResumeUploader() {
       if (profileEmail) {
         await fetch("/api/ats-score", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
           body: JSON.stringify({ email: profileEmail }),
         });

@@ -1,6 +1,27 @@
 import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "./upload-limits";
+import { createBrowserSupabaseClient } from "./supabase";
 
 export { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL };
+
+/**
+ * Headers including Bearer JWT when the browser has a Supabase session.
+ * Route handlers often cannot see auth cookies reliably without middleware; this aligns server auth with the client session.
+ */
+export async function withSupabaseAuthHeaders(base?: HeadersInit): Promise<Headers> {
+  const headers = new Headers(base ?? undefined);
+  try {
+    const supabase = createBrowserSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers.set("Authorization", `Bearer ${session.access_token}`);
+    }
+  } catch {
+    /* env missing or session unavailable — cookie-only auth may still work */
+  }
+  return headers;
+}
 
 export function apiErrorMessage(data: unknown): string | undefined {
   if (data && typeof data === "object" && "error" in data) {
