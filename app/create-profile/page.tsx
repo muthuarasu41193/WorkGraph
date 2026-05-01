@@ -11,6 +11,12 @@ import {
   PenLine,
   UploadCloud,
 } from "lucide-react";
+import {
+  MAX_RESUME_UPLOAD_BYTES,
+  MAX_RESUME_UPLOAD_LABEL,
+  apiErrorMessage,
+  readApiJson,
+} from "../../lib/api-fetch";
 
 type ManualState = {
   email: string;
@@ -34,36 +40,11 @@ const initialManual: ManualState = {
   education: "",
 };
 
-const MAX_BYTES = 5 * 1024 * 1024;
-
 function splitLines(value: string): string[] {
   return value
     .split("\n")
     .map((v) => v.trim())
     .filter(Boolean);
-}
-
-async function readJsonSafely(response: Response) {
-  const raw = await response.text();
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    const looksLikeHosted404 =
-      response.status === 404 ||
-      /\bNOT_FOUND\b/i.test(raw) ||
-      /the page could not be found/i.test(raw);
-    if (looksLikeHosted404) {
-      throw new Error(
-        "The resume API was not found. Use profile setup from this same site while the Next.js app is running (e.g. open /create-profile on your deployment or localhost:3000), not a standalone HTML preview server."
-      );
-    }
-    const short = raw.slice(0, 140).replace(/\s+/g, " ").trim();
-    throw new Error(
-      short
-        ? `Server returned non-JSON response: ${short}`
-        : "Server returned a non-JSON response."
-    );
-  }
 }
 
 function formatBytes(n: number) {
@@ -102,7 +83,7 @@ export default function CreateProfilePage() {
 
   const onDropRejected = useCallback(() => {
     setFile(null);
-    setError("Use a PDF or Word document (.docx) under 5 MB.");
+    setError(`Use a PDF or Word document (.docx) under ${MAX_RESUME_UPLOAD_LABEL}.`);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -110,7 +91,7 @@ export default function CreateProfilePage() {
     onDropRejected,
     accept: acceptedTypes,
     maxFiles: 1,
-    maxSize: MAX_BYTES,
+    maxSize: MAX_RESUME_UPLOAD_BYTES,
     disabled: isLoading,
   });
 
@@ -132,12 +113,16 @@ export default function CreateProfilePage() {
         body: data,
         credentials: "include",
       });
-      const parseJson = await readJsonSafely(parseRes);
-      if (!parseRes.ok) throw new Error(parseJson.error || "Could not process your resume.");
+      const parseJson = await readApiJson(parseRes);
+      if (!parseRes.ok) {
+        throw new Error(apiErrorMessage(parseJson) || "Could not process your resume.");
+      }
 
+      const profile = parseJson && typeof parseJson === "object" && "profile" in parseJson
+        ? (parseJson as { profile?: { email?: string } }).profile
+        : undefined;
       const email =
-        (typeof parseJson?.profile?.email === "string" && parseJson.profile.email.trim()) ||
-        uploadEmail.trim();
+        (typeof profile?.email === "string" && profile.email.trim()) || uploadEmail.trim();
 
       setLoadingPhase("score");
       if (email) {
@@ -182,8 +167,8 @@ export default function CreateProfilePage() {
         credentials: "include",
         body: JSON.stringify(payload),
       });
-      const saveJson = await readJsonSafely(saveRes);
-      if (!saveRes.ok) throw new Error(saveJson.error || "Could not save your profile.");
+      const saveJson = await readApiJson(saveRes);
+      if (!saveRes.ok) throw new Error(apiErrorMessage(saveJson) || "Could not save your profile.");
 
       await fetch("/api/ats-score", {
         method: "POST",
@@ -302,7 +287,9 @@ export default function CreateProfilePage() {
 
               <div>
                 <span className="block text-sm font-medium text-slate-800">Resume file</span>
-                <p className="mt-1 text-xs text-slate-500">PDF or DOCX · maximum {formatBytes(MAX_BYTES)}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  PDF or DOCX · maximum {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
+                </p>
 
                 {!file ? (
                   <div

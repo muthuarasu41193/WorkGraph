@@ -5,6 +5,10 @@ import mammoth from "mammoth";
 import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
+import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "../../../lib/upload-limits";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type ParsedEducation = {
   degree: string;
@@ -131,6 +135,13 @@ export async function POST(request: Request) {
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    if (file.size > MAX_RESUME_UPLOAD_BYTES) {
+      return NextResponse.json(
+        { error: `File is too large. Maximum size is ${MAX_RESUME_UPLOAD_LABEL}.` },
+        { status: 400 }
+      );
     }
 
     const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");

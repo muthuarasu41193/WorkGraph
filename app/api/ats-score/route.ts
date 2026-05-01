@@ -4,6 +4,9 @@ import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 type ATSFeedback = {
   score: number;
   grade: "A" | "B" | "C" | "D" | "F";

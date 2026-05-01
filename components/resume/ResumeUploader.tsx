@@ -12,30 +12,22 @@ import {
   Upload,
 } from "lucide-react";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
+import {
+  MAX_RESUME_UPLOAD_BYTES,
+  MAX_RESUME_UPLOAD_LABEL,
+  apiErrorMessage,
+  readApiJson,
+} from "../../lib/api-fetch";
 
 type UploadStatus = "default" | "selected" | "uploading" | "parsing" | "success" | "error";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = MAX_RESUME_UPLOAD_BYTES;
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   const kb = bytes / 1024;
   if (kb < 1024) return `${kb.toFixed(1)} KB`;
   return `${(kb / 1024).toFixed(2)} MB`;
-}
-
-async function readJsonSafely(response: Response) {
-  const raw = await response.text();
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    const short = raw.slice(0, 140).replace(/\s+/g, " ").trim();
-    throw new Error(
-      short
-        ? `Server returned non-JSON response: ${short}`
-        : "Server returned a non-JSON response."
-    );
-  }
 }
 
 export default function ResumeUploader() {
@@ -88,7 +80,7 @@ export default function ResumeUploader() {
   const onDropRejected = useCallback(() => {
     setSelectedFile(null);
     setStatus("error");
-    setErrorMessage("Only PDF/DOCX files up to 5MB are allowed.");
+    setErrorMessage(`Only PDF/DOCX files up to ${MAX_RESUME_UPLOAD_LABEL} are allowed.`);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -140,17 +132,20 @@ export default function ResumeUploader() {
       const parseRes = await fetch("/api/parse-resume", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
-      const parseJson = await readJsonSafely(parseRes);
+      const parseJson = await readApiJson(parseRes);
       if (!parseRes.ok) {
-        throw new Error(parseJson.error || "Failed to parse resume.");
+        throw new Error(apiErrorMessage(parseJson) || "Failed to parse resume.");
       }
 
-      const profileEmail = parseJson?.profile?.email || user.email;
+      const parsed = parseJson as { profile?: { email?: string | null } };
+      const profileEmail = parsed?.profile?.email || user.email;
       if (profileEmail) {
         await fetch("/api/ats-score", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email: profileEmail }),
         });
       }
@@ -249,7 +244,9 @@ export default function ResumeUploader() {
         <p className="mt-4 text-base font-semibold text-[#111827]">Drag and drop your resume here</p>
         <p className="mt-1 text-sm text-[#6B7280]">or click to browse</p>
       </div>
-      <p className="mt-4 text-center text-xs text-[#6B7280]">Supports PDF and DOCX · Max 5MB</p>
+      <p className="mt-4 text-center text-xs text-[#6B7280]">
+        Supports PDF and DOCX · Max {MAX_RESUME_UPLOAD_LABEL}
+      </p>
     </div>
   );
 }

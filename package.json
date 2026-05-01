@@ -21,6 +21,9 @@
     "url": "https://github.com/muthuarasu41193/WorkGraph/issues"
   },
   "homepage": "https://github.com/muthuarasu41193/WorkGraph#readme",
+  "engines": {
+    "node": ">=20.16.0"
+  },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.10.2",

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CheckCircle, Lightbulb, Loader2, XCircle } from "lucide-react";
 import type { ATSFeedback } from "../../lib/types";
+import { apiErrorMessage, readApiJson } from "../../lib/api-fetch";
 
 type Tab = "strengths" | "weaknesses" | "suggestions";
 
@@ -40,19 +41,36 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
       const res = await fetch("/api/ats-score", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ user_id: userId }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to analyze resume.");
+      const json = await readApiJson(res);
+      const payload = json && typeof json === "object" ? (json as Record<string, unknown>) : {};
+      if (!res.ok) throw new Error(apiErrorMessage(payload) || "Failed to analyze resume.");
+
+      const num = (v: unknown) => {
+        const n = typeof v === "number" ? v : Number(v);
+        return Number.isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
+      };
+      const list = (v: unknown): string[] =>
+        Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+
       setLocalFeedback({
-        score: json.score,
-        grade: json.grade,
-        strengths: json.strengths ?? [],
-        weaknesses: json.weaknesses ?? [],
-        suggestions: json.suggestions ?? [],
-        keyword_density: json.keyword_density ?? "low",
-        formatting_score: json.formatting_score ?? 0,
-        content_score: json.content_score ?? 0,
+        score: num(payload.score),
+        grade:
+          typeof payload.grade === "string" && ["A", "B", "C", "D", "F"].includes(payload.grade.toUpperCase())
+            ? (payload.grade.toUpperCase() as ATSFeedback["grade"])
+            : "F",
+        strengths: list(payload.strengths),
+        weaknesses: list(payload.weaknesses),
+        suggestions: list(payload.suggestions),
+        keyword_density:
+          typeof payload.keyword_density === "string" &&
+          ["low", "medium", "high"].includes(payload.keyword_density.toLowerCase())
+            ? (payload.keyword_density.toLowerCase() as ATSFeedback["keyword_density"])
+            : "low",
+        formatting_score: num(payload.formatting_score),
+        content_score: num(payload.content_score),
       });
     } catch {
       // keep UI simple if API fails
