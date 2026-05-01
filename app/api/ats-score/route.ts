@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
-import Groq from "groq-sdk";
+import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
+import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
+import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
 
 type ATSFeedback = {
   score: number;
@@ -18,27 +19,6 @@ function getRequiredEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Missing required environment variable: ${key}`);
   return value;
-}
-
-function getAccessToken(request: Request, cookieStore: Awaited<ReturnType<typeof cookies>>): string | null {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader?.toLowerCase().startsWith("bearer ")) {
-    return authHeader.slice(7).trim();
-  }
-
-  const cookieToken = cookieStore.get("sb-access-token")?.value;
-  if (cookieToken) return cookieToken;
-
-  const legacyAuth = cookieStore.get("supabase-auth-token")?.value;
-  if (!legacyAuth) return null;
-  try {
-    const parsed = JSON.parse(legacyAuth) as [string, string] | string;
-    if (Array.isArray(parsed)) return parsed[0] ?? null;
-    if (typeof parsed === "string") return parsed;
-  } catch {
-    // ignore malformed cookie format
-  }
-  return null;
 }
 
 function normalizeAtsFeedback(input: unknown): ATSFeedback {
@@ -94,25 +74,36 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json().catch(() => ({}))) as { user_id?: string };
     const providedUserId = body.user_id?.trim();
-    const cookieStore = await cookies();
     const supabase = createClient(
       getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
       getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
     );
 
-    let userId = providedUserId;
+    let userId = providedUserId ?? null;
+
     if (!userId) {
-      const accessToken = getAccessToken(request, cookieStore);
-      if (accessToken) {
+      const bearer = getBearerToken(request);
+      if (bearer) {
         const {
           data: { user },
-          error: userError,
-        } = await supabase.auth.getUser(accessToken);
-        if (userError) {
-          console.error("ATS API auth session error:", userError);
+          error: jwtError,
+        } = await supabase.auth.getUser(bearer);
+        if (jwtError) {
+          console.error("ATS API JWT auth error:", jwtError);
         }
-        userId = user?.id;
+        userId = user?.id ?? null;
       }
+    }
+
+    if (!userId) {
+      const {
+        data: { user },
+        error: sessionError,
+      } = await getSupabaseSessionUser();
+      if (sessionError) {
+        console.error("ATS API cookie session error:", sessionError);
+      }
+      userId = user?.id ?? null;
     }
 
     if (!userId) {
@@ -139,11 +130,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const groq = getGroqClient();
     let completion;
     try {
       completion = await groq.chat.completions.create({
-        model: "llama-3.1-70b-versatile",
+        model: GROQ_MODEL,
         messages: [
           {
             role: "system",
@@ -203,8 +194,7 @@ export async function POST(request: Request) {
     const content = completion.choices[0]?.message?.content ?? "{}";
     let atsFeedback: ATSFeedback;
     try {
-      const parsed = JSON.parse(content);
-      atsFeedback = normalizeAtsFeedback(parsed);
+      atsFeedback = normalizeAtsFeedback(parseAssistantJsonObject(content));
     } catch (error) {
       console.error("ATS JSON parse error:", error, "Raw content:", content);
       return NextResponse.json({ error: "Failed to parse ATS analysis JSON response" }, { status: 500 });

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 import { PDFParse } from "pdf-parse";
 import mammoth from "mammoth";
-import Groq from "groq-sdk";
+import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
+import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
+import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
 
 type ParsedEducation = {
   degree: string;
@@ -39,29 +40,6 @@ function getRequiredEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Missing required environment variable: ${key}`);
   return value;
-}
-
-function getAccessToken(request: Request, cookieStore: Awaited<ReturnType<typeof cookies>>): string | null {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader?.toLowerCase().startsWith("bearer ")) {
-    return authHeader.slice(7).trim();
-  }
-
-  const cookieToken = cookieStore.get("sb-access-token")?.value;
-  if (cookieToken) return cookieToken;
-
-  const legacyAuth = cookieStore.get("supabase-auth-token")?.value;
-  if (!legacyAuth) return null;
-
-  try {
-    const parsed = JSON.parse(legacyAuth) as [string, string] | string;
-    if (Array.isArray(parsed)) return parsed[0] ?? null;
-    if (typeof parsed === "string") return parsed;
-  } catch {
-    // ignore malformed cookie format
-  }
-
-  return null;
 }
 
 function normalizeParsedResume(data: unknown): ParsedResume {
@@ -155,23 +133,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const cookieStore = await cookies();
-    const accessToken = getAccessToken(request, cookieStore);
-    if (!accessToken) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
+    const serviceRole = getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+    const supabaseAdmin = createClient(supabaseUrl, serviceRole);
+
+    let userId: string | null = null;
+    let sessionEmail: string | null = null;
+
+    const bearer = getBearerToken(request);
+    if (bearer) {
+      const {
+        data: { user },
+        error: jwtError,
+      } = await supabaseAdmin.auth.getUser(bearer);
+      if (!jwtError && user) {
+        userId = user.id;
+        sessionEmail = user.email ?? null;
+      }
     }
 
-    const supabase = createClient(
-      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
-      getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
-    );
+    if (!userId) {
+      const {
+        data: { user },
+        error: sessionError,
+      } = await getSupabaseSessionUser();
+      if (!sessionError && user) {
+        userId = user.id;
+        sessionEmail = user.email ?? null;
+      }
+    }
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser(accessToken);
-
-    if (userError || !user) {
+    if (!userId) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
@@ -194,21 +186,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Only PDF and DOCX files are supported" }, { status: 400 });
     }
 
-    const storagePath = `${user.id}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    const { error: uploadError } = await supabase.storage.from("resumes").upload(storagePath, file, {
+    const textSample = resumeText.replace(/\s+/g, " ").trim();
+    if (textSample.length < 24) {
+      return NextResponse.json(
+        {
+          error:
+            "We could not extract enough text from this file. Try another PDF/DOCX export, or enter your profile manually.",
+        },
+        { status: 422 }
+      );
+    }
+
+    const storagePath = `${userId}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const { error: uploadError } = await supabaseAdmin.storage.from("resumes").upload(storagePath, file, {
       upsert: false,
     });
     if (uploadError) {
       return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
-    const { data: publicUrlData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
+    const { data: publicUrlData } = supabaseAdmin.storage.from("resumes").getPublicUrl(storagePath);
     const resumeUrl = publicUrlData.publicUrl;
 
-    // exact Groq flow requested
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const groq = getGroqClient();
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.1-70b-versatile",
+      model: GROQ_MODEL,
       messages: [
         {
           role: "system",
@@ -262,17 +264,21 @@ export async function POST(request: Request) {
 
     let parsedJson: ParsedResume;
     try {
-      parsedJson = normalizeParsedResume(JSON.parse(content));
+      parsedJson = normalizeParsedResume(parseAssistantJsonObject(content));
     } catch {
       return NextResponse.json({ error: "Failed to parse Groq JSON response" }, { status: 500 });
     }
 
     const profile_completeness = calculateProfileCompleteness(parsedJson);
 
-    const { error: upsertError } = await supabase.from("profiles").upsert(
+    const formEmail = formData.get("email");
+    const emailOverride =
+      typeof formEmail === "string" && formEmail.trim() ? formEmail.trim() : null;
+
+    const { error: upsertError } = await supabaseAdmin.from("profiles").upsert(
       {
-        id: user.id,
-        email: parsedJson.email ?? user.email ?? null,
+        id: userId,
+        email: parsedJson.email ?? emailOverride ?? sessionEmail,
         full_name: parsedJson.full_name || null,
         phone: parsedJson.phone,
         location: parsedJson.location,

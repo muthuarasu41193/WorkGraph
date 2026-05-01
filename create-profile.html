@@ -96,6 +96,15 @@
     function splitLines(v) {
       return v.split("\n").map(s => s.trim()).filter(Boolean);
     }
+    async function readJsonSafely(res) {
+      const raw = await res.text();
+      try {
+        return raw ? JSON.parse(raw) : {};
+      } catch {
+        const short = raw.slice(0, 140).replace(/\s+/g, " ").trim();
+        throw new Error(short ? "Server returned non-JSON response: " + short : "Server returned non-JSON response.");
+      }
+    }
     function showLocalPreview(profile) {
       document.getElementById("pvName").textContent = profile.full_name || profile.email || "Profile";
       document.getElementById("pvHeadline").textContent = profile.headline || "";
@@ -124,7 +133,7 @@
         if (email) form.append("email", email);
 
         const parseRes = await fetch("/api/parse-resume", { method: "POST", body: form });
-        const parseJson = await parseRes.json();
+        const parseJson = await readJsonSafely(parseRes);
         if (!parseRes.ok) throw new Error(parseJson.error || "Parse failed.");
         const finalEmail = (parseJson.profile && parseJson.profile.email) || email;
 
@@ -166,7 +175,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        const saveJson = await saveRes.json();
+        const saveJson = await readJsonSafely(saveRes);
         if (!saveRes.ok) throw new Error(saveJson.error || "Save failed.");
 
         await fetch("/api/ats-score", {

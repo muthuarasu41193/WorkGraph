@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
 
-export const GROQ_MODEL = "llama-3.1-70b-versatile";
+/** Production Groq model (3.1 IDs were decommissioned Jan 2025). */
+export const GROQ_MODEL = "llama-3.3-70b-versatile";
 
 export function getGroqClient() {
   const groqApiKey = process.env.GROQ_API_KEY;

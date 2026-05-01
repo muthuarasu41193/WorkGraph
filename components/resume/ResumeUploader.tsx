@@ -24,6 +24,20 @@ function formatFileSize(bytes: number): string {
   return `${(kb / 1024).toFixed(2)} MB`;
 }
 
+async function readJsonSafely(response: Response) {
+  const raw = await response.text();
+  try {
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    const short = raw.slice(0, 140).replace(/\s+/g, " ").trim();
+    throw new Error(
+      short
+        ? `Server returned non-JSON response: ${short}`
+        : "Server returned a non-JSON response."
+    );
+  }
+}
+
 export default function ResumeUploader() {
   const router = useRouter();
   const [status, setStatus] = useState<UploadStatus>("default");
@@ -127,7 +141,7 @@ export default function ResumeUploader() {
         method: "POST",
         body: formData,
       });
-      const parseJson = await parseRes.json();
+      const parseJson = await readJsonSafely(parseRes);
       if (!parseRes.ok) {
         throw new Error(parseJson.error || "Failed to parse resume.");
       }
@@ -166,8 +180,8 @@ export default function ResumeUploader() {
     return (
       <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
         <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#7C3AED]" />
-        <p className="mt-4 text-base font-semibold text-[#111827]">Groq AI is reading your resume...</p>
-        <p className="mt-1 text-sm text-[#6B7280]">This takes about 5 seconds</p>
+        <p className="mt-4 text-base font-semibold text-[#111827]">Analyzing your resume…</p>
+        <p className="mt-1 text-sm text-[#6B7280]">Usually finishes in a few seconds</p>
       </div>
     );
   }
