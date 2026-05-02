@@ -12,10 +12,7 @@ import ProfileTopBar from "../../components/profile/ProfileTopBar";
 import ProfileQuickActions from "../../components/profile/ProfileQuickActions";
 import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
 import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
-import {
-  PLACEHOLDER_RECOMMENDED_JOBS,
-  getPipelineCountsForProfile,
-} from "../../lib/profile-dashboard-placeholder";
+import { loadProfileJobDashboard } from "../../lib/job-dashboard";
 
 function asStringArray(value: unknown): string[] {
   return Array.isArray(value)
@@ -98,7 +95,10 @@ export default async function ProfilePage() {
     updated_at: data.updated_at,
   };
 
-  const pipelineCounts = await getPipelineCountsForProfile(user.id);
+  const jobDashboard = await loadProfileJobDashboard(supabase, user.id, {
+    skills: profile.skills,
+    headline: profile.headline,
+  });
   const firstName = (profile.full_name?.trim().split(/\s+/)[0] ?? "").trim();
 
   return (
@@ -108,7 +108,12 @@ export default async function ProfilePage() {
       <main className="mx-auto max-w-7xl space-y-8 px-4 pb-16 pt-8 sm:px-6 lg:space-y-10 lg:pb-20 lg:pt-10">
         <ProfileQuickActions userFirstName={firstName || "there"} />
 
-        <ProfileJobDashboard stats={pipelineCounts} profileCompleteness={profile.profile_completeness} />
+        <ProfileJobDashboard
+          stats={jobDashboard.pipeline}
+          profileCompleteness={profile.profile_completeness}
+          liveListings={jobDashboard.liveListings}
+          listingsBySource={jobDashboard.listingsBySource}
+        />
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start xl:gap-10">
           <div className="space-y-6">
@@ -149,7 +154,7 @@ export default async function ProfilePage() {
           </aside>
         </div>
 
-        <RecommendedJobsSection jobs={PLACEHOLDER_RECOMMENDED_JOBS} skillHints={profile.skills} />
+        <RecommendedJobsSection jobs={jobDashboard.recommended} skillHints={profile.skills} feedKind={jobDashboard.feedKind} />
       </main>
     </div>
   );

@@ -1,0 +1,7 @@
+requests
+sqlalchemy
+psycopg2-binary
+sentence-transformers
+numpy
+scikit-learn
+python-dotenv

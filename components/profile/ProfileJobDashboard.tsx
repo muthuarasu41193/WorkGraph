@@ -5,13 +5,17 @@ import {
   CalendarHeart,
   HeartHandshake,
   PartyPopper,
+  Radar,
   Sparkles,
 } from "lucide-react";
-import type { JobPipelineCounts } from "../../lib/profile-dashboard-placeholder";
+import type { JobPipelineCounts } from "../../lib/job-dashboard";
 
 type Props = {
   stats: JobPipelineCounts;
   profileCompleteness: number;
+  /** Total rows in public.jobs (Python ATS ingest target table). */
+  liveListings: number;
+  listingsBySource: Partial<Record<string, number>>;
 };
 
 const cards = [
@@ -53,8 +57,14 @@ const cards = [
   },
 ];
 
-export default function ProfileJobDashboard({ stats, profileCompleteness }: Props) {
+export default function ProfileJobDashboard({
+  stats,
+  profileCompleteness,
+  liveListings,
+  listingsBySource,
+}: Props) {
   const totalTracked = stats.applied + stats.interview + stats.offers + stats.saved;
+  const sourceEntries = Object.entries(listingsBySource).filter(([, n]) => (n ?? 0) > 0);
 
   return (
     <section
@@ -62,8 +72,8 @@ export default function ProfileJobDashboard({ stats, profileCompleteness }: Prop
       className="rounded-3xl border border-emerald-100/90 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/35 p-5 shadow-[0_24px_80px_-48px_rgba(16,185,129,0.35)] sm:p-6"
     >
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
               <Sparkles className="h-4 w-4" aria-hidden />
             </span>
@@ -72,8 +82,31 @@ export default function ProfileJobDashboard({ stats, profileCompleteness }: Prop
             </h2>
           </div>
           <p className="mt-1 text-sm text-slate-600">
-            Compact tracker — totals sync when you wire LinkedIn, boards & Reddit feeds.
+            Pipeline cards reflect your tracker rows; live listings count syncs from Postgres{" "}
+            <code className="rounded bg-emerald-100/80 px-1 py-0.5 text-[11px] text-emerald-900">jobs</code> via ATS
+            ingest.
           </p>
+          {liveListings > 0 ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-semibold text-emerald-900 shadow-sm">
+                <Radar className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
+                {liveListings.toLocaleString()} live listings indexed
+              </span>
+              {sourceEntries.map(([src, n]) => (
+                <span
+                  key={src}
+                  className="rounded-full bg-emerald-900/[0.06] px-2.5 py-0.5 text-[11px] font-medium capitalize text-slate-700 ring-1 ring-emerald-900/10"
+                >
+                  {src}: {(n ?? 0).toLocaleString()}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">
+              Run the Python ingest against Supabase Postgres — totals appear here automatically after migration{" "}
+              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">20260202120000_jobs_board</code>.
+            </p>
+          )}
         </div>
         <div className="rounded-2xl border border-emerald-200/70 bg-white/80 px-3 py-2 text-right shadow-sm backdrop-blur-sm">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700/90">Profile</p>
@@ -111,8 +144,18 @@ export default function ProfileJobDashboard({ stats, profileCompleteness }: Prop
 
       {totalTracked === 0 ? (
         <p className="mt-4 rounded-2xl border border-dashed border-emerald-200/90 bg-white/70 px-4 py-3 text-center text-xs leading-relaxed text-slate-600">
-          No applications synced yet — when your tracker API goes live, this row fills automatically. Until then, use{" "}
-          <strong className="font-semibold text-slate-800">Saved</strong> bookmarks below as your backlog.
+          {liveListings > 0 ? (
+            <>
+              No personal tracker rows yet — listing totals above come from shared ATS ingest. Insert rows into{" "}
+              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">job_tracker_entries</code> when your CRM
+              ships.
+            </>
+          ) : (
+            <>
+              No applications synced yet — ingest jobs first, then wire tracker events. Until then, browse recommended
+              roles below.
+            </>
+          )}
         </p>
       ) : null}
     </section>

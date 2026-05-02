@@ -1,0 +1,3 @@
+Senior Software Engineer with 8+ years building distributed systems in Python and TypeScript.
+Experience with PostgreSQL, Redis, Kubernetes, and AWS.
+Focused on API design, observability, and reliable batch pipelines.

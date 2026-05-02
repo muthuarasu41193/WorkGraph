@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.db
+jobs.db
+# Only the package root secrets file — not samples/.env template
+/.env
+.pytest_cache/
+*.log
+
+# Local agent tooling copies (do not commit)
+.agents/
+.aider-desk/
+skills-lock.json
