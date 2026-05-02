@@ -14,6 +14,8 @@ import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
 import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
 
+export const dynamic = "force-dynamic";
+
 function asStringArray(value: unknown): string[] {
   return Array.isArray(value)
     ? value.filter((v): v is string => typeof v === "string").map((v) => v.trim()).filter(Boolean)

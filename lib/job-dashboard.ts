@@ -181,7 +181,10 @@ async function fetchListingStats(supabase: SupabaseClient): Promise<{
   bySource: Partial<Record<JobFeedSource, number>>;
 } | null> {
   const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true });
-  if (totalRes.error) return null;
+  if (totalRes.error) {
+    console.warn("[job-dashboard] jobs count error:", totalRes.error.message, totalRes.error.code);
+    return null;
+  }
 
   const bySource: Partial<Record<JobFeedSource, number>> = {};
   const sources = ["greenhouse", "lever", "ashby"] as const;
@@ -204,7 +207,11 @@ async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> 
     .order("posted_at", { ascending: false })
     .limit(250);
 
-  if (error || !data) return null;
+  if (error) {
+    console.warn("[job-dashboard] jobs select error:", error.message, error.code);
+    return null;
+  }
+  if (!data) return null;
   return data as JobRow[];
 }
 

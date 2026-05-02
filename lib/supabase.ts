@@ -1,11 +1,9 @@
-import {
-  createBrowserClient as createClientComponentClient,
-  createServerClient as createServerComponentClient,
-} from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 function assertEnv(value: string | undefined, key: string): string {
   if (!value) {
     throw new Error(`Missing required environment variable: ${key}`);
@@ -14,7 +12,7 @@ function assertEnv(value: string | undefined, key: string): string {
 }
 
 export function createBrowserSupabaseClient(): SupabaseClient {
-  return createClientComponentClient(
+  return createBrowserClient(
     assertEnv(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL"),
     assertEnv(supabaseAnonKey, "NEXT_PUBLIC_SUPABASE_ANON_KEY")
   );
@@ -26,7 +24,7 @@ type CookieStoreLike = {
 };
 
 export function createServerSupabaseClient(cookieStore: CookieStoreLike): SupabaseClient {
-  return createServerComponentClient(
+  return createServerClient(
     assertEnv(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL"),
     assertEnv(supabaseAnonKey, "NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
@@ -40,11 +38,10 @@ export function createServerSupabaseClient(cookieStore: CookieStoreLike): Supaba
               cookieStore.set(name, value, options);
             });
           } catch {
-            // no-op when setting cookies is unavailable
+            /* Server Components often cannot mutate cookies; middleware refreshes the session. */
           }
         },
       },
     }
   );
 }
-
