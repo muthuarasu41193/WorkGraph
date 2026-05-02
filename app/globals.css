@@ -20,3 +20,92 @@ body {
     Roboto,
     sans-serif;
 }
+
+/* Auth shell: subtle motion + grid (respect reduced motion) */
+@keyframes wg-auth-float-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(28px, -22px, 0) scale(1.06);
+  }
+}
+
+@keyframes wg-auth-float-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-24px, 20px, 0) scale(1.05);
+  }
+}
+
+@keyframes wg-auth-float-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(14px, 16px, 0);
+  }
+  66% {
+    transform: translate3d(-10px, -12px, 0);
+  }
+}
+
+.wg-auth-blob-a {
+  animation: wg-auth-float-a 16s ease-in-out infinite;
+}
+
+.wg-auth-blob-b {
+  animation: wg-auth-float-b 19s ease-in-out infinite;
+}
+
+.wg-auth-blob-c {
+  animation: wg-auth-float-c 22s ease-in-out infinite;
+}
+
+.wg-auth-grid {
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.35) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.wg-auth-grid-green {
+  background-image:
+    linear-gradient(to right, rgb(167 243 208 / 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(153 246 228 / 0.18) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-auth-blob-a,
+  .wg-auth-blob-b,
+  .wg-auth-blob-c {
+    animation: none;
+  }
+}
+
+@keyframes wg-auth-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wg-auth-enter {
+  animation: wg-auth-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-auth-enter {
+    animation: none;
+  }
+}

@@ -11,6 +11,7 @@ import {
   PenLine,
   UploadCloud,
 } from "lucide-react";
+import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import {
   MAX_RESUME_UPLOAD_BYTES,
   MAX_RESUME_UPLOAD_LABEL,
@@ -76,7 +77,8 @@ export default function CreateProfilePage() {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      throw new Error("Not authenticated. Please sign in first, then try creating your profile again.");
+      window.location.href = "/login?next=/create-profile";
+      throw new Error("Redirecting to sign in...");
     }
   }
 
@@ -134,9 +136,10 @@ export default function CreateProfilePage() {
         throw new Error(apiErrorMessage(parseJson) || "Could not process your resume.");
       }
 
-      const profile = parseJson && typeof parseJson === "object" && "profile" in parseJson
-        ? (parseJson as { profile?: { email?: string } }).profile
-        : undefined;
+      const profile =
+        parseJson && typeof parseJson === "object" && "profile" in parseJson
+          ? (parseJson as { profile?: { email?: string } }).profile
+          : undefined;
       const email =
         (typeof profile?.email === "string" && profile.email.trim()) || uploadEmail.trim();
 
@@ -204,39 +207,36 @@ export default function CreateProfilePage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f8f9fb] text-slate-900 antialiased">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.45]"
-        aria-hidden
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 0%, rgb(226 232 240 / 0.9), transparent 42%), radial-gradient(circle at 80% 10%, rgb(241 245 249 / 0.95), transparent 38%)",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-xl px-5 pb-20 pt-14 sm:px-6 sm:pt-20">
-        <header className="mb-10 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-            Profile setup
-          </p>
-          <h1 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-[2rem]">
-            Create your profile
-          </h1>
-          <p className="mx-auto mt-3 max-w-md text-pretty text-[15px] leading-relaxed text-slate-600">
-            Import details from a resume, or enter them yourself. You can refine everything later on
-            your profile page.
-          </p>
+    <AuthSplitShell
+      wide
+      panelEyebrow="Get started"
+      panelHeadline="Build a profile recruiters skim in seconds."
+      panelDescription="Upload once or type it in — refine headlines, links, and bullets anytime."
+      highlights={[
+        "Smart resume import (PDF & DOCX)",
+        "Structured sections hiring teams expect",
+        "ATS-aware polish after you save",
+      ]}
+    >
+      <div className="wg-auth-enter space-y-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Create your profile</h2>
+            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-slate-600">
+              Signed-in accounts only. Choose import or manual entry — you can edit everything later.
+            </p>
+          </div>
           <Link
             href="/profile"
-            className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-900 hover:decoration-slate-400"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
           >
-            View existing profile
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            View profile
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
-        </header>
+        </div>
 
         <div
-          className="mb-8 flex rounded-xl border border-slate-200/80 bg-white/70 p-1 shadow-sm backdrop-blur-sm"
+          className="inline-flex h-11 w-full rounded-full bg-emerald-50/70 p-1 ring-1 ring-emerald-100/90 sm:w-auto sm:min-w-[340px]"
           role="tablist"
           aria-label="Profile creation method"
         >
@@ -244,10 +244,10 @@ export default function CreateProfilePage() {
             type="button"
             role="tab"
             aria-selected={mode === "resume"}
-            className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-200 ${
               mode === "resume"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                ? "bg-white text-emerald-950 shadow-sm ring-1 ring-emerald-200/80"
+                : "text-emerald-900/65 hover:text-emerald-950"
             }`}
             onClick={() => {
               setMode("resume");
@@ -255,16 +255,16 @@ export default function CreateProfilePage() {
             }}
           >
             <UploadCloud className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-            Resume import
+            Import resume
           </button>
           <button
             type="button"
             role="tab"
             aria-selected={mode === "manual"}
-            className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-200 ${
               mode === "manual"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                ? "bg-white text-emerald-950 shadow-sm ring-1 ring-emerald-200/80"
+                : "text-emerald-900/65 hover:text-emerald-950"
             }`}
             onClick={() => {
               setMode("manual");
@@ -277,19 +277,23 @@ export default function CreateProfilePage() {
         </div>
 
         <section
-          className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgb(15_23_42/0.06)] sm:p-8"
+          className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_24px_80px_-24px_rgb(15_23_42/0.12)] sm:p-8"
           aria-live="polite"
         >
+          {message ? (
+            <p className="mb-6 rounded-xl border border-emerald-200/80 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{message}</p>
+          ) : null}
+          {error ? (
+            <p className="mb-6 rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</p>
+          ) : null}
+
           {mode === "resume" ? (
             <form className="space-y-6" onSubmit={handleUpload}>
               <div>
-                <label htmlFor="profile-email-fallback" className="block text-sm font-medium text-slate-800">
-                  Contact email
-                  <span className="ml-1 font-normal text-slate-500">(optional)</span>
+                <label htmlFor="profile-email-fallback" className="block text-sm font-semibold text-slate-900">
+                  Contact email <span className="font-normal text-slate-500">(optional)</span>
                 </label>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                  Used only if your file does not include an email we can read.
-                </p>
+                <p className="mt-1 text-xs text-slate-500">If your file doesn&apos;t include a readable email.</p>
                 <input
                   id="profile-email-fallback"
                   type="email"
@@ -298,36 +302,36 @@ export default function CreateProfilePage() {
                   value={uploadEmail}
                   onChange={(e) => setUploadEmail(e.target.value)}
                   disabled={isLoading}
-                  className="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-900 outline-none ring-slate-900/5 transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 disabled:opacity-60"
+                  className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                 />
               </div>
 
               <div>
-                <span className="block text-sm font-medium text-slate-800">Resume file</span>
+                <span className="block text-sm font-semibold text-slate-900">Resume file</span>
                 <p className="mt-1 text-xs text-slate-500">
-                  PDF or DOCX · maximum {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
+                  PDF or DOCX · up to {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
                 </p>
 
                 {!file ? (
                   <div
                     {...getRootProps()}
-                    className={`mt-3 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-5 py-12 text-center transition-colors duration-200 ${
+                    className={`group mt-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-200 ${
                       isDragActive
-                        ? "border-slate-400 bg-slate-50"
-                        : "border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-slate-50"
+                        ? "scale-[1.01] border-emerald-500 bg-emerald-50/70"
+                        : "border-slate-200 bg-gradient-to-b from-emerald-50/35 via-white to-white hover:border-emerald-200 hover:shadow-[0_12px_40px_-28px_rgb(16_185_129/0.14)]"
                     } ${isLoading ? "pointer-events-none opacity-50" : ""}`}
                   >
                     <input {...getInputProps()} />
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200/80">
-                      <FileText className="h-5 w-5 text-slate-500" aria-hidden />
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-200/80 transition-transform duration-200 group-hover:scale-105">
+                      <FileText className="h-6 w-6 text-emerald-600" aria-hidden />
                     </div>
-                    <p className="mt-4 text-sm font-medium text-slate-800">
-                      {isDragActive ? "Drop file here" : "Drag and drop your resume"}
+                    <p className="mt-5 text-[15px] font-semibold text-slate-900">
+                      {isDragActive ? "Drop your file here" : "Drag & drop your resume"}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">or click to browse from your device</p>
+                    <p className="mt-1 text-sm text-slate-500">or click to browse — PDF or DOCX</p>
                   </div>
                 ) : (
-                  <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                  <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5">
                     <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-slate-900">{file.name}</p>
@@ -337,7 +341,7 @@ export default function CreateProfilePage() {
                       type="button"
                       disabled={isLoading}
                       onClick={() => setFile(null)}
-                      className="shrink-0 text-xs font-medium text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline disabled:opacity-50"
+                      className="shrink-0 text-xs font-semibold text-slate-700 underline-offset-2 hover:underline disabled:opacity-50"
                     >
                       Remove
                     </button>
@@ -348,12 +352,12 @@ export default function CreateProfilePage() {
               <button
                 type="submit"
                 disabled={isLoading || !file}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:bg-emerald-100 disabled:text-emerald-400"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    {loadingPhase === "score" ? "Finalizing profile…" : "Reading resume…"}
+                    {loadingPhase === "score" ? "Finalizing…" : "Reading resume…"}
                   </>
                 ) : (
                   <>
@@ -364,10 +368,10 @@ export default function CreateProfilePage() {
               </button>
             </form>
           ) : (
-            <form className="space-y-4" onSubmit={handleManual}>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <form className="space-y-5" onSubmit={handleManual}>
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label htmlFor="manual-email" className="block text-sm font-medium text-slate-800">
+                  <label htmlFor="manual-email" className="block text-sm font-semibold text-slate-900">
                     Email <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -379,11 +383,11 @@ export default function CreateProfilePage() {
                     value={manual.email}
                     onChange={(e) => setManual((p) => ({ ...p, email: e.target.value }))}
                     disabled={isLoading}
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label htmlFor="manual-name" className="block text-sm font-medium text-slate-800">
+                  <label htmlFor="manual-name" className="block text-sm font-semibold text-slate-900">
                     Full name
                   </label>
                   <input
@@ -394,11 +398,11 @@ export default function CreateProfilePage() {
                     value={manual.full_name}
                     onChange={(e) => setManual((p) => ({ ...p, full_name: e.target.value }))}
                     disabled={isLoading}
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label htmlFor="manual-headline" className="block text-sm font-medium text-slate-800">
+                  <label htmlFor="manual-headline" className="block text-sm font-semibold text-slate-900">
                     Professional headline
                   </label>
                   <input
@@ -408,11 +412,11 @@ export default function CreateProfilePage() {
                     value={manual.headline}
                     onChange={(e) => setManual((p) => ({ ...p, headline: e.target.value }))}
                     disabled={isLoading}
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
                 <div>
-                  <label htmlFor="manual-li" className="block text-sm font-medium text-slate-800">
+                  <label htmlFor="manual-li" className="block text-sm font-semibold text-slate-900">
                     LinkedIn
                   </label>
                   <input
@@ -422,11 +426,11 @@ export default function CreateProfilePage() {
                     value={manual.linkedin_url}
                     onChange={(e) => setManual((p) => ({ ...p, linkedin_url: e.target.value }))}
                     disabled={isLoading}
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
                 <div>
-                  <label htmlFor="manual-gh" className="block text-sm font-medium text-slate-800">
+                  <label htmlFor="manual-gh" className="block text-sm font-semibold text-slate-900">
                     GitHub
                   </label>
                   <input
@@ -436,16 +440,16 @@ export default function CreateProfilePage() {
                     value={manual.github_url}
                     onChange={(e) => setManual((p) => ({ ...p, github_url: e.target.value }))}
                     disabled={isLoading}
-                    className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="manual-skills" className="block text-sm font-medium text-slate-800">
+                <label htmlFor="manual-skills" className="block text-sm font-semibold text-slate-900">
                   Skills
                 </label>
-                <p className="mt-1 text-xs text-slate-500">One skill per line.</p>
+                <p className="mt-1 text-xs text-slate-500">One per line.</p>
                 <textarea
                   id="manual-skills"
                   rows={4}
@@ -453,15 +457,15 @@ export default function CreateProfilePage() {
                   value={manual.skills}
                   onChange={(e) => setManual((p) => ({ ...p, skills: e.target.value }))}
                   disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                 />
               </div>
 
               <div>
-                <label htmlFor="manual-exp" className="block text-sm font-medium text-slate-800">
+                <label htmlFor="manual-exp" className="block text-sm font-semibold text-slate-900">
                   Experience
                 </label>
-                <p className="mt-1 text-xs text-slate-500">Short bullets or roles, one per line.</p>
+                <p className="mt-1 text-xs text-slate-500">Bullets or roles, one per line.</p>
                 <textarea
                   id="manual-exp"
                   rows={4}
@@ -469,12 +473,12 @@ export default function CreateProfilePage() {
                   value={manual.experience}
                   onChange={(e) => setManual((p) => ({ ...p, experience: e.target.value }))}
                   disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                 />
               </div>
 
               <div>
-                <label htmlFor="manual-edu" className="block text-sm font-medium text-slate-800">
+                <label htmlFor="manual-edu" className="block text-sm font-semibold text-slate-900">
                   Education
                 </label>
                 <p className="mt-1 text-xs text-slate-500">One entry per line.</p>
@@ -485,14 +489,14 @@ export default function CreateProfilePage() {
                   value={manual.education}
                   onChange={(e) => setManual((p) => ({ ...p, education: e.target.value }))}
                   disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm outline-none transition focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-900/5 disabled:opacity-60"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:bg-emerald-100 disabled:text-emerald-400"
               >
                 {isLoading ? (
                   <>
@@ -510,21 +514,20 @@ export default function CreateProfilePage() {
           )}
         </section>
 
-        {message ? (
-          <p className="mt-6 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-3 text-center text-sm text-emerald-900">
-            {message}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="mt-6 rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-center text-sm text-red-900">
-            {error}
-          </p>
-        ) : null}
+        <p className="text-center text-xs leading-relaxed text-slate-400">
+          Trouble importing? Confirm you&apos;re signed in, then try manual entry or a different file format.
+        </p>
 
-        <p className="mt-10 text-center text-xs leading-relaxed text-slate-500">
-          Signed-in accounts only. If import fails, check that you are logged in and try manual entry.
+        <p className="text-center text-sm text-slate-600">
+          Already have an account?{" "}
+          <Link
+            href="/login?next=/create-profile"
+            className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
+          >
+            Sign in
+          </Link>
         </p>
       </div>
-    </main>
+    </AuthSplitShell>
   );
 }
