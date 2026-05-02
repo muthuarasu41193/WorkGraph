@@ -99,7 +99,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
   };
 
   return (
-    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
+    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       {toast ? (
         <div className="fixed right-6 top-6 z-50 rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm text-[#111827] shadow-md">
           {toast}
@@ -122,7 +122,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               sizes="96px"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[#7C3AED] text-3xl font-bold text-white">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-600 to-teal-700 text-3xl font-bold text-white">
               {initials}
             </div>
           )}
@@ -240,7 +240,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
           <div className="mt-4">
             <p className="mb-2 text-sm font-medium text-[#111827]">Profile {completeness}% Complete</p>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#F3F4F6]">
-              <div className="h-full rounded-full bg-[#7C3AED]" style={{ width: `${completeness}%` }} />
+              <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-600" style={{ width: `${completeness}%` }} />
             </div>
             <p className="mt-2 text-xs text-[#9CA3AF]">{getMissingItems(profile)}</p>
           </div>

@@ -8,6 +8,14 @@ import SkillsSection from "../../components/profile/SkillsSection";
 import ExperienceTimeline from "../../components/profile/ExperienceTimeline";
 import EducationSection from "../../components/profile/EducationSection";
 import ATSScoreCard from "../../components/profile/ATSScoreCard";
+import ProfileTopBar from "../../components/profile/ProfileTopBar";
+import ProfileQuickActions from "../../components/profile/ProfileQuickActions";
+import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
+import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
+import {
+  PLACEHOLDER_RECOMMENDED_JOBS,
+  getPipelineCountsForProfile,
+} from "../../lib/profile-dashboard-placeholder";
 
 function asStringArray(value: unknown): string[] {
   return Array.isArray(value)
@@ -90,45 +98,59 @@ export default async function ProfilePage() {
     updated_at: data.updated_at,
   };
 
+  const pipelineCounts = await getPipelineCountsForProfile(user.id);
+  const firstName = (profile.full_name?.trim().split(/\s+/)[0] ?? "").trim();
+
   return (
-    <main className="min-h-screen bg-white px-6 py-10">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid gap-6 lg:grid-cols-[65%_35%]">
-          <section className="space-y-6">
+    <div className="min-h-[100dvh] bg-[linear-gradient(180deg,#ecfdf5_0%,#f8fafc_18%,#ffffff_42%,#f0fdf9_100%)]">
+      <ProfileTopBar />
+
+      <main className="mx-auto max-w-7xl space-y-8 px-4 pb-16 pt-8 sm:px-6 lg:space-y-10 lg:pb-20 lg:pt-10">
+        <ProfileQuickActions userFirstName={firstName || "there"} />
+
+        <ProfileJobDashboard stats={pipelineCounts} profileCompleteness={profile.profile_completeness} />
+
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start xl:gap-10">
+          <div className="space-y-6">
             <ProfileHeader profile={profile} userId={user.id} />
             <LinksSection profile={profile} userId={user.id} />
             <SkillsSection userId={user.id} initialSkills={profile.skills} />
             <ExperienceTimeline userId={user.id} experience={profile.work_experience} />
             <EducationSection userId={user.id} education={profile.education} />
-          </section>
+          </div>
 
-          <aside className="space-y-6">
+          <aside className="space-y-6 xl:sticky xl:top-[4.25rem]">
             <ATSScoreCard userId={user.id} score={profile.ats_score} feedback={profile.ats_feedback} />
 
-            <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-[#111827]">Quick Stats</h2>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Skills</span>
-                  <span className="font-semibold text-[#111827]">{profile.skills.length}</span>
+            <section className="rounded-3xl border border-emerald-100/90 bg-white/90 p-6 shadow-[0_20px_60px_-44px_rgba(16,185,129,0.35)] backdrop-blur-sm">
+              <h2 className="text-base font-semibold text-slate-900">Resume snapshot</h2>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                Tallies from your parsed profile — sync applications above when your tracker is live.
+              </p>
+              <dl className="mt-5 space-y-3 text-sm">
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-emerald-50/60 px-3 py-2.5 ring-1 ring-emerald-100/80">
+                  <dt className="text-slate-600">Skills</dt>
+                  <dd className="font-semibold tabular-nums text-slate-900">{profile.skills.length}</dd>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Experience Entries</span>
-                  <span className="font-semibold text-[#111827]">{profile.work_experience.length}</span>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-100">
+                  <dt className="text-slate-600">Experience</dt>
+                  <dd className="font-semibold tabular-nums text-slate-900">{profile.work_experience.length}</dd>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Education Entries</span>
-                  <span className="font-semibold text-[#111827]">{profile.education.length}</span>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-100">
+                  <dt className="text-slate-600">Education</dt>
+                  <dd className="font-semibold tabular-nums text-slate-900">{profile.education.length}</dd>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#6B7280]">Certifications</span>
-                  <span className="font-semibold text-[#111827]">{profile.certifications.length}</span>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-100">
+                  <dt className="text-slate-600">Certifications</dt>
+                  <dd className="font-semibold tabular-nums text-slate-900">{profile.certifications.length}</dd>
                 </div>
-              </div>
+              </dl>
             </section>
           </aside>
         </div>
-      </div>
-    </main>
+
+        <RecommendedJobsSection jobs={PLACEHOLDER_RECOMMENDED_JOBS} skillHints={profile.skills} />
+      </main>
+    </div>
   );
 }

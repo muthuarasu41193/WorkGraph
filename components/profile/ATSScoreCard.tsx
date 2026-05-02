@@ -91,7 +91,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
+    <section id="ats-score" className="scroll-mt-28 rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(16,185,129,0.3)]">
       <h2 className="mb-4 text-lg font-semibold text-[#111827]">ATS Score</h2>
 
       {localFeedback || score !== null ? (
@@ -126,7 +126,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                 type="button"
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize ${
-                  activeTab === tab ? "bg-[#7C3AED] text-white" : "text-[#6B7280]"
+                  activeTab === tab ? "bg-emerald-700 text-white" : "text-[#6B7280]"
                 }`}
               >
                 {tab}
@@ -143,7 +143,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                   ) : activeTab === "weaknesses" ? (
                     <XCircle className="mt-0.5 h-4 w-4 text-[#EF4444]" />
                   ) : (
-                    <Lightbulb className="mt-0.5 h-4 w-4 text-[#7C3AED]" />
+                    <Lightbulb className="mt-0.5 h-4 w-4 text-emerald-700" />
                   )}
                   <span>{item}</span>
                 </li>
@@ -158,7 +158,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
           type="button"
           onClick={() => void analyze()}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {loading ? "Analyzing..." : "Analyze My Resume"}

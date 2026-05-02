@@ -109,3 +109,59 @@ body {
     animation: none;
   }
 }
+
+/* Profile dashboard — playful micro-motion */
+@keyframes wg-dash-stat-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes wg-dash-icon-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@keyframes wg-job-card-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wg-dash-stat-enter {
+  animation: wg-dash-stat-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wg-dash-icon-float {
+  animation: wg-dash-icon-float 4.5s ease-in-out infinite;
+}
+
+.wg-job-card-enter {
+  animation: wg-job-card-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-dash-stat-enter,
+  .wg-job-card-enter {
+    animation: none;
+  }
+
+  .wg-dash-icon-float {
+    animation: none;
+  }
+}

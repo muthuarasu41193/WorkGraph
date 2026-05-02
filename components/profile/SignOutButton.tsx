@@ -26,10 +26,10 @@ export default function SignOutButton() {
       type="button"
       onClick={handleSignOut}
       disabled={isLoading}
-      className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/60 hover:text-emerald-950 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      <LogOut className="h-4 w-4" />
-      {isLoading ? "Signing out..." : "Sign out"}
+      <LogOut className="h-4 w-4" aria-hidden />
+      {isLoading ? "Signing out…" : "Sign out"}
     </button>
   );
 }
