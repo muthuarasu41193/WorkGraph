@@ -1,4 +1,6 @@
 .env.local
+.env
+job_aggregator/.env
 node_modules
 .next
 out
