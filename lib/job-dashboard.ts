@@ -1,7 +1,8 @@
 /**
  * Profile dashboard job feed + pipeline counts from Supabase.
  *
- * Requires migration `supabase/migrations/20260202120000_jobs_board.sql`.
+ * Requires migrations `20260202120000_jobs_board`, `20260204120000_jobs_anon_select`,
+ * and `20260205153000_jobs_api_grants` (PostgREST needs GRANT SELECT, not only RLS).
  * Python job_aggregator should target the same DATABASE_URL / Postgres instance.
  */
 

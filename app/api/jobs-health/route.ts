@@ -38,8 +38,24 @@ export async function GET() {
   const head = await supabase.from("jobs").select("id", { count: "exact", head: true });
   const sample = await supabase.from("jobs").select("id, title, source").limit(3);
 
+  const permMsg = (head.error?.message ?? "") + (sample.error?.message ?? "");
+  const looksLikeMissingPrivilege =
+    /permission denied|42501|PGRST/i.test(permMsg) || head.error?.code === "42501";
+
+  let hint: string;
+  if (head.error || sample.error) {
+    hint = looksLikeMissingPrivilege
+      ? "Database rejected SELECT on public.jobs. Run supabase/migrations/20260205153000_jobs_api_grants.sql on this project (GRANT SELECT to anon, authenticated), then reload schema cache if needed."
+      : "See headError / sampleError — wrong project URL/key, missing jobs table, or RLS/policy mismatch.";
+  } else if ((head.count ?? 0) === 0) {
+    hint =
+      "Table is readable but empty — run ingest (GitHub Action or python -m app.main ingest) against this project's Postgres, and confirm Vercel env points at the same Supabase project.";
+  } else {
+    hint = "Looks healthy — profile should show live listings for signed-in users.";
+  }
+
   return NextResponse.json({
-    ok: !head.error,
+    ok: !head.error && !sample.error,
     supabaseHost: host,
     jobsTableCount: head.count,
     headError: head.error?.message ?? null,
@@ -47,11 +63,6 @@ export async function GET() {
     sampleRowCount: sample.data?.length ?? 0,
     sampleError: sample.error?.message ?? null,
     samplePreview: sample.data ?? null,
-    hint:
-      head.count === 0 || sample.data?.length === 0
-        ? "Count or rows are zero — run Python ingest against THIS project's Postgres, or fix Vercel env to match the project where you ran ingest."
-        : head.error || sample.error
-          ? "See headError / sampleError — often missing table, wrong key, or RLS blocking anon."
-          : "Looks healthy — profile should show live feed after redeploy / hard refresh.",
+    hint,
   });
 }
