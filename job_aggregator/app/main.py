@@ -17,11 +17,10 @@ import sys
 from pathlib import Path
 
 
-def _cmd_ingest() -> int:
-    from app.config import COMPANIES_JSON, EMBED_BATCH_SIZE
+def _cmd_ingest(*, no_embed: bool = False) -> int:
+    from app.config import COMPANIES_JSON
     from app.database import init_db, session_scope
     from app.ingest.runner import run_full_ingestion
-    from app.matching.embedder import JobEmbedder, embed_pending_jobs
     from app.utils import configure_logging
 
     configure_logging()
@@ -31,9 +30,15 @@ def _cmd_ingest() -> int:
         stats = run_full_ingestion(session, Path(COMPANIES_JSON))
         print(json.dumps({"ingestion": stats}, indent=2))
 
-        embedder = JobEmbedder()
-        embedded = embed_pending_jobs(session, embedder, batch_size=EMBED_BATCH_SIZE)
-        print(json.dumps({"embedding_jobs_encoded": embedded}, indent=2))
+        if no_embed:
+            print(json.dumps({"embedding_jobs_encoded": "skipped_no_embed"}, indent=2))
+        else:
+            from app.config import EMBED_BATCH_SIZE
+            from app.matching.embedder import JobEmbedder, embed_pending_jobs
+
+            embedder = JobEmbedder()
+            embedded = embed_pending_jobs(session, embedder, batch_size=EMBED_BATCH_SIZE)
+            print(json.dumps({"embedding_jobs_encoded": embedded}, indent=2))
 
     return 0
 
@@ -168,7 +173,12 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_ingest = sub.add_parser("ingest", help="Fetch jobs from configured ATS boards, dedupe, embed new/changed rows.")
-    p_ingest.set_defaults(func=lambda _: _cmd_ingest())
+    p_ingest.add_argument(
+        "--no-embed",
+        action="store_true",
+        help="Skip sentence-transformers (fast CI/cron). Website job cards only need rows in public.jobs.",
+    )
+    p_ingest.set_defaults(func=lambda args: _cmd_ingest(no_embed=bool(getattr(args, "no_embed", False))))
 
     p_probe = sub.add_parser(
         "probe-db",

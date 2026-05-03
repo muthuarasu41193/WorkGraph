@@ -11,6 +11,11 @@ function assertEnv(value: string | undefined, key: string): string {
   return value;
 }
 
+/** Next.js caches fetch() in Server Components; PostgREST must stay fresh for live job data. */
+function supabaseServerFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  return fetch(input, { ...init, cache: "no-store" });
+}
+
 export function createBrowserSupabaseClient(): SupabaseClient {
   return createBrowserClient(
     assertEnv(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL"),
@@ -28,6 +33,9 @@ export function createServerSupabaseClient(cookieStore: CookieStoreLike): Supaba
     assertEnv(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL"),
     assertEnv(supabaseAnonKey, "NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
+      global: {
+        fetch: supabaseServerFetch,
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();

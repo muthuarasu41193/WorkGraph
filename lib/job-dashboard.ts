@@ -5,6 +5,7 @@
  * Python job_aggregator should target the same DATABASE_URL / Postgres instance.
  */
 
+import { unstable_noStore as noStore } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** Matches dashboard cards + optional DB rows in job_tracker_entries.status */
@@ -223,6 +224,7 @@ export async function loadProfileJobDashboard(
   userId: string,
   profile: { skills: string[]; headline: string | null }
 ): Promise<ProfileJobsPayload> {
+  noStore();
   const pipeline = await fetchPipelineCounts(supabase, userId);
 
   const stats = await fetchListingStats(supabase);

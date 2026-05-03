@@ -1,11 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import {
   Briefcase,
   CalendarHeart,
   HeartHandshake,
   PartyPopper,
   Radar,
+  RefreshCw,
   Sparkles,
 } from "lucide-react";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
@@ -63,8 +66,16 @@ export default function ProfileJobDashboard({
   liveListings,
   listingsBySource,
 }: Props) {
+  const router = useRouter();
+  const [isRefreshing, startRefresh] = useTransition();
   const totalTracked = stats.applied + stats.interview + stats.offers + stats.saved;
   const sourceEntries = Object.entries(listingsBySource).filter(([, n]) => (n ?? 0) > 0);
+
+  function refreshListings() {
+    startRefresh(() => {
+      router.refresh();
+    });
+  }
 
   return (
     <section
@@ -92,6 +103,15 @@ export default function ProfileJobDashboard({
                 <Radar className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
                 {liveListings.toLocaleString()} live listings indexed
               </span>
+              <button
+                type="button"
+                onClick={refreshListings}
+                disabled={isRefreshing}
+                className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-white px-3 py-1 text-xs font-semibold text-emerald-800 shadow-sm transition hover:bg-emerald-50/90 disabled:cursor-wait disabled:opacity-70"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 text-emerald-600 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
+                {isRefreshing ? "Refreshing…" : "Refresh listings"}
+              </button>
               {sourceEntries.map(([src, n]) => (
                 <span
                   key={src}
@@ -102,10 +122,21 @@ export default function ProfileJobDashboard({
               ))}
             </div>
           ) : (
-            <p className="mt-2 text-xs leading-relaxed text-slate-500">
-              Run the Python ingest against Supabase Postgres — totals appear here automatically after migration{" "}
-              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">20260202120000_jobs_board</code>.
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <p className="text-xs leading-relaxed text-slate-500">
+                Run the Python ingest against Supabase Postgres — totals appear here automatically after migration{" "}
+                <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">20260202120000_jobs_board</code>.
+              </p>
+              <button
+                type="button"
+                onClick={refreshListings}
+                disabled={isRefreshing}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-wait disabled:opacity-70"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
+                {isRefreshing ? "Checking…" : "Check again"}
+              </button>
+            </div>
           )}
         </div>
         <div className="rounded-2xl border border-emerald-200/70 bg-white/80 px-3 py-2 text-right shadow-sm backdrop-blur-sm">

@@ -1,0 +1,5 @@
+# Minimal deps for `python -m app.main ingest --no-embed` (listing sync only; no ML stack).
+requests
+sqlalchemy
+psycopg2-binary
+python-dotenv

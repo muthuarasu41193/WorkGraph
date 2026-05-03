@@ -29,7 +29,11 @@ export async function GET() {
     /* keep raw */
   }
 
-  const supabase = createClient(url, key);
+  const supabase = createClient(url, key, {
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+    },
+  });
 
   const head = await supabase.from("jobs").select("id", { count: "exact", head: true });
   const sample = await supabase.from("jobs").select("id, title, source").limit(3);
