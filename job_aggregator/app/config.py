@@ -211,12 +211,15 @@ def _validate_database_url(url: str) -> None:
 
 
 def _resolve_database_url() -> str | URL:
-    built = _pg_from_components()
-    if built is not None:
-        return built
+    # Resolve Session pooler *before* DATABASE_HOST. A common .env mistake is
+    # DATABASE_HOST=aws-*-....pooler.supabase.com with default user "postgres";
+    # the pooler requires ``postgres.<project_ref>`` (handled in _pg_pooler_from_shorthand).
     pooler = _pg_pooler_from_shorthand()
     if pooler is not None:
         return pooler
+    built = _pg_from_components()
+    if built is not None:
+        return built
     raw = os.getenv("DATABASE_URL", "").strip()
     if raw:
         return _normalize_database_url(raw)
