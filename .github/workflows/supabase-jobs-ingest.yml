@@ -6,8 +6,16 @@
 #
 # Optional: instead of JOBS_DATABASE_URL, leave it unset and add all of:
 #   SUPABASE_DB_PASSWORD — DB password from Supabase → Database
-#   SUPABASE_POOLER_REGION — e.g. us-east-1 (from probe-db or Connect UI)
 #   NEXT_PUBLIC_SUPABASE_URL — same as Vercel (https://<ref>.supabase.co), OR set SUPABASE_PROJECT_REF alone
+#   Plus EITHER:
+#     SUPABASE_POOLER_HOST — full Session pooler hostname from Connect (recommended; matches aws-0 vs aws-1)
+#   OR:
+#     SUPABASE_POOLER_REGION — e.g. ap-south-1 (workflow builds aws-0-{region}; wrong prefix breaks login)
+#   Optional: DATABASE_POOLER_AWS_PREFIX secret — set to aws-1 if Connect shows aws-1-<region>.pooler.supabase.com
+#
+# Easiest CI option (no DB password / pooler):
+#   SUPABASE_SERVICE_ROLE_KEY — Dashboard → Settings → API Keys → Secret (server-only).
+#   NEXT_PUBLIC_SUPABASE_URL or SUPABASE_PROJECT_REF — same project as production.
 #
 # Apply SQL migrations on the Supabase project first (public.jobs + RLS), then push this workflow to the default branch.
 
@@ -16,8 +24,9 @@ name: Sync ATS jobs to Supabase
 on:
   workflow_dispatch:
   schedule:
-    # Every 6 hours UTC — adjust cron as you like
-    - cron: "20 */6 * * *"
+    # Twice daily India Standard Time (IST = UTC+5:30): 06:00 and 15:00 IST
+    - cron: "30 0 * * *" # 00:30 UTC → 06:00 IST
+    - cron: "30 9 * * *" # 09:30 UTC → 15:00 IST
 
 concurrency:
   group: supabase-jobs-ingest
@@ -47,16 +56,23 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.JOBS_DATABASE_URL }}
           DATABASE_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          DATABASE_POOLER_HOST: ${{ secrets.SUPABASE_POOLER_HOST }}
+          DATABASE_POOLER_AWS_PREFIX: ${{ secrets.DATABASE_POOLER_AWS_PREFIX }}
           DATABASE_POOLER_REGION: ${{ secrets.SUPABASE_POOLER_REGION }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INGEST_PRUNE_MISSING: ${{ vars.INGEST_PRUNE_MISSING }}
+          INGEST_PRUNE_MIN_FETCHED: ${{ vars.INGEST_PRUNE_MIN_FETCHED }}
         run: |
           if [ -n "$DATABASE_URL" ]; then
             echo "Using DATABASE_URL from JOBS_DATABASE_URL secret."
-          elif [ -n "$DATABASE_PASSWORD" ] && [ -n "$DATABASE_POOLER_REGION" ] && { [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -n "$SUPABASE_PROJECT_REF" ]; }; then
+          elif [ -n "$DATABASE_PASSWORD" ] && { [ -n "$DATABASE_POOLER_HOST" ] || [ -n "$DATABASE_POOLER_REGION" ]; } && { [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -n "$SUPABASE_PROJECT_REF" ]; }; then
             echo "Using pooler env vars (no JOBS_DATABASE_URL)."
+          elif [ -n "$SUPABASE_SERVICE_ROLE_KEY" ] && { [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -n "$SUPABASE_PROJECT_REF" ]; }; then
+            echo "Using Supabase REST ingest (SUPABASE_SERVICE_ROLE_KEY — no Postgres password needed)."
           else
-            echo "::error::Set JOBS_DATABASE_URL, or SUPABASE_DB_PASSWORD + SUPABASE_POOLER_REGION + (NEXT_PUBLIC_SUPABASE_URL or SUPABASE_PROJECT_REF). See workflow comments."
+            echo "::error::Set JOBS_DATABASE_URL, or SUPABASE_DB_PASSWORD + pooler host/region + URL/ref, or SUPABASE_SERVICE_ROLE_KEY + NEXT_PUBLIC_SUPABASE_URL (or SUPABASE_PROJECT_REF). See workflow comments."
             exit 1
           fi
           python -m app.main ingest --no-embed

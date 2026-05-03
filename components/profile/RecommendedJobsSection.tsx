@@ -38,7 +38,7 @@ function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
       return {
         title: "No job rows in this site’s Supabase database yet",
         body:
-          "Vercel is reading public.jobs on the project tied to NEXT_PUBLIC_SUPABASE_URL. That table is empty until ingest runs against the same Postgres. In GitHub: Actions → “Sync ATS jobs to Supabase” → Run workflow (after repository secrets are set), or run python -m app.main ingest --no-embed locally with DATABASE_URL pointing at this project.",
+          "Vercel reads public.jobs on the Supabase project from NEXT_PUBLIC_SUPABASE_URL. Populate it via ingest: GitHub Actions → “Sync ATS jobs to Supabase” (set SUPABASE_SERVICE_ROLE_KEY + NEXT_PUBLIC_SUPABASE_URL on the repo, or DB password + pooler), or locally from job_aggregator run python -m app.main ingest --no-embed after adding SUPABASE_SERVICE_ROLE_KEY (secret key from Supabase → API Keys) or a real DATABASE_PASSWORD.",
       };
     case "count_unavailable":
     case "rows_unavailable":

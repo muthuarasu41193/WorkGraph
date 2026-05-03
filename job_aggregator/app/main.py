@@ -17,13 +17,136 @@ import sys
 from pathlib import Path
 
 
+def _password_raw() -> str | None:
+    for key in ("DATABASE_PASSWORD", "SUPABASE_DB_PASSWORD"):
+        raw = os.getenv(key)
+        if raw is not None and raw.strip():
+            return raw.strip()
+    return None
+
+
+def _database_password_is_placeholder(password: str | None) -> bool:
+    if not password:
+        return False
+    s = password.lower()
+    return (
+        "replace_with" in s
+        or "<paste" in s
+        or "changeme" in s
+        or s == "password"
+        or "your_plain" in s.replace("-", "_")
+    )
+
+
+def _rest_ingest_env_ready() -> bool:
+    from app.ingest.supabase_rest import resolve_supabase_rest_url
+
+    url = resolve_supabase_rest_url().strip()
+    key = (
+        os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SECRET_KEY") or ""
+    ).strip()
+    return bool(url and key)
+
+
+def _should_use_rest_ingest() -> bool:
+    flag = os.getenv("JOB_INGEST_USE_REST", "").strip().lower()
+    if flag in ("1", "true", "yes"):
+        return True
+    if flag in ("0", "false", "no"):
+        return False
+
+    pwd = _password_raw()
+    if _database_password_is_placeholder(pwd):
+        return _rest_ingest_env_ready()
+    if pwd is None:
+        return _rest_ingest_env_ready()
+    return False
+
+
+def _warn_if_ingest_db_differs_from_supabase_project() -> None:
+    """SQLite ingest while Supabase URL is configured → profile stays empty / stale."""
+    from sqlalchemy.engine.url import URL
+
+    from app.config import DATABASE_URL, infer_supabase_project_ref
+
+    ref = infer_supabase_project_ref()
+    if not ref:
+        return
+    url_str = (
+        DATABASE_URL.render_as_string(hide_password=True)
+        if isinstance(DATABASE_URL, URL)
+        else str(DATABASE_URL)
+    )
+    if url_str.startswith("sqlite"):
+        print(
+            "\n*** WARNING: Ingest is using SQLite (see DATABASE_URL resolution in app/config.py), "
+            f"but NEXT_PUBLIC_SUPABASE_URL implies Supabase project ref {ref!r}. "
+            "The Next.js profile reads Postgres on that project — set DATABASE_PASSWORD (+ pooler host or "
+            "DATABASE_URL) so ingest writes the same database as the web app.\n",
+            file=sys.stderr,
+        )
+
+
 def _cmd_ingest(*, no_embed: bool = False) -> int:
     from app.config import COMPANIES_JSON
-    from app.database import init_db, session_scope
-    from app.ingest.runner import run_full_ingestion
+    from app.ingest.runner import run_full_ingestion, run_full_ingestion_via_rest
     from app.utils import configure_logging
 
     configure_logging()
+
+    if _should_use_rest_ingest():
+        if not _rest_ingest_env_ready():
+            print(
+                "\nCannot ingest: DATABASE_PASSWORD is missing or still a placeholder, but "
+                "SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_URL are not both set.\n\n"
+                "Fix one of:\n"
+                "  • Set DATABASE_PASSWORD to your Supabase DB password (plain text), or\n"
+                "  • Add SUPABASE_SERVICE_ROLE_KEY from Dashboard → Settings → API Keys → Secret "
+                "(same project as NEXT_PUBLIC_SUPABASE_URL).\n",
+                file=sys.stderr,
+            )
+            return 1
+        try:
+            stats = run_full_ingestion_via_rest(Path(COMPANIES_JSON))
+        except RuntimeError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        print(json.dumps({"ingestion": stats}, indent=2))
+        if no_embed:
+            print(json.dumps({"embedding_jobs_encoded": "skipped_no_embed"}, indent=2))
+        else:
+            print(
+                json.dumps(
+                    {
+                        "embedding_jobs_encoded": "skipped_rest_ingest_needs_postgres_for_embed",
+                        "hint": "Re-run with --no-embed (default for CI) or set DATABASE_PASSWORD for SQLAlchemy embed.",
+                    },
+                    indent=2,
+                )
+            )
+        return 0
+
+    pwd = _password_raw()
+    if _database_password_is_placeholder(pwd):
+        print(
+            "\nDATABASE_PASSWORD is still a template value (not your real DB password).\n"
+            "Either paste the plain database password from Supabase → Database, or add "
+            "SUPABASE_SERVICE_ROLE_KEY + NEXT_PUBLIC_SUPABASE_URL so ingest can use REST upserts.\n",
+            file=sys.stderr,
+        )
+        return 1
+    if pwd is None:
+        print(
+            "\nCannot ingest via Postgres: DATABASE_PASSWORD is not set.\n"
+            "Add SUPABASE_SERVICE_ROLE_KEY + NEXT_PUBLIC_SUPABASE_URL for REST ingest, "
+            "or set DATABASE_PASSWORD for direct Postgres.\n",
+            file=sys.stderr,
+        )
+        return 1
+
+    from app.database import init_db, session_scope
+
+    _warn_if_ingest_db_differs_from_supabase_project()
     init_db()
 
     with session_scope() as session:
