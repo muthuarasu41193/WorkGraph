@@ -92,15 +92,28 @@ def infer_supabase_project_ref() -> str | None:
 
 
 def _pg_pooler_from_shorthand() -> URL | None:
-    """Session pooler (IPv4). Needs region — run ``python -m app.main probe-db`` if unsure."""
-    region = _first_nonempty_env("DATABASE_POOLER_REGION", "SUPABASE_POOLER_REGION")
+    """Session pooler (IPv4). Use DATABASE_POOLER_HOST from Connect UI, or region + aws prefix.
+
+    Some projects use ``aws-1-<region>`` instead of ``aws-0-<region>`` (probe-db discovers both).
+    """
     pwd = _password_env()
-    if not region or pwd is None:
+    if pwd is None:
         return None
     ref = infer_supabase_project_ref()
     if not ref:
         return None
-    host = f"aws-0-{region}.pooler.supabase.com"
+
+    host_override = _first_nonempty_env("DATABASE_POOLER_HOST", "SUPABASE_POOLER_HOST")
+    if host_override:
+        host = host_override.strip()
+    else:
+        region = _first_nonempty_env("DATABASE_POOLER_REGION", "SUPABASE_POOLER_REGION")
+        if not region:
+            return None
+        prefix = _first_nonempty_env("DATABASE_POOLER_AWS_PREFIX", "aws-0") or "aws-0"
+        if prefix not in ("aws-0", "aws-1"):
+            prefix = "aws-0"
+        host = f"{prefix}-{region}.pooler.supabase.com"
     user = f"postgres.{ref}"
     db = _first_nonempty_env("DATABASE_NAME", "SUPABASE_DB_NAME") or "postgres"
     port_str = _first_nonempty_env("DATABASE_PORT", "SUPABASE_DB_PORT") or "5432"

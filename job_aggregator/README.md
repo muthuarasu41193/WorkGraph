@@ -61,7 +61,7 @@ DATABASE_PASSWORD=...
 
 Or a single `DATABASE_URL` (must URL-encode `@` in passwords). If `db.*.supabase.co` fails DNS on Windows (direct connections are IPv6-only), set **`DATABASE_PASSWORD`** and run **`python -m app.main probe-db`** — it prints **`DATABASE_POOLER_REGION`** for the IPv4 Session pooler; paste that into `job_aggregator/.env`. Optional **`DATABASE_HOSTADDR`** (AAAA record from `nslookup`) only helps if your PC has working IPv6 routing.
 
-**`FATAL: tenant/user postgres.<project_ref> not found`** on `*.pooler.supabase.com` means the **Session pooler region is wrong** (not your geographic region — Supabase assigns the pool). Do not guess `DATABASE_POOLER_REGION`; run **`python -m app.main probe-db`** with `DATABASE_PASSWORD` + `NEXT_PUBLIC_SUPABASE_URL` set and use the region it prints. Alternatively, copy the **full URI** from Dashboard → **Connect** → **Session pooler** (host + port + user are guaranteed to match).
+**`FATAL: tenant/user postgres.<project_ref> not found`** on `*.pooler.supabase.com` usually means the **pooler hostname is wrong**: Supabase may assign **`aws-1-<region>`** instead of **`aws-0-<region>`** for your project (same symptom if the region is wrong). **`probe-db`** tries both prefixes across regions. Alternatively paste **`DATABASE_POOLER_HOST`** from Dashboard → **Connect** → **Session pooler** (full hostname, no guessing). **`DATABASE_PASSWORD`** must be the **database** password (Supabase → Database), not the anon API key; use the exact password in `DATABASE_PASSWORD` (do not URL-encode `@` as `%40` in env files).
 
 ### Supabase + Next.js profile dashboard
 

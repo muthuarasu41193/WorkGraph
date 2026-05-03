@@ -107,43 +107,85 @@ def _cmd_probe_db() -> int:
     db = os.getenv("DATABASE_NAME") or os.getenv("SUPABASE_DB_NAME") or "postgres"
     port = int((os.getenv("DATABASE_PORT") or os.getenv("SUPABASE_DB_PORT") or "5432").strip())
 
-    for region in POOLER_PROBE_REGIONS:
-        host = f"aws-0-{region}.pooler.supabase.com"
-        try:
-            conn = psycopg2.connect(
-                host=host,
-                port=port,
-                dbname=db,
-                user=user,
-                password=pwd,
-                sslmode="require",
-                connect_timeout=12,
-            )
-            conn.close()
-            print(json.dumps({"ok": True, "DATABASE_POOLER_REGION": region, "pooler_host": host}, indent=2))
-            print(
-                f"\nAdd to job_aggregator/.env:\nDATABASE_POOLER_REGION={region}\n"
-                f"# plus DATABASE_PASSWORD and SUPABASE_PROJECT_REF={ref} (or rely on NEXT_PUBLIC_SUPABASE_URL)."
-            )
-            return 0
-        except psycopg2.OperationalError as exc:
-            msg = str(exc).replace("\n", " ").lower()
-            if "password authentication failed" in msg:
-                print(json.dumps({"ok": False, "error": "password authentication failed"}, indent=2), file=sys.stderr)
+    # Hosted Supabase may register the tenant on aws-1-<region> instead of aws-0-<region>.
+    # See: https://stackoverflow.com/questions/78422887 (pooler hostname must match dashboard).
+    for aws_prefix in ("aws-0", "aws-1"):
+        for region in POOLER_PROBE_REGIONS:
+            host = f"{aws_prefix}-{region}.pooler.supabase.com"
+            try:
+                conn = psycopg2.connect(
+                    host=host,
+                    port=port,
+                    dbname=db,
+                    user=user,
+                    password=pwd,
+                    sslmode="require",
+                    connect_timeout=12,
+                )
+                conn.close()
+                print(
+                    json.dumps(
+                        {
+                            "ok": True,
+                            "DATABASE_POOLER_HOST": host,
+                            "DATABASE_POOLER_AWS_PREFIX": aws_prefix,
+                            "DATABASE_POOLER_REGION": region,
+                        },
+                        indent=2,
+                    )
+                )
+                print(
+                    f"\nAdd to job_aggregator/.env (either full host or prefix + region):\n"
+                    f"DATABASE_POOLER_HOST={host}\n"
+                    f"# or:\n# DATABASE_POOLER_AWS_PREFIX={aws_prefix}\n# DATABASE_POOLER_REGION={region}\n"
+                    f"# plus DATABASE_PASSWORD and SUPABASE_PROJECT_REF={ref} (or NEXT_PUBLIC_SUPABASE_URL)."
+                )
+                return 0
+            except psycopg2.OperationalError as exc:
+                msg = str(exc).replace("\n", " ").lower()
+                if "password authentication failed" in msg:
+                    print(json.dumps({"ok": False, "error": "password authentication failed"}, indent=2), file=sys.stderr)
+                    return 1
+                if "tenant" in msg or "enotfound" in msg or "user not found" in msg:
+                    continue
+                if "could not translate host name" in msg:
+                    continue
+                print(json.dumps({"tried": host, "error": str(exc)[:240]}, indent=2))
                 return 1
-            if "tenant" in msg or "enotfound" in msg or "user not found" in msg:
-                continue
-            if "could not translate host name" in msg:
-                continue
-            print(json.dumps({"tried_region": region, "host": host, "error": str(exc)[:240]}, indent=2))
-            return 1
+
+    # Direct connection (user postgres, not postgres.ref) — works when IPv6/DNS route to db.* is OK.
+    direct_host = f"db.{ref}.supabase.co"
+    try:
+        conn = psycopg2.connect(
+            host=direct_host,
+            port=port,
+            dbname=db,
+            user="postgres",
+            password=pwd,
+            sslmode="require",
+            connect_timeout=15,
+        )
+        conn.close()
+        print(json.dumps({"ok": True, "mode": "direct", "DATABASE_HOST": direct_host, "DATABASE_USER": "postgres"}, indent=2))
+        print(
+            f"\nPooler did not match; direct connection works. Add to job_aggregator/.env:\n"
+            f"DATABASE_HOST={direct_host}\n"
+            f"DATABASE_USER=postgres\n"
+            f"DATABASE_PASSWORD=<same>\n"
+            f"DATABASE_PORT={port}\n"
+            f"# Remove DATABASE_POOLER_* lines so these take effect."
+        )
+        return 0
+    except psycopg2.OperationalError as exc:
+        print(json.dumps({"direct_attempt": direct_host, "error": str(exc)[:280]}, indent=2))
 
     print(
         json.dumps(
             {
                 "ok": False,
-                "hint": "No pooler region matched this project ref + password. "
-                "Confirm DATABASE_PASSWORD and copy Session pooler host from Supabase → Connect → Session pool.",
+                "hint": "No pooler host matched; direct db.* also failed. Confirm DATABASE_PASSWORD in "
+                "Supabase → Settings → Database, then copy the exact Session pooler host from Connect "
+                "(may be aws-1-… not aws-0-…). You can set DATABASE_POOLER_HOST to that full hostname.",
             },
             indent=2,
         )
