@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, Clock, ExternalLink } from "lucide-react";
-import type { RecommendedJobCard } from "../../lib/job-dashboard";
+import { ArrowUpRight, Clock, ExternalLink, LifeBuoy } from "lucide-react";
+import type { FeedDemoHint, RecommendedJobCard } from "../../lib/job-dashboard";
 
 const SOURCE_STYLES: Record<
   RecommendedJobCard["source"],
@@ -29,9 +29,34 @@ type Props = {
   jobs: RecommendedJobCard[];
   skillHints: string[];
   feedKind: "live" | "demo";
+  feedDemoHint?: FeedDemoHint | null;
 };
 
-export default function RecommendedJobsSection({ jobs, skillHints, feedKind }: Props) {
+function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
+  switch (hint) {
+    case "empty_table":
+      return {
+        title: "No job rows in this site’s Supabase database yet",
+        body:
+          "Vercel is reading public.jobs on the project tied to NEXT_PUBLIC_SUPABASE_URL. That table is empty until ingest runs against the same Postgres. In GitHub: Actions → “Sync ATS jobs to Supabase” → Run workflow (after repository secrets are set), or run python -m app.main ingest --no-embed locally with DATABASE_URL pointing at this project.",
+      };
+    case "count_unavailable":
+    case "rows_unavailable":
+      return {
+        title: "Could not load listings from Supabase",
+        body:
+          "Often missing GRANT SELECT on public.jobs, missing RLS policies, or wrong API keys. Run all SQL migrations in supabase/migrations (including 20260205153000_jobs_api_grants.sql), then open /api/jobs-health on this domain to see the exact error.",
+      };
+    case "select_returned_empty":
+      return {
+        title: "Job count looks non-zero but no rows were returned",
+        body:
+          "Rare mismatch (RLS vs count, or stale schema cache). Check /api/jobs-health and confirm migrations; in Supabase Dashboard try Database → Settings → reload if your project offers schema refresh.",
+      };
+  }
+}
+
+export default function RecommendedJobsSection({ jobs, skillHints, feedKind, feedDemoHint }: Props) {
   const hint =
     skillHints.length > 0
       ? feedKind === "live"
@@ -61,6 +86,29 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind }: P
           {feedKind === "live" ? "Live Postgres feed" : "Demo preview"}
         </span>
       </div>
+
+      {feedKind === "demo" && feedDemoHint ? (
+        <div className="flex gap-3 rounded-2xl border border-amber-200/90 bg-amber-50/90 p-4 text-sm text-amber-950 shadow-sm ring-1 ring-amber-100">
+          <span className="mt-0.5 shrink-0 text-amber-700">
+            <LifeBuoy className="h-5 w-5" aria-hidden />
+          </span>
+          <div className="min-w-0 space-y-2">
+            <p className="font-semibold leading-snug text-amber-950">{demoBannerCopy(feedDemoHint).title}</p>
+            <p className="leading-relaxed text-amber-900/95">{demoBannerCopy(feedDemoHint).body}</p>
+            <p className="text-xs text-amber-800/90">
+              <Link
+                href="/api/jobs-health"
+                className="font-semibold underline decoration-amber-400 underline-offset-2 hover:text-amber-950"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open /api/jobs-health
+              </Link>{" "}
+              (new tab) — then compare Supabase project ref with Vercel env and GitHub Action secrets.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {jobs.map((job, i) => {

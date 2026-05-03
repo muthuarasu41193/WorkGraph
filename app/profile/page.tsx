@@ -156,7 +156,12 @@ export default async function ProfilePage() {
           </aside>
         </div>
 
-        <RecommendedJobsSection jobs={jobDashboard.recommended} skillHints={profile.skills} feedKind={jobDashboard.feedKind} />
+        <RecommendedJobsSection
+          jobs={jobDashboard.recommended}
+          skillHints={profile.skills}
+          feedKind={jobDashboard.feedKind}
+          feedDemoHint={jobDashboard.feedDemoHint}
+        />
       </main>
     </div>
   );

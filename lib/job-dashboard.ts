@@ -40,12 +40,21 @@ export type RecommendedJobCard = {
   applyUrl?: string | null;
 };
 
+/** Why the profile shows placeholder cards instead of Postgres rows (only set when feedKind is demo). */
+export type FeedDemoHint =
+  | "empty_table"
+  | "count_unavailable"
+  | "rows_unavailable"
+  | "select_returned_empty";
+
 export type ProfileJobsPayload = {
   pipeline: JobPipelineCounts;
   liveListings: number;
   listingsBySource: Partial<Record<JobFeedSource, number>>;
   recommended: RecommendedJobCard[];
   feedKind: "live" | "demo";
+  /** Present only in demo mode — drives the troubleshooting banner on the profile. */
+  feedDemoHint?: FeedDemoHint | null;
 };
 
 type JobRow = {
@@ -178,14 +187,16 @@ async function fetchPipelineCounts(supabase: SupabaseClient, userId: string): Pr
   return counts;
 }
 
-async function fetchListingStats(supabase: SupabaseClient): Promise<{
-  total: number;
-  bySource: Partial<Record<JobFeedSource, number>>;
-} | null> {
+async function fetchListingStats(
+  supabase: SupabaseClient
+): Promise<
+  | { ok: true; total: number; bySource: Partial<Record<JobFeedSource, number>> }
+  | { ok: false; error: string; code?: string }
+> {
   const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true });
   if (totalRes.error) {
     console.warn("[job-dashboard] jobs count error:", totalRes.error.message, totalRes.error.code);
-    return null;
+    return { ok: false, error: totalRes.error.message, code: totalRes.error.code };
   }
 
   const bySource: Partial<Record<JobFeedSource, number>> = {};
@@ -199,7 +210,7 @@ async function fetchListingStats(supabase: SupabaseClient): Promise<{
     })
   );
 
-  return { total: totalRes.count ?? 0, bySource };
+  return { ok: true, total: totalRes.count ?? 0, bySource };
 }
 
 async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> {
@@ -229,24 +240,48 @@ export async function loadProfileJobDashboard(
   const pipeline = await fetchPipelineCounts(supabase, userId);
 
   const stats = await fetchListingStats(supabase);
-  if (!stats || stats.total === 0) {
+  if (!stats.ok) {
     return {
       pipeline,
-      liveListings: stats?.total ?? 0,
-      listingsBySource: stats?.bySource ?? {},
+      liveListings: 0,
+      listingsBySource: {},
       recommended: DEMO_RECOMMENDED_JOBS,
       feedKind: "demo",
+      feedDemoHint: "count_unavailable",
+    };
+  }
+
+  if (stats.total === 0) {
+    return {
+      pipeline,
+      liveListings: 0,
+      listingsBySource: stats.bySource,
+      recommended: DEMO_RECOMMENDED_JOBS,
+      feedKind: "demo",
+      feedDemoHint: "empty_table",
     };
   }
 
   const rows = await fetchJobRows(supabase);
-  if (!rows || rows.length === 0) {
+  if (!rows) {
     return {
       pipeline,
       liveListings: stats.total,
       listingsBySource: stats.bySource,
       recommended: DEMO_RECOMMENDED_JOBS,
       feedKind: "demo",
+      feedDemoHint: "rows_unavailable",
+    };
+  }
+
+  if (rows.length === 0) {
+    return {
+      pipeline,
+      liveListings: stats.total,
+      listingsBySource: stats.bySource,
+      recommended: DEMO_RECOMMENDED_JOBS,
+      feedKind: "demo",
+      feedDemoHint: "select_returned_empty",
     };
   }
 
@@ -260,5 +295,7 @@ export async function loadProfileJobDashboard(
     listingsBySource: stats.bySource,
     recommended,
     feedKind: ranked.length > 0 ? "live" : "demo",
+    feedDemoHint: ranked.length > 0 ? null : "select_returned_empty",
   };
 }
+
