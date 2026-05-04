@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowUpRight, Clock, ExternalLink, LifeBuoy } from "lucide-react";
-import type { FeedDemoHint, RecommendedJobCard } from "../../lib/job-dashboard";
+import { useMemo, useState } from "react";
+import { ArrowUpRight, Clock, ExternalLink, LifeBuoy, Search, SlidersHorizontal } from "lucide-react";
+import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 
 const SOURCE_STYLES: Record<
   RecommendedJobCard["source"],
@@ -24,6 +27,15 @@ const SOURCE_STYLES: Record<
   glassdoor: { label: "Glassdoor", className: "bg-emerald-700/10 text-emerald-900 ring-emerald-600/15" },
   levels: { label: "Levels.fyi", className: "bg-violet-600/12 text-violet-900 ring-violet-500/20" },
 };
+
+const DATE_OPTIONS = [
+  { id: "any" as const, label: "Any time" },
+  { id: "7" as const, label: "Last 7 days" },
+  { id: "14" as const, label: "Last 14 days" },
+  { id: "30" as const, label: "Last 30 days" },
+];
+
+const PAGE_SIZE = 24;
 
 type Props = {
   jobs: RecommendedJobCard[];
@@ -56,6 +68,16 @@ function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
   }
 }
 
+function passesDateFilter(iso: string | null | undefined, windowId: "any" | "7" | "14" | "30"): boolean {
+  if (windowId === "any") return true;
+  if (!iso) return true;
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return true;
+  const days = Number(windowId);
+  const cutoff = Date.now() - days * 86400000;
+  return t >= cutoff;
+}
+
 export default function RecommendedJobsSection({ jobs, skillHints, feedKind, feedDemoHint }: Props) {
   const hint =
     skillHints.length > 0
@@ -66,13 +88,80 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         ? "Ranked using your headline, summary text, and saved skills vs each posting."
         : "Add skills to your profile to sharpen ranking after ingest runs.";
 
+  const [query, setQuery] = useState("");
+  const [dateWindow, setDateWindow] = useState<"any" | "7" | "14" | "30">("any");
+  const [sources, setSources] = useState<Set<JobFeedSource>>(() => new Set());
+  const [skillsPick, setSkillsPick] = useState<Set<string>>(() => new Set());
+  const [visible, setVisible] = useState(PAGE_SIZE);
+
+  const platformsInFeed = useMemo(() => {
+    const u = new Set<JobFeedSource>();
+    for (const j of jobs) u.add(j.source);
+    return Array.from(u).sort();
+  }, [jobs]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return jobs.filter((job) => {
+      if (q) {
+        const blob = `${job.title} ${job.company} ${job.location}`.toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
+      if (sources.size > 0 && !sources.has(job.source)) return false; // empty set = all platforms
+      if (skillsPick.size > 0) {
+        const hasAny = [...skillsPick].some((sk) =>
+          job.matchedSkills.some((m) => m.toLowerCase() === sk.toLowerCase())
+        );
+        if (!hasAny) return false;
+      }
+      return true;
+    });
+  }, [jobs, query, dateWindow, sources, skillsPick]);
+
+  const visibleJobs = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
+
+  function togglePlatform(src: JobFeedSource) {
+    setSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(src)) {
+        next.delete(src);
+      } else {
+        next.add(src);
+      }
+      return next;
+    });
+    setVisible(PAGE_SIZE);
+  }
+
+  function toggleSkill(sk: string) {
+    setSkillsPick((prev) => {
+      const next = new Set(prev);
+      if (next.has(sk)) next.delete(sk);
+      else next.add(sk);
+      return next;
+    });
+    setVisible(PAGE_SIZE);
+  }
+
+  function clearFilters() {
+    setQuery("");
+    setDateWindow("any");
+    setSources(new Set());
+    setSkillsPick(new Set());
+    setVisible(PAGE_SIZE);
+  }
+
+  const hasActiveFilters =
+    query.trim() !== "" || dateWindow !== "any" || sources.size > 0 || skillsPick.size > 0;
+
   return (
     <section id="recommended-jobs" className="scroll-mt-28 space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">Recommended roles</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">Job board</p>
           <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            {feedKind === "live" ? "Greenhouse · Lever · Ashby matches" : "Sample roles (run ingest for live data)"}
+            {feedKind === "live" ? "Browse live ATS listings" : "Sample roles (run ingest for live data)"}
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{hint}</p>
         </div>
@@ -110,8 +199,138 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         </div>
       ) : null}
 
+      {jobs.length > 0 ? (
+        <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
+          <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 pb-4">
+            <SlidersHorizontal className="h-4 w-4 text-slate-500" aria-hidden />
+            <span className="text-sm font-semibold text-slate-800">Filters</span>
+            {hasActiveFilters ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="ml-auto text-xs font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950"
+              >
+                Clear all
+              </button>
+            ) : null}
+          </div>
+
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setVisible(PAGE_SIZE);
+              }}
+              placeholder="Search title, company, location…"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-emerald-500/20 transition focus:border-emerald-400 focus:bg-white focus:ring-2"
+              aria-label="Search jobs"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Posted</p>
+            <div className="flex flex-wrap gap-2">
+              {DATE_OPTIONS.map((d) => (
+                <button
+                  key={d.id}
+                  type="button"
+                  onClick={() => {
+                    setDateWindow(d.id);
+                    setVisible(PAGE_SIZE);
+                  }}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                    dateWindow === d.id
+                      ? "bg-emerald-700 text-white ring-emerald-700"
+                      : "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {platformsInFeed.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Platform</p>
+              <p className="text-[11px] text-slate-500">Leave none selected to show every platform, or pick one or more.</p>
+              <div className="flex flex-wrap gap-2">
+                {platformsInFeed.map((src) => {
+                  const active = sources.size === 0 || sources.has(src);
+                  return (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => togglePlatform(src)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                        sources.size === 0
+                          ? "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-emerald-50 hover:ring-emerald-200"
+                          : active
+                            ? "bg-violet-600 text-white ring-violet-600"
+                            : "bg-slate-100 text-slate-400 ring-slate-200"
+                      }`}
+                      title={
+                        sources.size === 0
+                          ? "Select to filter by this platform only (add more chips to combine)"
+                          : active
+                            ? "Click to exclude from filter"
+                            : "Click to include"
+                      }
+                    >
+                      {SOURCE_STYLES[src].label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          {skillHints.length > 0 && feedKind === "live" ? (
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Skills on your profile</p>
+              <div className="flex flex-wrap gap-2">
+                {skillHints.map((sk) => {
+                  const picked = skillsPick.has(sk);
+                  return (
+                    <button
+                      key={sk}
+                      type="button"
+                      onClick={() => toggleSkill(sk)}
+                      className={`max-w-full truncate rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                        picked
+                          ? "bg-emerald-100 text-emerald-950 ring-emerald-300"
+                          : "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-slate-100"
+                      }`}
+                      title="Show roles that mention this skill in title or description"
+                    >
+                      {sk}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[11px] text-slate-500">Select one or more to require overlap with those skills.</p>
+            </div>
+          ) : null}
+
+          <p className="text-sm text-slate-600">
+            Showing{" "}
+            <span className="font-semibold tabular-nums text-slate-900">{visibleJobs.length}</span> of{" "}
+            <span className="font-semibold tabular-nums text-slate-900">{filtered.length}</span>
+            {filtered.length !== jobs.length ? (
+              <>
+                {" "}
+                (<span className="tabular-nums">{jobs.length}</span> total ranked)
+              </>
+            ) : null}
+          </p>
+        </div>
+      ) : null}
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {jobs.map((job, i) => {
+        {visibleJobs.map((job, i) => {
           const src = SOURCE_STYLES[job.source];
           const applyHref = job.applyUrl?.trim();
           const canApply = Boolean(applyHref);
@@ -119,7 +338,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           return (
             <article
               key={job.id}
-              style={{ animationDelay: `${90 + i * 65}ms` }}
+              style={{ animationDelay: `${90 + i * 45}ms` }}
               className="group relative flex flex-col rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.22)] transition hover:border-emerald-200/90 hover:shadow-[0_22px_55px_-36px_rgba(16,185,129,0.22)] wg-job-card-enter"
             >
               <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -137,6 +356,18 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               <p className="mt-3 rounded-xl bg-emerald-50/80 px-3 py-2 text-xs leading-relaxed text-emerald-900 ring-1 ring-emerald-100/90">
                 <span className="font-semibold">Match signal:</span> {job.matchLabel}
               </p>
+              {job.matchedSkills.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {job.matchedSkills.slice(0, 6).map((s) => (
+                    <span key={s} className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+                      {s}
+                    </span>
+                  ))}
+                  {job.matchedSkills.length > 6 ? (
+                    <span className="text-[10px] font-medium text-slate-500">+{job.matchedSkills.length - 6}</span>
+                  ) : null}
+                </div>
+              ) : null}
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {canApply ? (
@@ -176,6 +407,27 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           );
         })}
       </div>
+
+      {filtered.length > visible ? (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisible((v) => v + PAGE_SIZE)}
+            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50/50"
+          >
+            Load more ({Math.min(PAGE_SIZE, filtered.length - visible)} next)
+          </button>
+        </div>
+      ) : null}
+
+      {filtered.length === 0 && jobs.length > 0 ? (
+        <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/90 px-4 py-8 text-center text-sm text-slate-600">
+          No roles match these filters.{" "}
+          <button type="button" onClick={clearFilters} className="font-semibold text-emerald-800 underline underline-offset-2">
+            Clear filters
+          </button>
+        </p>
+      ) : null}
 
       <p className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs leading-relaxed text-slate-600">
         Ingest jobs with{" "}

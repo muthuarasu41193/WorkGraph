@@ -36,6 +36,10 @@ export type RecommendedJobCard = {
   source: JobFeedSource;
   matchLabel: string;
   postedAgo: string;
+  /** ISO timestamp for client-side date filters; null when unknown */
+  postedAtIso: string | null;
+  /** Profile skills that appear in title/description (lowercase for stable keys) */
+  matchedSkills: string[];
   /** Official apply URL when row comes from ATS ingest */
   applyUrl?: string | null;
 };
@@ -78,6 +82,8 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     source: "linkedin",
     matchLabel: "Demo listing — ingest ATS jobs to replace",
     postedAgo: "Demo",
+    postedAtIso: null,
+    matchedSkills: [],
     applyUrl: null,
   },
   {
@@ -88,6 +94,8 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     source: "levels",
     matchLabel: "Run job_aggregator ingest against Supabase Postgres",
     postedAgo: "Demo",
+    postedAtIso: null,
+    matchedSkills: [],
     applyUrl: null,
   },
   {
@@ -98,6 +106,8 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     source: "reddit",
     matchLabel: "Uses DATABASE_URL pointing at this Supabase DB",
     postedAgo: "Demo",
+    postedAtIso: null,
+    matchedSkills: [],
     applyUrl: null,
   },
 ];
@@ -118,12 +128,16 @@ function normalizeSource(raw: string): JobFeedSource {
   return "indeed";
 }
 
-function buildMatchLabel(row: JobRow, skills: string[]): string {
+function matchedProfileSkills(row: JobRow, skills: string[]): string[] {
   const hay = `${row.title}\n${row.description}`.toLowerCase();
-  const hits = skills
+  return skills
     .map((sk) => sk.trim())
     .filter(Boolean)
     .filter((sk) => hay.includes(sk.toLowerCase()));
+}
+
+function buildMatchLabel(row: JobRow, skills: string[]): string {
+  const hits = matchedProfileSkills(row, skills);
   if (hits.length > 0) {
     const shown = hits.slice(0, 4);
     return `Skill overlap: ${shown.join(", ")}${hits.length > 4 ? "…" : ""}`;
@@ -166,6 +180,8 @@ function rowToCard(row: JobRow, skills: string[]): RecommendedJobCard {
     source: normalizeSource(row.source),
     matchLabel: buildMatchLabel(row, skills),
     postedAgo: formatPostedAgo(row.posted_at),
+    postedAtIso: row.posted_at,
+    matchedSkills: matchedProfileSkills(row, skills),
     applyUrl: row.apply_url,
   };
 }
@@ -285,7 +301,7 @@ export async function loadProfileJobDashboard(
     };
   }
 
-  const ranked = rankJobs(rows, profile.skills, profile.headline, 15);
+  const ranked = rankJobs(rows, profile.skills, profile.headline, 250);
   const recommended =
     ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
 
