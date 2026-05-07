@@ -5,21 +5,31 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
+  ArrowRight,
+  BadgeCheck,
+  Banknote,
   Bookmark,
   BookmarkCheck,
+  CalendarDays,
   Check,
   ChevronDown,
   ChevronUp,
   Clock,
+  GraduationCap,
   ExternalLink,
   LayoutGrid,
   LayoutList,
   LifeBuoy,
   MapPin,
   Loader2,
+  Sparkles,
   SearchX,
   Search,
   SlidersHorizontal,
+  Star,
+  Target,
+  TriangleAlert,
+  Zap,
   ArrowUp,
   UserSearch,
   X,
@@ -94,6 +104,11 @@ const DATE_OPTIONS = [
 ];
 
 const PAGE_SIZE = 20;
+const FILTER_TRIGGER_BASE_CLASS =
+  "inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2";
+const FILTER_TRIGGER_INACTIVE_CLASS =
+  `${FILTER_TRIGGER_BASE_CLASS} border-[#DADCE0] bg-white text-[#3A3A3C] hover:border-[#1A73E8] hover:bg-[#E8F0FE]`;
+const FILTER_TRIGGER_ACTIVE_CLASS = `${FILTER_TRIGGER_BASE_CLASS} border-[#1A73E8] bg-[#1A73E8] text-white`;
 
 type Props = {
   jobs: RecommendedJobCard[];
@@ -134,6 +149,18 @@ function passesDateFilter(iso: string | null | undefined, windowId: "any" | "1" 
   const days = Number(windowId);
   const cutoff = Date.now() - days * 86400000;
   return t >= cutoff;
+}
+
+function getMatchScore(job: RecommendedJobCard, skillHints: string[]): number {
+  const normalizedHints = skillHints.map((s) => s.toLowerCase());
+  const hintHits = normalizedHints.filter((hint) =>
+    job.matchedSkills.some((matched) => matched.toLowerCase() === hint)
+  ).length;
+  const titleLocationBlob = `${job.title} ${job.location}`.toLowerCase();
+  const titleHits = normalizedHints.filter((hint) => titleLocationBlob.includes(hint)).length;
+  const recencyBonus = job.postedAtIso ? Math.max(0, 6 - Math.floor((Date.now() - new Date(job.postedAtIso).getTime()) / 86400000)) : 0;
+  const raw = 58 + job.matchedSkills.length * 6 + hintHits * 4 + titleHits * 2 + recencyBonus;
+  return Math.max(56, Math.min(98, raw));
 }
 
 export default function RecommendedJobsSection({ jobs, skillHints, feedKind, feedDemoHint }: Props) {
@@ -195,42 +222,6 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     return Array.from(u).sort();
   }, [jobs]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return jobs.filter((job) => {
-      if (q) {
-        const blob = `${job.title} ${job.company} ${job.location}`.toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
-      if (matchScore !== "any") {
-        const score = Number((job.matchLabel.match(/\d+/) || ["0"])[0]);
-        if (score < Number(matchScore)) return false;
-      }
-      if (sources.size > 0 && !sources.has(job.source)) return false; // empty set = all platforms
-      if (locationMode !== "any") {
-        const loc = job.location.toLowerCase();
-        if (locationMode === "remote" && !loc.includes("remote")) return false;
-        if (locationMode === "hybrid" && !loc.includes("hybrid")) return false;
-        if (locationMode === "onsite" && !(loc.includes("on-site") || loc.includes("onsite"))) return false;
-      }
-      if (locationQuery.trim()) {
-        if (!job.location.toLowerCase().includes(locationQuery.trim().toLowerCase())) return false;
-      }
-      if (skillsPick.size > 0) {
-        const hasAny = [...skillsPick].some((sk) =>
-          job.matchedSkills.some((m) => m.toLowerCase() === sk.toLowerCase())
-        );
-        if (!hasAny) return false;
-      }
-      return true;
-    });
-  }, [jobs, query, dateWindow, sources, skillsPick]);
-
-  function getMatchScore(job: RecommendedJobCard): number {
-    return Math.max(56, Math.min(98, 60 + job.matchedSkills.length * 7));
-  }
-
   function getSalaryBand(job: RecommendedJobCard): [number, number] {
     const base = 90 + (job.id.length % 6) * 15;
     return [base, base + 60];
@@ -246,6 +237,74 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     return levels[job.id.length % levels.length];
   }
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return jobs.filter((job) => {
+      const score = getMatchScore(job, skillHints);
+      if (q) {
+        const blob = `${job.title} ${job.company} ${job.location} ${job.matchLabel} ${job.matchedSkills.join(" ")}`.toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
+      if (matchScore !== "any") {
+        if (score < Number(matchScore)) return false;
+      }
+      if (sources.size > 0 && !sources.has(job.source)) return false; // empty set = all platforms
+      if (jobTypes.size > 0 && !jobTypes.has(getJobType(job))) return false;
+      if (locationMode !== "any") {
+        const loc = job.location.toLowerCase();
+        if (locationMode === "remote" && !loc.includes("remote")) return false;
+        if (locationMode === "hybrid" && !loc.includes("hybrid")) return false;
+        if (locationMode === "onsite" && !(loc.includes("on-site") || loc.includes("onsite"))) return false;
+      }
+      if (locationQuery.trim()) {
+        if (!job.location.toLowerCase().includes(locationQuery.trim().toLowerCase())) return false;
+      }
+      if (skillsPick.size > 0) {
+        const hasAny = [...skillsPick].some((sk) =>
+          job.matchedSkills.some((m) => m.toLowerCase() === sk.toLowerCase())
+        );
+        if (!hasAny) return false;
+      }
+      if (experienceLevel !== "any" && getExperience(job) !== experienceLevel) return false;
+      const [, salaryMaxK] = getSalaryBand(job);
+      if (salaryMaxK < salaryMin || salaryMaxK > salaryMax) return false;
+      const industryKeywords: Record<string, string[]> = {
+        Technology: ["software", "engineer", "developer", "saas", "ai"],
+        Finance: ["finance", "fintech", "bank", "payments"],
+        Healthcare: ["health", "clinical", "med", "biotech"],
+        Marketing: ["marketing", "growth", "seo", "brand"],
+        Design: ["design", "ux", "ui", "product design"],
+        Legal: ["legal", "law", "compliance"],
+        Education: ["education", "edtech", "curriculum"],
+        Retail: ["retail", "commerce", "ecommerce"],
+      };
+      if (industries.size > 0) {
+        const hay = `${job.title} ${job.company} ${job.matchLabel}`.toLowerCase();
+        const matchesIndustry = Array.from(industries).some((industry) =>
+          (industryKeywords[industry] ?? []).some((kw) => hay.includes(kw))
+        );
+        if (!matchesIndustry) return false;
+      }
+      return true;
+    });
+  }, [
+    jobs,
+    query,
+    dateWindow,
+    matchScore,
+    sources,
+    skillsPick,
+    jobTypes,
+    locationMode,
+    locationQuery,
+    experienceLevel,
+    salaryMin,
+    salaryMax,
+    industries,
+    skillHints,
+  ]);
+
   const sortedJobs = useMemo(() => {
     const rows = [...filtered];
     rows.sort((a, b) => {
@@ -253,10 +312,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
       if (sortBy === "newest") return (new Date(b.postedAtIso || 0).getTime() || 0) - (new Date(a.postedAtIso || 0).getTime() || 0);
       if (sortBy === "salary_desc") return getSalaryBand(b)[1] - getSalaryBand(a)[1];
       if (sortBy === "salary_asc") return getSalaryBand(a)[1] - getSalaryBand(b)[1];
-      return getMatchScore(b) - getMatchScore(a);
+      return getMatchScore(b, skillHints) - getMatchScore(a, skillHints);
     });
     return rows;
-  }, [filtered, sortBy]);
+  }, [filtered, sortBy, skillHints]);
 
   const visibleJobs = useMemo(() => sortedJobs.slice(0, visible), [sortedJobs, visible]);
   const totalMatched = sortedJobs.length;
@@ -526,7 +585,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   const matchBreakdown = [
     { label: "Skills", score: 87, color: "#1A73E8", detail: "React, Node.js, Python +12 more" },
     { label: "Experience", score: 92, color: "#1E8E3E", detail: "5 years matches senior roles" },
-    { label: "Location", score: 100, color: "#F9AB00", detail: "Remote preferred ✓" },
+    { label: "Location", score: 100, color: "#F9AB00", detail: "Remote preferred" },
     { label: "Salary", score: 78, color: "#1A73E8", detail: "$120K-$180K range" },
     { label: "Industry", score: 85, color: "#1E8E3E", detail: "Tech, SaaS, FinTech" },
   ];
@@ -689,7 +748,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               ) : null}
 
               <details data-filter-dropdown="true" className="group relative shrink-0">
-                <summary className={`inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border px-4 text-sm font-medium ${matchScore !== "any" ? "border-[#1A73E8] bg-[#1A73E8] text-white" : "border-[#DADCE0] bg-white text-[#3A3A3C]"}`}>
+                <summary className={`${matchScore !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS} font-medium`}>
                   Match Score <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-44 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
@@ -708,7 +767,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                   {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-52 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
@@ -733,7 +792,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                   <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -755,7 +814,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 { label: "Company Size", value: companySize, set: setCompanySize, opts: ["Startup (1-50)", "Small (51-200)", "Medium (201-1000)", "Large (1000+)", "Enterprise (10K+)"] },
               ].map((item) => (
                 <details data-filter-dropdown="true" key={item.label} className="relative shrink-0">
-                  <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                  <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                     {item.label} <ChevronDown className="h-4 w-4" />
                   </summary>
                   <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-56 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
@@ -780,7 +839,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               ))}
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                   Salary <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-72 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -801,7 +860,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                   Industry {industries.size > 0 ? `· ${industries.size}` : ""} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -825,7 +884,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className="inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
                   Source {sources.size > 0 ? `· ${sources.size}` : ""} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-60 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -838,7 +897,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 </div>
               </details>
 
-              <button type="button" onClick={() => setIsMoreFiltersOpen(true)} className="inline-flex h-10 shrink-0 items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-white px-4 text-sm text-[#3A3A3C]">
+              <button type="button" onClick={() => setIsMoreFiltersOpen(true)} className={`${FILTER_TRIGGER_INACTIVE_CLASS} shrink-0`}>
                 <SlidersHorizontal className="h-4 w-4" /> More Filters
               </button>
             </div>
@@ -1012,7 +1071,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           const applyHref = job.applyUrl?.trim();
           const canApply = Boolean(applyHref);
           const [salaryMinK, salaryMaxK] = getSalaryBand(job);
-          const score = getMatchScore(job);
+          const score = getMatchScore(job, skillHints);
           const isSaved = savedJobs.has(job.id);
           const isNew = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000;
           const isFresh = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000 * 3;
@@ -1023,13 +1082,14 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             { label: "AWS", status: "warn" },
             { label: "Docker", status: "miss" },
           ] as const;
+          const MatchIcon = score >= 90 ? Target : score >= 75 ? BadgeCheck : Zap;
           const matchBadge =
             score >= 90
-              ? { bg: "#E6F4EA", fg: "#1E8E3E", label: `🎯 ${score}% Match` }
+              ? { bg: "#E6F4EA", fg: "#1E8E3E", label: `${score}% Match` }
               : score >= 75
-                ? { bg: "#E8F0FE", fg: "#1A73E8", label: `✓ ${score}% Match` }
+                ? { bg: "#E8F0FE", fg: "#1A73E8", label: `${score}% Match` }
                 : score >= 60
-                  ? { bg: "#FEF7E0", fg: "#F9AB00", label: `~ ${score}% Match` }
+                  ? { bg: "#FEF7E0", fg: "#F9AB00", label: `${score}% Match` }
                   : { bg: "#F8F9FA", fg: "#8E8E93", label: `${score}% Match` };
 
           return (
@@ -1058,7 +1118,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="group/score relative rounded-2xl px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
+                  <span className="group/score relative inline-flex items-center rounded-2xl px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
+                    <MatchIcon className="mr-1 inline h-3.5 w-3.5" />
                     {matchBadge.label}
                     <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden w-48 rounded-lg border border-[#DADCE0] bg-white px-2 py-1 text-[11px] font-normal text-[#3A3A3C] shadow-lg group-hover/score:block">
                       Skills 60% · Experience 20% · Location 20%
@@ -1078,7 +1139,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       });
                     }}
                     title="Save job"
-                    className={`text-[#8E8E93] hover:text-[#1A73E8] ${bouncingBookmarkId === job.id ? "wg-bookmark-bounce" : ""}`}
+                    className={`rounded-md p-1 text-[#8E8E93] transition hover:bg-[#E8F0FE] hover:text-[#1A73E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-1 ${bouncingBookmarkId === job.id ? "wg-bookmark-bounce" : ""}`}
                   >
                     {isSaved ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
                   </button>
@@ -1086,12 +1147,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className="rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]">💰 ${salaryMinK}K - ${salaryMaxK}K</span>
-                <span className="rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]">📋 {getExperience(job)}</span>
-                <span className={`rounded-xl border px-2.5 py-1 text-xs ${isFresh ? "border-[#E6F4EA] bg-[#E6F4EA] text-[#1E8E3E]" : "border-[#DADCE0] bg-[#F8F9FA] text-[#8E8E93]"}`}>🕐 {job.postedAgo}</span>
+                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><Banknote className="h-3.5 w-3.5" /> ${salaryMinK}K - ${salaryMaxK}K</span>
+                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><GraduationCap className="h-3.5 w-3.5" /> {getExperience(job)}</span>
+                <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-xs ${isFresh ? "border-[#E6F4EA] bg-[#E6F4EA] text-[#1E8E3E]" : "border-[#DADCE0] bg-[#F8F9FA] text-[#8E8E93]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
                 <span className="rounded-xl bg-[#F0F4FF] px-2.5 py-1 text-xs text-[#1A73E8]">via {src.label}</span>
-                {canApply ? <span className="rounded-xl bg-[#E6F4EA] px-2.5 py-1 text-xs text-[#1E8E3E]">⚡ Easy Apply</span> : null}
-                {isNew ? <span className="rounded-xl bg-[#FCE8E6] px-2.5 py-1 text-xs text-[#D93025] wg-new-badge-pulse">🔴 New</span> : null}
+                {canApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#E6F4EA] px-2.5 py-1 text-xs text-[#1E8E3E]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
+                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#FCE8E6] px-2.5 py-1 text-xs text-[#D93025] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
               </div>
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -1109,9 +1170,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex h-9 items-center rounded-[18px] bg-[#1A73E8] px-5 text-sm font-medium text-white transition hover:scale-[1.02] hover:bg-[#1557B0]"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-5 text-sm font-medium text-white transition hover:scale-[1.02] hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
                     >
-                      {canApply ? "⚡ Quick Apply" : "Apply Now"}
+                      <Zap className="h-4 w-4" />
+                      Quick Apply
                     </a>
                   ) : null}
                   <button
@@ -1135,7 +1197,13 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   <ul className="space-y-1 text-sm">
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
-                        <span>{r.status === "ok" ? "✅" : r.status === "warn" ? "⚠️" : "❌"}</span>
+                        {r.status === "ok" ? (
+                          <Check className="h-4 w-4 text-[#1E8E3E]" />
+                        ) : r.status === "warn" ? (
+                          <TriangleAlert className="h-4 w-4 text-[#F9AB00]" />
+                        ) : (
+                          <X className="h-4 w-4 text-[#D93025]" />
+                        )}
                         <span className="text-[#3A3A3C]">{r.label}</span>
                       </li>
                     ))}
@@ -1144,7 +1212,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     <span>Company size: 201-1000</span>
                     <span>Industry: SaaS</span>
                     <span>Founded: 2017</span>
-                    <span>⭐ 4.2</span>
+                    <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-[#F9AB00]" /> 4.2</span>
                     <a href="#" onClick={(e) => e.preventDefault()} className="text-[#1A73E8]">View company</a>
                   </div>
                   {canApply ? (
@@ -1153,8 +1221,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex w-full items-center justify-center rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#1557B0]"
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
                     >
+                      <ExternalLink className="h-4 w-4" />
                       Apply Now
                     </a>
                   ) : null}
@@ -1167,7 +1236,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-[#8E8E93]">Posted {job.postedAgo}</span>
                     {canApply ? (
-                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="rounded-[18px] bg-[#1A73E8] px-3 py-1.5 text-xs font-medium text-white">
+                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2">
+                        <ExternalLink className="h-3.5 w-3.5" />
                         Apply
                       </a>
                     ) : null}
@@ -1255,9 +1325,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             </div>
           </div>
           <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
-            <Link href="/create-profile#skills" className="text-[#1A73E8]">Add your skills →</Link>
-            <Link href="/create-profile#salary" className="text-[#1A73E8]">Add expected salary →</Link>
-            <Link href="/create-profile#location" className="text-[#1A73E8]">Add location preference →</Link>
+            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[#1A73E8]">Add your skills <ArrowRight className="h-3.5 w-3.5" /></Link>
+            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[#1A73E8]">Add expected salary <ArrowRight className="h-3.5 w-3.5" /></Link>
+            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-[#1A73E8]">Add location preference <ArrowRight className="h-3.5 w-3.5" /></Link>
           </div>
           <Link
             href="/create-profile"
@@ -1331,7 +1401,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   {job.matchLabel}. This full-screen mobile sheet lets candidates read role details without leaving the list flow.
                 </p>
                 {job.applyUrl ? (
-                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white">
+                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2">
+                    <ExternalLink className="h-4 w-4" />
                     Apply Now
                   </a>
                 ) : null}

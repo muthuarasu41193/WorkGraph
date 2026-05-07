@@ -88,10 +88,10 @@ if (finalForm) {
     e.preventDefault();
     const email = document.getElementById('finalEmail').value;
     const b = finalForm.querySelector('button');
-    b.innerHTML = 'Adding you... ✓';
+    b.innerHTML = 'Added successfully';
     b.disabled = true;
     await saveToWaitlist({ email });
-    b.innerHTML = '🎉 You\'re on the list!';
+    b.innerHTML = 'You are on the list!';
     b.style.background =
       'linear-gradient(135deg,#10B981,#059669)';
   });
@@ -136,7 +136,7 @@ function copyLink() {
   );
   const btn = document.getElementById('copyBtn');
   if (btn) {
-    btn.textContent = '✅ Copied!';
+    btn.textContent = 'Copied!';
     btn.style.background = 'rgba(16,185,129,.15)';
     btn.style.color = '#10B981';
     setTimeout(() => {

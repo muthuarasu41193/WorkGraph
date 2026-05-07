@@ -2,7 +2,28 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { AlertTriangle, Bell, Bookmark, Briefcase, CheckCircle2, Radar, RefreshCw, SlidersHorizontal, Sparkles, XCircle } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  Bookmark,
+  Briefcase,
+  Building2,
+  CheckCircle2,
+  Cpu,
+  Database,
+  FileSpreadsheet,
+  Leaf,
+  LoaderCircle,
+  Radar,
+  RefreshCw,
+  SlidersHorizontal,
+  Sparkles,
+  TrendingUp,
+  Workflow,
+  Wrench,
+  XCircle,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
 import {
   Box,
@@ -99,7 +120,7 @@ export default function ProfileJobDashboard({
   const sourceItems: Array<{
     key: string;
     name: string;
-    icon: string;
+    icon: LucideIcon;
     status: "synced" | "syncing" | "error";
     lastSync: string;
     countLabel: string;
@@ -107,7 +128,7 @@ export default function ProfileJobDashboard({
     {
       key: "greenhouse",
       name: "Greenhouse",
-      icon: "🏢",
+      icon: Building2,
       status: "synced",
       lastSync: "Last synced 2 mins ago",
       countLabel: (listingsBySource.greenhouse ?? 3241).toLocaleString(),
@@ -115,7 +136,7 @@ export default function ProfileJobDashboard({
     {
       key: "lever",
       name: "Lever",
-      icon: "⚙️",
+      icon: Wrench,
       status: "synced",
       lastSync: "Last synced 4 mins ago",
       countLabel: (listingsBySource.lever ?? 2108).toLocaleString(),
@@ -123,7 +144,7 @@ export default function ProfileJobDashboard({
     {
       key: "workday",
       name: "Workday",
-      icon: "💼",
+      icon: Briefcase,
       status: "syncing",
       lastSync: "Sync in progress",
       countLabel: "Syncing…",
@@ -131,7 +152,7 @@ export default function ProfileJobDashboard({
     {
       key: "smartrecruiters",
       name: "SmartRecruiters",
-      icon: "🧠",
+      icon: Sparkles,
       status: "synced",
       lastSync: "Last synced 6 mins ago",
       countLabel: (listingsBySource.smartrecruiters ?? 1456).toLocaleString(),
@@ -139,7 +160,7 @@ export default function ProfileJobDashboard({
     {
       key: "ashby",
       name: "Ashby",
-      icon: "✨",
+      icon: Workflow,
       status: "synced",
       lastSync: "Last synced 3 mins ago",
       countLabel: (listingsBySource.ashby ?? 891).toLocaleString(),
@@ -147,7 +168,7 @@ export default function ProfileJobDashboard({
     {
       key: "jobvite",
       name: "Jobvite",
-      icon: "🧩",
+      icon: Cpu,
       status: "error",
       lastSync: "Sync failed 12 mins ago",
       countLabel: "Error",
@@ -155,7 +176,7 @@ export default function ProfileJobDashboard({
     {
       key: "bamboohr",
       name: "BambooHR",
-      icon: "🎋",
+      icon: Leaf,
       status: "synced",
       lastSync: "Last synced 8 mins ago",
       countLabel: (listingsBySource.bamboohr ?? 734).toLocaleString(),
@@ -163,7 +184,7 @@ export default function ProfileJobDashboard({
     {
       key: "icims",
       name: "iCIMS",
-      icon: "🌀",
+      icon: Database,
       status: "synced",
       lastSync: "Last synced 5 mins ago",
       countLabel: (listingsBySource.icims ?? 612).toLocaleString(),
@@ -171,7 +192,7 @@ export default function ProfileJobDashboard({
     {
       key: "taleo",
       name: "Taleo",
-      icon: "📁",
+      icon: FileSpreadsheet,
       status: "synced",
       lastSync: "Last synced 7 mins ago",
       countLabel: (listingsBySource.taleo ?? 508).toLocaleString(),
@@ -309,6 +330,7 @@ export default function ProfileJobDashboard({
         </div>
         <div className="wg-no-scrollbar flex gap-2 overflow-x-auto pb-1">
           {sourceItems.map((source) => {
+            const SourceIcon = source.icon;
             const isActive = activeSource === source.key;
             const statusClass =
               source.status === "synced"
@@ -328,7 +350,9 @@ export default function ProfileJobDashboard({
                     : "border-[#DADCE0] bg-[#F8F9FA] text-[#1D1D1F] hover:border-[#1A73E8] hover:bg-[#E8F0FE]"
                 }`}
               >
-                <span className="inline-flex h-5 w-5 items-center justify-center text-sm">{source.icon}</span>
+                <span className="inline-flex h-5 w-5 items-center justify-center text-sm">
+                  <SourceIcon className="h-4 w-4" aria-hidden />
+                </span>
                 <span className="text-[13px] font-medium">{source.name}</span>
                 <span
                   className={`rounded-[20px] px-2 py-0.5 text-xs font-semibold ${
@@ -384,7 +408,10 @@ export default function ProfileJobDashboard({
             <div className="min-w-0">
               <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={liveListings} /></p>
               <p className="mt-2 text-[13px] text-[#8E8E93]">Live Jobs Available</p>
-              <span className="mt-2 inline-flex rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">↑ +284 new today</span>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
+                <TrendingUp className="h-3.5 w-3.5" />
+                +284 new today
+              </span>
             </div>
           </div>
         </article>
@@ -400,7 +427,10 @@ export default function ProfileJobDashboard({
             <div className="min-w-0">
               <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={matchedCount} /></p>
               <p className="mt-2 text-[13px] text-[#8E8E93]">Matched to Your Profile</p>
-              <span className="mt-2 inline-flex rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">↑ +47 new matches</span>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
+                <TrendingUp className="h-3.5 w-3.5" />
+                +47 new matches
+              </span>
             </div>
           </div>
         </article>
@@ -416,7 +446,10 @@ export default function ProfileJobDashboard({
             <div className="min-w-0">
               <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.applied} /></p>
               <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
-              <span className="mt-2 inline-flex rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">3 awaiting response</span>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
+                <LoaderCircle className="h-3.5 w-3.5" />
+                3 awaiting response
+              </span>
             </div>
           </div>
         </article>
@@ -432,7 +465,10 @@ export default function ProfileJobDashboard({
             <div className="min-w-0">
               <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.saved} /></p>
               <p className="mt-2 text-[13px] text-[#8E8E93]">Jobs Saved</p>
-              <span className="mt-2 inline-flex rounded-lg bg-[#FCE8E6] px-2 py-1 text-xs font-medium text-[#D93025]">12 expiring soon</span>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FCE8E6] px-2 py-1 text-xs font-medium text-[#D93025]">
+                <AlertTriangle className="h-3.5 w-3.5" />
+                12 expiring soon
+              </span>
             </div>
           </div>
         </article>
