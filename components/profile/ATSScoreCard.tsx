@@ -30,9 +30,9 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
   const grade = localFeedback?.grade ?? gradeFromScore(currentScore);
 
   const ringColor = useMemo(() => {
-    if (currentScore >= 80) return "#10B981";
-    if (currentScore >= 60) return "#F59E0B";
-    return "#EF4444";
+    if (currentScore >= 80) return "#1E8E3E";
+    if (currentScore >= 60) return "#F9AB00";
+    return "#D93025";
   }, [currentScore]);
 
   const analyze = async () => {
@@ -91,16 +91,16 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <section id="ats-score" className="scroll-mt-28 rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(16,185,129,0.3)]">
-      <h2 className="mb-1 text-lg font-extrabold tracking-tight text-slate-950">ATS Score</h2>
-      <p className="mb-4 text-xs font-medium text-slate-700">Your parsed resume quality and action points.</p>
+    <section id="ats-score" className="scroll-mt-28 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
+      <h2 className="mb-1 text-[18px] font-semibold text-[#2C2C2E]">ATS Score</h2>
+      <p className="mb-4 text-xs font-normal text-[#8E8E93]">Your parsed resume quality and action points.</p>
 
       {localFeedback || score !== null ? (
         <>
           <div className="mx-auto mb-4 flex w-fit flex-col items-center">
             <div className="relative h-36 w-36">
               <svg className="-rotate-90" viewBox="0 0 140 140">
-                <circle cx="70" cy="70" r={radius} fill="none" stroke="#E5E7EB" strokeWidth="10" />
+                <circle cx="70" cy="70" r={radius} fill="none" stroke="#DADCE0" strokeWidth="10" />
                 <circle
                   cx="70"
                   cy="70"
@@ -114,13 +114,13 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-3xl font-bold text-[#111827]">{currentScore}</p>
-                <p className="text-sm font-semibold text-[#6B7280]">{grade}</p>
+                <p className="text-3xl font-bold text-[#1D1D1F]">{currentScore}</p>
+                <p className="text-sm font-medium text-[#8E8E93]">{grade}</p>
               </div>
             </div>
           </div>
 
-          <div className="mb-3 flex rounded-lg border border-slate-300 p-1" role="tablist" aria-label="ATS analysis tabs">
+          <div className="mb-3 flex rounded-lg border border-[#DADCE0] p-1" role="tablist" aria-label="ATS analysis tabs">
             {(["strengths", "weaknesses", "suggestions"] as Tab[]).map((tab) => (
               <button
                 key={tab}
@@ -130,8 +130,8 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                 aria-selected={activeTab === tab}
                 aria-controls={`ats-tabpanel-${tab}`}
                 id={`ats-tab-${tab}`}
-                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 ${
-                  activeTab === tab ? "bg-emerald-700 text-white" : "text-slate-700"
+                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 ${
+                  activeTab === tab ? "bg-[#1A73E8] text-white" : "text-[#3A3A3C]"
                 }`}
               >
                 {tab}
@@ -148,19 +148,19 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
           >
             {tabItems.length ? (
               tabItems.map((item, idx) => (
-                <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm font-medium text-slate-800">
+                <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm font-normal text-[#3A3A3C]">
                   {activeTab === "strengths" ? (
-                    <CheckCircle className="mt-0.5 h-4 w-4 text-[#10B981]" />
+                    <CheckCircle className="mt-0.5 h-4 w-4 text-[#1E8E3E]" />
                   ) : activeTab === "weaknesses" ? (
-                    <XCircle className="mt-0.5 h-4 w-4 text-[#EF4444]" />
+                    <XCircle className="mt-0.5 h-4 w-4 text-[#D93025]" />
                   ) : (
-                    <Lightbulb className="mt-0.5 h-4 w-4 text-emerald-700" />
+                    <Lightbulb className="mt-0.5 h-4 w-4 text-[#1A73E8]" />
                   )}
                   <span>{item}</span>
                 </li>
               ))
             ) : (
-              <li className="text-sm font-medium text-slate-500">No analysis points available.</li>
+              <li className="text-sm font-normal text-[#8E8E93]">No analysis points available.</li>
             )}
           </ul>
         </>
@@ -169,7 +169,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
           type="button"
           onClick={() => void analyze()}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#1A73E8] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {loading ? "Analyzing..." : "Analyze My Resume"}

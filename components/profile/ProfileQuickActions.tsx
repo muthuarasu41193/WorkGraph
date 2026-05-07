@@ -5,15 +5,15 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
   const name = userFirstName.trim() || "there";
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 p-[1px] shadow-lg shadow-emerald-900/15">
-      <div className="rounded-[calc(1.5rem-1px)] bg-gradient-to-br from-emerald-950/95 via-teal-950/98 to-emerald-950 p-6">
+    <section className="overflow-hidden rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
+      <div>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0 space-y-2">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-300">Next steps</p>
-            <h2 className="text-pretty text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Next steps</p>
+            <h2 className="text-pretty text-[18px] font-semibold text-[#2C2C2E]">
               Hey {name} — keep momentum after your resume parse.
             </h2>
-            <p className="max-w-xl text-sm font-medium leading-relaxed text-emerald-100/90">
+            <p className="max-w-xl text-sm font-normal leading-relaxed text-[#3A3A3C]">
               Refresh your file, tighten ATS gaps, then skim matched roles from boards you&apos;ll connect next.
             </p>
           </div>
@@ -21,7 +21,7 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
           <nav className="flex flex-shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end" aria-label="Profile actions">
             <Link
               href="/create-profile"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-emerald-950 shadow-md transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-900 sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A73E8] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
               <FileUp className="h-4 w-4 shrink-0" aria-hidden />
               Upload new resume
@@ -29,16 +29,16 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
             </Link>
             <a
               href="#ats-score"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-400/35 bg-emerald-500/15 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-900 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] px-4 py-3 text-sm font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
-              <Radar className="h-4 w-4 shrink-0 text-emerald-200" aria-hidden />
+              <Radar className="h-4 w-4 shrink-0 text-[#1A73E8]" aria-hidden />
               Improve ATS score
             </a>
             <a
               href="#recommended-jobs"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-900 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-[#E8F0FE] px-4 py-3 text-sm font-medium text-[#1557B0] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
-              <Search className="h-4 w-4 shrink-0 text-emerald-200" aria-hidden />
+              <Search className="h-4 w-4 shrink-0 text-[#1A73E8]" aria-hidden />
               Browse matches
             </a>
           </nav>

@@ -25,6 +25,9 @@
     "node": ">=20.16.0"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^9.0.1",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.1",
     "groq-sdk": "^1.1.2",
@@ -34,7 +37,8 @@
     "pdf-parse": "^1.1.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-dropzone": "^15.0.0"
+    "react-dropzone": "^15.0.0",
+    "react-window": "^2.2.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.4",

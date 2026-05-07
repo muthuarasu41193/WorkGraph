@@ -73,47 +73,47 @@ export default function LinksSection({ profile, userId }: Props) {
     {
       key: "linkedin_url",
       label: "LinkedIn",
-      icon: <Link2 className="h-4 w-4 text-[#6B7280]" />,
+      icon: <Link2 className="h-4 w-4 text-[#8E8E93]" />,
       placeholder: "https://linkedin.com/in/yourname",
     },
     {
       key: "github_url",
       label: "GitHub",
-      icon: <GitBranch className="h-4 w-4 text-[#6B7280]" />,
+      icon: <GitBranch className="h-4 w-4 text-[#8E8E93]" />,
       placeholder: "https://github.com/yourname",
     },
     {
       key: "website_url",
       label: "Website",
-      icon: <Globe className="h-4 w-4 text-[#6B7280]" />,
+      icon: <Globe className="h-4 w-4 text-[#8E8E93]" />,
       placeholder: "https://yourwebsite.com",
     },
   ];
 
   return (
-    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
-      {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
-      <h2 className="mb-1 text-lg font-semibold text-slate-900">Links</h2>
-      <p className="mb-4 text-xs font-semibold text-slate-700">Keep your public profiles up-to-date for recruiters.</p>
+    <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
+      {toast ? <p className="mb-3 text-sm text-[#1A73E8]">{toast}</p> : null}
+      <h2 className="mb-1 text-[18px] font-semibold text-[#2C2C2E]">Links</h2>
+      <p className="mb-4 text-xs font-normal text-[#8E8E93]">Keep your public profiles up-to-date for recruiters.</p>
 
       <div className="space-y-3">
         {rows.map((row) => {
           const isEditing = editing === row.key;
           return (
-            <div key={row.key} className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white p-3 shadow-sm">
+            <div key={row.key} className="flex items-center gap-3 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-3">
               <div>{row.icon}</div>
               <input
                 value={values[row.key]}
                 disabled={!isEditing}
                 onChange={(e) => setValues((prev) => ({ ...prev, [row.key]: e.target.value }))}
                 placeholder={row.placeholder}
-                className="flex-1 border-none bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-500"
+                className="flex-1 border-none bg-transparent text-sm font-normal text-[#3A3A3C] outline-none placeholder:text-[#8E8E93]"
               />
               {!isEditing ? (
                 <button
                   type="button"
                   onClick={() => setEditing(row.key)}
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-800"
+                  className="rounded-lg border border-[#DADCE0] bg-[#FFFFFF] px-3 py-1.5 text-xs font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
                 >
                   Edit
                 </button>
@@ -121,7 +121,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => saveField(row.key)}
-                  className="rounded-lg bg-emerald-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-950"
+                  className="rounded-lg bg-[#1A73E8] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#1557B0]"
                 >
                   Save
                 </button>

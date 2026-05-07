@@ -16,6 +16,17 @@ export default function SignupPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  function humanizeAuthError(raw: string): string {
+    const msg = raw.toLowerCase();
+    if (msg.includes("already registered") || msg.includes("already been registered")) {
+      return "This email already has an account. Please sign in instead.";
+    }
+    if (msg.includes("password")) {
+      return "Password is too weak. Use at least 8 characters.";
+    }
+    return raw;
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -36,10 +47,13 @@ export default function SignupPage() {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/create-profile")}`,
+        },
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        setError(humanizeAuthError(signUpError.message));
         return;
       }
 
@@ -49,7 +63,7 @@ export default function SignupPage() {
         return;
       }
 
-      setMessage("Account created. Please verify your email before signing in.");
+      setMessage("Account created. Check your email to verify your account, then continue to sign in.");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

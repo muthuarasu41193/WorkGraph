@@ -14,6 +14,7 @@ import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
 import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
 import ProfileSaveStatus from "../../components/profile/ProfileSaveStatus";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
+import SectionErrorBoundary from "../../components/shared/SectionErrorBoundary";
 
 export const dynamic = "force-dynamic";
 
@@ -105,33 +106,37 @@ export default async function ProfilePage() {
   const firstName = (profile.full_name?.trim().split(/\s+/)[0] ?? "").trim();
 
   return (
-    <div className="min-h-[100dvh] bg-[linear-gradient(180deg,#ecfdf5_0%,#f8fafc_18%,#ffffff_42%,#f0fdf9_100%)]">
+    <div className="min-h-[100dvh] bg-[#F1F3F4]">
       <ProfileTopBar />
 
-      <main className="mx-auto max-w-7xl space-y-8 px-4 pb-16 pt-8 sm:px-6 lg:space-y-10 lg:pb-20 lg:pt-10">
+      <main className="mx-auto w-full max-w-[1280px] space-y-8 px-6 pb-16 pt-8 lg:space-y-10 lg:pb-20 lg:pt-10">
         <header className="space-y-2">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-800">Professional profile hub</p>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl">
-            Dashboard-first profile with live jobs intelligence
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#8E8E93]">Professional profile hub</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1D1D1F] sm:text-3xl">
+            Dashboard-first profile with live ATS jobs intelligence
           </h1>
-          <p className="max-w-3xl text-sm font-medium leading-relaxed text-slate-700">
+          <p className="max-w-3xl text-sm font-normal leading-relaxed text-[#3A3A3C]">
             Manage your parsed resume details, ATS readiness, and live ATS job feed from one polished workspace.
           </p>
         </header>
 
-        <ProfileJobDashboard
-          stats={jobDashboard.pipeline}
-          profileCompleteness={profile.profile_completeness}
-          liveListings={jobDashboard.liveListings}
-          listingsBySource={jobDashboard.listingsBySource}
-        />
+        <SectionErrorBoundary sectionName="Jobs dashboard">
+          <ProfileJobDashboard
+            stats={jobDashboard.pipeline}
+            profileCompleteness={profile.profile_completeness}
+            liveListings={jobDashboard.liveListings}
+            listingsBySource={jobDashboard.listingsBySource}
+          />
+        </SectionErrorBoundary>
 
-        <RecommendedJobsSection
-          jobs={jobDashboard.recommended}
-          skillHints={profile.skills}
-          feedKind={jobDashboard.feedKind}
-          feedDemoHint={jobDashboard.feedDemoHint}
-        />
+        <SectionErrorBoundary sectionName="Recommended jobs">
+          <RecommendedJobsSection
+            jobs={jobDashboard.recommended}
+            skillHints={profile.skills}
+            feedKind={jobDashboard.feedKind}
+            feedDemoHint={jobDashboard.feedDemoHint}
+          />
+        </SectionErrorBoundary>
 
         <ProfileQuickActions userFirstName={firstName || "there"} />
 
@@ -147,27 +152,27 @@ export default async function ProfilePage() {
           <aside className="space-y-6 xl:sticky xl:top-[4.25rem]">
             <ATSScoreCard userId={user.id} score={profile.ats_score} feedback={profile.ats_feedback} />
 
-            <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_20px_60px_-44px_rgba(16,185,129,0.35)]">
-              <h2 className="text-base font-bold tracking-tight text-slate-950">Resume snapshot</h2>
-              <p className="mt-1 text-xs font-medium leading-relaxed text-slate-700">
+            <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
+              <h2 className="text-[18px] font-semibold text-[#2C2C2E]">Resume snapshot</h2>
+              <p className="mt-1 text-xs font-normal leading-relaxed text-[#8E8E93]">
                 Tallies from your parsed profile — sync applications above when your tracker is live.
               </p>
               <dl className="mt-5 space-y-3 text-sm">
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-emerald-50 px-3 py-2.5 ring-1 ring-emerald-200">
-                  <dt className="font-semibold text-slate-700">Skills</dt>
-                  <dd className="text-base font-bold tabular-nums text-slate-950">{profile.skills.length}</dd>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#F8F9FA] px-3 py-2.5 ring-1 ring-[#DADCE0]">
+                  <dt className="font-medium text-[#3A3A3C]">Skills</dt>
+                  <dd className="text-base font-semibold tabular-nums text-[#1D1D1F]">{profile.skills.length}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-200">
-                  <dt className="font-semibold text-slate-700">Experience</dt>
-                  <dd className="text-base font-bold tabular-nums text-slate-950">{profile.work_experience.length}</dd>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#F8F9FA] px-3 py-2.5 ring-1 ring-[#DADCE0]">
+                  <dt className="font-medium text-[#3A3A3C]">Experience</dt>
+                  <dd className="text-base font-semibold tabular-nums text-[#1D1D1F]">{profile.work_experience.length}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-200">
-                  <dt className="font-semibold text-slate-700">Education</dt>
-                  <dd className="text-base font-bold tabular-nums text-slate-950">{profile.education.length}</dd>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#F8F9FA] px-3 py-2.5 ring-1 ring-[#DADCE0]">
+                  <dt className="font-medium text-[#3A3A3C]">Education</dt>
+                  <dd className="text-base font-semibold tabular-nums text-[#1D1D1F]">{profile.education.length}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-200">
-                  <dt className="font-semibold text-slate-700">Certifications</dt>
-                  <dd className="text-base font-bold tabular-nums text-slate-950">{profile.certifications.length}</dd>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#F8F9FA] px-3 py-2.5 ring-1 ring-[#DADCE0]">
+                  <dt className="font-medium text-[#3A3A3C]">Certifications</dt>
+                  <dd className="text-base font-semibold tabular-nums text-[#1D1D1F]">{profile.certifications.length}</dd>
                 </div>
               </dl>
             </section>

@@ -21,12 +21,19 @@ export type JobPipelineCounts = {
 export type JobFeedSource =
   | "greenhouse"
   | "lever"
+  | "workday"
+  | "smartrecruiters"
   | "ashby"
+  | "jobvite"
+  | "bamboohr"
+  | "icims"
+  | "taleo"
   | "linkedin"
   | "reddit"
   | "indeed"
   | "glassdoor"
-  | "levels";
+  | "levels"
+  | "other";
 
 export type RecommendedJobCard = {
   id: string;
@@ -124,8 +131,21 @@ function formatPostedAgo(iso: string | null): string {
 
 function normalizeSource(raw: string): JobFeedSource {
   const s = raw.toLowerCase().trim();
-  if (s === "greenhouse" || s === "lever" || s === "ashby") return s;
-  return "indeed";
+  if (
+    s === "greenhouse" ||
+    s === "lever" ||
+    s === "ashby" ||
+    s === "workday" ||
+    s === "smartrecruiters" ||
+    s === "jobvite" ||
+    s === "bamboohr" ||
+    s === "icims" ||
+    s === "taleo"
+  ) {
+    return s;
+  }
+  if (s === "linkedin" || s === "reddit" || s === "indeed" || s === "glassdoor" || s === "levels") return s;
+  return "other";
 }
 
 function matchedProfileSkills(row: JobRow, skills: string[]): string[] {
@@ -216,7 +236,7 @@ async function fetchListingStats(
   }
 
   const bySource: Partial<Record<JobFeedSource, number>> = {};
-  const sources = ["greenhouse", "lever", "ashby"] as const;
+  const sources = ["greenhouse", "lever", "workday", "smartrecruiters", "ashby", "jobvite", "bamboohr", "icims", "taleo"] as const;
   await Promise.all(
     sources.map(async (src) => {
       const r = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("source", src);

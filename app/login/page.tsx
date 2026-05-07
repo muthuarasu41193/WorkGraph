@@ -15,6 +15,17 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  function humanizeAuthError(raw: string): string {
+    const msg = raw.toLowerCase();
+    if (msg.includes("email not confirmed")) {
+      return "Your email is not verified yet. Please check your inbox and click the verification link.";
+    }
+    if (msg.includes("invalid login credentials")) {
+      return "Invalid email or password. Please try again.";
+    }
+    return raw;
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -33,12 +44,13 @@ export default function LoginPage() {
       });
 
       if (signInError) {
-        setError(signInError.message);
+        setError(humanizeAuthError(signInError.message));
         return;
       }
 
       setMessage("Signed in successfully. Redirecting...");
-      router.push(nextPath);
+      router.replace(nextPath);
+      router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
