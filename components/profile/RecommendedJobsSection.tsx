@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Building2,
   ArrowUpRight,
   ArrowRight,
   BadgeCheck,
@@ -161,6 +162,14 @@ function getMatchScore(job: RecommendedJobCard, skillHints: string[]): number {
   const recencyBonus = job.postedAtIso ? Math.max(0, 6 - Math.floor((Date.now() - new Date(job.postedAtIso).getTime()) / 86400000)) : 0;
   const raw = 58 + job.matchedSkills.length * 6 + hintHits * 4 + titleHits * 2 + recencyBonus;
   return Math.max(56, Math.min(98, raw));
+}
+
+function companyInitials(name: string): string {
+  const cleaned = name.trim();
+  if (!cleaned) return "CO";
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
 export default function RecommendedJobsSection({ jobs, skillHints, feedKind, feedDemoHint }: Props) {
@@ -1108,7 +1117,15 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 gap-3">
-                  <div className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} shrink-0 rounded-lg border border-[#DADCE0] bg-[#F8F9FA]`} />
+                  <div
+                    className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} relative shrink-0 overflow-hidden rounded-lg border border-[#DADCE0] bg-gradient-to-br from-[#E8F0FE] to-[#F8F9FA]`}
+                    aria-label={`${job.company} logo placeholder`}
+                  >
+                    <Building2 className="absolute left-1.5 top-1.5 h-3.5 w-3.5 text-[#5F6368]" aria-hidden />
+                    <span className="absolute bottom-1 right-1 text-[10px] font-semibold tracking-wide text-[#3A3A3C]">
+                      {companyInitials(job.company)}
+                    </span>
+                  </div>
                   <div className="min-w-0">
                     <h3 className="line-clamp-2 text-base font-semibold leading-snug text-[#1D1D1F] transition-colors group-hover:text-[#1A73E8]">{job.title}</h3>
                     <p className="mt-1 text-sm font-medium text-[#3A3A3C]">{job.company}</p>
