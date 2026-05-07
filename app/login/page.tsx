@@ -2,12 +2,15 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -24,11 +27,9 @@ export default function LoginPage() {
       const nextParam = params.get("next");
       const nextPath =
         typeof nextParam === "string" && nextParam.startsWith("/") ? nextParam : "/profile";
-      const { error: signInError } = await supabase.auth.signInWithOtp({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-        },
+        password,
       });
 
       if (signInError) {
@@ -36,7 +37,8 @@ export default function LoginPage() {
         return;
       }
 
-      setMessage("Check your inbox — we sent a sign-in link.");
+      setMessage("Signed in successfully. Redirecting...");
+      router.push(nextPath);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -48,9 +50,9 @@ export default function LoginPage() {
     <AuthSplitShell
       panelEyebrow="Welcome back"
       panelHeadline="Sign in and keep your profile interview-ready."
-      panelDescription="Passwordless email — fast for you, familiar for recruiters."
+      panelDescription="Use your WorkGraph email and password."
       highlights={[
-        "Magic link — no password to forget",
+        "Secure email + password sign in",
         "Pick up where you left off on any device",
         "Designed for ATS-friendly layouts",
       ]}
@@ -59,7 +61,7 @@ export default function LoginPage() {
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Sign in</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-            Enter your work email and we&apos;ll send you a secure link.
+            Enter your email and password to continue.
           </p>
         </div>
 
@@ -88,12 +90,34 @@ export default function LoginPage() {
             </div>
           </div>
 
+          <div>
+            <label htmlFor="login-password" className="sr-only">
+              Password
+            </label>
+            <div className="relative">
+              <Lock
+                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400"
+                aria-hidden
+              />
+              <input
+                id="login-password"
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Password"
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-3 text-[15px] text-slate-900 outline-none ring-emerald-950/[0.04] transition placeholder:text-slate-400 focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+              />
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
             className="flex h-12 w-full items-center justify-center rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:opacity-55"
           >
-            {isSubmitting ? "Sending link…" : "Continue"}
+            {isSubmitting ? "Signing in…" : "Continue"}
           </button>
         </form>
 
@@ -117,7 +141,7 @@ export default function LoginPage() {
         </p>
 
         <p className="text-center text-xs leading-relaxed text-slate-400">
-          By continuing you agree to receive a one-time sign-in email from WorkGraph.
+          Keep your password secure and do not share it with anyone.
         </p>
       </div>
     </AuthSplitShell>
