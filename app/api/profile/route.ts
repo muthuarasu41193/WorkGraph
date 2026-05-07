@@ -67,13 +67,13 @@ export async function POST(request: Request) {
     };
 
     const profile_completeness = calculateCompleteness(payload);
-    const work_experience = payload.experience.map((line) => ({
+    const work_experience = (payload.experience ?? []).map((line) => ({
       title: line,
       company: "",
       duration: "",
       description: "",
     }));
-    const education = payload.education.map((line) => ({
+    const education = (payload.education ?? []).map((line) => ({
       degree: line,
       institution: "",
       year: "",
