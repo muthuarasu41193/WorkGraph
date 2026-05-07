@@ -25,23 +25,23 @@ import {
   X,
 } from "lucide-react";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
-import { FixedSizeList as List, type ListChildComponentProps } from "react-window";
 import {
   Box,
   Button,
   Card,
   CardContent,
+  Checkbox,
   Chip,
   Dialog,
   DialogContent,
   DialogTitle,
   Drawer,
+  FormControlLabel,
   FormControl,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -422,7 +422,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
   const showSkeleton = isInitialLoading || isLoadingMore;
-  const shouldVirtualize = viewMode === "list" && totalMatched > 200 && !showSkeleton;
+  const shouldVirtualize = false;
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -763,7 +763,13 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       <button
                         key={opt}
                         type="button"
-                        onClick={() => item.set(item.label === "Date Posted" ? (opt === "Any time" ? "any" : opt === "Past 24h" ? "1" : opt === "Past week" ? "7" : "30") : opt)}
+                        onClick={() =>
+                          item.set(
+                            (item.label === "Date Posted"
+                              ? (opt === "Any time" ? "any" : opt === "Past 24h" ? "1" : opt === "Past week" ? "7" : "30")
+                              : opt) as never
+                          )
+                        }
                         className="block w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
                       >
                         {opt}
@@ -872,11 +878,11 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         sx={{ display: { md: "none" } }}
       >
         <Box sx={{ p: 2 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-            <Typography variant="subtitle1" fontWeight={600}>Filters</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Filters</Typography>
             <Button onClick={() => setIsMobileFiltersOpen(false)} size="small">Close</Button>
-          </Stack>
-          <Stack spacing={2}>
+          </Box>
+          <Box sx={{ display: "grid", gap: 2 }}>
             <TextField
               size="small"
               value={searchInput}
@@ -905,7 +911,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             >
               Clear all filters
             </Button>
-          </Stack>
+          </Box>
         </Box>
       </Drawer>
 
@@ -915,31 +921,31 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         onClose={() => setIsMoreFiltersOpen(false)}
       >
         <Box sx={{ p: 3, width: { xs: "100vw", sm: 420 } }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
             <Typography variant="h6">Advanced Filters</Typography>
             <Button onClick={() => setIsMoreFiltersOpen(false)}>Close</Button>
-          </Stack>
-          <Stack spacing={2}>
+          </Box>
+          <Box sx={{ display: "grid", gap: 2 }}>
             <TextField size="small" label="Skills required" placeholder="Type skill..." fullWidth />
             <TextField size="small" label="Company" placeholder="Search company..." fullWidth />
             <Box>
               <Typography variant="caption" color="text.secondary">Benefits</Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
                 {["Health", "401k", "Equity", "Remote-first"].map((b) => (
                   <Chip key={b} label={b} variant="outlined" />
                 ))}
-              </Stack>
+              </Box>
             </Box>
             <FormControlLabel control={<Checkbox />} label="Visa sponsorship" />
             <FormControlLabel control={<Checkbox />} label="Easy Apply" />
-          </Stack>
+          </Box>
         </Box>
       </Drawer>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
       {jobs.length > 0 ? (
-        <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
           <ToggleButtonGroup
             exclusive
             value={viewMode}
@@ -967,7 +973,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               <MenuItem value="company_asc">Company Name A-Z</MenuItem>
             </Select>
           </FormControl>
-        </Stack>
+        </Box>
       ) : null}
 
       {showSkeleton ? (
@@ -1001,38 +1007,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         </div>
       ) : (
       <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3"}>
-        {shouldVirtualize ? (
-          <List
-            height={720}
-            width={"100%"}
-            itemCount={visibleJobs.length}
-            itemSize={196}
-            itemData={visibleJobs}
-            className="rounded-xl border border-[#DADCE0] bg-white"
-          >
-            {({ index, style, data }: ListChildComponentProps<RecommendedJobCard[]>) => {
-              const job = data[index];
-              const src = SOURCE_STYLES[job.source];
-              return (
-                <div style={style} className="border-b border-[#DADCE0] p-4 last:border-b-0">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="line-clamp-1 text-base font-semibold text-[#1D1D1F]">{job.title}</h3>
-                      <p className="text-sm text-[#3A3A3C]">{job.company}</p>
-                      <p className="text-xs text-[#8E8E93]">{job.location}</p>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {job.matchedSkills.slice(0, 3).map((s) => (
-                          <span key={`${job.id}-${s}`} className="rounded-xl bg-[#E8F0FE] px-2 py-0.5 text-xs text-[#1A73E8]">{s}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ${src.className}`}>{src.label}</span>
-                  </div>
-                </div>
-              );
-            }}
-          </List>
-        ) : visibleJobs.map((job, i) => {
+        {shouldVirtualize ? null : visibleJobs.map((job, i) => {
           const src = SOURCE_STYLES[job.source];
           const applyHref = job.applyUrl?.trim();
           const canApply = Boolean(applyHref);
@@ -1202,7 +1177,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             </Card>
           );
         })
-        )}
+        }
       </div>
       )}
 
