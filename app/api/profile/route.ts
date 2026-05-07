@@ -4,11 +4,14 @@ import { cookies } from "next/headers";
 import { createServerSupabaseClient } from "../../../lib/supabase";
 
 type ManualProfilePayload = {
-  email: string;
+  email?: string;
   full_name?: string;
   headline?: string;
+  summary?: string;
+  location?: string;
   linkedin_url?: string;
   github_url?: string;
+  website_url?: string;
   skills?: string[];
   experience?: string[];
   education?: string[];
@@ -34,8 +37,17 @@ function calculateCompleteness(payload: ManualProfilePayload): number {
 
 export async function POST(request: Request) {
   try {
+    const supabase = createServerSupabaseClient(await cookies());
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json({ error: "Not authenticated. Please sign in and try again." }, { status: 401 });
+    }
+
     const body = (await request.json()) as ManualProfilePayload;
-    const email = body.email?.trim();
+    const email = body.email?.trim() || user.email || "";
     if (!email) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });
     }
@@ -44,28 +56,45 @@ export async function POST(request: Request) {
       email,
       full_name: body.full_name?.trim() || "",
       headline: body.headline?.trim() || "",
+      summary: body.summary?.trim() || "",
+      location: body.location?.trim() || "",
       linkedin_url: body.linkedin_url?.trim() || "",
       github_url: body.github_url?.trim() || "",
+      website_url: body.website_url?.trim() || "",
       skills: toStringArray(body.skills),
       experience: toStringArray(body.experience),
       education: toStringArray(body.education),
     };
 
     const profile_completeness = calculateCompleteness(payload);
-    const supabase = createServerSupabaseClient(await cookies());
+    const work_experience = payload.experience.map((line) => ({
+      title: line,
+      company: "",
+      duration: "",
+      description: "",
+    }));
+    const education = payload.education.map((line) => ({
+      degree: line,
+      institution: "",
+      year: "",
+    }));
     const { data, error } = await supabase
       .from("profiles")
       .upsert(
         {
+          id: user.id,
           email: payload.email,
           full_name: payload.full_name || null,
           headline: payload.headline || null,
+          summary: payload.summary || null,
+          location: payload.location || null,
           linkedin_url: payload.linkedin_url || null,
           github_url: payload.github_url || null,
+          website_url: payload.website_url || null,
           skills: payload.skills,
-          experience: payload.experience,
-          education: payload.education,
-          resume_text: [
+          work_experience,
+          education,
+          resume_raw_text: [
             payload.full_name ? `Name: ${payload.full_name}` : "",
             payload.headline ? `Headline: ${payload.headline}` : "",
             payload.skills?.length ? `Skills: ${payload.skills.join(", ")}` : "",
@@ -77,7 +106,7 @@ export async function POST(request: Request) {
           profile_completeness,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: "email" }
+        { onConflict: "id" }
       )
       .select()
       .single();

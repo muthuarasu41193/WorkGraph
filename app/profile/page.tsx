@@ -12,6 +12,7 @@ import ProfileTopBar from "../../components/profile/ProfileTopBar";
 import ProfileQuickActions from "../../components/profile/ProfileQuickActions";
 import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
 import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
+import ProfileSaveStatus from "../../components/profile/ProfileSaveStatus";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
 
 export const dynamic = "force-dynamic";
@@ -66,10 +67,10 @@ export default async function ProfilePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/upload");
+  if (!user) redirect("/login?next=/profile");
 
   const { data, error } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
-  if (error || !data) redirect("/upload");
+  if (error || !data) redirect("/create-profile");
 
   const profile: Profile = {
     id: data.id,
@@ -163,6 +164,7 @@ export default async function ProfilePage() {
           feedDemoHint={jobDashboard.feedDemoHint}
         />
       </main>
+      <ProfileSaveStatus />
     </div>
   );
 }

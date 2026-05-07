@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { GitBranch, Globe, Link2 } from "lucide-react";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
+import {
+  emitProfileSaved,
+  emitProfileSaveError,
+  emitProfileSaveStart,
+  onSaveAllRequested,
+} from "../../lib/profile-save-events";
 
 type Props = {
   profile: Profile;
@@ -21,7 +27,30 @@ export default function LinksSection({ profile, userId }: Props) {
   const [editing, setEditing] = useState<FieldKey | null>(null);
   const [toast, setToast] = useState("");
 
+  const saveAll = async () => {
+    emitProfileSaveStart("links");
+    try {
+      const supabase = createBrowserSupabaseClient();
+      const { error } = await supabase
+        .from("profiles")
+        .update({ ...values, updated_at: new Date().toISOString() })
+        .eq("id", userId);
+      if (error) throw error;
+      setEditing(null);
+      emitProfileSaved("links");
+      setToast("Links saved");
+      window.setTimeout(() => setToast(""), 1800);
+    } catch (error) {
+      emitProfileSaveError("links", error instanceof Error ? error.message : "Failed to save links");
+      setToast(error instanceof Error ? error.message : "Failed to save links");
+      window.setTimeout(() => setToast(""), 2200);
+    }
+  };
+
+  useEffect(() => onSaveAllRequested(() => void saveAll()), [values, userId]);
+
   const saveField = async (field: FieldKey) => {
+    emitProfileSaveStart("links");
     try {
       const supabase = createBrowserSupabaseClient();
       const { error } = await supabase
@@ -30,9 +59,11 @@ export default function LinksSection({ profile, userId }: Props) {
         .eq("id", userId);
       if (error) throw error;
       setEditing(null);
+      emitProfileSaved("links");
       setToast("Links updated");
       window.setTimeout(() => setToast(""), 1800);
     } catch (error) {
+      emitProfileSaveError("links", error instanceof Error ? error.message : "Failed to update link");
       setToast(error instanceof Error ? error.message : "Failed to update link");
       window.setTimeout(() => setToast(""), 2200);
     }
@@ -60,28 +91,29 @@ export default function LinksSection({ profile, userId }: Props) {
   ];
 
   return (
-    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-      {toast ? <p className="mb-3 text-sm text-[#7C3AED]">{toast}</p> : null}
-      <h2 className="mb-4 text-lg font-semibold text-[#111827]">Links</h2>
+    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+      {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
+      <h2 className="mb-1 text-lg font-semibold text-slate-900">Links</h2>
+      <p className="mb-4 text-xs text-slate-500">Keep your public profiles up-to-date for recruiters.</p>
 
       <div className="space-y-3">
         {rows.map((row) => {
           const isEditing = editing === row.key;
           return (
-            <div key={row.key} className="flex items-center gap-3 rounded-lg border border-[#E5E7EB] p-3">
+            <div key={row.key} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 p-3">
               <div>{row.icon}</div>
               <input
                 value={values[row.key]}
                 disabled={!isEditing}
                 onChange={(e) => setValues((prev) => ({ ...prev, [row.key]: e.target.value }))}
                 placeholder={row.placeholder}
-                className="flex-1 border-none bg-transparent text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
+                className="flex-1 border-none bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
               />
               {!isEditing ? (
                 <button
                   type="button"
                   onClick={() => setEditing(row.key)}
-                  className="rounded-md border border-[#E5E7EB] px-3 py-1.5 text-xs font-medium text-[#111827]"
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-800"
                 >
                   Edit
                 </button>
@@ -89,7 +121,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => saveField(row.key)}
-                  className="rounded-md bg-[#7C3AED] px-3 py-1.5 text-xs font-semibold text-white"
+                  className="rounded-lg bg-emerald-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-950"
                 >
                   Save
                 </button>

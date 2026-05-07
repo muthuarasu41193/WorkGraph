@@ -1,10 +1,16 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, MapPin, Pencil, X } from "lucide-react";
 import Image from "next/image";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
+import {
+  emitProfileSaved,
+  emitProfileSaveError,
+  emitProfileSaveStart,
+  onSaveAllRequested,
+} from "../../lib/profile-save-events";
 
 type Props = {
   profile: Profile;
@@ -49,6 +55,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
   const handleUpload = async (file?: File | null) => {
     if (!file) return;
     setIsUploading(true);
+    emitProfileSaveStart("photo");
     try {
       const supabase = createBrowserSupabaseClient();
       const path = `${userId}/avatar.jpg`;
@@ -65,9 +72,11 @@ export default function ProfileHeader({ profile, userId }: Props) {
       if (updateError) throw updateError;
 
       setPhotoUrl(data.publicUrl);
+      emitProfileSaved("photo");
       showToast("Photo updated successfully");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to update photo";
+      emitProfileSaveError("photo", message);
       showToast(message);
     } finally {
       setIsUploading(false);
@@ -76,6 +85,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
 
   const saveProfileBasics = async () => {
     setIsSaving(true);
+    emitProfileSaveStart("header");
     try {
       const supabase = createBrowserSupabaseClient();
       const { error } = await supabase
@@ -90,13 +100,28 @@ export default function ProfileHeader({ profile, userId }: Props) {
         .eq("id", userId);
       if (error) throw error;
       setIsEditing(false);
+      emitProfileSaved("header");
       showToast("Profile details updated");
     } catch (error) {
+      emitProfileSaveError(
+        "header",
+        error instanceof Error ? error.message : "Failed to update profile details"
+      );
       showToast(error instanceof Error ? error.message : "Failed to update profile details");
     } finally {
       setIsSaving(false);
     }
   };
+
+  useEffect(() => {
+    return onSaveAllRequested(() => {
+      if (isEditing) {
+        void saveProfileBasics();
+      } else {
+        emitProfileSaved("header");
+      }
+    });
+  }, [isEditing]);
 
   return (
     <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">

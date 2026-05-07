@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { WorkExperience } from "../../lib/types";
+import {
+  emitProfileSaved,
+  emitProfileSaveError,
+  emitProfileSaveStart,
+  onSaveAllRequested,
+} from "../../lib/profile-save-events";
 
 type Props = {
   userId: string;
@@ -15,13 +21,20 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
   const [toast, setToast] = useState("");
 
   const persist = async (nextItems: WorkExperience[]) => {
+    emitProfileSaveStart("experience");
     const supabase = createBrowserSupabaseClient();
     const { error } = await supabase
       .from("profiles")
       .update({ work_experience: nextItems, updated_at: new Date().toISOString() })
       .eq("id", userId);
-    if (error) throw error;
+    if (error) {
+      emitProfileSaveError("experience", error.message);
+      throw error;
+    }
+    emitProfileSaved("experience");
   };
+
+  useEffect(() => onSaveAllRequested(() => void persist(items)), [items]);
 
   const updateField = async (index: number, key: keyof WorkExperience, value: string) => {
     const next = items.map((item, i) => (i === index ? { ...item, [key]: value } : item));
@@ -57,22 +70,29 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
   };
 
   return (
-    <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-      {toast ? <p className="mb-3 text-sm text-[#7C3AED]">{toast}</p> : null}
+    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+      {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-[#111827]">Work Experience</h2>
-        <button type="button" onClick={() => void addItem()} className="text-[#7C3AED]">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">Work experience</h2>
+          <p className="mt-0.5 text-xs text-slate-500">Show impact with role, company, and outcomes.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void addItem()}
+          className="rounded-xl border border-emerald-200 bg-emerald-50 p-2 text-emerald-700 transition hover:bg-emerald-100"
+        >
           <PlusCircle className="h-5 w-5" />
         </button>
       </div>
 
-      <ol className="relative space-y-5 border-l border-[#E5E7EB] pl-5">
+      <ol className="relative space-y-5 border-l border-emerald-100 pl-5">
         {items.map((item, idx) => (
           <li key={`${item.title}-${idx}`} className="relative">
-            <span className="absolute -left-[25px] top-1.5 h-3 w-3 rounded-full bg-[#7C3AED]" />
-            <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+            <span className="absolute -left-[25px] top-1.5 h-3 w-3 rounded-full bg-emerald-600" />
+            <div className="rounded-xl border border-slate-200 bg-slate-50/35 p-4">
               <div className="mb-2 flex justify-end">
-                <button type="button" onClick={() => void removeItem(idx)} className="text-[#9CA3AF] hover:text-[#DC2626]">
+                <button type="button" onClick={() => void removeItem(idx)} className="text-slate-400 hover:text-red-600">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
@@ -80,26 +100,26 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                 value={item.title}
                 onChange={(e) => void updateField(idx, "title", e.target.value)}
                 placeholder="Job title"
-                className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm font-semibold text-[#111827] outline-none focus:border-[#D1D5DB]"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <input
                 value={item.company}
                 onChange={(e) => void updateField(idx, "company", e.target.value)}
                 placeholder="Company"
-                className="mt-2 w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#6B7280] outline-none focus:border-[#D1D5DB]"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <input
                 value={item.duration}
                 onChange={(e) => void updateField(idx, "duration", e.target.value)}
                 placeholder="Duration (e.g., 2021 - Present)"
-                className="mt-2 w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-xs text-[#6B7280] outline-none focus:border-[#D1D5DB]"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <textarea
                 value={item.description}
                 onChange={(e) => void updateField(idx, "description", e.target.value)}
                 placeholder="Describe impact, responsibilities, outcomes"
                 rows={3}
-                className="mt-2 w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm leading-6 text-[#6B7280] outline-none focus:border-[#D1D5DB]"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-6 text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
             </div>
           </li>
@@ -107,7 +127,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
       </ol>
 
       {!items.length ? (
-        <p className="mt-4 text-sm text-[#6B7280]">No experience added yet. Use + to add your first role.</p>
+        <p className="mt-4 text-sm text-slate-600">No experience added yet. Use + to add your first role.</p>
       ) : null}
     </section>
   );

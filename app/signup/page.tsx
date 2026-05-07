@@ -2,11 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Mail, Sparkles } from "lucide-react";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,14 +20,10 @@ export default function LoginPage() {
 
     try {
       const supabase = createBrowserSupabaseClient();
-      const params = new URLSearchParams(window.location.search);
-      const nextParam = params.get("next");
-      const nextPath =
-        typeof nextParam === "string" && nextParam.startsWith("/") ? nextParam : "/profile";
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/create-profile")}`,
         },
       });
 
@@ -36,7 +32,7 @@ export default function LoginPage() {
         return;
       }
 
-      setMessage("Check your inbox — we sent a sign-in link.");
+      setMessage("Check your inbox — your sign-up link is ready.");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -46,26 +42,26 @@ export default function LoginPage() {
 
   return (
     <AuthSplitShell
-      panelEyebrow="Welcome back"
-      panelHeadline="Sign in and keep your profile interview-ready."
-      panelDescription="Passwordless email — fast for you, familiar for recruiters."
+      panelEyebrow="Create account"
+      panelHeadline="Upload your resume and launch your profile in minutes."
+      panelDescription="One magic link. No password. Start with resume parsing, then refine your profile."
       highlights={[
-        "Magic link — no password to forget",
-        "Pick up where you left off on any device",
-        "Designed for ATS-friendly layouts",
+        "Fast sign-up with email magic link",
+        "Auto profile generation from resume",
+        "Get redirected straight into profile setup",
       ]}
     >
       <div className="wg-auth-enter space-y-8">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Sign in</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Sign up</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
-            Enter your work email and we&apos;ll send you a secure link.
+            Enter your email to create your WorkGraph account.
           </p>
         </div>
 
         <form className="space-y-5" onSubmit={onSubmit}>
           <div>
-            <label htmlFor="login-email" className="sr-only">
+            <label htmlFor="signup-email" className="sr-only">
               Email
             </label>
             <div className="relative">
@@ -74,7 +70,7 @@ export default function LoginPage() {
                 aria-hidden
               />
               <input
-                id="login-email"
+                id="signup-email"
                 type="email"
                 required
                 autoComplete="email"
@@ -91,9 +87,10 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex h-12 w-full items-center justify-center rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:opacity-55"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:opacity-55"
           >
-            {isSubmitting ? "Sending link…" : "Continue"}
+            {isSubmitting ? "Sending link…" : "Create account"}
+            {!isSubmitting ? <Sparkles className="h-4 w-4" aria-hidden /> : null}
           </button>
         </form>
 
@@ -107,17 +104,13 @@ export default function LoginPage() {
         ) : null}
 
         <p className="text-center text-[14px] text-slate-600">
-          New to WorkGraph?{" "}
+          Already have an account?{" "}
           <Link
-            href="/signup"
+            href="/login"
             className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
           >
-            Sign up
+            Sign in
           </Link>
-        </p>
-
-        <p className="text-center text-xs leading-relaxed text-slate-400">
-          By continuing you agree to receive a one-time sign-in email from WorkGraph.
         </p>
       </div>
     </AuthSplitShell>

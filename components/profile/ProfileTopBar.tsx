@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { Save } from "lucide-react";
 import SignOutButton from "./SignOutButton";
+import { emitProfileSaveStart, emitSaveAllBegin, emitSaveAllRequested } from "../../lib/profile-save-events";
 
 export default function ProfileTopBar() {
   return (
@@ -13,7 +15,21 @@ export default function ProfileTopBar() {
           </span>
           <span className="text-[15px] font-semibold tracking-tight text-slate-900 group-hover:text-emerald-900">WorkGraph</span>
         </Link>
-        <SignOutButton />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              emitSaveAllBegin(["header", "links", "skills", "experience", "education"]);
+              emitProfileSaveStart("all sections");
+              emitSaveAllRequested();
+            }}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-900 transition hover:bg-emerald-100"
+          >
+            <Save className="h-3.5 w-3.5" aria-hidden />
+            Save all changes
+          </button>
+          <SignOutButton />
+        </div>
       </div>
     </header>
   );

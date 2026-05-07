@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import {
@@ -25,8 +25,11 @@ type ManualState = {
   email: string;
   full_name: string;
   headline: string;
+  summary: string;
+  location: string;
   linkedin_url: string;
   github_url: string;
+  website_url: string;
   skills: string;
   experience: string;
   education: string;
@@ -36,8 +39,11 @@ const initialManual: ManualState = {
   email: "",
   full_name: "",
   headline: "",
+  summary: "",
+  location: "",
   linkedin_url: "",
   github_url: "",
+  website_url: "",
   skills: "",
   experience: "",
   education: "",
@@ -68,6 +74,20 @@ export default function CreateProfilePage() {
   const [loadingPhase, setLoadingPhase] = useState<"parse" | "score" | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function hydrateEmail() {
+      const supabase = createBrowserSupabaseClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user?.email) {
+        setUploadEmail((prev) => prev || user.email || "");
+        setManual((prev) => ({ ...prev, email: prev.email || user.email || "" }));
+      }
+    }
+    void hydrateEmail();
+  }, []);
 
   async function requireSignedInUser() {
     const supabase = createBrowserSupabaseClient();
@@ -174,8 +194,11 @@ export default function CreateProfilePage() {
         email: manual.email.trim(),
         full_name: manual.full_name.trim(),
         headline: manual.headline.trim(),
+        summary: manual.summary.trim(),
+        location: manual.location.trim(),
         linkedin_url: manual.linkedin_url.trim(),
         github_url: manual.github_url.trim(),
+        website_url: manual.website_url.trim(),
         skills: splitLines(manual.skills),
         experience: splitLines(manual.experience),
         education: splitLines(manual.education),
@@ -190,15 +213,17 @@ export default function CreateProfilePage() {
       const saveJson = await readApiJson(saveRes);
       if (!saveRes.ok) throw new Error(apiErrorMessage(saveJson) || "Could not save your profile.");
 
-      await fetch("/api/ats-score", {
-        method: "POST",
-        headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
-        credentials: "include",
-        body: JSON.stringify({ email: payload.email }),
-      });
+      if (payload.email) {
+        await fetch("/api/ats-score", {
+          method: "POST",
+          headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
+          credentials: "include",
+          body: JSON.stringify({ email: payload.email }),
+        });
+      }
 
       setMessage("Profile saved. Taking you to your profile.");
-      window.location.href = `/profile?email=${encodeURIComponent(payload.email)}`;
+      window.location.href = "/profile";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to save your profile.");
     } finally {
@@ -416,6 +441,20 @@ export default function CreateProfilePage() {
                   />
                 </div>
                 <div>
+                  <label htmlFor="manual-location" className="block text-sm font-semibold text-slate-900">
+                    Location
+                  </label>
+                  <input
+                    id="manual-location"
+                    type="text"
+                    placeholder="Chennai, India"
+                    value={manual.location}
+                    onChange={(e) => setManual((p) => ({ ...p, location: e.target.value }))}
+                    disabled={isLoading}
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
+                  />
+                </div>
+                <div>
                   <label htmlFor="manual-li" className="block text-sm font-semibold text-slate-900">
                     LinkedIn
                   </label>
@@ -443,6 +482,35 @@ export default function CreateProfilePage() {
                     className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
                   />
                 </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="manual-website" className="block text-sm font-semibold text-slate-900">
+                    Website / Portfolio
+                  </label>
+                  <input
+                    id="manual-website"
+                    type="url"
+                    placeholder="https://yourportfolio.com"
+                    value={manual.website_url}
+                    onChange={(e) => setManual((p) => ({ ...p, website_url: e.target.value }))}
+                    disabled={isLoading}
+                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="manual-summary" className="block text-sm font-semibold text-slate-900">
+                  Professional summary
+                </label>
+                <textarea
+                  id="manual-summary"
+                  rows={3}
+                  placeholder="Write a concise summary recruiters can skim quickly."
+                  value={manual.summary}
+                  onChange={(e) => setManual((p) => ({ ...p, summary: e.target.value }))}
+                  disabled={isLoading}
+                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
+                />
               </div>
 
               <div>
