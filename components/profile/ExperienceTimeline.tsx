@@ -70,12 +70,12 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
   };
 
   return (
-    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Work experience</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Show impact with role, company, and outcomes.</p>
+          <p className="mt-0.5 text-xs font-semibold text-slate-700">Parsed experience: role, company, duration, outcomes.</p>
         </div>
         <button
           type="button"
@@ -90,7 +90,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
         {items.map((item, idx) => (
           <li key={`${item.title}-${idx}`} className="relative">
             <span className="absolute -left-[25px] top-1.5 h-3 w-3 rounded-full bg-emerald-600" />
-            <div className="rounded-xl border border-slate-200 bg-slate-50/35 p-4">
+            <div className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
               <div className="mb-2 flex justify-end">
                 <button type="button" onClick={() => void removeItem(idx)} className="text-slate-400 hover:text-red-600">
                   <Trash2 className="h-4 w-4" />
@@ -106,20 +106,20 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                 value={item.company}
                 onChange={(e) => void updateField(idx, "company", e.target.value)}
                 placeholder="Company"
-                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <input
                 value={item.duration}
                 onChange={(e) => void updateField(idx, "duration", e.target.value)}
                 placeholder="Duration (e.g., 2021 - Present)"
-                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <textarea
                 value={item.description}
                 onChange={(e) => void updateField(idx, "description", e.target.value)}
                 placeholder="Describe impact, responsibilities, outcomes"
                 rows={3}
-                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm leading-6 text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium leading-6 text-slate-800 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
             </div>
           </li>

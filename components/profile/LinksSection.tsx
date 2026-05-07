@@ -91,23 +91,23 @@ export default function LinksSection({ profile, userId }: Props) {
   ];
 
   return (
-    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
       <h2 className="mb-1 text-lg font-semibold text-slate-900">Links</h2>
-      <p className="mb-4 text-xs text-slate-500">Keep your public profiles up-to-date for recruiters.</p>
+      <p className="mb-4 text-xs font-semibold text-slate-700">Keep your public profiles up-to-date for recruiters.</p>
 
       <div className="space-y-3">
         {rows.map((row) => {
           const isEditing = editing === row.key;
           return (
-            <div key={row.key} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 p-3">
+            <div key={row.key} className="flex items-center gap-3 rounded-xl border border-slate-300 bg-white p-3 shadow-sm">
               <div>{row.icon}</div>
               <input
                 value={values[row.key]}
                 disabled={!isEditing}
                 onChange={(e) => setValues((prev) => ({ ...prev, [row.key]: e.target.value }))}
                 placeholder={row.placeholder}
-                className="flex-1 border-none bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
+                className="flex-1 border-none bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-500"
               />
               {!isEditing ? (
                 <button

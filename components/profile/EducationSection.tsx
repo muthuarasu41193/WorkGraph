@@ -70,12 +70,12 @@ export default function EducationSection({ userId, education }: Props) {
   };
 
   return (
-    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       {toast ? <p className="mb-3 text-sm text-emerald-700">{toast}</p> : null}
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Education</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Degrees, schools, certifications, and years.</p>
+          <p className="mt-0.5 text-xs font-semibold text-slate-700">Parsed education details from your resume.</p>
         </div>
         <button
           type="button"
@@ -88,7 +88,7 @@ export default function EducationSection({ userId, education }: Props) {
       <div className="space-y-3">
         {items.length ? (
           items.map((item, idx) => (
-            <div key={`${item.degree}-${idx}`} className="rounded-xl border border-slate-200 bg-slate-50/35 p-4">
+            <div key={`${item.degree}-${idx}`} className="rounded-xl border border-slate-300 bg-white p-4 shadow-sm">
               <div className="mb-2 flex justify-end">
                 <button type="button" onClick={() => void removeItem(idx)} className="text-slate-400 hover:text-red-600">
                   <Trash2 className="h-4 w-4" />
@@ -104,13 +104,13 @@ export default function EducationSection({ userId, education }: Props) {
                 value={item.institution}
                 onChange={(e) => void updateField(idx, "institution", e.target.value)}
                 placeholder="Institution"
-                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
               <input
                 value={item.year}
                 onChange={(e) => void updateField(idx, "year", e.target.value)}
                 placeholder="Year"
-                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 outline-none transition focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
               />
             </div>
           ))

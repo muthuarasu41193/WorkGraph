@@ -65,11 +65,11 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
   };
 
   return (
-    <section className="rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Skills</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Add keywords recruiters and ATS systems scan first.</p>
+          <p className="mt-0.5 text-xs font-semibold text-slate-700">Resume keywords that improve recruiter and ATS visibility.</p>
         </div>
         <button
           type="button"
@@ -110,7 +110,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
           skills.map((skill) => (
             <span
               key={skill}
-              className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-800 ring-1 ring-emerald-100"
+              className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-950 ring-1 ring-emerald-200"
             >
               {skill}
               <button type="button" onClick={() => void removeSkill(skill)} className="text-emerald-700">

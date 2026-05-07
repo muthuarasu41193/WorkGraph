@@ -91,8 +91,9 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <section id="ats-score" className="scroll-mt-28 rounded-3xl border border-emerald-100/90 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(16,185,129,0.3)]">
-      <h2 className="mb-4 text-lg font-semibold text-[#111827]">ATS Score</h2>
+    <section id="ats-score" className="scroll-mt-28 rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_50px_-40px_rgba(16,185,129,0.3)]">
+      <h2 className="mb-1 text-lg font-extrabold tracking-tight text-slate-950">ATS Score</h2>
+      <p className="mb-4 text-xs font-medium text-slate-700">Your parsed resume quality and action points.</p>
 
       {localFeedback || score !== null ? (
         <>
@@ -119,14 +120,18 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
             </div>
           </div>
 
-          <div className="mb-3 flex rounded-lg border border-[#E5E7EB] p-1">
+          <div className="mb-3 flex rounded-lg border border-slate-300 p-1" role="tablist" aria-label="ATS analysis tabs">
             {(["strengths", "weaknesses", "suggestions"] as Tab[]).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize ${
-                  activeTab === tab ? "bg-emerald-700 text-white" : "text-[#6B7280]"
+                role="tab"
+                aria-selected={activeTab === tab}
+                aria-controls={`ats-tabpanel-${tab}`}
+                id={`ats-tab-${tab}`}
+                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 ${
+                  activeTab === tab ? "bg-emerald-700 text-white" : "text-slate-700"
                 }`}
               >
                 {tab}
@@ -134,10 +139,16 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
             ))}
           </div>
 
-          <ul className="space-y-2">
+          <ul
+            className="space-y-2"
+            role="tabpanel"
+            id={`ats-tabpanel-${activeTab}`}
+            aria-labelledby={`ats-tab-${activeTab}`}
+            aria-live="polite"
+          >
             {tabItems.length ? (
               tabItems.map((item, idx) => (
-                <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm text-[#6B7280]">
+                <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm font-medium text-slate-800">
                   {activeTab === "strengths" ? (
                     <CheckCircle className="mt-0.5 h-4 w-4 text-[#10B981]" />
                   ) : activeTab === "weaknesses" ? (
@@ -149,7 +160,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                 </li>
               ))
             ) : (
-              <li className="text-sm text-[#9CA3AF]">No analysis points available.</li>
+              <li className="text-sm font-medium text-slate-500">No analysis points available.</li>
             )}
           </ul>
         </>
@@ -158,7 +169,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
           type="button"
           onClick={() => void analyze()}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
+          className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {loading ? "Analyzing..." : "Analyze My Resume"}

@@ -154,16 +154,18 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
 
   const hasActiveFilters =
     query.trim() !== "" || dateWindow !== "any" || sources.size > 0 || skillsPick.size > 0;
+  const activeFilterCount =
+    (query.trim() ? 1 : 0) + (dateWindow !== "any" ? 1 : 0) + (sources.size > 0 ? 1 : 0) + (skillsPick.size > 0 ? 1 : 0);
 
   return (
     <section id="recommended-jobs" className="scroll-mt-28 space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">Job board</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Job board</p>
+          <h2 className="mt-1 text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">
             {feedKind === "live" ? "Browse live ATS listings" : "Sample roles (run ingest for live data)"}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{hint}</p>
+          <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-700">{hint}</p>
         </div>
         <span
           className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ring-1 ${
@@ -200,15 +202,15 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
       ) : null}
 
       {jobs.length > 0 ? (
-        <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-sm ring-1 ring-slate-100 sm:p-5">
+        <div className="space-y-4 rounded-2xl border border-slate-300 bg-white p-4 shadow-md ring-1 ring-slate-100 sm:p-5">
           <div className="flex flex-wrap items-center gap-2 border-b border-slate-100 pb-4">
             <SlidersHorizontal className="h-4 w-4 text-slate-500" aria-hidden />
-            <span className="text-sm font-semibold text-slate-800">Filters</span>
+            <span className="text-sm font-bold text-slate-900">Filters</span>
             {hasActiveFilters ? (
               <button
                 type="button"
                 onClick={clearFilters}
-                className="ml-auto text-xs font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950"
+                className="ml-auto text-xs font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
               >
                 Clear all
               </button>
@@ -225,14 +227,14 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 setVisible(PAGE_SIZE);
               }}
               placeholder="Search title, company, location…"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none ring-emerald-500/20 transition focus:border-emerald-400 focus:bg-white focus:ring-2"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50/80 py-2.5 pl-10 pr-3 text-sm font-medium text-slate-900 placeholder:text-slate-500 outline-none ring-emerald-500/20 transition focus:border-emerald-400 focus:bg-white focus:ring-2 focus-visible:ring-emerald-600/40"
               aria-label="Search jobs"
             />
           </div>
 
           <div className="space-y-2">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Posted</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {DATE_OPTIONS.map((d) => (
                 <button
                   key={d.id}
@@ -241,7 +243,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     setDateWindow(d.id);
                     setVisible(PAGE_SIZE);
                   }}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ring-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:px-3 sm:py-1.5 sm:text-xs ${
                     dateWindow === d.id
                       ? "bg-emerald-700 text-white ring-emerald-700"
                       : "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-slate-100"
@@ -256,8 +258,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           {platformsInFeed.length > 0 ? (
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Platform</p>
-              <p className="text-[11px] text-slate-500">Leave none selected to show every platform, or pick one or more.</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-[11px] font-medium text-slate-600">Leave none selected to show every platform, or pick one or more.</p>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {platformsInFeed.map((src) => {
                   const active = sources.size === 0 || sources.has(src);
                   return (
@@ -265,7 +267,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       key={src}
                       type="button"
                       onClick={() => togglePlatform(src)}
-                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold transition ring-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:px-3 sm:py-1.5 sm:text-xs ${
                         sources.size === 0
                           ? "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-emerald-50 hover:ring-emerald-200"
                           : active
@@ -291,7 +293,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           {skillHints.length > 0 && feedKind === "live" ? (
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Skills on your profile</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {skillHints.map((sk) => {
                   const picked = skillsPick.has(sk);
                   return (
@@ -299,7 +301,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       key={sk}
                       type="button"
                       onClick={() => toggleSkill(sk)}
-                      className={`max-w-full truncate rounded-full px-3 py-1.5 text-xs font-semibold transition ring-1 ${
+                      className={`max-w-full truncate rounded-full px-2.5 py-1 text-[11px] font-semibold transition ring-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:px-3 sm:py-1.5 sm:text-xs ${
                         picked
                           ? "bg-emerald-100 text-emerald-950 ring-emerald-300"
                           : "bg-slate-50 text-slate-700 ring-slate-200 hover:bg-slate-100"
@@ -315,7 +317,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             </div>
           ) : null}
 
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600" aria-live="polite">
             Showing{" "}
             <span className="font-semibold tabular-nums text-slate-900">{visibleJobs.length}</span> of{" "}
             <span className="font-semibold tabular-nums text-slate-900">{filtered.length}</span>
@@ -325,6 +327,11 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 (<span className="tabular-nums">{jobs.length}</span> total ranked)
               </>
             ) : null}
+          </p>
+          <p className="sr-only" aria-live="polite">
+            {activeFilterCount === 0
+              ? "No active filters."
+              : `${activeFilterCount} active filter${activeFilterCount === 1 ? "" : "s"} applied.`}
           </p>
         </div>
       ) : null}
@@ -339,7 +346,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             <article
               key={job.id}
               style={{ animationDelay: `${90 + i * 45}ms` }}
-              className="group relative flex flex-col rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.22)] transition hover:border-emerald-200/90 hover:shadow-[0_22px_55px_-36px_rgba(16,185,129,0.22)] wg-job-card-enter"
+              className="group relative flex min-h-[260px] flex-col rounded-2xl border border-slate-300 bg-white p-5 shadow-[0_18px_50px_-38px_rgba(15,23,42,0.22)] transition hover:border-emerald-300 hover:shadow-[0_22px_55px_-36px_rgba(16,185,129,0.22)] wg-job-card-enter"
             >
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ${src.className}`}>
@@ -350,16 +357,16 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   {job.postedAgo}
                 </span>
               </div>
-              <h3 className="text-[17px] font-semibold leading-snug text-slate-900">{job.title}</h3>
-              <p className="mt-1 text-sm font-medium text-slate-700">{job.company}</p>
-              <p className="mt-1 text-xs text-slate-500">{job.location}</p>
+              <h3 className="line-clamp-2 text-[17px] font-bold leading-snug text-slate-950">{job.title}</h3>
+              <p className="mt-1 text-sm font-semibold text-slate-800">{job.company}</p>
+              <p className="mt-1 line-clamp-2 text-xs font-medium text-slate-600">{job.location}</p>
               <p className="mt-3 rounded-xl bg-emerald-50/80 px-3 py-2 text-xs leading-relaxed text-emerald-900 ring-1 ring-emerald-100/90">
                 <span className="font-semibold">Match signal:</span> {job.matchLabel}
               </p>
               {job.matchedSkills.length > 0 ? (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {job.matchedSkills.slice(0, 6).map((s) => (
-                    <span key={s} className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+                    <span key={s} className="max-w-full truncate rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-700">
                       {s}
                     </span>
                   ))}
@@ -369,13 +376,13 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 </div>
               ) : null}
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-auto flex flex-wrap gap-2 pt-4">
                 {canApply ? (
                   <a
                     href={applyHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-800 min-[380px]:flex-none"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 min-[380px]:w-auto min-[380px]:flex-1"
                   >
                     Apply
                     <ExternalLink className="h-3.5 w-3.5 opacity-90" aria-hidden />
@@ -386,7 +393,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     disabled
                     aria-disabled="true"
                     title="No apply URL on demo listings — ingest live ATS rows"
-                    className="inline-flex flex-1 cursor-not-allowed items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-semibold text-white opacity-60 shadow-sm min-[380px]:flex-none"
+                    className="inline-flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-3 py-2 text-xs font-semibold text-white opacity-60 shadow-sm min-[380px]:w-auto min-[380px]:flex-1"
                   >
                     Apply
                     <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden />
@@ -397,7 +404,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   disabled
                   aria-disabled="true"
                   title="Saved roles hook into job_tracker_entries soon"
-                  className="inline-flex cursor-not-allowed items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 opacity-60"
+                  className="inline-flex w-full cursor-not-allowed items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 opacity-60 min-[380px]:w-auto"
                 >
                   Save
                   <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
@@ -413,7 +420,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           <button
             type="button"
             onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50/50"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
           >
             Load more ({Math.min(PAGE_SIZE, filtered.length - visible)} next)
           </button>
@@ -423,7 +430,11 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
       {filtered.length === 0 && jobs.length > 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/90 px-4 py-8 text-center text-sm text-slate-600">
           No roles match these filters.{" "}
-          <button type="button" onClick={clearFilters} className="font-semibold text-emerald-800 underline underline-offset-2">
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="font-semibold text-emerald-800 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          >
             Clear filters
           </button>
         </p>
@@ -433,7 +444,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         Ingest jobs with{" "}
         <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px] text-slate-800">job_aggregator</code> using the
         same <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">DATABASE_URL</code> as Supabase.{" "}
-        <Link href="/create-profile" className="font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950">
+        <Link
+          href="/create-profile"
+          className="font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+        >
           Refresh resume
         </Link>{" "}
         to tune keyword overlap ranking.
