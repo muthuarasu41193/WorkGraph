@@ -21,6 +21,7 @@ export type JobPipelineCounts = {
 export type JobFeedSource =
   | "greenhouse"
   | "lever"
+  | "adzuna"
   | "workday"
   | "smartrecruiters"
   | "ashby"
@@ -134,6 +135,7 @@ function normalizeSource(raw: string): JobFeedSource {
   if (
     s === "greenhouse" ||
     s === "lever" ||
+    s === "adzuna" ||
     s === "ashby" ||
     s === "workday" ||
     s === "smartrecruiters" ||
@@ -236,7 +238,18 @@ async function fetchListingStats(
   }
 
   const bySource: Partial<Record<JobFeedSource, number>> = {};
-  const sources = ["greenhouse", "lever", "workday", "smartrecruiters", "ashby", "jobvite", "bamboohr", "icims", "taleo"] as const;
+  const sources = [
+    "greenhouse",
+    "lever",
+    "adzuna",
+    "workday",
+    "smartrecruiters",
+    "ashby",
+    "jobvite",
+    "bamboohr",
+    "icims",
+    "taleo",
+  ] as const;
   await Promise.all(
     sources.map(async (src) => {
       const r = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("source", src);

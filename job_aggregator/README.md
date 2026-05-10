@@ -2,7 +2,7 @@
 
 Production-oriented Python service that:
 
-1. Pulls **public** job listings from **Greenhouse**, **Lever**, and **Ashby** (official ATS JSON endpoints — no scraping marketplaces, no paid SERP APIs).
+1. Pulls **public** job listings from **Greenhouse**, **Lever**, and **Ashby** (official ATS JSON endpoints), plus optional **Adzuna** multi-country search when `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` are set.
 2. Persists normalized rows to **PostgreSQL** (recommended) or **SQLite** (default file `./jobs.db`).
 3. **Dedupes** by canonical `apply_url` (unique) and skips unchanged bodies to avoid pointless re-embedding.
 4. Embeds postings locally with **`sentence-transformers/all-MiniLM-L6-v2`** (384-d vectors, stored as JSON arrays).
@@ -15,8 +15,11 @@ Production-oriented Python service that:
 | Greenhouse | `https://boards-api.greenhouse.io/v1/boards/{token}/jobs` |
 | Lever      | `https://api.lever.co/v0/postings/{site}?mode=json` |
 | Ashby      | `https://api.ashbyhq.com/posting-api/job-board/{slug}` (public posting API — **no API key**) |
+| Adzuna     | `https://api.adzuna.com/v1/api/jobs/{country}/search/{page}` (**requires** [API id + key](https://developer.adzuna.com/signup)) |
 
 > **Ashby note:** The slug is the hosted board name (`jobs.ashbyhq.com/Ashby` → `Ashby`). An older hypothetical `jobs.ashbyhq.com/api/non-search-paths/{company}` path is **not** used because it does not align with Ashby’s documented public posting feed.
+
+> **Adzuna note:** Ingest skips Adzuna when credentials are unset. Rows use `source = adzuna` and `external_id = adzuna:{country}:{id}`. **`INGEST_PRUNE_MISSING` does not delete Adzuna rows** (search results can legitimately change between runs); board feeds (Greenhouse/Lever/Ashby) are still pruned as before.
 
 ---
 
@@ -93,6 +96,18 @@ Edit `companies.json`:
 
 Invalid slugs simply yield zero rows — ingestion logs warnings and continues.
 
+### Adzuna (optional global feed)
+
+Set **`ADZUNA_APP_ID`** and **`ADZUNA_APP_KEY`** in `job_aggregator/.env` (or CI secrets). Without them, ingest skips Adzuna.
+
+| Variable | Purpose |
+|----------|---------|
+| `ADZUNA_COUNTRIES` | Comma-separated country codes (default: broad multi-region list). |
+| `ADZUNA_SEARCH_QUERIES` | Multiple searches: separate with <code>&#124;</code> (e.g. <code>software engineer&#124;data engineer</code>). |
+| `ADZUNA_WHAT` | Shorthand if `ADZUNA_SEARCH_QUERIES` is unset (default `software engineer`). |
+| `ADZUNA_RESULTS_PER_PAGE` | 1–50 (default 50). |
+| `ADZUNA_MAX_PAGES_PER_QUERY` | Pages per country/query (default 1; raise slowly — each page is an API call). |
+
 ---
 
 ## CLI usage
@@ -125,7 +140,19 @@ Reads UTF-8 resume text, embeds locally, prints sorted JSON matches.
 
 ---
 
-## Scheduling with cron
+## Automatic sync (recommended)
+
+**GitHub Actions** (no laptop required): the workflow [`.github/workflows/supabase-jobs-ingest.yml`](../.github/workflows/supabase-jobs-ingest.yml) runs on a schedule and executes `python -m app.main ingest --no-embed`.
+
+1. Push the repo to GitHub; ensure **Actions** are enabled for the repository.
+2. Add **Secrets** (same values as local): at minimum `SUPABASE_SERVICE_ROLE_KEY` and `NEXT_PUBLIC_SUPABASE_URL` (or `SUPABASE_PROJECT_REF`), plus optional `ADZUNA_APP_ID` / `ADZUNA_APP_KEY`.
+3. Scheduled workflows only run from the **default branch**; merge this workflow there.
+
+The cron expression is in the YAML file (default: every 6 hours UTC). Use **Actions → Sync ATS jobs to Supabase → Run workflow** for a one-off run.
+
+**Windows (PC must be on):** schedule `job_aggregator/scripts/run-ingest.ps1` with Task Scheduler (daily or hourly), after `job_aggregator/.env` is configured.
+
+## Scheduling with cron (Linux / VPS)
 
 Run ingestion nightly (adjust paths):
 

@@ -19,6 +19,7 @@ from typing import Any
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
+from app.ingest.adzuna import fetch_adzuna_jobs
 from app.ingest.ashby import fetch_ashby_jobs
 from app.ingest.greenhouse import fetch_greenhouse_jobs
 from app.ingest.lever import fetch_lever_jobs
@@ -26,7 +27,10 @@ from app.models import Job
 
 LOG = logging.getLogger(__name__)
 
-_ATS_SOURCES = frozenset({"greenhouse", "lever", "ashby"})
+# Board-backed feeds: safe to prune when a full ingest no longer lists an apply_url.
+_PRUNE_ATS_SOURCES = frozenset({"greenhouse", "lever", "ashby"})
+# Adzuna is search-based and optional (keys may be unset); never bulk-prune it via
+# INGEST_PRUNE_MISSING — a transient empty response would wipe the partition.
 
 
 def prune_jobs_missing_from_fetch(session: Session, apply_urls: set[str], *, min_fetched: int) -> int:
@@ -42,7 +46,7 @@ def prune_jobs_missing_from_fetch(session: Session, apply_urls: set[str], *, min
             min_fetched,
         )
         return 0
-    res = session.execute(delete(Job).where(Job.source.in_(_ATS_SOURCES), Job.apply_url.not_in(apply_urls)))
+    res = session.execute(delete(Job).where(Job.source.in_(_PRUNE_ATS_SOURCES), Job.apply_url.not_in(apply_urls)))
     removed = int(res.rowcount or 0)
     if removed:
         LOG.info("Pruned %s jobs no longer returned by ATS feeds", removed)
@@ -70,7 +74,7 @@ def load_companies(path: Path) -> dict[str, list[str]]:
 def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
     """Fetch all ATS boards and return normalized rows + board/site counts."""
     companies = load_companies(companies_path)
-    boards = {"greenhouse_boards": 0, "lever_sites": 0, "ashby_slugs": 0}
+    boards = {"greenhouse_boards": 0, "lever_sites": 0, "ashby_slugs": 0, "adzuna_jobs": 0}
     all_rows: list[dict[str, Any]] = []
 
     for token in companies["greenhouse"]:
@@ -84,6 +88,10 @@ def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]],
     for slug in companies["ashby"]:
         boards["ashby_slugs"] += 1
         all_rows.extend(fetch_ashby_jobs(slug))
+
+    adzuna_rows = fetch_adzuna_jobs()
+    boards["adzuna_jobs"] = len(adzuna_rows)
+    all_rows.extend(adzuna_rows)
 
     return all_rows, boards
 
@@ -173,10 +181,11 @@ def run_full_ingestion_via_rest(companies_path: Path) -> dict[str, Any]:
     totals["upserted"] = agg["upserted"]
 
     LOG.info(
-        "Ingest complete (REST) boards/gh=%s lever=%s ashby=%s rows=%s upserted=%s",
+        "Ingest complete (REST) boards/gh=%s lever=%s ashby=%s adzuna=%s rows=%s upserted=%s",
         totals["greenhouse_boards"],
         totals["lever_sites"],
         totals["ashby_slugs"],
+        totals["adzuna_jobs"],
         totals["normalized_rows"],
         totals["upserted"],
     )
@@ -212,10 +221,11 @@ def run_full_ingestion(session: Session, companies_path: Path) -> dict[str, Any]
         totals["pruned"] = prune_jobs_missing_from_fetch(session, fetched_urls, min_fetched=min_fetched)
 
     LOG.info(
-        "Ingest complete boards/gh=%s lever=%s ashby=%s rows=%s inserted=%s updated=%s unchanged=%s pruned=%s",
+        "Ingest complete boards/gh=%s lever=%s ashby=%s adzuna=%s rows=%s inserted=%s updated=%s unchanged=%s pruned=%s",
         totals["greenhouse_boards"],
         totals["lever_sites"],
         totals["ashby_slugs"],
+        totals["adzuna_jobs"],
         totals["normalized_rows"],
         totals["inserted"],
         totals["updated"],

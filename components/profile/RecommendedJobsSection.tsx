@@ -73,6 +73,10 @@ const SOURCE_STYLES: Record<
     label: "Lever",
     className: "bg-orange-500/12 text-orange-900 ring-orange-400/25",
   },
+  adzuna: {
+    label: "Adzuna",
+    className: "bg-sky-600/12 text-sky-950 ring-sky-500/25",
+  },
   workday: {
     label: "Workday",
     className: "bg-[#E8F0FE] text-[#1557B0] ring-[#1A73E8]/25",

@@ -12,6 +12,7 @@ import {
   Cpu,
   Database,
   FileSpreadsheet,
+  Globe2,
   Leaf,
   LoaderCircle,
   Radar,
@@ -140,6 +141,14 @@ export default function ProfileJobDashboard({
       status: "synced",
       lastSync: "Last synced 4 mins ago",
       countLabel: (listingsBySource.lever ?? 2108).toLocaleString(),
+    },
+    {
+      key: "adzuna",
+      name: "Adzuna",
+      icon: Globe2,
+      status: "synced",
+      lastSync: "Global search API",
+      countLabel: (listingsBySource.adzuna ?? 0).toLocaleString(),
     },
     {
       key: "workday",

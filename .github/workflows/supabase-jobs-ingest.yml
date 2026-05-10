@@ -13,20 +13,25 @@
 #     SUPABASE_POOLER_REGION — e.g. ap-south-1 (workflow builds aws-0-{region}; wrong prefix breaks login)
 #   Optional: DATABASE_POOLER_AWS_PREFIX secret — set to aws-1 if Connect shows aws-1-<region>.pooler.supabase.com
 #
+# Optional Adzuna (global listings):
+#   ADZUNA_APP_ID, ADZUNA_APP_KEY — GitHub Actions secrets
+#   ADZUNA_COUNTRIES, ADZUNA_SEARCH_QUERIES, ADZUNA_WHAT, ADZUNA_RESULTS_PER_PAGE, ADZUNA_MAX_PAGES_PER_QUERY — repo Variables (optional)
+#
 # Easiest CI option (no DB password / pooler):
 #   SUPABASE_SERVICE_ROLE_KEY — Dashboard → Settings → API Keys → Secret (server-only).
 #   NEXT_PUBLIC_SUPABASE_URL or SUPABASE_PROJECT_REF — same project as production.
 #
 # Apply SQL migrations on the Supabase project first (public.jobs + RLS), then push this workflow to the default branch.
+#
+# Scheduled runs: enable Actions on the repo, add the secrets below, and keep this file on the default branch.
 
 name: Sync ATS jobs to Supabase
 
 on:
   workflow_dispatch:
   schedule:
-    # Twice daily India Standard Time (IST = UTC+5:30): 06:00 and 15:00 IST
-    - cron: "30 0 * * *" # 00:30 UTC → 06:00 IST
-    - cron: "30 9 * * *" # 09:30 UTC → 15:00 IST
+    # Every 6 hours UTC (~4×/day). Edit if you need fewer API calls or Actions minutes.
+    - cron: "0 */6 * * *"
 
 concurrency:
   group: supabase-jobs-ingest
@@ -64,6 +69,13 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           INGEST_PRUNE_MISSING: ${{ vars.INGEST_PRUNE_MISSING }}
           INGEST_PRUNE_MIN_FETCHED: ${{ vars.INGEST_PRUNE_MIN_FETCHED }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          ADZUNA_COUNTRIES: ${{ vars.ADZUNA_COUNTRIES }}
+          ADZUNA_SEARCH_QUERIES: ${{ vars.ADZUNA_SEARCH_QUERIES }}
+          ADZUNA_WHAT: ${{ vars.ADZUNA_WHAT }}
+          ADZUNA_RESULTS_PER_PAGE: ${{ vars.ADZUNA_RESULTS_PER_PAGE }}
+          ADZUNA_MAX_PAGES_PER_QUERY: ${{ vars.ADZUNA_MAX_PAGES_PER_QUERY }}
         run: |
           if [ -n "$DATABASE_URL" ]; then
             echo "Using DATABASE_URL from JOBS_DATABASE_URL secret."
