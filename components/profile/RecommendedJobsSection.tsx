@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import {
   Building2,
   ArrowUpRight,
@@ -15,7 +15,6 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
-  Clock,
   GraduationCap,
   ExternalLink,
   LayoutGrid,
@@ -40,23 +39,17 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
   Checkbox,
   Chip,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Drawer,
   FormControlLabel,
   FormControl,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -107,6 +100,64 @@ const DATE_OPTIONS = [
   { id: "7" as const, label: "Last 7 days" },
   { id: "30" as const, label: "Last 30 days" },
 ];
+const JOB_TYPE_OPTIONS = ["Full-time", "Part-time", "Contract", "Freelance", "Internship", "Temporary"] as const;
+const EXPERIENCE_OPTIONS = [
+  "Entry (0-2yr)",
+  "Mid (2-5yr)",
+  "Senior (5-8yr)",
+  "Lead (8-12yr)",
+  "Executive (12yr+)",
+] as const;
+const COMPANY_SIZE_OPTIONS = [
+  "Startup (1-50)",
+  "Small (51-200)",
+  "Medium (201-1000)",
+  "Large (1000+)",
+  "Enterprise (10K+)",
+] as const;
+const BENEFIT_OPTIONS = ["Health", "401k", "Equity", "Remote-first"] as const;
+const INDUSTRY_KEYWORDS = {
+  Technology: ["software", "engineer", "developer", "saas", "ai", "platform", "data", "cloud"],
+  Finance: ["finance", "fintech", "bank", "payments", "trading", "risk"],
+  Healthcare: ["health", "clinical", "med", "biotech", "hospital", "pharma"],
+  Marketing: ["marketing", "growth", "seo", "brand", "content", "demand gen"],
+  Design: ["design", "ux", "ui", "product design", "figma"],
+  Legal: ["legal", "law", "compliance", "counsel", "contract law"],
+  Education: ["education", "edtech", "curriculum", "teacher", "learning"],
+  Retail: ["retail", "commerce", "ecommerce", "merchant", "shopper"],
+} as const;
+const INDUSTRY_OPTIONS = Object.keys(INDUSTRY_KEYWORDS) as Array<keyof typeof INDUSTRY_KEYWORDS>;
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: "$",
+  EUR: "EUR ",
+  GBP: "GBP ",
+  INR: "INR ",
+};
+const JOB_FEED_SOURCE_OPTIONS = [
+  "greenhouse",
+  "lever",
+  "adzuna",
+  "workday",
+  "smartrecruiters",
+  "ashby",
+  "jobvite",
+  "bamboohr",
+  "icims",
+  "taleo",
+  "linkedin",
+  "reddit",
+  "indeed",
+  "glassdoor",
+  "levels",
+  "other",
+] as const satisfies readonly JobFeedSource[];
+const MATCH_SCORE_OPTIONS = ["any", "90", "75", "60"] as const;
+const DATE_WINDOW_OPTIONS = ["any", "1", "7", "30"] as const;
+const LOCATION_MODE_OPTIONS = ["any", "remote", "hybrid", "onsite"] as const;
+const SALARY_PERIOD_OPTIONS = ["year", "hour"] as const;
+const VIEW_MODE_OPTIONS = ["list", "grid"] as const;
+const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_asc"] as const;
+const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
 const FILTER_TRIGGER_BASE_CLASS =
@@ -114,6 +165,249 @@ const FILTER_TRIGGER_BASE_CLASS =
 const FILTER_TRIGGER_INACTIVE_CLASS =
   `${FILTER_TRIGGER_BASE_CLASS} border-[#DADCE0] bg-white text-[#3A3A3C] hover:border-[#1A73E8] hover:bg-[#E8F0FE]`;
 const FILTER_TRIGGER_ACTIVE_CLASS = `${FILTER_TRIGGER_BASE_CLASS} border-[#1A73E8] bg-[#1A73E8] text-white`;
+
+type JobTypeOption = (typeof JOB_TYPE_OPTIONS)[number];
+type ExperienceFilterOption = (typeof EXPERIENCE_OPTIONS)[number];
+type CompanySizeFilterOption = (typeof COMPANY_SIZE_OPTIONS)[number];
+type BenefitOption = (typeof BENEFIT_OPTIONS)[number];
+type IndustryOption = (typeof INDUSTRY_OPTIONS)[number];
+
+type SalaryMeta = {
+  minK: number;
+  maxK: number;
+  currency: string;
+  period: "year" | "hour";
+};
+
+type DerivedJobMeta = {
+  searchBlob: string;
+  jobTypes: JobTypeOption[];
+  primaryJobType: JobTypeOption | null;
+  locationMode: "remote" | "hybrid" | "onsite";
+  experienceLevel: ExperienceFilterOption | null;
+  salary: SalaryMeta | null;
+  companySize: CompanySizeFilterOption | null;
+  industries: IndustryOption[];
+  benefits: BenefitOption[];
+  hasVisaSponsorship: boolean;
+  isEasyApply: boolean;
+};
+
+function normalizeText(...parts: Array<string | null | undefined>): string {
+  return parts
+    .filter((part): part is string => typeof part === "string" && part.trim().length > 0)
+    .join(" ")
+    .toLowerCase();
+}
+
+function parseMoneyToK(rawValue: string, suffix: string | undefined, period: "year" | "hour"): number {
+  const value = Number(rawValue.replace(/,/g, ""));
+  if (Number.isNaN(value)) return 0;
+  const normalizedSuffix = suffix?.toLowerCase();
+  if (normalizedSuffix === "m") return Math.round(value * 1000);
+  if (normalizedSuffix === "k") return Math.round(value);
+  if (period === "hour") return Math.round(value);
+  if (value >= 1000) return Math.round(value / 1000);
+  return Math.round(value);
+}
+
+function inferSalary(text: string): SalaryMeta | null {
+  const period: "year" | "hour" = /(per hour|hourly|\/\s*(?:h|hr|hour)\b)/i.test(text) ? "hour" : "year";
+  const currencyRange =
+    /\b(?:salary|compensation|pay(?:\s*range)?|hourly(?:\s+rate)?)\b[\s:]{0,12}(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:-|to|–|—)\s*(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
+      text
+    ) ??
+    /([$€£₹])\s*(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:-|to|–|—)\s*(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
+      text
+    );
+
+  if (currencyRange) {
+    const currencySymbol = currencyRange[1] || currencyRange[4] || "$";
+    const currency =
+      currencySymbol === "€" ? "EUR" : currencySymbol === "£" ? "GBP" : currencySymbol === "₹" ? "INR" : "USD";
+    const minK = parseMoneyToK(currencyRange[2], currencyRange[3], period);
+    const maxK = parseMoneyToK(currencyRange[5], currencyRange[6], period);
+    if (minK > 0 && maxK > 0) {
+      return {
+        minK: Math.min(minK, maxK),
+        maxK: Math.max(minK, maxK),
+        currency,
+        period,
+      };
+    }
+  }
+
+  const singleSalary =
+    /\b(?:salary|compensation|pay(?:\s*range)?|hourly(?:\s+rate)?)\b[\s:]{0,12}(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
+      text
+    ) ?? /([$€£₹])\s*(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:per year|annual|annually|per hour|hourly|\/\s*(?:h|hr|hour)\b)/i.exec(text);
+
+  if (!singleSalary) return null;
+
+  const currencySymbol = singleSalary[1] || "$";
+  const currency =
+    currencySymbol === "€" ? "EUR" : currencySymbol === "£" ? "GBP" : currencySymbol === "₹" ? "INR" : "USD";
+  const amountK = parseMoneyToK(singleSalary[2], singleSalary[3], period);
+  if (amountK <= 0) return null;
+
+  return {
+    minK: amountK,
+    maxK: amountK,
+    currency,
+    period,
+  };
+}
+
+function mapYearsToExperience(maxYears: number): ExperienceFilterOption {
+  if (maxYears <= 2) return "Entry (0-2yr)";
+  if (maxYears <= 5) return "Mid (2-5yr)";
+  if (maxYears <= 8) return "Senior (5-8yr)";
+  if (maxYears <= 12) return "Lead (8-12yr)";
+  return "Executive (12yr+)";
+}
+
+function inferExperienceLevel(text: string): ExperienceFilterOption | null {
+  if (/\b(chief|c-suite|executive|director|vice president|vp\b|head of)\b/i.test(text)) {
+    return "Executive (12yr+)";
+  }
+  if (/\b(principal|staff|lead|manager|architect)\b/i.test(text)) {
+    return "Lead (8-12yr)";
+  }
+  if (/\b(senior|sr\.?)\b/i.test(text)) {
+    return "Senior (5-8yr)";
+  }
+  if (/\b(mid[-\s]?level|mid level|intermediate)\b/i.test(text)) {
+    return "Mid (2-5yr)";
+  }
+  if (/\b(entry[-\s]?level|junior|jr\.?|graduate|new grad|intern(ship)?)\b/i.test(text)) {
+    return "Entry (0-2yr)";
+  }
+
+  const matches = Array.from(text.matchAll(/(\d{1,2})(?:\s*(?:\+|plus))?(?:\s*[-–]\s*(\d{1,2}))?\s*(?:years?|yrs?)/gi));
+  if (matches.length === 0) return null;
+  let maxYears = 0;
+  for (const match of matches) {
+    const start = Number(match[1] || 0);
+    const end = Number(match[2] || 0);
+    maxYears = Math.max(maxYears, start, end);
+  }
+  return maxYears > 0 ? mapYearsToExperience(maxYears) : null;
+}
+
+function inferJobTypes(text: string): JobTypeOption[] {
+  const matches: JobTypeOption[] = [];
+  if (/\bfull[-\s]?time\b/i.test(text)) matches.push("Full-time");
+  if (/\bpart[-\s]?time\b/i.test(text)) matches.push("Part-time");
+  if (/\bcontract(or)?\b|freelance contract/i.test(text)) matches.push("Contract");
+  if (/\bfreelance(r)?\b/i.test(text)) matches.push("Freelance");
+  if (/\bintern(ship)?\b/i.test(text)) matches.push("Internship");
+  if (/\btemporary\b|\btemp\b/i.test(text)) matches.push("Temporary");
+  return matches;
+}
+
+function inferLocationMode(location: string, description: string): "remote" | "hybrid" | "onsite" {
+  const text = normalizeText(location, description);
+  if (/\bremote\b|work from home|distributed/i.test(text)) return "remote";
+  if (/\bhybrid\b/i.test(text)) return "hybrid";
+  return "onsite";
+}
+
+function inferCompanySize(text: string): CompanySizeFilterOption | null {
+  const rangeMatch = /(\d{1,3}(?:,\d{3})*)\s*(?:-|to|–|—)\s*(\d{1,3}(?:,\d{3})*)\s+(?:employees|people|team members)/i.exec(text);
+  const plusMatch = /(\d{1,3}(?:,\d{3})*)\+\s*(?:employees|people|team members)/i.exec(text);
+
+  const classify = (maxEmployees: number): CompanySizeFilterOption => {
+    if (maxEmployees <= 50) return "Startup (1-50)";
+    if (maxEmployees <= 200) return "Small (51-200)";
+    if (maxEmployees <= 1000) return "Medium (201-1000)";
+    if (maxEmployees < 10000) return "Large (1000+)";
+    return "Enterprise (10K+)";
+  };
+
+  if (rangeMatch) {
+    return classify(Math.max(Number(rangeMatch[1].replace(/,/g, "")), Number(rangeMatch[2].replace(/,/g, ""))));
+  }
+  if (plusMatch) {
+    return classify(Number(plusMatch[1].replace(/,/g, "")));
+  }
+  if (/\b(startup|seed stage|series a|early stage)\b/i.test(text)) return "Startup (1-50)";
+  if (/\bsmall team\b|\bgrowing team\b/i.test(text)) return "Small (51-200)";
+  if (/\bmidsize\b|\bmid-size\b/i.test(text)) return "Medium (201-1000)";
+  if (/\benterprise\b|\bglobal company\b/i.test(text)) return "Enterprise (10K+)";
+  return null;
+}
+
+function inferIndustries(text: string): IndustryOption[] {
+  return INDUSTRY_OPTIONS.filter((industry) => INDUSTRY_KEYWORDS[industry].some((keyword) => text.includes(keyword)));
+}
+
+function inferBenefits(text: string): BenefitOption[] {
+  const benefits: BenefitOption[] = [];
+  if (/\b(health insurance|medical|dental|vision)\b/i.test(text)) benefits.push("Health");
+  if (/\b401k\b|\bretirement plan\b/i.test(text)) benefits.push("401k");
+  if (/\bequity\b|\bstock options?\b|\brsus?\b/i.test(text)) benefits.push("Equity");
+  if (/\bremote[-\s]?first\b|\bdistributed team\b/i.test(text)) benefits.push("Remote-first");
+  return benefits;
+}
+
+function inferVisaSponsorship(text: string): boolean {
+  return /\bvisa sponsorship\b|\bsponsorship available\b|\bh-?1b\b|\bwork authorization support\b/i.test(text);
+}
+
+function deriveJobMeta(job: RecommendedJobCard): DerivedJobMeta {
+  const text = normalizeText(job.title, job.company, job.location, job.description, job.matchLabel);
+  const jobTypes = inferJobTypes(text);
+
+  return {
+    searchBlob: normalizeText(job.title, job.company, job.location, job.description, job.matchLabel, job.matchedSkills.join(" ")),
+    jobTypes,
+    primaryJobType: jobTypes[0] ?? null,
+    locationMode: inferLocationMode(job.location, job.description),
+    experienceLevel: inferExperienceLevel(text),
+    salary: inferSalary(text),
+    companySize: inferCompanySize(text),
+    industries: inferIndustries(text),
+    benefits: inferBenefits(text),
+    hasVisaSponsorship: inferVisaSponsorship(text),
+    isEasyApply: Boolean(job.applyUrl?.trim()),
+  };
+}
+
+function formatSalaryRange(salary: SalaryMeta | null): string {
+  if (!salary) return "Salary not listed";
+  const prefix = CURRENCY_SYMBOLS[salary.currency] ?? `${salary.currency} `;
+  const unit = salary.period === "hour" ? "/hr" : "";
+  return `${prefix}${salary.minK}K - ${prefix}${salary.maxK}K${unit}`;
+}
+
+function parseEnumParam<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
+  return value && allowed.includes(value as T) ? (value as T) : fallback;
+}
+
+function parseCsvSet<T extends string>(value: string | null, allowed: readonly T[]): Set<T> {
+  if (!value) return new Set();
+  return new Set(value.split(",").filter((item): item is T => allowed.includes(item as T)));
+}
+
+function parseStringSet(value: string | null): Set<string> {
+  if (!value) return new Set();
+  return new Set(
+    value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+  );
+}
+
+function parseNumberParam(value: string | null, fallback: number): number {
+  if (!value) return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function parseBooleanParam(value: string | null): boolean {
+  return value === "1" || value === "true";
+}
 
 type Props = {
   jobs: RecommendedJobCard[];
@@ -182,6 +476,22 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isMobile = useMediaQuery("(max-width:767px)");
+  const initialDateWindow = parseEnumParam(searchParams.get("date"), DATE_WINDOW_OPTIONS, "any");
+  const initialSources = parseCsvSet(searchParams.get("src"), JOB_FEED_SOURCE_OPTIONS);
+  const initialSkillsPick = parseStringSet(searchParams.get("skills"));
+  const initialMatchScore = parseEnumParam(searchParams.get("match"), MATCH_SCORE_OPTIONS, "any");
+  const initialJobTypes = parseCsvSet(searchParams.get("type"), JOB_TYPE_OPTIONS);
+  const initialLocationMode = parseEnumParam(searchParams.get("locMode"), LOCATION_MODE_OPTIONS, "any");
+  const initialExperienceLevel = parseEnumParam(searchParams.get("exp"), EXPERIENCE_OPTIONS, EXPERIENCE_OPTIONS[0]);
+  const hasExperienceParam = searchParams.has("exp");
+  const initialSalaryMin = parseNumberParam(searchParams.get("salMin"), 0);
+  const initialSalaryMax = parseNumberParam(searchParams.get("salMax"), 500);
+  const initialCurrency = parseEnumParam(searchParams.get("ccy"), CURRENCY_OPTIONS, "USD");
+  const initialSalaryPeriod = parseEnumParam(searchParams.get("salPeriod"), SALARY_PERIOD_OPTIONS, "year");
+  const initialCompanySize = parseEnumParam(searchParams.get("companySize"), COMPANY_SIZE_OPTIONS, COMPANY_SIZE_OPTIONS[0]);
+  const hasCompanySizeParam = searchParams.has("companySize");
+  const initialIndustries = parseCsvSet(searchParams.get("industry"), INDUSTRY_OPTIONS);
+  const initialBenefits = parseCsvSet(searchParams.get("benefits"), BENEFIT_OPTIONS);
   const hint =
     skillHints.length > 0
       ? feedKind === "live"
@@ -191,32 +501,37 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         ? "Ranked using your headline, summary text, and saved skills vs each posting."
         : "Add skills to your profile to sharpen ranking after ingest runs.";
 
-  const [query, setQuery] = useState("");
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
-  const [dateWindow, setDateWindow] = useState<"any" | "1" | "7" | "30">(
-    (searchParams.get("date") as "any" | "1" | "7" | "30") ?? "any"
-  );
-  const [sources, setSources] = useState<Set<JobFeedSource>>(
-    () => new Set((searchParams.get("src") ?? "").split(",").filter(Boolean) as JobFeedSource[])
-  );
-  const [skillsPick, setSkillsPick] = useState<Set<string>>(() => new Set());
+  const [dateWindow, setDateWindow] = useState<"any" | "1" | "7" | "30">(initialDateWindow);
+  const [sources, setSources] = useState<Set<JobFeedSource>>(initialSources);
+  const [skillsPick, setSkillsPick] = useState<Set<string>>(initialSkillsPick);
   const [visible, setVisible] = useState(PAGE_SIZE);
-  const [matchScore, setMatchScore] = useState<"any" | "90" | "75" | "60">("any");
-  const [jobTypes, setJobTypes] = useState<Set<string>>(() => new Set());
-  const [locationMode, setLocationMode] = useState<"any" | "remote" | "hybrid" | "onsite">("any");
-  const [locationQuery, setLocationQuery] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState<string>("any");
-  const [salaryMin, setSalaryMin] = useState(0);
-  const [salaryMax, setSalaryMax] = useState(500);
-  const [currency, setCurrency] = useState("USD");
-  const [salaryPeriod, setSalaryPeriod] = useState<"year" | "hour">("year");
-  const [companySize, setCompanySize] = useState<string>("any");
-  const [industries, setIndustries] = useState<Set<string>>(() => new Set());
+  const [matchScore, setMatchScore] = useState<"any" | "90" | "75" | "60">(initialMatchScore);
+  const [jobTypes, setJobTypes] = useState<Set<JobTypeOption>>(initialJobTypes);
+  const [locationMode, setLocationMode] = useState<"any" | "remote" | "hybrid" | "onsite">(initialLocationMode);
+  const [locationQuery, setLocationQuery] = useState(searchParams.get("loc") ?? "");
+  const [experienceLevel, setExperienceLevel] = useState<"any" | ExperienceFilterOption>(
+    hasExperienceParam ? initialExperienceLevel : "any"
+  );
+  const [salaryMin, setSalaryMin] = useState(initialSalaryMin);
+  const [salaryMax, setSalaryMax] = useState(initialSalaryMax);
+  const [currency, setCurrency] = useState(initialCurrency);
+  const [salaryPeriod, setSalaryPeriod] = useState<"year" | "hour">(initialSalaryPeriod);
+  const [companySize, setCompanySize] = useState<"any" | CompanySizeFilterOption>(
+    hasCompanySizeParam ? initialCompanySize : "any"
+  );
+  const [industries, setIndustries] = useState<Set<IndustryOption>>(initialIndustries);
+  const [industrySearch, setIndustrySearch] = useState("");
+  const [requiredSkillsInput, setRequiredSkillsInput] = useState(searchParams.get("reqSkills") ?? "");
+  const [companyQuery, setCompanyQuery] = useState(searchParams.get("company") ?? "");
+  const [benefits, setBenefits] = useState<Set<BenefitOption>>(initialBenefits);
+  const [visaSponsorshipOnly, setVisaSponsorshipOnly] = useState(parseBooleanParam(searchParams.get("visa")));
+  const [easyApplyOnly, setEasyApplyOnly] = useState(parseBooleanParam(searchParams.get("easy")));
   const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
   const [isMatchProfileExpanded, setIsMatchProfileExpanded] = useState(true);
-  const [viewMode, setViewMode] = useState<"list" | "grid">((searchParams.get("view") as "list" | "grid") ?? "list");
+  const [viewMode, setViewMode] = useState<"list" | "grid">(parseEnumParam(searchParams.get("view"), VIEW_MODE_OPTIONS, "list"));
   const [sortBy, setSortBy] = useState<"best" | "newest" | "salary_desc" | "salary_asc" | "company_asc">(
-    (searchParams.get("sort") as "best" | "newest" | "salary_desc" | "salary_asc" | "company_asc") ?? "best"
+    parseEnumParam(searchParams.get("sort"), SORT_OPTIONS, "best")
   );
   const [savedJobs, setSavedJobs] = useState<Set<string>>(() => new Set());
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -226,52 +541,60 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
+  const deferredSearchInput = useDeferredValue(searchInput);
+  const query = deferredSearchInput.trim();
+  const isSearching = deferredSearchInput !== searchInput;
+
+  const enrichedJobs = useMemo(
+    () =>
+      jobs.map((job) => ({
+        job,
+        meta: deriveJobMeta(job),
+        score: getMatchScore(job, skillHints),
+      })),
+    [jobs, skillHints]
+  );
 
   const platformsInFeed = useMemo(() => {
     const u = new Set<JobFeedSource>();
-    for (const j of jobs) u.add(j.source);
+    for (const { job } of enrichedJobs) u.add(job.source);
     return Array.from(u).sort();
-  }, [jobs]);
+  }, [enrichedJobs]);
 
-  function getSalaryBand(job: RecommendedJobCard): [number, number] {
-    const base = 90 + (job.id.length % 6) * 15;
-    return [base, base + 60];
-  }
-
-  function getJobType(job: RecommendedJobCard): string {
-    const types = ["Full-time", "Part-time", "Contract", "Freelance", "Internship", "Temporary"];
-    return types[job.id.length % types.length];
-  }
-
-  function getExperience(job: RecommendedJobCard): string {
-    const levels = ["1+ years", "3+ years", "5+ years", "8+ years"];
-    return levels[job.id.length % levels.length];
-  }
+  const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
+  const normalizedRequiredSkills = useMemo(
+    () =>
+      requiredSkillsInput
+        .split(",")
+        .map((skill) => skill.trim().toLowerCase())
+        .filter(Boolean),
+    [requiredSkillsInput]
+  );
+  const visibleIndustryOptions = useMemo(
+    () =>
+      INDUSTRY_OPTIONS.filter((industry) =>
+        industry.toLowerCase().includes(industrySearch.trim().toLowerCase())
+      ),
+    [industrySearch]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return jobs.filter((job) => {
-      const score = getMatchScore(job, skillHints);
+    const normalizedLocationQuery = locationQuery.trim().toLowerCase();
+    const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
+    return enrichedJobs.filter(({ job, meta, score }) => {
       if (q) {
-        const blob = `${job.title} ${job.company} ${job.location} ${job.matchLabel} ${job.matchedSkills.join(" ")}`.toLowerCase();
-        if (!blob.includes(q)) return false;
+        if (!meta.searchBlob.includes(q)) return false;
       }
       if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
-      if (matchScore !== "any") {
-        if (score < Number(matchScore)) return false;
-      }
+      if (matchScore !== "any" && score < Number(matchScore)) return false;
       if (sources.size > 0 && !sources.has(job.source)) return false; // empty set = all platforms
-      if (jobTypes.size > 0 && !jobTypes.has(getJobType(job))) return false;
-      if (locationMode !== "any") {
-        const loc = job.location.toLowerCase();
-        if (locationMode === "remote" && !loc.includes("remote")) return false;
-        if (locationMode === "hybrid" && !loc.includes("hybrid")) return false;
-        if (locationMode === "onsite" && !(loc.includes("on-site") || loc.includes("onsite"))) return false;
-      }
-      if (locationQuery.trim()) {
-        if (!job.location.toLowerCase().includes(locationQuery.trim().toLowerCase())) return false;
+      if (jobTypes.size > 0 && !meta.jobTypes.some((type) => jobTypes.has(type))) return false;
+      if (locationMode !== "any" && meta.locationMode !== locationMode) return false;
+      if (normalizedLocationQuery) {
+        const locationBlob = normalizeText(job.location, job.description);
+        if (!locationBlob.includes(normalizedLocationQuery)) return false;
       }
       if (skillsPick.size > 0) {
         const hasAny = [...skillsPick].some((sk) =>
@@ -279,30 +602,27 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         );
         if (!hasAny) return false;
       }
-      if (experienceLevel !== "any" && getExperience(job) !== experienceLevel) return false;
-      const [, salaryMaxK] = getSalaryBand(job);
-      if (salaryMaxK < salaryMin || salaryMaxK > salaryMax) return false;
-      const industryKeywords: Record<string, string[]> = {
-        Technology: ["software", "engineer", "developer", "saas", "ai"],
-        Finance: ["finance", "fintech", "bank", "payments"],
-        Healthcare: ["health", "clinical", "med", "biotech"],
-        Marketing: ["marketing", "growth", "seo", "brand"],
-        Design: ["design", "ux", "ui", "product design"],
-        Legal: ["legal", "law", "compliance"],
-        Education: ["education", "edtech", "curriculum"],
-        Retail: ["retail", "commerce", "ecommerce"],
-      };
-      if (industries.size > 0) {
-        const hay = `${job.title} ${job.company} ${job.matchLabel}`.toLowerCase();
-        const matchesIndustry = Array.from(industries).some((industry) =>
-          (industryKeywords[industry] ?? []).some((kw) => hay.includes(kw))
-        );
-        if (!matchesIndustry) return false;
+      if (experienceLevel !== "any" && meta.experienceLevel !== experienceLevel) return false;
+      if (salaryFilterActive) {
+        if (!meta.salary) return false;
+        if (meta.salary.currency !== currency) return false;
+        if (meta.salary.period !== salaryPeriod) return false;
+        if (meta.salary.maxK < salaryMin || meta.salary.minK > salaryMax) return false;
       }
+      if (companySize !== "any" && meta.companySize !== companySize) return false;
+      if (industries.size > 0 && !meta.industries.some((industry) => industries.has(industry))) return false;
+      if (normalizedRequiredSkills.length > 0) {
+        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
+        if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
+      }
+      if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
+      if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
+      if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
+      if (easyApplyOnly && !meta.isEasyApply) return false;
       return true;
     });
   }, [
-    jobs,
+    enrichedJobs,
     query,
     dateWindow,
     matchScore,
@@ -314,21 +634,31 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     experienceLevel,
     salaryMin,
     salaryMax,
+    currency,
+    salaryPeriod,
+    companySize,
     industries,
-    skillHints,
+    normalizedRequiredSkills,
+    companyQuery,
+    benefits,
+    visaSponsorshipOnly,
+    easyApplyOnly,
+    salaryFilterActive,
   ]);
 
   const sortedJobs = useMemo(() => {
     const rows = [...filtered];
     rows.sort((a, b) => {
-      if (sortBy === "company_asc") return a.company.localeCompare(b.company);
-      if (sortBy === "newest") return (new Date(b.postedAtIso || 0).getTime() || 0) - (new Date(a.postedAtIso || 0).getTime() || 0);
-      if (sortBy === "salary_desc") return getSalaryBand(b)[1] - getSalaryBand(a)[1];
-      if (sortBy === "salary_asc") return getSalaryBand(a)[1] - getSalaryBand(b)[1];
-      return getMatchScore(b, skillHints) - getMatchScore(a, skillHints);
+      if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
+      if (sortBy === "newest") {
+        return (new Date(b.job.postedAtIso || 0).getTime() || 0) - (new Date(a.job.postedAtIso || 0).getTime() || 0);
+      }
+      if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
+      if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
+      return b.score - a.score;
     });
     return rows;
-  }, [filtered, sortBy, skillHints]);
+  }, [filtered, sortBy]);
 
   const visibleJobs = useMemo(() => sortedJobs.slice(0, visible), [sortedJobs, visible]);
   const totalMatched = sortedJobs.length;
@@ -357,18 +687,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     setVisible(PAGE_SIZE);
   }
 
-  function toggleSkill(sk: string) {
-    setSkillsPick((prev) => {
-      const next = new Set(prev);
-      if (next.has(sk)) next.delete(sk);
-      else next.add(sk);
-      return next;
-    });
-    setVisible(PAGE_SIZE);
-  }
-
   const clearFilters = useCallback(() => {
-    setQuery("");
     setSearchInput("");
     setDateWindow("any");
     setSources(new Set());
@@ -384,38 +703,95 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     setSalaryPeriod("year");
     setCompanySize("any");
     setIndustries(new Set());
+    setIndustrySearch("");
+    setRequiredSkillsInput("");
+    setCompanyQuery("");
+    setBenefits(new Set());
+    setVisaSponsorshipOnly(false);
+    setEasyApplyOnly(false);
     setVisible(PAGE_SIZE);
   }, []);
 
   useEffect(() => {
-    setIsSearching(true);
-    const handle = window.setTimeout(() => setQuery(searchInput), 300);
-    return () => {
-      window.clearTimeout(handle);
-      setIsSearching(false);
-    };
-  }, [searchInput]);
-
-  useEffect(() => {
-    setIsSearching(false);
-  }, [query]);
-
-  useEffect(() => {
     const timer = window.setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
+      const setListParam = (key: string, values: Iterable<string>) => {
+        const list = Array.from(values).filter(Boolean).sort();
+        if (list.length > 0) params.set(key, list.join(","));
+        else params.delete(key);
+      };
+
       if (searchInput.trim()) params.set("q", searchInput.trim());
       else params.delete("q");
       if (dateWindow !== "any") params.set("date", dateWindow);
       else params.delete("date");
-      if (sources.size > 0) params.set("src", Array.from(sources).join(","));
-      else params.delete("src");
+      setListParam("src", sources);
+      setListParam("skills", skillsPick);
+      if (matchScore !== "any") params.set("match", matchScore);
+      else params.delete("match");
+      setListParam("type", jobTypes);
+      if (locationMode !== "any") params.set("locMode", locationMode);
+      else params.delete("locMode");
+      if (locationQuery.trim()) params.set("loc", locationQuery.trim());
+      else params.delete("loc");
+      if (experienceLevel !== "any") params.set("exp", experienceLevel);
+      else params.delete("exp");
+      if (salaryMin > 0) params.set("salMin", String(salaryMin));
+      else params.delete("salMin");
+      if (salaryMax < 500) params.set("salMax", String(salaryMax));
+      else params.delete("salMax");
+      if (currency !== "USD") params.set("ccy", currency);
+      else params.delete("ccy");
+      if (salaryPeriod !== "year") params.set("salPeriod", salaryPeriod);
+      else params.delete("salPeriod");
+      if (companySize !== "any") params.set("companySize", companySize);
+      else params.delete("companySize");
+      setListParam("industry", industries);
+      if (requiredSkillsInput.trim()) params.set("reqSkills", requiredSkillsInput.trim());
+      else params.delete("reqSkills");
+      if (companyQuery.trim()) params.set("company", companyQuery.trim());
+      else params.delete("company");
+      setListParam("benefits", benefits);
+      if (visaSponsorshipOnly) params.set("visa", "1");
+      else params.delete("visa");
+      if (easyApplyOnly) params.set("easy", "1");
+      else params.delete("easy");
       params.set("view", viewMode);
       params.set("sort", sortBy);
-      const next = `${pathname}?${params.toString()}`;
+      const nextQuery = params.toString();
+      const currentQuery = searchParams.toString();
+      if (nextQuery === currentQuery) return;
+      const next = nextQuery ? `${pathname}?${nextQuery}` : pathname;
       router.replace(next, { scroll: false });
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [searchInput, dateWindow, sources, viewMode, sortBy, pathname, router, searchParams]);
+  }, [
+    searchInput,
+    dateWindow,
+    sources,
+    skillsPick,
+    matchScore,
+    jobTypes,
+    locationMode,
+    locationQuery,
+    experienceLevel,
+    salaryMin,
+    salaryMax,
+    currency,
+    salaryPeriod,
+    companySize,
+    industries,
+    requiredSkillsInput,
+    companyQuery,
+    benefits,
+    visaSponsorshipOnly,
+    easyApplyOnly,
+    viewMode,
+    sortBy,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   useEffect(() => {
     const closeAllDropdowns = () => {
@@ -490,7 +866,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     );
     observer.observe(autoLoadRef.current);
     return () => observer.disconnect();
-  }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore]);
+  }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
   const showSkeleton = isInitialLoading || isLoadingMore;
@@ -506,7 +882,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         return;
       }
       if (filter === "matched") {
-        setQuery("");
+        setSearchInput("");
         setDateWindow("any");
         setSources(new Set());
         setVisible(PAGE_SIZE);
@@ -517,7 +893,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
       }
       // Applied/saved cards currently route users into the jobs list view.
       // Dedicated per-job status filtering will be wired when tracker status is attached to each row.
-      setQuery("");
+      setSearchInput("");
       setDateWindow("any");
       setSources(new Set());
       setSkillsPick(new Set());
@@ -525,7 +901,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     };
     window.addEventListener("wg:job-filter", handler as EventListener);
     return () => window.removeEventListener("wg:job-filter", handler as EventListener);
-  }, [skillHints]);
+  }, [clearFilters, skillHints]);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -553,8 +929,14 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     locationMode !== "any" ||
     locationQuery.trim() !== "" ||
     experienceLevel !== "any" ||
+    salaryFilterActive ||
     companySize !== "any" ||
-    industries.size > 0;
+    industries.size > 0 ||
+    normalizedRequiredSkills.length > 0 ||
+    companyQuery.trim() !== "" ||
+    benefits.size > 0 ||
+    visaSponsorshipOnly ||
+    easyApplyOnly;
   const activeFilterCount =
     (query.trim() ? 1 : 0) +
     (dateWindow !== "any" ? 1 : 0) +
@@ -564,8 +946,14 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     (jobTypes.size > 0 ? 1 : 0) +
     (locationMode !== "any" || locationQuery.trim() ? 1 : 0) +
     (experienceLevel !== "any" ? 1 : 0) +
+    (salaryFilterActive ? 1 : 0) +
     (companySize !== "any" ? 1 : 0) +
-    (industries.size > 0 ? 1 : 0);
+    (industries.size > 0 ? 1 : 0) +
+    (normalizedRequiredSkills.length > 0 ? 1 : 0) +
+    (companyQuery.trim() ? 1 : 0) +
+    (benefits.size > 0 ? 1 : 0) +
+    (visaSponsorshipOnly ? 1 : 0) +
+    (easyApplyOnly ? 1 : 0);
 
   const activeFilterChips = [
     query.trim() ? { key: "query", label: `Search: ${query.trim()}` } : null,
@@ -575,14 +963,19 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     jobTypes.size > 0 ? { key: "jobType", label: `Job Type: ${jobTypes.size}` } : null,
     (locationMode !== "any" || locationQuery.trim()) ? { key: "location", label: `Location` } : null,
     experienceLevel !== "any" ? { key: "exp", label: `Experience: ${experienceLevel}` } : null,
+    salaryFilterActive ? { key: "salary", label: `Salary: ${currency} ${salaryMin}K-${salaryMax}K${salaryPeriod === "hour" ? "/hr" : ""}` } : null,
     companySize !== "any" ? { key: "size", label: `Size: ${companySize}` } : null,
     industries.size > 0 ? { key: "industry", label: `Industry: ${industries.size}` } : null,
+    normalizedRequiredSkills.length > 0 ? { key: "requiredSkills", label: `Skills: ${normalizedRequiredSkills.join(", ")}` } : null,
+    companyQuery.trim() ? { key: "company", label: `Company: ${companyQuery.trim()}` } : null,
+    benefits.size > 0 ? { key: "benefits", label: `Benefits: ${benefits.size}` } : null,
+    visaSponsorshipOnly ? { key: "visa", label: "Visa sponsorship" } : null,
+    easyApplyOnly ? { key: "easyApply", label: "Easy Apply" } : null,
   ].filter(Boolean) as Array<{ key: string; label: string }>;
 
   function removeChip(key: string) {
     if (key === "query") {
       setSearchInput("");
-      setQuery("");
     } else if (key === "match") setMatchScore("any");
     else if (key === "date") setDateWindow("any");
     else if (key === "source") setSources(new Set());
@@ -591,8 +984,19 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
       setLocationMode("any");
       setLocationQuery("");
     } else if (key === "exp") setExperienceLevel("any");
+    else if (key === "salary") {
+      setSalaryMin(0);
+      setSalaryMax(500);
+      setCurrency("USD");
+      setSalaryPeriod("year");
+    }
     else if (key === "size") setCompanySize("any");
     else if (key === "industry") setIndustries(new Set());
+    else if (key === "requiredSkills") setRequiredSkillsInput("");
+    else if (key === "company") setCompanyQuery("");
+    else if (key === "benefits") setBenefits(new Set());
+    else if (key === "visa") setVisaSponsorshipOnly(false);
+    else if (key === "easyApply") setEasyApplyOnly(false);
   }
 
   const matchBreakdown = [
@@ -747,7 +1151,6 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     type="button"
                     onClick={() => {
                       setSearchInput("");
-                      setQuery("");
                     }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93]"
                   >
@@ -757,7 +1160,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[#8E8E93]" /> : null}
               </div>
               {query.trim() && !isSearching && filtered.length === 0 ? (
-                <p className="ml-2 text-xs text-[#8E8E93]">No results for "{query.trim()}".</p>
+                <p className="ml-2 text-xs text-[#8E8E93]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
 
               <details data-filter-dropdown="true" className="group relative shrink-0">
@@ -780,11 +1183,11 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                <summary className={jobTypes.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-52 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
-                  {["Full-time", "Part-time", "Contract", "Freelance", "Internship", "Temporary"].map((type) => (
+                  {JOB_TYPE_OPTIONS.map((type) => (
                     <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
                       <input
                         type="checkbox"
@@ -805,15 +1208,15 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                <summary className={locationMode !== "any" || locationQuery.trim() ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
                   <input value={locationQuery} onChange={(e) => setLocationQuery(e.target.value)} placeholder="Country or city" className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
                   <div className="flex flex-wrap gap-2">
-                    {["remote", "hybrid", "onsite"].map((loc) => (
-                      <button key={loc} type="button" onClick={() => setLocationMode(loc as "remote" | "hybrid" | "onsite")} className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}>
-                        {loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
+                    {["any", "remote", "hybrid", "onsite"].map((loc) => (
+                      <button key={loc} type="button" onClick={() => setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite")} className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}>
+                        {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
                       </button>
                     ))}
                   </div>
@@ -822,12 +1225,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               {[
-                { label: "Experience", value: experienceLevel, set: setExperienceLevel, opts: ["Entry (0-2yr)", "Mid (2-5yr)", "Senior (5-8yr)", "Lead (8-12yr)", "Executive (12yr+)"] },
+                { label: "Experience", value: experienceLevel, set: setExperienceLevel, opts: EXPERIENCE_OPTIONS },
                 { label: "Date Posted", value: dateWindow, set: setDateWindow, opts: ["Any time", "Past 24h", "Past week", "Past month"] },
-                { label: "Company Size", value: companySize, set: setCompanySize, opts: ["Startup (1-50)", "Small (51-200)", "Medium (201-1000)", "Large (1000+)", "Enterprise (10K+)"] },
+                { label: "Company Size", value: companySize, set: setCompanySize, opts: COMPANY_SIZE_OPTIONS },
               ].map((item) => (
                 <details data-filter-dropdown="true" key={item.label} className="relative shrink-0">
-                  <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                  <summary className={item.value !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                     {item.label} <ChevronDown className="h-4 w-4" />
                   </summary>
                   <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-56 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
@@ -852,7 +1255,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               ))}
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                <summary className={salaryFilterActive ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   Salary <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-72 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -863,7 +1266,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   <input type="range" min={0} max={500} value={salaryMin} onChange={(e) => setSalaryMin(Number(e.target.value))} className="w-full" />
                   <input type="range" min={0} max={500} value={salaryMax} onChange={(e) => setSalaryMax(Number(e.target.value))} className="w-full" />
                   <div className="mt-2 flex items-center gap-2">
-                    <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="h-8 rounded-lg border border-[#DADCE0] px-2 text-xs">
+                    <select value={currency} onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])} className="h-8 rounded-lg border border-[#DADCE0] px-2 text-xs">
                       <option>USD</option><option>EUR</option><option>GBP</option><option>INR</option>
                     </select>
                     <button type="button" onClick={() => setSalaryPeriod("year")} className={`rounded-md px-2 py-1 text-xs ${salaryPeriod === "year" ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA]"}`}>Per year</button>
@@ -873,12 +1276,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                <summary className={industries.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   Industry {industries.size > 0 ? `· ${industries.size}` : ""} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  <input placeholder="Search industry..." className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
-                  {["Technology", "Finance", "Healthcare", "Marketing", "Design", "Legal", "Education", "Retail"].map((ind) => (
+                  <input value={industrySearch} onChange={(e) => setIndustrySearch(e.target.value)} placeholder="Search industry..." className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
+                  {visibleIndustryOptions.map((ind) => (
                     <label key={ind} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
                       <input
                         type="checkbox"
@@ -893,11 +1296,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                       {ind}
                     </label>
                   ))}
+                  {visibleIndustryOptions.length === 0 ? <p className="px-2 py-1 text-xs text-[#8E8E93]">No industry matches.</p> : null}
                 </div>
               </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={FILTER_TRIGGER_INACTIVE_CLASS}>
+                <summary className={sources.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   Source {sources.size > 0 ? `· ${sources.size}` : ""} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-60 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
@@ -998,18 +1402,53 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             <Button onClick={() => setIsMoreFiltersOpen(false)}>Close</Button>
           </Box>
           <Box sx={{ display: "grid", gap: 2 }}>
-            <TextField size="small" label="Skills required" placeholder="Type skill..." fullWidth />
-            <TextField size="small" label="Company" placeholder="Search company..." fullWidth />
+            <TextField
+              size="small"
+              label="Skills required"
+              placeholder="React, Python, SQL"
+              value={requiredSkillsInput}
+              onChange={(e) => setRequiredSkillsInput(e.target.value)}
+              helperText="Separate multiple skills with commas."
+              fullWidth
+            />
+            <TextField
+              size="small"
+              label="Company"
+              placeholder="Search company..."
+              value={companyQuery}
+              onChange={(e) => setCompanyQuery(e.target.value)}
+              fullWidth
+            />
             <Box>
               <Typography variant="caption" color="text.secondary">Benefits</Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-                {["Health", "401k", "Equity", "Remote-first"].map((b) => (
-                  <Chip key={b} label={b} variant="outlined" />
+                {BENEFIT_OPTIONS.map((benefit) => (
+                  <Chip
+                    key={benefit}
+                    label={benefit}
+                    clickable
+                    color={benefits.has(benefit) ? "primary" : "default"}
+                    variant={benefits.has(benefit) ? "filled" : "outlined"}
+                    onClick={() =>
+                      setBenefits((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(benefit)) next.delete(benefit);
+                        else next.add(benefit);
+                        return next;
+                      })
+                    }
+                  />
                 ))}
               </Box>
             </Box>
-            <FormControlLabel control={<Checkbox />} label="Visa sponsorship" />
-            <FormControlLabel control={<Checkbox />} label="Easy Apply" />
+            <FormControlLabel
+              control={<Checkbox checked={visaSponsorshipOnly} onChange={(e) => setVisaSponsorshipOnly(e.target.checked)} />}
+              label="Visa sponsorship"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={easyApplyOnly} onChange={(e) => setEasyApplyOnly(e.target.checked)} />}
+              label="Easy Apply"
+            />
           </Box>
         </Box>
       </Drawer>
@@ -1079,12 +1518,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         </div>
       ) : (
       <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3"}>
-        {shouldVirtualize ? null : visibleJobs.map((job, i) => {
+        {shouldVirtualize ? null : visibleJobs.map(({ job, meta, score }, i) => {
           const src = SOURCE_STYLES[job.source];
           const applyHref = job.applyUrl?.trim();
           const canApply = Boolean(applyHref);
-          const [salaryMinK, salaryMaxK] = getSalaryBand(job);
-          const score = getMatchScore(job, skillHints);
           const isSaved = savedJobs.has(job.id);
           const isNew = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000;
           const isFresh = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000 * 3;
@@ -1134,7 +1571,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     <h3 className="line-clamp-2 text-base font-semibold leading-snug text-[#1D1D1F] transition-colors group-hover:text-[#1A73E8]">{job.title}</h3>
                     <p className="mt-1 text-sm font-medium text-[#3A3A3C]">{job.company}</p>
                     <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#8E8E93]">
-                      <MapPin className="h-3 w-3" /> {job.location} · {getJobType(job)}
+                      <MapPin className="h-3 w-3" /> {job.location}
+                      {meta.primaryJobType ? ` · ${meta.primaryJobType}` : ""}
                     </p>
                   </div>
                 </div>
@@ -1168,11 +1606,13 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><Banknote className="h-3.5 w-3.5" /> ${salaryMinK}K - ${salaryMaxK}K</span>
-                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><GraduationCap className="h-3.5 w-3.5" /> {getExperience(job)}</span>
+                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
+                {meta.experienceLevel ? (
+                  <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
+                ) : null}
                 <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-xs ${isFresh ? "border-[#E6F4EA] bg-[#E6F4EA] text-[#1E8E3E]" : "border-[#DADCE0] bg-[#F8F9FA] text-[#8E8E93]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
                 <span className="rounded-xl bg-[#F0F4FF] px-2.5 py-1 text-xs text-[#1A73E8]">via {src.label}</span>
-                {canApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#E6F4EA] px-2.5 py-1 text-xs text-[#1E8E3E]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
+                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#E6F4EA] px-2.5 py-1 text-xs text-[#1E8E3E]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
                 {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#FCE8E6] px-2.5 py-1 text-xs text-[#D93025] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
               </div>
 
@@ -1213,7 +1653,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               {isExpanded ? (
                 <div className="mt-4 space-y-3 border-t border-[#DADCE0] pt-4">
                   <div className="max-h-[200px] overflow-auto text-sm leading-6 text-[#3A3A3C]">
-                    {job.matchLabel}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere, sem vitae bibendum luctus, risus justo ultricies lorem, vitae aliquet dui nunc id mi. Curabitur luctus mi in sem feugiat varius.
+                    {job.description?.trim() ? job.description : job.matchLabel}
                   </div>
                   <ul className="space-y-1 text-sm">
                     {reqs.map((r) => (
@@ -1230,9 +1670,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                     ))}
                   </ul>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93]">
-                    <span>Company size: 201-1000</span>
-                    <span>Industry: SaaS</span>
-                    <span>Founded: 2017</span>
+                    {meta.companySize ? <span>Company size: {meta.companySize}</span> : null}
+                    {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
+                    {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
+                    {meta.hasVisaSponsorship ? <span>Visa sponsorship available</span> : null}
                     <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-[#F9AB00]" /> 4.2</span>
                     <a href="#" onClick={(e) => e.preventDefault()} className="text-[#1A73E8]">View company</a>
                   </div>
@@ -1411,15 +1852,19 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             </button>
           </div>
           {(() => {
-            const job = jobs.find((j) => j.id === mobileDetailJobId);
-            if (!job) return <p className="text-sm text-[#8E8E93]">Job not available.</p>;
+            const jobEntry = enrichedJobs.find(({ job }) => job.id === mobileDetailJobId);
+            if (!jobEntry) return <p className="text-sm text-[#8E8E93]">Job not available.</p>;
+            const { job, meta } = jobEntry;
             return (
               <div className="space-y-3">
                 <h4 className="text-lg font-semibold text-[#1D1D1F]">{job.title}</h4>
                 <p className="text-sm text-[#3A3A3C]">{job.company}</p>
-                <p className="text-sm text-[#8E8E93]">{job.location}</p>
+                <p className="text-sm text-[#8E8E93]">
+                  {job.location}
+                  {meta.primaryJobType ? ` · ${meta.primaryJobType}` : ""}
+                </p>
                 <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-[#3A3A3C]">
-                  {job.matchLabel}. This full-screen mobile sheet lets candidates read role details without leaving the list flow.
+                  {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
                   <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2">

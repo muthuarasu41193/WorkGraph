@@ -41,6 +41,7 @@ export type RecommendedJobCard = {
   title: string;
   company: string;
   location: string;
+  description: string;
   source: JobFeedSource;
   matchLabel: string;
   postedAgo: string;
@@ -87,6 +88,7 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     title: "Senior Frontend Engineer",
     company: "Northwind Labs",
     location: "Remote · US",
+    description: "Demo listing shown until live ATS ingest populates the shared jobs table.",
     source: "linkedin",
     matchLabel: "Demo listing — ingest ATS jobs to replace",
     postedAgo: "Demo",
@@ -99,6 +101,7 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     title: "Staff Product Engineer",
     company: "Atlas AI",
     location: "Hybrid · NYC",
+    description: "Run the ATS ingest against Supabase to replace these placeholders with live rows.",
     source: "levels",
     matchLabel: "Run job_aggregator ingest against Supabase Postgres",
     postedAgo: "Demo",
@@ -111,6 +114,7 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     title: "Full Stack (TypeScript)",
     company: "Cobalt Health",
     location: "Remote",
+    description: "WorkGraph will rank real jobs here after the Postgres jobs table has been filled.",
     source: "reddit",
     matchLabel: "Uses DATABASE_URL pointing at this Supabase DB",
     postedAgo: "Demo",
@@ -199,6 +203,7 @@ function rowToCard(row: JobRow, skills: string[]): RecommendedJobCard {
     title: row.title || "Role",
     company: row.company || "Company",
     location: row.location || "Location TBD",
+    description: row.description || "",
     source: normalizeSource(row.source),
     matchLabel: buildMatchLabel(row, skills),
     postedAgo: formatPostedAgo(row.posted_at),
