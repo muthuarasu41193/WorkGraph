@@ -246,9 +246,9 @@ export default function ProfileJobDashboard({
             </span>
           </div>
           <p className="mt-3 text-sm font-normal text-[#3A3A3C]">
-            Pipeline cards reflect your tracker rows; live listings count syncs from Postgres{" "}
-            <code className="rounded bg-[#E8F0FE] px-1 py-0.5 text-[11px] text-[#1557B0]">jobs</code> via ATS
-            ingest.
+            Pipeline cards reflect your tracker rows; live listings count comes from Postgres{" "}
+            <code className="rounded bg-[#E8F0FE] px-1 py-0.5 text-[11px] text-[#1557B0]">jobs</code>{" "}
+            (ATS ingest and/or community sync).
           </p>
           {liveListings > 0 ? (
             <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -284,7 +284,7 @@ export default function ProfileJobDashboard({
           ) : (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <p className="text-xs leading-relaxed text-[#8E8E93]">
-                Run the Python ingest against Supabase Postgres — totals appear here automatically after migration{" "}
+                No indexed listings yet — run ATS ingest or community sync against Supabase after migration{" "}
                 <code className="rounded bg-[#F8F9FA] px-1 py-0.5 text-[11px]">20260202120000_jobs_board</code>.
               </p>
               <button

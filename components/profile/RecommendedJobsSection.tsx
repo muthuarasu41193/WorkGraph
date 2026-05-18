@@ -88,6 +88,11 @@ const SOURCE_STYLES: Record<
   taleo: { label: "Taleo", className: "bg-slate-500/12 text-slate-800 ring-slate-400/25" },
   linkedin: { label: "LinkedIn", className: "bg-[#0a66c2]/12 text-[#0a66c2] ring-[#0a66c2]/20" },
   reddit: { label: "Reddit", className: "bg-orange-500/12 text-orange-800 ring-orange-400/25" },
+  x: { label: "X", className: "bg-slate-900/10 text-slate-900 ring-slate-500/20" },
+  remoteok: { label: "RemoteOK", className: "bg-emerald-600/12 text-emerald-900 ring-emerald-500/20" },
+  hackernews: { label: "Hacker News", className: "bg-orange-500/12 text-orange-900 ring-orange-400/25" },
+  jobicy: { label: "Jobicy", className: "bg-fuchsia-600/12 text-fuchsia-900 ring-fuchsia-500/20" },
+  arbeitnow: { label: "Arbeitnow", className: "bg-cyan-600/12 text-cyan-900 ring-cyan-500/20" },
   indeed: { label: "Indeed", className: "bg-blue-600/12 text-blue-800 ring-blue-500/20" },
   glassdoor: { label: "Glassdoor", className: "bg-emerald-700/10 text-emerald-900 ring-emerald-600/15" },
   levels: { label: "Levels.fyi", className: "bg-violet-600/12 text-violet-900 ring-violet-500/20" },
@@ -146,6 +151,11 @@ const JOB_FEED_SOURCE_OPTIONS = [
   "taleo",
   "linkedin",
   "reddit",
+  "x",
+  "remoteok",
+  "hackernews",
+  "jobicy",
+  "arbeitnow",
   "indeed",
   "glassdoor",
   "levels",
@@ -422,7 +432,7 @@ function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
       return {
         title: "No job rows in this site’s Supabase database yet",
         body:
-          "Vercel reads public.jobs on the Supabase project from NEXT_PUBLIC_SUPABASE_URL. Populate it via ingest: GitHub Actions → “Sync ATS jobs to Supabase” (set SUPABASE_SERVICE_ROLE_KEY + NEXT_PUBLIC_SUPABASE_URL on the repo, or DB password + pooler), or locally from job_aggregator run python -m app.main ingest --no-embed after adding SUPABASE_SERVICE_ROLE_KEY (secret key from Supabase → API Keys) or a real DATABASE_PASSWORD.",
+          "Vercel reads public.jobs from NEXT_PUBLIC_SUPABASE_URL. Add rows with ATS ingest (GitHub Action or job_aggregator python -m app.main ingest), or run community sync (cron GET /api/sync-community-jobs with CRON_SECRET, or an admin POST) so community listings fill the table. Confirm migrations in supabase/migrations and check /api/jobs-health and /api/community-jobs-health.",
       };
     case "count_unavailable":
     case "rows_unavailable":
@@ -495,10 +505,10 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   const hint =
     skillHints.length > 0
       ? feedKind === "live"
-        ? `Ranked from ingested ATS roles — boosted when titles/descriptions mention ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
+        ? `Ranked from your jobs database — boosted when titles/descriptions mention ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
         : `Demo cards — once ingest fills Postgres, listings personalize against ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
       : feedKind === "live"
-        ? "Ranked using your headline, summary text, and saved skills vs each posting."
+        ? "Ranked using your headline, summary text, and saved skills vs each posting (ATS ingest and/or community sync)."
         : "Add skills to your profile to sharpen ranking after ingest runs.";
 
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
@@ -1017,7 +1027,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Job board</p>
           <h2 className="mt-1 text-[18px] font-semibold text-[#2C2C2E] sm:text-[18px]">
-            {feedKind === "live" ? "Browse live ATS listings" : "Sample roles (run ingest for live data)"}
+            {feedKind === "live" ? "Browse live job listings" : "Sample roles (run ingest or community sync for live data)"}
           </h2>
           <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-[#3A3A3C]">{hint}</p>
         </div>

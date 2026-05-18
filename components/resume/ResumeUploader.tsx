@@ -58,6 +58,7 @@ export default function ResumeUploader() {
     if (status !== "success") return;
     const timer = setTimeout(() => {
       router.push("/profile");
+      router.refresh();
     }, 2000);
     return () => clearTimeout(timer);
   }, [status, router]);

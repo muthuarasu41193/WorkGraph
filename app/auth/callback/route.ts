@@ -11,10 +11,17 @@ function getRequiredEnv(key: string): string {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/profile";
+  const nextRaw = requestUrl.searchParams.get("next") || "/profile";
+  const next = nextRaw.startsWith("/") ? nextRaw : "/profile";
   const origin = requestUrl.origin;
+  const loginWith = (errorKey: string) =>
+    NextResponse.redirect(`${origin}/login?next=${encodeURIComponent(next)}&error=${encodeURIComponent(errorKey)}`);
 
-  if (code) {
+  if (!code) {
+    return loginWith("missing_code");
+  }
+
+  try {
     const cookieStore = await cookies();
     const supabase = createServerClient(
       getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
@@ -33,7 +40,15 @@ export async function GET(request: Request) {
       }
     );
 
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      console.error("[auth/callback] exchangeCodeForSession:", error.message);
+      return loginWith(error.message || "exchange_failed");
+    }
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "callback_failed";
+    console.error("[auth/callback]", message);
+    return loginWith(message);
   }
 
   return NextResponse.redirect(`${origin}${next}`);

@@ -1,11 +1,22 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
+
+function humanizeAuthError(raw: string): string {
+  const msg = raw.toLowerCase();
+  if (msg.includes("email not confirmed")) {
+    return "Your email is not verified yet. Open the confirmation message from Supabase (check spam), then sign in.";
+  }
+  if (msg.includes("invalid login credentials") || msg.includes("invalid credentials")) {
+    return "Invalid email or password, or the account is not confirmed yet. Confirm your email first, try again, or use Forgot password below.";
+  }
+  return raw;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,16 +25,53 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotBusy, setForgotBusy] = useState(false);
 
-  function humanizeAuthError(raw: string): string {
-    const msg = raw.toLowerCase();
-    if (msg.includes("email not confirmed")) {
-      return "Your email is not verified yet. Please check your inbox and click the verification link.";
+  useEffect(() => {
+    const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    const reason = params.get("reason");
+    const errQ = params.get("error");
+    if (reason === "session") {
+      setMessage("Your session expired or you were not signed in. Sign in below to continue.");
     }
-    if (msg.includes("invalid login credentials")) {
-      return "Invalid email or password. Please try again.";
+    if (errQ) {
+      const decoded = decodeURIComponent(errQ);
+      if (decoded === "missing_code") {
+        setError(
+          "That sign-in link was incomplete or expired. Request a new confirmation or password-reset email from Supabase, or sign in with your password."
+        );
+      } else {
+        setError(humanizeAuthError(decoded));
+      }
     }
-    return raw;
+  }, []);
+
+  async function onForgotPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setForgotSent(false);
+    setError("");
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setError("Enter your email above, then try Forgot password again.");
+      return;
+    }
+    setForgotBusy(true);
+    try {
+      const supabase = createBrowserSupabaseClient();
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent("/profile")}`;
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(trimmed, { redirectTo });
+      if (resetError) {
+        setError(resetError.message);
+        return;
+      }
+      setForgotSent(true);
+    } catch {
+      setError("Could not send reset email. Try again.");
+    } finally {
+      setForgotBusy(false);
+    }
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -141,6 +189,36 @@ export default function LoginPage() {
         {error ? (
           <p className="rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-center text-sm text-red-900">{error}</p>
         ) : null}
+
+        <div className="rounded-xl border border-slate-200/90 bg-slate-50/80 px-4 py-3 text-sm text-slate-700">
+          <button
+            type="button"
+            onClick={() => {
+              setShowForgot((v) => !v);
+              setForgotSent(false);
+            }}
+            className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[4px] hover:text-emerald-950"
+          >
+            {showForgot ? "Hide password reset" : "Forgot password?"}
+          </button>
+          {showForgot ? (
+            <form className="mt-3 space-y-2" onSubmit={onForgotPassword}>
+              <p className="text-xs leading-relaxed text-slate-600">
+                Uses the email in the &quot;Email&quot; field. We send a Supabase reset link to that address.
+              </p>
+              <button
+                type="submit"
+                disabled={forgotBusy}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 disabled:opacity-60"
+              >
+                {forgotBusy ? "Sending…" : "Send reset link"}
+              </button>
+              {forgotSent ? (
+                <p className="text-xs text-emerald-800">If an account exists, check your inbox for the reset link.</p>
+              ) : null}
+            </form>
+          ) : null}
+        </div>
 
         <p className="text-center text-[14px] text-slate-600">
           New to WorkGraph?{" "}

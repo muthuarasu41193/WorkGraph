@@ -11,10 +11,12 @@ import ATSScoreCard from "../../components/profile/ATSScoreCard";
 import ProfileTopBar from "../../components/profile/ProfileTopBar";
 import ProfileQuickActions from "../../components/profile/ProfileQuickActions";
 import ProfileJobDashboard from "../../components/profile/ProfileJobDashboard";
+import ProfileSocialJobPosts from "../../components/profile/ProfileSocialJobPosts";
 import RecommendedJobsSection from "../../components/profile/RecommendedJobsSection";
 import ProfileSaveStatus from "../../components/profile/ProfileSaveStatus";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
 import SectionErrorBoundary from "../../components/shared/SectionErrorBoundary";
+import { isCommunityJobsAdminEmail } from "../../lib/community-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -126,6 +128,13 @@ export default async function ProfilePage() {
             profileCompleteness={profile.profile_completeness}
             liveListings={jobDashboard.liveListings}
             listingsBySource={jobDashboard.listingsBySource}
+          />
+        </SectionErrorBoundary>
+
+        <SectionErrorBoundary sectionName="Social job posts">
+          <ProfileSocialJobPosts
+            jobs={jobDashboard.communityPosts}
+            canSyncCommunityJobs={isCommunityJobsAdminEmail(user.email)}
           />
         </SectionErrorBoundary>
 

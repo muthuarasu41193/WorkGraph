@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import {
   ArrowRight,
@@ -66,6 +67,7 @@ function formatBytes(n: number) {
 type Mode = "resume" | "manual";
 
 export default function CreateProfilePage() {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("resume");
   const [file, setFile] = useState<File | null>(null);
   const [uploadEmail, setUploadEmail] = useState("");
@@ -89,15 +91,32 @@ export default function CreateProfilePage() {
     void hydrateEmail();
   }, []);
 
-  async function requireSignedInUser() {
+  async function ensureBrowserAuth(): Promise<boolean> {
     const supabase = createBrowserSupabaseClient();
     const {
-      data: { user },
-      error: userError,
+      data: { user: first },
     } = await supabase.auth.getUser();
+    if (first) return true;
 
-    if (userError || !user) {
-      window.location.href = "/login?next=/create-profile";
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session?.refresh_token) {
+      const { error } = await supabase.auth.refreshSession();
+      if (!error) {
+        const {
+          data: { user: second },
+        } = await supabase.auth.getUser();
+        if (second) return true;
+      }
+    }
+    return false;
+  }
+
+  async function requireSignedInUser() {
+    const ok = await ensureBrowserAuth();
+    if (!ok) {
+      router.replace("/login?next=/create-profile&reason=session");
       throw new Error("Redirecting to sign in...");
     }
   }
@@ -174,7 +193,9 @@ export default function CreateProfilePage() {
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      window.location.href = email ? `/profile?email=${encodeURIComponent(email)}` : "/profile";
+      const path = email ? `/profile?email=${encodeURIComponent(email)}` : "/profile";
+      router.push(path);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong while importing your resume.");
     } finally {
@@ -223,7 +244,8 @@ export default function CreateProfilePage() {
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      window.location.href = "/profile";
+      router.push("/profile");
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to save your profile.");
     } finally {

@@ -732,6 +732,209 @@ a, button, input, textarea {
 }
 
 /* ============================================
+   COMMUNITY JOBS
+   ============================================ */
+.community-jobs-section {
+  background: linear-gradient(135deg, rgba(37,99,235,.03) 0%, rgba(124,58,237,.04) 100%);
+}
+
+.community-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.community-job-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 330px;
+}
+
+.community-job-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.community-job-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.community-job-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.community-job-eyebrow {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.community-job-source {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.community-job-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.community-badge,
+.community-priority {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.community-badge.live {
+  background: rgba(59,130,246,.08);
+  color: #2563EB;
+}
+
+.community-badge.demo {
+  background: rgba(124,58,237,.08);
+  color: #7C3AED;
+}
+
+.community-priority.low {
+  background: rgba(245,158,11,.14);
+  color: #B45309;
+}
+
+.community-job-description {
+  font-size: 14px;
+  color: var(--secondary);
+  line-height: 1.7;
+}
+
+.community-job-preview {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.community-job-preview h3 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.community-job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--secondary);
+}
+
+.community-job-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.community-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.community-chip.kind {
+  background: rgba(37,99,235,.08);
+  color: #1D4ED8;
+}
+
+.community-chip.classification {
+  background: rgba(16,185,129,.12);
+  color: #047857;
+}
+
+.community-chip.classification.low {
+  background: rgba(245,158,11,.14);
+  color: #B45309;
+}
+
+.community-job-snippet {
+  font-size: 14px;
+  color: var(--secondary);
+  line-height: 1.65;
+  min-height: 92px;
+}
+
+.community-job-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.community-job-date {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.community-job-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.community-jobs-empty {
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ============================================
    SECTION HEADERS
    ============================================ */
 .section-head {
@@ -1818,6 +2021,7 @@ body {
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .features-grid { grid-template-columns: 1fr; }
+  .community-jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .profile-grid { grid-template-columns: 1fr; }
   .roadmap-grid { grid-template-columns: 1fr; }
   .testimonials-grid { grid-template-columns: 1fr; }
@@ -1854,6 +2058,8 @@ body {
   .final-cta-box { padding: 40px 20px; }
   .stat-divider { width: 80%; height: 1px; }
   .trust-row { gap: 8px; font-size: 11px; }
+  .community-jobs-grid { grid-template-columns: 1fr; }
+  .community-job-footer { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
@@ -2185,6 +2391,21 @@ body {
     </div>
   </div>
 </div>
+
+<!-- COMMUNITY JOBS -->
+<section class="section community-jobs-section" id="community-jobs">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <span class="section-tag">Community Jobs</span>
+      <h2>Live job posts from<br/><span class="gradient-text">RemoteOK, Arbeitnow, Reddit, and Hacker News</span></h2>
+      <p>A separate discovery lane for community listings and job-related posts, clearly marked as listings or posts with low-priority discussion badges when needed.</p>
+    </div>
+
+    <div class="community-jobs-grid" id="communityJobsGrid">
+      <div class="community-jobs-empty">Loading community jobs...</div>
+    </div>
+  </div>
+</section>
 
 <!-- CORE FEATURES -->
 <section class="section" id="features">
@@ -2956,6 +3177,177 @@ function bumpCount() {
 }
 
 bumpCount();
+
+// ============================================
+// COMMUNITY JOBS
+// ============================================
+const COMMUNITY_SOURCE_META = {
+  remoteok: {
+    label: 'RemoteOK',
+    eyebrow: 'Remote listings',
+    description: 'Structured remote listings with direct apply paths.',
+    destinationUrl: 'https://remoteok.com/',
+    logoClass: 'background:#ECFDF5;color:#047857;border:1px solid rgba(16,185,129,.18);',
+    logoSvg: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="#059669"></rect><path d="M7 12h3.2l1.5 2.2L14.6 10 17 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="17" cy="12" r="1.3" fill="white"></circle></svg>',
+    fallback: {
+      title: 'Senior Frontend Engineer',
+      company: 'RemoteOK spotlight',
+      location: 'Remote',
+      description: 'Remote-first listings from RemoteOK will appear here once the community sync cron starts writing rows.',
+      kind: 'listing',
+      classification: 'remote',
+      postedAgo: 'Demo',
+      applyUrl: 'https://remoteok.com/'
+    }
+  },
+  arbeitnow: {
+    label: 'Arbeitnow',
+    eyebrow: 'European openings',
+    description: 'Useful for remote-friendly and relocation-oriented openings.',
+    destinationUrl: 'https://www.arbeitnow.com/jobs',
+    logoClass: 'background:#ECFEFF;color:#0E7490;border:1px solid rgba(8,145,178,.18);',
+    logoSvg: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="#0891B2"></rect><path d="M8 17 12 7l4 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.6 13h4.8" stroke="white" stroke-width="2" stroke-linecap="round"></path></svg>',
+    fallback: {
+      title: 'Backend Engineer with visa support',
+      company: 'Arbeitnow spotlight',
+      location: 'Berlin / Remote',
+      description: 'Arbeitnow community listings will appear here after the protected cron route starts syncing jobs.',
+      kind: 'listing',
+      classification: 'employer_hiring',
+      postedAgo: 'Demo',
+      applyUrl: 'https://www.arbeitnow.com/jobs'
+    }
+  },
+  reddit: {
+    label: 'Reddit',
+    eyebrow: 'Community threads',
+    description: 'Hiring posts, referrals, freelance requests, and candidate posts.',
+    destinationUrl: 'https://www.reddit.com/r/forhire/',
+    logoClass: 'background:#FFF7ED;color:#C2410C;border:1px solid rgba(249,115,22,.18);',
+    logoSvg: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#FF4500"></circle><circle cx="9" cy="12.5" r="1.3" fill="white"></circle><circle cx="15" cy="12.5" r="1.3" fill="white"></circle><path d="M8.4 15.3c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2" stroke="white" stroke-width="1.8" stroke-linecap="round"></path></svg>',
+    fallback: {
+      title: 'Hiring thread for React and TypeScript roles',
+      company: 'r/forhire',
+      location: 'Community post',
+      description: 'Reddit threads will be classified so discussion-heavy posts stay visible, but clearly marked as low priority when needed.',
+      kind: 'post',
+      classification: 'employer_hiring',
+      postedAgo: 'Demo',
+      applyUrl: 'https://www.reddit.com/r/forhire/'
+    }
+  },
+  hackernews: {
+    label: 'Hacker News',
+    eyebrow: 'Hiring threads',
+    description: 'Official HN hiring threads and related public hiring conversations.',
+    destinationUrl: 'https://news.ycombinator.com/',
+    logoClass: 'background:#FFF7ED;color:#C2410C;border:1px solid rgba(249,115,22,.18);',
+    logoSvg: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="#FF6600"></rect><path d="M8 7h2l2 4 2-4h2l-3 5.8V17h-2v-4.2L8 7Z" fill="white"></path></svg>',
+    fallback: {
+      title: 'Ask HN: Who is hiring?',
+      company: 'Hacker News',
+      location: 'Internet',
+      description: 'Official HN hiring threads and related posts will appear here, with low-priority badges for discussion-only items.',
+      kind: 'post',
+      classification: 'discussion_only',
+      postedAgo: 'Demo',
+      applyUrl: 'https://news.ycombinator.com/'
+    }
+  }
+};
+
+function communityClassificationLabel(value) {
+  switch (value) {
+    case 'candidate_for_hire': return 'Candidate for hire';
+    case 'freelance': return 'Freelance';
+    case 'internship': return 'Internship';
+    case 'remote': return 'Remote';
+    case 'discussion_only': return 'Discussion only';
+    default: return 'Employer hiring';
+  }
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function trimSnippet(text) {
+  const value = String(text || '').trim();
+  if (value.length <= 155) return value;
+  return value.slice(0, 152).trimEnd() + '...';
+}
+
+function renderCommunityJobs(jobs) {
+  const grid = document.getElementById('communityJobsGrid');
+  if (!grid) return;
+
+  const preferredOrder = ['remoteok', 'arbeitnow', 'reddit', 'hackernews'];
+  const spotlight = preferredOrder.map(source => {
+    const live = Array.isArray(jobs) ? jobs.find(job => job && job.source === source) : null;
+    return { source, job: live || COMMUNITY_SOURCE_META[source].fallback, isLive: Boolean(live) };
+  });
+
+  grid.innerHTML = spotlight.map(({ source, job, isLive }) => {
+    const meta = COMMUNITY_SOURCE_META[source];
+    const lowPriority = job.classification === 'discussion_only';
+    const href = escapeHtml(job.applyUrl || meta.destinationUrl);
+    return `
+      <article class="community-job-card">
+        <div class="community-job-top">
+          <div class="community-job-brand">
+            <div class="community-job-logo" style="${meta.logoClass}">${meta.logoSvg}</div>
+            <div>
+              <span class="community-job-eyebrow">${escapeHtml(meta.eyebrow)}</span>
+              <div class="community-job-source">${escapeHtml(meta.label)}</div>
+            </div>
+          </div>
+          <div class="community-job-badges">
+            <span class="community-badge ${isLive ? 'live' : 'demo'}">${isLive ? 'Live source' : 'Community lane'}</span>
+            ${lowPriority ? '<span class="community-priority low">Low priority</span>' : ''}
+          </div>
+        </div>
+
+        <p class="community-job-description">${escapeHtml(meta.description)}</p>
+
+        <div class="community-job-preview">
+          <h3>${escapeHtml(job.title)}</h3>
+          <div class="community-job-meta">
+            <span>${escapeHtml(job.company)}</span>
+            <span>${escapeHtml(job.location)}</span>
+          </div>
+          <div class="community-job-chips">
+            <span class="community-chip kind">${job.kind === 'post' ? 'Post' : 'Listing'}</span>
+            <span class="community-chip classification ${lowPriority ? 'low' : ''}">${escapeHtml(communityClassificationLabel(job.classification))}</span>
+          </div>
+          <p class="community-job-snippet">${escapeHtml(trimSnippet(job.description || job.matchLabel || meta.description))}</p>
+          <div class="community-job-footer">
+            <span class="community-job-date">${escapeHtml(job.postedAgo || 'Listed recently')}</span>
+            <a class="community-job-link" href="${href}" target="_blank" rel="noopener noreferrer">Open source <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+async function loadCommunityJobs() {
+  try {
+    const response = await fetch('/api/community-jobs', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load community jobs');
+    const payload = await response.json();
+    renderCommunityJobs(Array.isArray(payload.jobs) ? payload.jobs : []);
+  } catch (err) {
+    console.warn('Community jobs load failed:', err);
+    renderCommunityJobs([]);
+  }
+}
+
+loadCommunityJobs();
 
 // ============================================
 // SAVE TO GOOGLE SHEETS

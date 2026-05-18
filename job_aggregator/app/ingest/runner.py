@@ -23,6 +23,7 @@ from app.ingest.adzuna import fetch_adzuna_jobs
 from app.ingest.ashby import fetch_ashby_jobs
 from app.ingest.greenhouse import fetch_greenhouse_jobs
 from app.ingest.lever import fetch_lever_jobs
+from app.ingest.sync_rss import fetch_public_feed_jobs
 from app.models import Job
 
 LOG = logging.getLogger(__name__)
@@ -74,7 +75,13 @@ def load_companies(path: Path) -> dict[str, list[str]]:
 def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
     """Fetch all ATS boards and return normalized rows + board/site counts."""
     companies = load_companies(companies_path)
-    boards = {"greenhouse_boards": 0, "lever_sites": 0, "ashby_slugs": 0, "adzuna_jobs": 0}
+    boards = {
+        "greenhouse_boards": 0,
+        "lever_sites": 0,
+        "ashby_slugs": 0,
+        "adzuna_jobs": 0,
+        "community_jobs": 0,
+    }
     all_rows: list[dict[str, Any]] = []
 
     for token in companies["greenhouse"]:
@@ -92,6 +99,10 @@ def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]],
     adzuna_rows = fetch_adzuna_jobs()
     boards["adzuna_jobs"] = len(adzuna_rows)
     all_rows.extend(adzuna_rows)
+
+    community_rows = fetch_public_feed_jobs()
+    boards["community_jobs"] = len(community_rows)
+    all_rows.extend(community_rows)
 
     return all_rows, boards
 
@@ -121,6 +132,9 @@ def persist_normalized_jobs(session: Session, normalized_jobs: list[dict[str, An
             existing.description = row["description"]
             existing.posted_at = row["posted_at"]
             existing.source = row["source"]
+            existing.kind = row.get("kind") or "listing"
+            existing.classification = row.get("classification") or "employer_hiring"
+            existing.is_community = bool(row.get("is_community", False))
             existing.content_hash = row["content_hash"]
             existing.embedding_json = None
             existing.embedding_model_version = None
@@ -149,6 +163,9 @@ def persist_normalized_jobs(session: Session, normalized_jobs: list[dict[str, An
                 apply_url=apply_url,
                 posted_at=row["posted_at"],
                 source=row["source"],
+                kind=row.get("kind") or "listing",
+                classification=row.get("classification") or "employer_hiring",
+                is_community=bool(row.get("is_community", False)),
                 content_hash=row["content_hash"],
                 embedding_json=None,
                 embedding_model_version=None,
@@ -181,11 +198,12 @@ def run_full_ingestion_via_rest(companies_path: Path) -> dict[str, Any]:
     totals["upserted"] = agg["upserted"]
 
     LOG.info(
-        "Ingest complete (REST) boards/gh=%s lever=%s ashby=%s adzuna=%s rows=%s upserted=%s",
+        "Ingest complete (REST) boards/gh=%s lever=%s ashby=%s adzuna=%s community=%s rows=%s upserted=%s",
         totals["greenhouse_boards"],
         totals["lever_sites"],
         totals["ashby_slugs"],
         totals["adzuna_jobs"],
+        totals["community_jobs"],
         totals["normalized_rows"],
         totals["upserted"],
     )
@@ -221,11 +239,12 @@ def run_full_ingestion(session: Session, companies_path: Path) -> dict[str, Any]
         totals["pruned"] = prune_jobs_missing_from_fetch(session, fetched_urls, min_fetched=min_fetched)
 
     LOG.info(
-        "Ingest complete boards/gh=%s lever=%s ashby=%s adzuna=%s rows=%s inserted=%s updated=%s unchanged=%s pruned=%s",
+        "Ingest complete boards/gh=%s lever=%s ashby=%s adzuna=%s community=%s rows=%s inserted=%s updated=%s unchanged=%s pruned=%s",
         totals["greenhouse_boards"],
         totals["lever_sites"],
         totals["ashby_slugs"],
         totals["adzuna_jobs"],
+        totals["community_jobs"],
         totals["normalized_rows"],
         totals["inserted"],
         totals["updated"],

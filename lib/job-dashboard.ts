@@ -31,10 +31,25 @@ export type JobFeedSource =
   | "taleo"
   | "linkedin"
   | "reddit"
+  | "x"
+  | "remoteok"
+  | "hackernews"
+  | "jobicy"
+  | "arbeitnow"
   | "indeed"
   | "glassdoor"
   | "levels"
   | "other";
+
+export type JobCardKind = "listing" | "post";
+
+export type CommunityJobClassification =
+  | "employer_hiring"
+  | "candidate_for_hire"
+  | "freelance"
+  | "internship"
+  | "remote"
+  | "discussion_only";
 
 export type RecommendedJobCard = {
   id: string;
@@ -47,6 +62,9 @@ export type RecommendedJobCard = {
   postedAgo: string;
   /** ISO timestamp for client-side date filters; null when unknown */
   postedAtIso: string | null;
+  kind: JobCardKind;
+  classification: CommunityJobClassification;
+  isCommunity: boolean;
   /** Profile skills that appear in title/description (lowercase for stable keys) */
   matchedSkills: string[];
   /** Official apply URL when row comes from ATS ingest */
@@ -65,6 +83,7 @@ export type ProfileJobsPayload = {
   liveListings: number;
   listingsBySource: Partial<Record<JobFeedSource, number>>;
   recommended: RecommendedJobCard[];
+  communityPosts: RecommendedJobCard[];
   feedKind: "live" | "demo";
   /** Present only in demo mode — drives the troubleshooting banner on the profile. */
   feedDemoHint?: FeedDemoHint | null;
@@ -80,7 +99,35 @@ type JobRow = {
   apply_url: string;
   posted_at: string | null;
   source: string;
+  kind: string | null;
+  classification: string | null;
+  is_community: boolean | null;
 };
+
+const ATS_SOURCES = [
+  "greenhouse",
+  "lever",
+  "adzuna",
+  "workday",
+  "smartrecruiters",
+  "ashby",
+  "jobvite",
+  "bamboohr",
+  "icims",
+  "taleo",
+] as const satisfies readonly JobFeedSource[];
+
+const COMMUNITY_SOURCES = [
+  "remoteok",
+  "reddit",
+  "hackernews",
+  "jobicy",
+  "arbeitnow",
+] as const satisfies readonly JobFeedSource[];
+
+function isCommunitySource(source: JobFeedSource): source is (typeof COMMUNITY_SOURCES)[number] {
+  return (COMMUNITY_SOURCES as readonly string[]).includes(source);
+}
 
 export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
   {
@@ -93,6 +140,9 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     matchLabel: "Demo listing — ingest ATS jobs to replace",
     postedAgo: "Demo",
     postedAtIso: null,
+    kind: "listing",
+    classification: "employer_hiring",
+    isCommunity: false,
     matchedSkills: [],
     applyUrl: null,
   },
@@ -106,6 +156,9 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     matchLabel: "Run job_aggregator ingest against Supabase Postgres",
     postedAgo: "Demo",
     postedAtIso: null,
+    kind: "listing",
+    classification: "employer_hiring",
+    isCommunity: false,
     matchedSkills: [],
     applyUrl: null,
   },
@@ -119,8 +172,94 @@ export const DEMO_RECOMMENDED_JOBS: RecommendedJobCard[] = [
     matchLabel: "Uses DATABASE_URL pointing at this Supabase DB",
     postedAgo: "Demo",
     postedAtIso: null,
+    kind: "listing",
+    classification: "employer_hiring",
+    isCommunity: false,
     matchedSkills: [],
     applyUrl: null,
+  },
+  {
+    id: "demo-4",
+    title: "Founding Frontend Engineer",
+    company: "Signal Foundry",
+    location: "Remote",
+    description: "Community-sourced post preview for the X hiring lane on the profile dashboard.",
+    source: "x",
+    matchLabel: "Track fast-moving hiring posts from X alongside LinkedIn and Reddit",
+    postedAgo: "Demo",
+    postedAtIso: null,
+    kind: "listing",
+    classification: "employer_hiring",
+    isCommunity: false,
+    matchedSkills: [],
+    applyUrl: null,
+  },
+];
+
+export const DEMO_COMMUNITY_POSTS: RecommendedJobCard[] = [
+  {
+    id: "community-remoteok-demo",
+    title: "Senior Frontend Engineer",
+    company: "RemoteOK spotlight",
+    location: "Remote",
+    description: "Live remote listings from RemoteOK will appear here once the community sync cron starts writing rows.",
+    source: "remoteok",
+    matchLabel: "Community listing",
+    postedAgo: "Demo",
+    postedAtIso: null,
+    kind: "listing",
+    classification: "remote",
+    isCommunity: true,
+    matchedSkills: [],
+    applyUrl: "https://remoteok.com/",
+  },
+  {
+    id: "community-arbeitnow-demo",
+    title: "Backend Engineer with visa support",
+    company: "Arbeitnow spotlight",
+    location: "Berlin / Remote",
+    description: "Arbeitnow roles are useful for remote-friendly and visa-aware openings across European teams.",
+    source: "arbeitnow",
+    matchLabel: "Community listing",
+    postedAgo: "Demo",
+    postedAtIso: null,
+    kind: "listing",
+    classification: "employer_hiring",
+    isCommunity: true,
+    matchedSkills: [],
+    applyUrl: "https://www.arbeitnow.com/jobs",
+  },
+  {
+    id: "community-reddit-demo",
+    title: "Hiring thread for React and TypeScript roles",
+    company: "r/forhire",
+    location: "Community post",
+    description: "Reddit community hiring posts, freelance requests, and candidate posts are classified before they show up here.",
+    source: "reddit",
+    matchLabel: "Community post",
+    postedAgo: "Demo",
+    postedAtIso: null,
+    kind: "post",
+    classification: "employer_hiring",
+    isCommunity: true,
+    matchedSkills: [],
+    applyUrl: "https://www.reddit.com/r/forhire/",
+  },
+  {
+    id: "community-hn-demo",
+    title: "Ask HN: Who is hiring?",
+    company: "Hacker News",
+    location: "Internet",
+    description: "Official Hacker News hiring threads and nearby hiring-related posts will appear here with low-priority discussion badges when needed.",
+    source: "hackernews",
+    matchLabel: "Community post",
+    postedAgo: "Demo",
+    postedAtIso: null,
+    kind: "post",
+    classification: "discussion_only",
+    isCommunity: true,
+    matchedSkills: [],
+    applyUrl: "https://news.ycombinator.com/",
   },
 ];
 
@@ -146,12 +285,54 @@ function normalizeSource(raw: string): JobFeedSource {
     s === "jobvite" ||
     s === "bamboohr" ||
     s === "icims" ||
-    s === "taleo"
+    s === "taleo" ||
+    s === "remoteok" ||
+    s === "hackernews" ||
+    s === "jobicy" ||
+    s === "arbeitnow"
   ) {
     return s;
   }
-  if (s === "linkedin" || s === "reddit" || s === "indeed" || s === "glassdoor" || s === "levels") return s;
+  if (s === "linkedin" || s === "reddit" || s === "x" || s === "twitter" || s === "indeed" || s === "glassdoor" || s === "levels") {
+    return s === "twitter" ? "x" : s;
+  }
   return "other";
+}
+
+function normalizeKind(raw: string | null | undefined): JobCardKind {
+  return raw === "post" ? "post" : "listing";
+}
+
+function normalizeClassification(raw: string | null | undefined): CommunityJobClassification {
+  switch (raw) {
+    case "candidate_for_hire":
+    case "freelance":
+    case "internship":
+    case "remote":
+    case "discussion_only":
+      return raw;
+    case "employer_hiring":
+    default:
+      return "employer_hiring";
+  }
+}
+
+function classificationLabel(value: CommunityJobClassification): string {
+  switch (value) {
+    case "candidate_for_hire":
+      return "Candidate for hire";
+    case "freelance":
+      return "Freelance";
+    case "internship":
+      return "Internship";
+    case "remote":
+      return "Remote";
+    case "discussion_only":
+      return "Discussion only";
+    case "employer_hiring":
+    default:
+      return "Employer hiring";
+  }
 }
 
 function matchedProfileSkills(row: JobRow, skills: string[]): string[] {
@@ -167,6 +348,10 @@ function buildMatchLabel(row: JobRow, skills: string[]): string {
   if (hits.length > 0) {
     const shown = hits.slice(0, 4);
     return `Skill overlap: ${shown.join(", ")}${hits.length > 4 ? "…" : ""}`;
+  }
+  if (row.is_community) {
+    const source = normalizeSource(row.source);
+    return `${normalizeKind(row.kind) === "post" ? "Community post" : "Community listing"} · ${classificationLabel(normalizeClassification(row.classification))} · via ${source}`;
   }
   return `${row.company} · via ${row.source} ATS`;
 }
@@ -208,6 +393,9 @@ function rowToCard(row: JobRow, skills: string[]): RecommendedJobCard {
     matchLabel: buildMatchLabel(row, skills),
     postedAgo: formatPostedAgo(row.posted_at),
     postedAtIso: row.posted_at,
+    kind: normalizeKind(row.kind),
+    classification: normalizeClassification(row.classification),
+    isCommunity: Boolean(row.is_community),
     matchedSkills: matchedProfileSkills(row, skills),
     applyUrl: row.apply_url,
   };
@@ -236,28 +424,17 @@ async function fetchListingStats(
   | { ok: true; total: number; bySource: Partial<Record<JobFeedSource, number>> }
   | { ok: false; error: string; code?: string }
 > {
-  const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true });
+  const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
   if (totalRes.error) {
     console.warn("[job-dashboard] jobs count error:", totalRes.error.message, totalRes.error.code);
     return { ok: false, error: totalRes.error.message, code: totalRes.error.code };
   }
 
   const bySource: Partial<Record<JobFeedSource, number>> = {};
-  const sources = [
-    "greenhouse",
-    "lever",
-    "adzuna",
-    "workday",
-    "smartrecruiters",
-    "ashby",
-    "jobvite",
-    "bamboohr",
-    "icims",
-    "taleo",
-  ] as const;
+
   await Promise.all(
-    sources.map(async (src) => {
-      const r = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("source", src);
+    ATS_SOURCES.map(async (src) => {
+      const r = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("source", src).eq("is_community", false);
       if (!r.error && typeof r.count === "number") {
         bySource[src] = r.count;
       }
@@ -270,7 +447,8 @@ async function fetchListingStats(
 async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> {
   const { data, error } = await supabase
     .from("jobs")
-    .select("id, external_id, title, company, location, description, apply_url, posted_at, source")
+    .select("id, external_id, title, company, location, description, apply_url, posted_at, source, kind, classification, is_community")
+    .eq("is_community", false)
     .order("posted_at", { ascending: false })
     .limit(250);
 
@@ -280,6 +458,49 @@ async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> 
   }
   if (!data) return null;
   return data as JobRow[];
+}
+
+async function fetchCommunityRows(supabase: SupabaseClient): Promise<JobRow[] | null> {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("id, external_id, title, company, location, description, apply_url, posted_at, source, kind, classification, is_community")
+    .eq("is_community", true)
+    .order("posted_at", { ascending: false })
+    .limit(24);
+
+  if (error) {
+    console.warn("[job-dashboard] community jobs select error:", error.message, error.code);
+    return null;
+  }
+  if (!data) return null;
+  return (data as JobRow[]).filter((row) => isCommunitySource(normalizeSource(row.source)));
+}
+
+/** Broader fetch for ranking when ATS table is empty but community sync has populated rows. */
+async function fetchCommunityRowsForRanking(supabase: SupabaseClient): Promise<JobRow[] | null> {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("id, external_id, title, company, location, description, apply_url, posted_at, source, kind, classification, is_community")
+    .eq("is_community", true)
+    .order("posted_at", { ascending: false })
+    .limit(250);
+
+  if (error) {
+    console.warn("[job-dashboard] community jobs (ranking) select error:", error.message, error.code);
+    return null;
+  }
+  if (!data) return null;
+  return (data as JobRow[]).filter((row) => isCommunitySource(normalizeSource(row.source)));
+}
+
+function countBySourceFromJobRows(rows: JobRow[]): Partial<Record<JobFeedSource, number>> {
+  const bySource: Partial<Record<JobFeedSource, number>> = {};
+  for (const row of rows) {
+    const src = normalizeSource(row.source);
+    if (src === "other") continue;
+    bySource[src] = (bySource[src] ?? 0) + 1;
+  }
+  return bySource;
 }
 
 /**
@@ -292,62 +513,97 @@ export async function loadProfileJobDashboard(
 ): Promise<ProfileJobsPayload> {
   noStore();
   const pipeline = await fetchPipelineCounts(supabase, userId);
-
   const stats = await fetchListingStats(supabase);
+
   if (!stats.ok) {
+    const communityRows = await fetchCommunityRows(supabase);
+    const communityPosts =
+      communityRows && communityRows.length > 0 ? communityRows.map((row) => rowToCard(row, [])) : DEMO_COMMUNITY_POSTS;
     return {
       pipeline,
       liveListings: 0,
       listingsBySource: {},
       recommended: DEMO_RECOMMENDED_JOBS,
+      communityPosts,
       feedKind: "demo",
       feedDemoHint: "count_unavailable",
     };
   }
 
-  if (stats.total === 0) {
+  if (stats.total > 0) {
+    const [communityRows, atsRows] = await Promise.all([fetchCommunityRows(supabase), fetchJobRows(supabase)]);
+    const communityPosts =
+      communityRows && communityRows.length > 0 ? communityRows.map((row) => rowToCard(row, [])) : DEMO_COMMUNITY_POSTS;
+
+    if (!atsRows) {
+      return {
+        pipeline,
+        liveListings: stats.total,
+        listingsBySource: stats.bySource,
+        recommended: DEMO_RECOMMENDED_JOBS,
+        communityPosts,
+        feedKind: "demo",
+        feedDemoHint: "rows_unavailable",
+      };
+    }
+
+    if (atsRows.length === 0) {
+      return {
+        pipeline,
+        liveListings: stats.total,
+        listingsBySource: stats.bySource,
+        recommended: DEMO_RECOMMENDED_JOBS,
+        communityPosts,
+        feedKind: "demo",
+        feedDemoHint: "select_returned_empty",
+      };
+    }
+
+    const ranked = rankJobs(atsRows, profile.skills, profile.headline, 250);
+    const recommended =
+      ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
+
+    return {
+      pipeline,
+      liveListings: stats.total,
+      listingsBySource: stats.bySource,
+      recommended,
+      communityPosts,
+      feedKind: ranked.length > 0 ? "live" : "demo",
+      feedDemoHint: ranked.length > 0 ? null : "select_returned_empty",
+    };
+  }
+
+  // No ATS rows: use community-synced jobs for both spotlight cards and ranked recommendations when available.
+  const communityForRank = await fetchCommunityRowsForRanking(supabase);
+  const communityPosts =
+    communityForRank && communityForRank.length > 0
+      ? communityForRank.slice(0, 24).map((row) => rowToCard(row, []))
+      : DEMO_COMMUNITY_POSTS;
+
+  if (!communityForRank || communityForRank.length === 0) {
     return {
       pipeline,
       liveListings: 0,
       listingsBySource: stats.bySource,
       recommended: DEMO_RECOMMENDED_JOBS,
+      communityPosts,
       feedKind: "demo",
       feedDemoHint: "empty_table",
     };
   }
 
-  const rows = await fetchJobRows(supabase);
-  if (!rows) {
-    return {
-      pipeline,
-      liveListings: stats.total,
-      listingsBySource: stats.bySource,
-      recommended: DEMO_RECOMMENDED_JOBS,
-      feedKind: "demo",
-      feedDemoHint: "rows_unavailable",
-    };
-  }
-
-  if (rows.length === 0) {
-    return {
-      pipeline,
-      liveListings: stats.total,
-      listingsBySource: stats.bySource,
-      recommended: DEMO_RECOMMENDED_JOBS,
-      feedKind: "demo",
-      feedDemoHint: "select_returned_empty",
-    };
-  }
-
-  const ranked = rankJobs(rows, profile.skills, profile.headline, 250);
+  const ranked = rankJobs(communityForRank, profile.skills, profile.headline, 250);
   const recommended =
     ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
+  const listingsBySource = countBySourceFromJobRows(communityForRank);
 
   return {
     pipeline,
-    liveListings: stats.total,
-    listingsBySource: stats.bySource,
+    liveListings: communityForRank.length,
+    listingsBySource,
     recommended,
+    communityPosts,
     feedKind: ranked.length > 0 ? "live" : "demo",
     feedDemoHint: ranked.length > 0 ? null : "select_returned_empty",
   };

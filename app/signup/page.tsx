@@ -58,12 +58,14 @@ export default function SignupPage() {
       }
 
       if (data.session) {
-        setMessage("Account created successfully. Redirecting...");
-        router.push("/create-profile");
+        router.replace("/create-profile");
+        router.refresh();
         return;
       }
 
-      setMessage("Account created. Check your email to verify your account, then continue to sign in.");
+      setMessage(
+        "Account created. Before you can sign in, Supabase may require you to confirm your email — open the message we sent (check spam), then use Sign in below."
+      );
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -170,9 +172,18 @@ export default function SignupPage() {
         </form>
 
         {message ? (
-          <p className="rounded-xl border border-emerald-200/90 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
-            {message}
-          </p>
+          <div className="space-y-3 rounded-xl border border-emerald-200/90 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
+            <p>{message}</p>
+            <p className="text-xs leading-relaxed text-emerald-900/90">
+              After you confirm your email, sign in with the same password to upload your resume.
+            </p>
+            <Link
+              href="/login?next=/create-profile"
+              className="inline-flex w-full items-center justify-center rounded-full border border-emerald-800/30 bg-white py-2.5 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-50"
+            >
+              Go to sign in
+            </Link>
+          </div>
         ) : null}
         {error ? (
           <p className="rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-center text-sm text-red-900">{error}</p>
@@ -181,7 +192,7 @@ export default function SignupPage() {
         <p className="text-center text-[14px] text-slate-600">
           Already have an account?{" "}
           <Link
-            href="/login"
+            href="/login?next=/create-profile"
             className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
           >
             Sign in
