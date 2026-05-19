@@ -3,19 +3,27 @@
 import Link from "next/link";
 import { Save } from "lucide-react";
 import SignOutButton from "./SignOutButton";
+import ProfileThemeToggle from "./theme/ProfileThemeToggle";
 import { emitProfileSaveStart, emitSaveAllBegin, emitSaveAllRequested } from "../../lib/profile-save-events";
 
 export default function ProfileTopBar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[#DADCE0] bg-[#FFFFFF]/90 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4 px-6 py-3">
-        <Link href="/" className="group flex items-center gap-2.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8]">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8F0FE] ring-1 ring-[#DADCE0]">
-            <span className="h-3.5 w-3.5 rounded-sm bg-white/95" />
+    <header className="sticky top-0 z-40 border-b border-[var(--wg-color-border)] bg-[var(--wg-color-surface)]/85 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="group flex items-center gap-2.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--wg-color-primary)]"
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--wg-color-primary)]/10 ring-1 ring-[var(--wg-color-border)]">
+            <span className="h-3.5 w-3.5 rounded-sm bg-[var(--wg-color-primary)]" />
           </span>
-          <span className="text-[15px] font-semibold tracking-tight text-[#1D1D1F] group-hover:text-[#1557B0]">WorkGraph</span>
+          <span className="text-[15px] font-semibold tracking-tight text-[var(--wg-color-text-primary)] group-hover:text-[var(--wg-color-primary)]">
+            WorkGraph
+          </span>
         </Link>
+
         <div className="flex items-center gap-2">
+          <ProfileThemeToggle />
           <button
             type="button"
             onClick={() => {
@@ -23,10 +31,10 @@ export default function ProfileTopBar() {
               emitProfileSaveStart("all sections");
               emitSaveAllRequested();
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#DADCE0] bg-[#E8F0FE] px-3 py-2 text-xs font-medium text-[#1557B0] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-3 py-2 text-xs font-medium text-[var(--wg-color-text-primary)] transition hover:shadow-sm"
           >
             <Save className="h-3.5 w-3.5" aria-hidden />
-            Save all changes
+            Save all
           </button>
           <SignOutButton />
         </div>

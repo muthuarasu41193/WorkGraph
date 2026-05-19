@@ -239,22 +239,22 @@ export default function ProfileJobDashboard({
             <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[#1D1D1F]">
               Job Dashboard
             </h2>
-            <p className="mt-1 text-sm font-normal text-[#8E8E93]">Live jobs matched to your profile</p>
+            <p className="mt-1 text-sm font-normal text-[#8E8E93]">Live ATS jobs matched to your profile (excludes community posts)</p>
             <span className="mt-3 inline-flex items-center gap-1.5 rounded-[20px] bg-[#E6F4EA] px-3 py-1 text-xs font-medium text-[#1E8E3E]">
               <span className="h-2 w-2 rounded-full bg-[#1E8E3E] animate-pulse" aria-hidden />
               Live • Last synced {lastSyncedLabel}
             </span>
           </div>
           <p className="mt-3 text-sm font-normal text-[#3A3A3C]">
-            Pipeline cards reflect your tracker rows; live listings count comes from Postgres{" "}
-            <code className="rounded bg-[#E8F0FE] px-1 py-0.5 text-[11px] text-[#1557B0]">jobs</code>{" "}
-            (ATS ingest and/or community sync).
+            Pipeline cards reflect your tracker rows. The live count is ATS-only (
+            <code className="rounded bg-[#E8F0FE] px-1 py-0.5 text-[11px] text-[#1557B0]">is_community=false</code>
+            ) — Reddit, RSS, and other community posts appear in the section below.
           </p>
           {liveListings > 0 ? (
             <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="inline-flex items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-[#E8F0FE] px-3 py-1 text-xs font-medium text-[#1557B0] sm:gap-1.5">
                 <Radar className="h-3.5 w-3.5 text-[#1A73E8]" aria-hidden />
-                {liveListings.toLocaleString()} live listings indexed
+                {liveListings.toLocaleString()} live ATS jobs indexed
               </span>
               <button
                 type="button"

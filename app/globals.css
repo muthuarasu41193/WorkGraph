@@ -221,6 +221,11 @@ body {
   animation: wg-shimmer 1.5s infinite;
 }
 
+[data-theme="dark"] .wg-skeleton-shimmer {
+  background: linear-gradient(90deg, #303134 25%, #3c4043 50%, #303134 75%);
+  background-size: 200% 100%;
+}
+
 @keyframes wg-modal-enter {
   from {
     opacity: 0;

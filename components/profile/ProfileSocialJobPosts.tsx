@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState, type JSX } from "react";
 import type { JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 
-type CommunitySource = Extract<JobFeedSource, "remoteok" | "arbeitnow" | "reddit" | "hackernews">;
+type CommunitySource = Extract<JobFeedSource, "remoteok" | "arbeitnow" | "reddit" | "rss" | "hackernews">;
 
 type SourceMeta = {
   label: string;
@@ -63,6 +63,21 @@ function ArbeitnowLogo() {
   );
 }
 
+function RssLogo() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="#7C3AED" />
+      <path
+        d="M7 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0-6a8 8 0 0 1 8 8"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <circle cx="7" cy="17" r="1.5" fill="white" />
+    </svg>
+  );
+}
+
 const SOURCE_META: Record<CommunitySource, SourceMeta> = {
   remoteok: {
     label: "RemoteOK",
@@ -115,6 +130,32 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
       applyUrl: "https://www.arbeitnow.com/jobs",
     },
     Logo: ArbeitnowLogo,
+  },
+  rss: {
+    label: "RSS feeds",
+    eyebrow: "Syndicated listings",
+    description: "Curated job RSS feeds (Jobicy, We Work Remotely, and more) normalized into the same community lane as social posts.",
+    ctaLabel: "Open listing",
+    destinationUrl: "https://weworkremotely.com/",
+    brandShellClassName: "bg-violet-50 text-violet-700 ring-1 ring-violet-500/15",
+    badgeClassName: "bg-violet-600/10 text-violet-700",
+    fallback: {
+      id: "community-rss-fallback",
+      title: "Remote role from RSS feed",
+      company: "RSS spotlight",
+      location: "Remote",
+      description: "RSS-syndicated listings appear here after community sync ingests configured RSS_FEED_URLS.",
+      source: "rss",
+      matchLabel: "Community listing",
+      postedAgo: "Fresh lane",
+      postedAtIso: null,
+      kind: "listing",
+      classification: "remote",
+      isCommunity: true,
+      matchedSkills: [],
+      applyUrl: "https://weworkremotely.com/",
+    },
+    Logo: RssLogo,
   },
   reddit: {
     label: "Reddit",
@@ -229,7 +270,7 @@ export default function ProfileSocialJobPosts({
     }
   }, [router]);
 
-  const spotlightPosts = (["remoteok", "arbeitnow", "reddit", "hackernews"] as const).map((source) => {
+  const spotlightPosts = (["reddit", "rss", "remoteok", "arbeitnow", "hackernews"] as const).map((source) => {
     const meta = SOURCE_META[source];
     const post = jobs.find((job) => job.source === source) ?? meta.fallback;
     const href = post.applyUrl?.trim() || meta.destinationUrl;
@@ -244,11 +285,11 @@ export default function ProfileSocialJobPosts({
         <div className="max-w-3xl">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Community jobs</p>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#1D1D1F]">
-            Live job posts from RemoteOK, Arbeitnow, Reddit, and Hacker News
+            Community job posts — Reddit, RSS, RemoteOK, Arbeitnow, and Hacker News
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#3A3A3C]">
-            This separate lane highlights community-driven opportunities outside the ATS dashboard, while clearly marking
-            whether each item is a structured listing or a discussion-style post.
+            Separate from live ATS jobs above. This lane surfaces Reddit threads, RSS syndication, and other public feeds —
+            clearly marked as listings vs discussion posts.
           </p>
         </div>
         <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
@@ -280,7 +321,7 @@ export default function ProfileSocialJobPosts({
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
+      <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
         {spotlightPosts.map(({ meta, post, href, isLive }) => {
           const Logo = meta.Logo;
           const lowPriority = post.classification === "discussion_only";
