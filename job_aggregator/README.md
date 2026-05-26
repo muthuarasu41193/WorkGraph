@@ -110,12 +110,42 @@ Set **`ADZUNA_APP_ID`** and **`ADZUNA_APP_KEY`** in `job_aggregator/.env` (or CI
 
 ---
 
+## FastAPI REST API
+
+Scalable read surface over the same `public.jobs` table (clean architecture: routes → services → repositories).
+
+```bash
+python -m app.main serve-api --host 0.0.0.0 --port 8000
+```
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /jobs` | Paginated list (`page`, `page_size`, `source`, `sources`, `community`) |
+| `GET /search?q=` | Keyword search (title, company, location, description) + same filters |
+| `GET /sources` | Distinct sources with counts |
+| `POST /ingest/community` | Cron/ops trigger for Reddit + RSS sync (`Authorization: Bearer JOB_AGGREGATOR_API_KEY`) |
+| `GET /health` | Liveness |
+
+Unified JSON job shape: `id`, `title`, `company`, `location`, `source`, `source_url`, `snippet`, `tags`, `posted_at`, plus `is_community` for dashboard separation.
+
+Community-only ingest (async HTTP, dedupe by `apply_url`):
+
+```bash
+python -m app.main ingest-community
+```
+
+Configure `REDDIT_SUBREDDITS`, `RSS_FEED_URLS` in `.env` (see `.env.example`).
+
+---
+
 ## CLI usage
 
 From `job_aggregator/`:
 
 ```bash
 python -m app.main ingest
+python -m app.main ingest-community
+python -m app.main serve-api --port 8000
 python -m app.main match --resume ./samples/resume.txt
 python -m app.main match --resume ./samples/resume.txt --top-k 20
 ```

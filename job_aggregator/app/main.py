@@ -49,18 +49,9 @@ def _rest_ingest_env_ready() -> bool:
 
 
 def _should_use_rest_ingest() -> bool:
-    flag = os.getenv("JOB_INGEST_USE_REST", "").strip().lower()
-    if flag in ("1", "true", "yes"):
-        return True
-    if flag in ("0", "false", "no"):
-        return False
+    from app.config import should_use_rest_ingest
 
-    pwd = _password_raw()
-    if _database_password_is_placeholder(pwd):
-        return _rest_ingest_env_ready()
-    if pwd is None:
-        return _rest_ingest_env_ready()
-    return False
+    return should_use_rest_ingest()
 
 
 def _warn_if_ingest_db_differs_from_supabase_project() -> None:
@@ -316,6 +307,52 @@ def _cmd_probe_db() -> int:
     return 1
 
 
+def _cmd_ingest_community() -> int:
+    from app.database import init_db, session_scope
+    from app.ingest.community_runner import run_community_ingestion
+    from app.utils import configure_logging
+
+    configure_logging()
+
+    if _should_use_rest_ingest():
+        if not _rest_ingest_env_ready():
+            print("REST ingest not configured for community sync.", file=sys.stderr)
+            return 1
+        import asyncio
+
+        from app.ingest.community_runner import fetch_community_jobs_async
+        from app.ingest.supabase_rest import persist_normalized_jobs_via_rest
+
+        rows = asyncio.run(fetch_community_jobs_async())
+        stats = persist_normalized_jobs_via_rest(rows)
+        print(json.dumps({"community_ingestion": stats, "normalized_rows": len(rows)}, indent=2))
+        print(
+            "\n*** Wrote to Supabase via REST (SUPABASE_SERVICE_ROLE_KEY). "
+            "serve-api reads a different database unless DATABASE_PASSWORD is set — "
+            "see job_aggregator/.env.example.\n",
+            file=sys.stderr,
+        )
+        return 0
+
+    pwd = _password_raw()
+    if pwd is None or _database_password_is_placeholder(pwd):
+        print("Set DATABASE_PASSWORD or REST keys for community ingest.", file=sys.stderr)
+        return 1
+
+    init_db()
+    with session_scope() as session:
+        stats = run_community_ingestion(session)
+    print(json.dumps({"community_ingestion": stats}, indent=2))
+    return 0
+
+
+def _cmd_serve_api(host: str, port: int, reload: bool) -> int:
+    import uvicorn
+
+    uvicorn.run("app.api.main:app", host=host, port=port, reload=reload)
+    return 0
+
+
 def _cmd_match(resume: Path, top_k: int) -> int:
     from app.database import init_db, session_scope
     from app.matching.embedder import JobEmbedder
@@ -344,6 +381,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip sentence-transformers (fast CI/cron). Website job cards only need rows in public.jobs.",
     )
     p_ingest.set_defaults(func=lambda args: _cmd_ingest(no_embed=bool(getattr(args, "no_embed", False))))
+
+    p_community = sub.add_parser(
+        "ingest-community",
+        help="Fetch Reddit + RSS community posts only (async HTTP, dedupe by apply_url).",
+    )
+    p_community.set_defaults(func=lambda _: _cmd_ingest_community())
+
+    p_api = sub.add_parser("serve-api", help="Run FastAPI REST server (/jobs, /search, /sources).")
+    p_api.add_argument("--host", default="0.0.0.0")
+    p_api.add_argument("--port", type=int, default=8000)
+    p_api.add_argument("--reload", action="store_true", help="Dev auto-reload")
+    p_api.set_defaults(func=lambda args: _cmd_serve_api(args.host, args.port, bool(args.reload)))
 
     p_probe = sub.add_parser(
         "probe-db",

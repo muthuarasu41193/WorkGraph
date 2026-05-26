@@ -1,18 +1,17 @@
 """
-Reddit public JSON endpoints for job-related community posts.
-
-Defaults to a small set of recruiting / job-focused subreddits and uses the
- Reddit post permalink as the direct destination URL.
+Async Reddit JSON ingest for community job posts.
 """
 
 from __future__ import annotations
 
+import asyncio
 import os
 import re
 from typing import Any
 
+from app.http.client import fetch_json
 from app.ingest.base import compact_text, env_int, normalize_job, parse_datetime, split_csv
-from app.utils import LOG, http_get_json
+from app.utils import LOG
 
 _JOBISH_RE = re.compile(
     r"\b(hiring|job|jobs|career|opening|role|engineer|developer|designer|frontend|backend|full[- ]stack)\b",
@@ -25,15 +24,17 @@ def _load_subreddits() -> list[str]:
     return split_csv(raw)
 
 
-def _fetch_listing(subreddit: str, *, query: str, limit: int) -> list[dict[str, Any]]:
+async def _fetch_listing(subreddit: str, *, query: str, limit: int) -> list[dict[str, Any]]:
     if query:
-        payload = http_get_json(
+        payload = await fetch_json(
             f"https://www.reddit.com/r/{subreddit}/search.json",
             params={"q": query, "restrict_sr": "1", "sort": "new", "limit": limit},
         )
     else:
-        payload = http_get_json(f"https://www.reddit.com/r/{subreddit}/new.json", params={"limit": limit})
-
+        payload = await fetch_json(
+            f"https://www.reddit.com/r/{subreddit}/new.json",
+            params={"limit": limit},
+        )
     if not isinstance(payload, dict):
         return []
     data = payload.get("data")
@@ -49,7 +50,7 @@ def _fetch_listing(subreddit: str, *, query: str, limit: int) -> list[dict[str, 
     return rows
 
 
-def fetch_reddit_jobs() -> list[dict[str, Any]]:
+async def fetch_reddit_jobs_async() -> list[dict[str, Any]]:
     subreddits = _load_subreddits()
     if not subreddits:
         return []
@@ -57,11 +58,17 @@ def fetch_reddit_jobs() -> list[dict[str, Any]]:
     query = str(os.getenv("REDDIT_SEARCH_QUERY", "") or "").strip()
     limit = env_int("REDDIT_LIMIT_PER_SUBREDDIT", 20, min_value=1, max_value=100)
 
+    tasks = [_fetch_listing(sub, query=query, limit=limit) for sub in subreddits]
+    listings = await asyncio.gather(*tasks, return_exceptions=True)
+
     normalized: list[dict[str, Any]] = []
     seen_urls: set[str] = set()
 
-    for subreddit in subreddits:
-        for post in _fetch_listing(subreddit, query=query, limit=limit):
+    for subreddit, result in zip(subreddits, listings):
+        if isinstance(result, Exception):
+            LOG.warning("Reddit fetch failed r/%s: %s", subreddit, result)
+            continue
+        for post in result:
             title = str(post.get("title") or "").strip()
             if not title:
                 continue
@@ -100,5 +107,5 @@ def fetch_reddit_jobs() -> list[dict[str, Any]]:
             normalized.append(row)
             seen_urls.add(apply_url)
 
-    LOG.info("Reddit normalized_jobs=%s subreddits=%s", len(normalized), len(subreddits))
+    LOG.info("Reddit async normalized_jobs=%s subreddits=%s", len(normalized), len(subreddits))
     return normalized

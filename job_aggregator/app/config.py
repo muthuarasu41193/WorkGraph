@@ -268,3 +268,62 @@ EMBED_BATCH_SIZE: int = int(os.getenv("EMBED_BATCH_SIZE", "32"))
 COMPANIES_JSON: Path = Path(
     os.getenv("COMPANIES_JSON", str(Path(__file__).resolve().parent.parent / "companies.json"))
 )
+
+
+def supabase_rest_configured() -> bool:
+    """True when PostgREST upsert/read env vars are present."""
+    try:
+        from app.ingest.supabase_rest import _supabase_rest_base_and_key
+
+        _supabase_rest_base_and_key()
+        return True
+    except ValueError:
+        return False
+
+
+def _db_password_usable() -> bool:
+    pwd = _password_env()
+    if pwd is None:
+        return False
+    s = pwd.lower()
+    if "replace_with" in s or "<paste" in s or "changeme" in s or s == "password":
+        return False
+    return True
+
+
+def should_use_rest_ingest() -> bool:
+    """Write jobs via PostgREST when DATABASE_PASSWORD is unset or placeholder."""
+    flag = os.getenv("JOB_INGEST_USE_REST", "").strip().lower()
+    if flag in ("1", "true", "yes"):
+        return True
+    if flag in ("0", "false", "no"):
+        return False
+    if not supabase_rest_configured():
+        return False
+    if not _db_password_usable():
+        return True
+    return False
+
+
+def use_supabase_rest_reads() -> bool:
+    """
+    Read /jobs via PostgREST when no direct Postgres password is configured.
+
+    Matches ingest-community REST writes so local serve-api sees Supabase rows.
+    """
+    flag = os.getenv("JOB_API_USE_REST", "").strip().lower()
+    if flag in ("0", "false", "no"):
+        return False
+    if flag in ("1", "true", "yes"):
+        return supabase_rest_configured()
+    if not supabase_rest_configured():
+        return False
+    if _db_password_usable():
+        url_str = (
+            DATABASE_URL.render_as_string(hide_password=True)
+            if hasattr(DATABASE_URL, "render_as_string")
+            else str(DATABASE_URL)
+        )
+        if not url_str.startswith("sqlite"):
+            return False
+    return True

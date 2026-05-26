@@ -36,6 +36,7 @@ export type JobFeedSource =
   | "hackernews"
   | "jobicy"
   | "arbeitnow"
+  | "rss"
   | "indeed"
   | "glassdoor"
   | "levels"
@@ -120,6 +121,7 @@ const ATS_SOURCES = [
 const COMMUNITY_SOURCES = [
   "remoteok",
   "reddit",
+  "rss",
   "hackernews",
   "jobicy",
   "arbeitnow",

@@ -15,6 +15,7 @@ from app.ingest.hackernews import fetch_hackernews_jobs
 from app.ingest.jobicy import fetch_jobicy_jobs
 from app.ingest.reddit import fetch_reddit_jobs
 from app.ingest.remoteok import fetch_remoteok_jobs
+from app.ingest.rss_feeds import fetch_rss_jobs
 from app.utils import LOG
 
 FetchFn = Callable[[], list[dict[str, Any]]]
@@ -22,6 +23,7 @@ FetchFn = Callable[[], list[dict[str, Any]]]
 _FETCHERS: dict[str, FetchFn] = {
     "remoteok": fetch_remoteok_jobs,
     "reddit": fetch_reddit_jobs,
+    "rss": fetch_rss_jobs,
     "hackernews": fetch_hackernews_jobs,
     "jobicy": fetch_jobicy_jobs,
     "arbeitnow": fetch_arbeitnow_jobs,

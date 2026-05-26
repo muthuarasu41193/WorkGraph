@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
-const COMMUNITY_SOURCE_DEFAULTS = ["remoteok", "arbeitnow", "reddit", "hackernews"] as const;
-const COMMUNITY_SOURCE_ALL = ["remoteok", "arbeitnow", "reddit", "hackernews", "jobicy"] as const;
+const COMMUNITY_SOURCE_DEFAULTS = ["remoteok", "arbeitnow", "reddit", "rss", "hackernews"] as const;
+const COMMUNITY_SOURCE_ALL = ["remoteok", "arbeitnow", "reddit", "rss", "hackernews", "jobicy"] as const;
 export type CommunitySource = (typeof COMMUNITY_SOURCE_ALL)[number];
 export type CommunityKind = "listing" | "post";
 export type CommunityClassification =
@@ -115,6 +115,16 @@ const COMMUNITY_HTTP_HEADERS = {
   Accept: "application/json",
   "User-Agent": "WorkGraphCommunitySync/1.0",
 };
+
+const RSS_HTTP_HEADERS = {
+  Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml",
+  "User-Agent": "WorkGraphCommunitySync/1.0",
+};
+
+const DEFAULT_RSS_FEEDS = [
+  "https://jobicy.com/?feed=job_feed",
+  "https://weworkremotely.com/remote-jobs.rss",
+] as const;
 
 function splitCsvEnv(value: string | undefined, fallback: readonly string[]): string[] {
   const raw = value?.trim();
@@ -443,6 +453,72 @@ async function fetchHackerNewsRows(): Promise<CommunitySyncRow[]> {
   return rows;
 }
 
+function rssTag(xml: string, tag: string): string {
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
+  const match = xml.match(re);
+  if (!match) return "";
+  return stripHtml(match[1] || "");
+}
+
+function rssLink(xml: string): string {
+  const atom = xml.match(/<link[^>]+href=["']([^"']+)["'][^>]*\/?>/i);
+  if (atom?.[1]) return atom[1].trim();
+  return rssTag(xml, "link");
+}
+
+function hostFromUrl(url: string): string {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    const parts = host.split(".");
+    return parts.length >= 2 ? parts[parts.length - 2] : host;
+  } catch {
+    return "rss";
+  }
+}
+
+async function fetchRssRows(): Promise<CommunitySyncRow[]> {
+  const feeds = splitCsvEnv(process.env.RSS_FEED_URLS, DEFAULT_RSS_FEEDS);
+  const rows: CommunitySyncRow[] = [];
+  const seen = new Set<string>();
+
+  for (const feedUrl of feeds) {
+    const res = await fetch(feedUrl, { headers: RSS_HTTP_HEADERS, cache: "no-store" });
+    if (!res.ok) continue;
+    const xml = await res.text();
+    const blocks = xml.match(/<item[\s\S]*?<\/item>|<entry[\s\S]*?<\/entry>/gi) || [];
+    const feedHost = hostFromUrl(feedUrl);
+
+    for (const block of blocks) {
+      const title = rssTag(block, "title");
+      const applyUrl = normalizeUrl(rssLink(block));
+      if (!title || !applyUrl || seen.has(applyUrl)) continue;
+      const guid = rssTag(block, "guid") || rssTag(block, "id") || applyUrl;
+      const description = compactText(
+        rssTag(block, "description") || rssTag(block, "summary") || rssTag(block, "content"),
+        rssTag(block, "category"),
+        `Feed: ${feedUrl}`
+      );
+      const row = buildRow({
+        source: "rss",
+        externalId: `rss:${feedHost}:${guid}`,
+        title,
+        company: feedHost.charAt(0).toUpperCase() + feedHost.slice(1),
+        location: rssTag(block, "category") || "RSS feed",
+        description,
+        applyUrl,
+        postedAt: toIso(rssTag(block, "pubDate") || rssTag(block, "published") || rssTag(block, "updated")),
+        kind: "listing",
+        classification: "employer_hiring",
+      });
+      if (!row) continue;
+      rows.push(row);
+      seen.add(applyUrl);
+    }
+  }
+
+  return rows;
+}
+
 async function fetchJobicyRows(): Promise<CommunitySyncRow[]> {
   const count = asPositiveInt(process.env.COMMUNITY_JOBICY_COUNT, 20, 1, 50);
   const payload = await fetchJson<{ jobs?: Array<Record<string, unknown>> } | Array<Record<string, unknown>>>(
@@ -487,6 +563,8 @@ async function fetchSourceRows(source: CommunitySource): Promise<CommunitySyncRo
       return fetchArbeitnowRows();
     case "reddit":
       return fetchRedditRows();
+    case "rss":
+      return fetchRssRows();
     case "hackernews":
       return fetchHackerNewsRows();
     case "jobicy":
