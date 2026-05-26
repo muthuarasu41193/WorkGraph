@@ -5,17 +5,11 @@ import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 function humanizeAuthError(raw: string): string {
-  const msg = raw.toLowerCase();
-  if (msg.includes("email not confirmed")) {
-    return "Your email is not verified yet. Open the confirmation message from Supabase (check spam), then sign in.";
-  }
-  if (msg.includes("invalid login credentials") || msg.includes("invalid credentials")) {
-    return "Invalid email or password, or the account is not confirmed yet. Confirm your email first, try again, or use Forgot password below.";
-  }
-  return raw;
+  return humanizeSupabaseAuthMessage(raw);
 }
 
 export default function LoginPage() {
@@ -99,8 +93,8 @@ export default function LoginPage() {
       setMessage("Signed in successfully. Redirecting...");
       router.replace(nextPath);
       router.refresh();
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      setError(describeAuthError(err));
     } finally {
       setIsSubmitting(false);
     }

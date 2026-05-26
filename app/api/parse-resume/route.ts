@@ -168,7 +168,7 @@ export async function POST(request: Request) {
       const {
         data: { user },
         error: sessionError,
-      } = await getSupabaseSessionUser();
+      } = await getSupabaseSessionUser(request);
       if (!sessionError && user) {
         userId = user.id;
         sessionEmail = user.email ?? null;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Lock, Mail, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 export default function SignupPage() {
@@ -17,14 +18,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
 
   function humanizeAuthError(raw: string): string {
-    const msg = raw.toLowerCase();
-    if (msg.includes("already registered") || msg.includes("already been registered")) {
-      return "This email already has an account. Please sign in instead.";
-    }
-    if (msg.includes("password")) {
-      return "Password is too weak. Use at least 8 characters.";
-    }
-    return raw;
+    return humanizeSupabaseAuthMessage(raw);
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -66,8 +60,8 @@ export default function SignupPage() {
       setMessage(
         "Account created. Before you can sign in, Supabase may require you to confirm your email — open the message we sent (check spam), then use Sign in below."
       );
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      setError(describeAuthError(err));
     } finally {
       setIsSubmitting(false);
     }

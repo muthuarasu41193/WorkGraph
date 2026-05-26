@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       const {
         data: { user },
         error: sessionError,
-      } = await getSupabaseSessionUser();
+      } = await getSupabaseSessionUser(request);
       if (sessionError) {
         console.error("ATS API cookie session error:", sessionError);
       }

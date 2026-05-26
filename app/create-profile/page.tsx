@@ -20,6 +20,7 @@ import {
   readApiJson,
   withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
+import { describeFetchError } from "../../lib/auth-errors";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 type ManualState = {
@@ -79,13 +80,17 @@ export default function CreateProfilePage() {
 
   useEffect(() => {
     async function hydrateEmail() {
-      const supabase = createBrowserSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user?.email) {
-        setUploadEmail((prev) => prev || user.email || "");
-        setManual((prev) => ({ ...prev, email: prev.email || user.email || "" }));
+      try {
+        const supabase = createBrowserSupabaseClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user?.email) {
+          setUploadEmail((prev) => prev || user.email || "");
+          setManual((prev) => ({ ...prev, email: prev.email || user.email || "" }));
+        }
+      } catch (err) {
+        setError(describeFetchError(err));
       }
     }
     void hydrateEmail();
@@ -197,7 +202,7 @@ export default function CreateProfilePage() {
       router.push(path);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong while importing your resume.");
+      setError(describeFetchError(err));
     } finally {
       setIsLoading(false);
       setLoadingPhase(null);
@@ -247,7 +252,7 @@ export default function CreateProfilePage() {
       router.push("/profile");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to save your profile.");
+      setError(describeFetchError(err));
     } finally {
       setIsLoading(false);
     }

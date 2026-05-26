@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
+import { getSupabaseSessionUser } from "../../../lib/route-auth";
 import { createServerSupabaseClient } from "../../../lib/supabase";
 
 type ManualProfilePayload = {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await getSupabaseSessionUser(request);
     if (userError || !user) {
       return NextResponse.json({ error: "Not authenticated. Please sign in and try again." }, { status: 401 });
     }
