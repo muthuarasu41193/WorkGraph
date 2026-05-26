@@ -3,9 +3,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
+import { hardNavigate, loginRedirectPath, syncClientSession, waitForSignedIn } from "../../lib/client-auth";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 function humanizeAuthError(raw: string): string {
@@ -13,7 +13,6 @@ function humanizeAuthError(raw: string): string {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,8 +90,12 @@ export default function LoginPage() {
       }
 
       setMessage("Signed in successfully. Redirecting...");
-      router.replace(nextPath);
-      router.refresh();
+      const ready = await waitForSignedIn();
+      if (!ready) {
+        setError("Signed in, but the session did not sync. Please try again.");
+        return;
+      }
+      hardNavigate(nextPath);
     } catch (err) {
       setError(describeAuthError(err));
     } finally {

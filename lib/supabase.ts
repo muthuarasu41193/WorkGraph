@@ -16,28 +16,18 @@ function supabaseServerFetch(input: RequestInfo | URL, init?: RequestInit): Prom
   return fetch(input, { ...init, cache: "no-store" });
 }
 
-let browserClient: SupabaseClient | null = null;
-
 export function createBrowserSupabaseClient(): SupabaseClient {
-  if (typeof window !== "undefined" && browserClient) {
-    return browserClient;
-  }
-
-  const client = createBrowserClient(
+  return createBrowserClient(
     assertEnv(supabaseUrl, "NEXT_PUBLIC_SUPABASE_URL"),
     assertEnv(supabaseAnonKey, "NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       cookieOptions: {
         secure: process.env.NODE_ENV === "production",
+        path: "/",
+        sameSite: "lax",
       },
     }
   );
-
-  if (typeof window !== "undefined") {
-    browserClient = client;
-  }
-
-  return client;
 }
 
 type CookieStoreLike = {

@@ -3,13 +3,12 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
+import { hardNavigate, waitForSignedIn } from "../../lib/client-auth";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -52,8 +51,12 @@ export default function SignupPage() {
       }
 
       if (data.session) {
-        router.replace("/create-profile");
-        router.refresh();
+        const ready = await waitForSignedIn();
+        if (ready) {
+          hardNavigate("/create-profile");
+          return;
+        }
+        setError("Account created, but the session did not sync. Please sign in.");
         return;
       }
 

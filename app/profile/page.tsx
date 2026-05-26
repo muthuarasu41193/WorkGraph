@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "../../lib/supabase";
 import type { ATSFeedback, Education, Profile, WorkExperience } from "../../lib/types";
 import ProfileShell from "../../components/profile/premium/ProfileShell";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
+import { getSupabaseSessionUser } from "../../lib/route-auth";
+import { createServerSupabaseClient } from "../../lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -52,12 +53,13 @@ function asFeedback(value: unknown): ATSFeedback | null {
 }
 
 export default async function ProfilePage() {
-  const supabase = createServerSupabaseClient(await cookies());
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getSupabaseSessionUser();
 
   if (!user) redirect("/login?next=/profile");
+
+  const supabase = createServerSupabaseClient(await cookies());
 
   const { data, error } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
   if (error || !data) redirect("/create-profile");

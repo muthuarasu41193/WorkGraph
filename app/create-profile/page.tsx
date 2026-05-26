@@ -2,7 +2,6 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import {
   ArrowRight,
@@ -21,6 +20,7 @@ import {
   withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
 import { describeFetchError } from "../../lib/auth-errors";
+import { hardNavigate, loginRedirectPath, syncClientSession } from "../../lib/client-auth";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 
 type ManualState = {
@@ -68,7 +68,6 @@ function formatBytes(n: number) {
 type Mode = "resume" | "manual";
 
 export default function CreateProfilePage() {
-  const router = useRouter();
   const [mode, setMode] = useState<Mode>("resume");
   const [file, setFile] = useState<File | null>(null);
   const [uploadEmail, setUploadEmail] = useState("");
@@ -77,10 +76,17 @@ export default function CreateProfilePage() {
   const [loadingPhase, setLoadingPhase] = useState<"parse" | "score" | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    async function hydrateEmail() {
+    async function bootstrap() {
       try {
+        const ok = await syncClientSession();
+        if (!ok) {
+          hardNavigate(loginRedirectPath("/create-profile"));
+          return;
+        }
+
         const supabase = createBrowserSupabaseClient();
         const {
           data: { user },
@@ -89,39 +95,19 @@ export default function CreateProfilePage() {
           setUploadEmail((prev) => prev || user.email || "");
           setManual((prev) => ({ ...prev, email: prev.email || user.email || "" }));
         }
+        setAuthReady(true);
       } catch (err) {
         setError(describeFetchError(err));
+        setAuthReady(true);
       }
     }
-    void hydrateEmail();
+    void bootstrap();
   }, []);
 
-  async function ensureBrowserAuth(): Promise<boolean> {
-    const supabase = createBrowserSupabaseClient();
-    const {
-      data: { user: first },
-    } = await supabase.auth.getUser();
-    if (first) return true;
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (session?.refresh_token) {
-      const { error } = await supabase.auth.refreshSession();
-      if (!error) {
-        const {
-          data: { user: second },
-        } = await supabase.auth.getUser();
-        if (second) return true;
-      }
-    }
-    return false;
-  }
-
   async function requireSignedInUser() {
-    const ok = await ensureBrowserAuth();
+    const ok = await syncClientSession();
     if (!ok) {
-      router.replace("/login?next=/create-profile&reason=session");
+      hardNavigate(loginRedirectPath("/create-profile"));
       throw new Error("Redirecting to sign in...");
     }
   }
@@ -177,6 +163,10 @@ export default function CreateProfilePage() {
       });
       const parseJson = await readApiJson(parseRes);
       if (!parseRes.ok) {
+        if (parseRes.status === 401) {
+          hardNavigate(loginRedirectPath("/create-profile"));
+          return;
+        }
         throw new Error(apiErrorMessage(parseJson) || "Could not process your resume.");
       }
 
@@ -198,9 +188,8 @@ export default function CreateProfilePage() {
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      const path = email ? `/profile?email=${encodeURIComponent(email)}` : "/profile";
-      router.push(path);
-      router.refresh();
+      await syncClientSession();
+      hardNavigate("/profile");
     } catch (err) {
       setError(describeFetchError(err));
     } finally {
@@ -237,7 +226,13 @@ export default function CreateProfilePage() {
         body: JSON.stringify(payload),
       });
       const saveJson = await readApiJson(saveRes);
-      if (!saveRes.ok) throw new Error(apiErrorMessage(saveJson) || "Could not save your profile.");
+      if (!saveRes.ok) {
+        if (saveRes.status === 401) {
+          hardNavigate(loginRedirectPath("/create-profile"));
+          return;
+        }
+        throw new Error(apiErrorMessage(saveJson) || "Could not save your profile.");
+      }
 
       if (payload.email) {
         await fetch("/api/ats-score", {
@@ -249,13 +244,30 @@ export default function CreateProfilePage() {
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      router.push("/profile");
-      router.refresh();
+      await syncClientSession();
+      hardNavigate("/profile");
     } catch (err) {
       setError(describeFetchError(err));
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (!authReady) {
+    return (
+      <AuthSplitShell
+        wide
+        panelEyebrow="Get started"
+        panelHeadline="Build a profile recruiters skim in seconds."
+        panelDescription="Checking your session…"
+        highlights={["Secure sign-in required", "Resume import", "Manual entry"]}
+      >
+        <div className="flex items-center justify-center py-16 text-sm text-slate-600">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+          Verifying sign-in…
+        </div>
+      </AuthSplitShell>
+    );
   }
 
   return (

@@ -1,4 +1,5 @@
 import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "./upload-limits";
+import { syncClientSession } from "./client-auth";
 import { createBrowserSupabaseClient } from "./supabase";
 
 export { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL };
@@ -10,6 +11,7 @@ export { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL };
 export async function withSupabaseAuthHeaders(base?: HeadersInit): Promise<Headers> {
   const headers = new Headers(base ?? undefined);
   try {
+    await syncClientSession();
     const supabase = createBrowserSupabaseClient();
     const {
       data: { session },
