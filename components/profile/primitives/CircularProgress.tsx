@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 type CircularProgressProps = {
   value: number;
   size?: number;
@@ -12,8 +10,8 @@ type CircularProgressProps = {
 
 export default function CircularProgress({
   value,
-  size = 120,
-  strokeWidth = 8,
+  size = 108,
+  strokeWidth = 7,
   label,
   sublabel,
 }: CircularProgressProps) {
@@ -23,55 +21,42 @@ export default function CircularProgress({
   const offset = circumference - (clamped / 100) * circumference;
 
   return (
-    <motion.div
-      className="relative inline-flex flex-col items-center justify-center"
-      style={{ width: size, height: size }}
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <svg width={size} height={size} className="-rotate-90" aria-hidden>
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="var(--wg-color-border)"
-          strokeWidth={strokeWidth}
-          opacity={0.35}
-        />
-        <motion.circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="var(--wg-color-primary)"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        />
-      </svg>
-      <motion.div
-        className="absolute inset-0 flex flex-col items-center justify-center text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <span className="text-2xl font-bold tabular-nums tracking-tight text-[var(--wg-color-text-primary)]">
-          {Math.round(clamped)}%
-        </span>
-        {label ? (
-          <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-[var(--wg-color-text-tertiary)]">
-            {label}
+    <div className="inline-flex flex-col items-center" style={{ width: size }}>
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90" aria-hidden>
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="var(--border)"
+            strokeWidth={strokeWidth}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="var(--primary)"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            className="transition-[stroke-dashoffset] duration-700 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-xl font-bold tabular-nums tracking-tight text-foreground">
+            {Math.round(clamped)}%
           </span>
-        ) : null}
-      </motion.div>
+          {label ? (
+            <span className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</span>
+          ) : null}
+        </div>
+      </div>
       {sublabel ? (
-        <p className="mt-2 max-w-[8rem] text-center text-xs text-[var(--wg-color-text-secondary)]">{sublabel}</p>
+        <p className="mt-2 max-w-[8rem] text-center text-xs text-muted-foreground">{sublabel}</p>
       ) : null}
-    </motion.div>
+    </div>
   );
 }

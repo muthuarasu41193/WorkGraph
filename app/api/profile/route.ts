@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
 
-import { getSupabaseSessionUser } from "../../../lib/route-auth";
-import { createServerSupabaseClient } from "../../../lib/supabase";
+import { getSessionUser } from "../../../lib/auth/session-server";
+import { supabaseServiceRoleConfigured } from "../../../lib/supabase-enabled";
+import { workgraphApiEnabled } from "../../../lib/workgraph-api";
+import { workgraphBffFetch } from "../../../lib/workgraph-bff";
+
+function getRequiredEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing required environment variable: ${key}`);
+  return value;
+}
 
 type ManualProfilePayload = {
   email?: string;
@@ -38,17 +46,13 @@ function calculateCompleteness(payload: ManualProfilePayload): number {
 
 export async function POST(request: Request) {
   try {
-    const supabase = createServerSupabaseClient(await cookies());
-    const {
-      data: { user },
-      error: userError,
-    } = await getSupabaseSessionUser(request);
-    if (userError || !user) {
+    const sessionUser = await getSessionUser(request);
+    if (!sessionUser) {
       return NextResponse.json({ error: "Not authenticated. Please sign in and try again." }, { status: 401 });
     }
 
     const body = (await request.json()) as ManualProfilePayload;
-    const email = body.email?.trim() || user.email || "";
+    const email = body.email?.trim() || sessionUser.email || "";
     if (!email) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });
     }
@@ -79,11 +83,59 @@ export async function POST(request: Request) {
       institution: "",
       year: "",
     }));
+
+    if (!supabaseServiceRoleConfigured()) {
+      if (!workgraphApiEnabled()) {
+        return NextResponse.json(
+          { error: "Configure NEXT_PUBLIC_SUPABASE_* and SUPABASE_SERVICE_ROLE_KEY, or WORKGRAPH_API_URL." },
+          { status: 503 },
+        );
+      }
+      const wgBody = {
+        email,
+        full_name: payload.full_name || "",
+        headline: payload.headline || "",
+        summary: payload.summary || "",
+        location: payload.location || "",
+        linkedin_url: payload.linkedin_url || "",
+        github_url: payload.github_url || "",
+        website_url: payload.website_url || "",
+        skills: payload.skills,
+        work_experience,
+        education,
+        resume_raw_text: [
+          payload.full_name ? `Name: ${payload.full_name}` : "",
+          payload.headline ? `Headline: ${payload.headline}` : "",
+          payload.skills?.length ? `Skills: ${payload.skills.join(", ")}` : "",
+          payload.experience?.length ? `Experience: ${payload.experience.join(" | ")}` : "",
+          payload.education?.length ? `Education: ${payload.education.join(" | ")}` : "",
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        profile_completeness,
+      };
+      const data = await workgraphBffFetch<{ profile: Record<string, unknown> }>("/profile/me", {
+        method: "PUT",
+        request,
+        body: JSON.stringify(wgBody),
+      });
+      return NextResponse.json({
+        success: true,
+        profile: data.profile,
+        profile_completeness,
+      });
+    }
+
+    const supabase = createClient(
+      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+      getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
+    );
+
     const { data, error } = await supabase
       .from("profiles")
       .upsert(
         {
-          id: user.id,
+          id: sessionUser.id,
           email: payload.email,
           full_name: payload.full_name || null,
           headline: payload.headline || null,

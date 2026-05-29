@@ -14,7 +14,7 @@
   <meta property="og:type" content="website"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
   <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
@@ -52,12 +52,12 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #FFFFFF;
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.65;
-  letter-spacing: .01em;
+  letter-spacing: 0;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -2061,6 +2061,577 @@ body {
   .community-jobs-grid { grid-template-columns: 1fr; }
   .community-job-footer { flex-direction: column; align-items: flex-start; }
 }
+
+/* ============================================================
+   WorkGraph — editorial visual refresh (look only)
+   ============================================================ */
+:root {
+  --wg-font: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --wg-ink: #0f1419;
+  --wg-ink-muted: #4b5563;
+  --wg-ink-subtle: #6b7280;
+  --wg-surface: #ffffff;
+  --wg-surface-muted: #f6f7f9;
+  --wg-border: #e2e5eb;
+  --wg-accent: #4338ca;
+  --wg-accent-hover: #3730a3;
+  --wg-accent-soft: #eef2ff;
+  --wg-radius: 10px;
+  --wg-radius-lg: 14px;
+  --wg-shadow: 0 1px 2px rgba(15, 20, 25, 0.05), 0 6px 20px rgba(15, 20, 25, 0.04);
+}
+
+body {
+  font-family: var(--wg-font) !important;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--wg-ink);
+  background: var(--wg-surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.container {
+  max-width: 1080px;
+  padding-inline: clamp(1.25rem, 4vw, 2rem);
+}
+
+/* —— Typography —— */
+h1, h2, h3, h4, h5, h6,
+.hero-title,
+.section-head h2,
+.profile-content h2,
+.final-cta-box h2,
+.feat-card h3,
+.roadmap-card h3,
+.step-item h3 {
+  font-family: var(--wg-font) !important;
+  font-weight: 700 !important;
+  color: var(--wg-ink) !important;
+  letter-spacing: -0.03em !important;
+}
+
+p, li,
+.hero-subtitle,
+.section-head p,
+.profile-sub,
+.feat-card p,
+.roadmap-card p,
+.step-item p,
+.testi-card p {
+  color: var(--wg-ink-muted) !important;
+}
+
+.hero-subtitle strong,
+.section-head p strong,
+.final-cta-box p strong,
+.hero-label strong {
+  color: var(--wg-ink) !important;
+  font-weight: 600;
+}
+
+.hero {
+  padding: clamp(9.5rem, 14vw, 11rem) 0 4.5rem !important;
+  text-align: center;
+}
+
+.hero-label {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 0.875rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--wg-ink-muted) !important;
+  line-height: 1.45;
+}
+
+.section-tag,
+.final-cta-box > .section-tag {
+  display: inline-block !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 0 0.875rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--wg-accent) !important;
+  line-height: 1.4;
+}
+
+.profile-content .section-tag {
+  text-align: left;
+  display: block !important;
+}
+
+.hero-title {
+  font-size: clamp(2.125rem, 5.2vw, 3.375rem) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.04em !important;
+  margin: 0 auto 1.125rem !important;
+  max-width: 14em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.0625rem, 1.8vw, 1.1875rem) !important;
+  line-height: 1.65 !important;
+  max-width: 40rem !important;
+  margin: 0 auto 2.75rem !important;
+  color: var(--wg-ink-muted) !important;
+}
+
+.gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: var(--wg-accent) !important;
+  color: var(--wg-accent) !important;
+}
+
+.stat-big,
+.mock-stat.highlight .ms-num,
+.guide-price,
+.pcm-score-num,
+.amount {
+  background: none !important;
+  -webkit-text-fill-color: var(--wg-ink) !important;
+  color: var(--wg-ink) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-small,
+.marquee-label,
+.ms-label,
+.community-job-eyebrow,
+.earning-label {
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
+}
+
+.stat-small {
+  font-size: 0.8125rem !important;
+  color: var(--wg-ink-subtle) !important;
+}
+
+.hero-stats {
+  margin: 0 auto 3rem !important;
+  padding: 1.125rem 1.75rem !important;
+  background: var(--wg-surface-muted) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius-lg) !important;
+  box-shadow: none !important;
+}
+
+.hero-stat {
+  padding: 0.5rem 1.75rem !important;
+}
+
+.stat-divider {
+  background: var(--wg-border) !important;
+  height: 2.25rem !important;
+}
+
+/* —— Chrome —— */
+.announcement-bar {
+  background: var(--wg-surface-muted) !important;
+  border-bottom: 1px solid var(--wg-border) !important;
+  color: var(--wg-ink-muted) !important;
+  font-size: 0.875rem !important;
+  min-height: 2.75rem;
+  line-height: 1.45;
+}
+
+.announce-dot {
+  background: var(--wg-accent) !important;
+  animation: none !important;
+}
+
+.announce-cta {
+  color: var(--wg-accent) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius) !important;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+}
+
+.navbar {
+  top: 44px !important;
+  padding: 0.75rem 0 !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid var(--wg-border) !important;
+  box-shadow: none !important;
+}
+
+.logo-text {
+  font-size: 1.0625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.logo-icon {
+  background: var(--wg-accent-soft) !important;
+  border: 1px solid #c7d2fe !important;
+  border-radius: var(--wg-radius) !important;
+}
+
+.nav-links a {
+  font-size: 0.9375rem !important;
+  font-weight: 500 !important;
+  color: var(--wg-ink-muted) !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+.nav-links a:hover {
+  color: var(--wg-ink) !important;
+}
+
+.nav-badge {
+  background: var(--wg-surface-muted) !important;
+  border: 1px solid var(--wg-border) !important;
+  color: var(--wg-ink-muted) !important;
+  font-size: 0.75rem !important;
+}
+
+.badge-dot {
+  background: var(--wg-accent) !important;
+  animation: none !important;
+}
+
+.nav-cta,
+.cta-button,
+.btn-filled,
+.frb-btn,
+.community-job-link,
+.copy-ref-btn {
+  background: var(--wg-accent) !important;
+  border: 1px solid var(--wg-accent) !important;
+  border-radius: var(--wg-radius) !important;
+  font-weight: 600 !important;
+  font-family: var(--wg-font) !important;
+  box-shadow: none !important;
+}
+
+.nav-cta:hover,
+.cta-button:hover,
+.btn-filled:hover,
+.frb-btn:hover {
+  background: var(--wg-accent-hover) !important;
+  border-color: var(--wg-accent-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* —— Sections —— */
+.section {
+  padding: clamp(4.5rem, 8vw, 6.5rem) 0 !important;
+}
+
+.section-head {
+  max-width: 40rem;
+  margin: 0 auto 3.25rem !important;
+  text-align: center;
+}
+
+.section-head h2 {
+  font-size: clamp(1.625rem, 3.2vw, 2.375rem) !important;
+  line-height: 1.18 !important;
+  margin-bottom: 0.875rem !important;
+}
+
+.section-head p {
+  font-size: 1.0625rem !important;
+  line-height: 1.65 !important;
+  max-width: 36rem;
+}
+
+.profile-content h2 {
+  font-size: clamp(1.625rem, 3vw, 2.25rem) !important;
+  line-height: 1.2 !important;
+  margin: 0.5rem 0 1rem !important;
+  text-align: left;
+}
+
+.profile-sub {
+  text-align: left;
+  line-height: 1.65 !important;
+}
+
+.community-jobs-section,
+.how-section,
+.profile-section {
+  background: var(--wg-surface-muted) !important;
+}
+
+.waitlist-box,
+.feat-card,
+.roadmap-card,
+.step-item,
+.testi-card,
+.price-card,
+.final-cta-box,
+.profile-card-mock,
+.vault-side,
+.guide-card,
+.feature-request-box,
+.guarantee-box,
+.community-job-card,
+.browser-mock {
+  background: var(--wg-surface) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius-lg) !important;
+  box-shadow: var(--wg-shadow) !important;
+}
+
+.waitlist-box {
+  margin-bottom: 4rem !important;
+  padding: 1.75rem !important;
+}
+
+.waitlist-header h3 {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+.waitlist-header p {
+  font-size: 0.9375rem !important;
+}
+
+.form-input {
+  font-family: var(--wg-font) !important;
+  background: var(--wg-surface) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius) !important;
+  color: var(--wg-ink) !important;
+  font-size: 0.9375rem !important;
+}
+
+.form-input:focus {
+  border-color: var(--wg-accent) !important;
+  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.12) !important;
+}
+
+.browser-top {
+  background: var(--wg-surface-muted) !important;
+  border-bottom: 1px solid var(--wg-border) !important;
+}
+
+.url-bar {
+  background: var(--wg-surface) !important;
+  border: 1px solid var(--wg-border) !important;
+  color: var(--wg-ink-subtle) !important;
+  font-size: 0.6875rem !important;
+}
+
+.mock-stat.highlight,
+.active-job,
+.featured-guide,
+.featured-testi,
+.popular-card {
+  background: var(--wg-surface-muted) !important;
+  border-color: var(--wg-border) !important;
+}
+
+.feat-card:hover,
+.roadmap-card:hover,
+.testi-card:hover,
+.guide-card:hover,
+.price-card:hover,
+.community-job-card:hover {
+  transform: none !important;
+  border-color: #c5cad3 !important;
+  box-shadow: var(--wg-shadow) !important;
+}
+
+.feat-card::before {
+  display: none !important;
+}
+
+.feat-card h3,
+.roadmap-card h3,
+.step-item h3 {
+  font-size: 1.125rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.step-num {
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em !important;
+  color: #d1d5db !important;
+}
+
+.testi-card p {
+  font-style: normal !important;
+  line-height: 1.65 !important;
+}
+
+.popular-card,
+.popular-card:hover {
+  transform: none !important;
+}
+
+.final-cta-box {
+  padding: clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 5vw, 3rem) !important;
+}
+
+.final-cta-box h2 {
+  font-size: clamp(1.625rem, 3.2vw, 2.375rem) !important;
+  line-height: 1.18 !important;
+}
+
+.fct-glow {
+  display: none !important;
+}
+
+.winwin-banner,
+.referral-box,
+.feature-request-box {
+  background: var(--wg-surface-muted) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius-lg) !important;
+}
+
+.profile-grid {
+  gap: 3rem !important;
+  align-items: start !important;
+}
+
+.pf-item strong {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.pf-item p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.footer {
+  border-top: 1px solid var(--wg-border) !important;
+  padding-top: 3rem !important;
+}
+
+.footer-brand p,
+.footer-col a,
+.social-link {
+  font-size: 0.875rem !important;
+  line-height: 1.55;
+}
+
+.footer-col h4 {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase;
+  color: var(--wg-ink) !important;
+}
+
+.btn-outline,
+.plan-btn.btn-outline,
+.profile-cta-btn.secondary {
+  border: 1px solid var(--wg-border) !important;
+  color: var(--wg-ink) !important;
+  background: var(--wg-surface) !important;
+}
+
+.live-badge,
+.roadmap-badge,
+.popular-tag,
+.early-tag,
+.badge-q1,
+.badge-q2,
+.badge-q3,
+.badge-q4 {
+  border-radius: 6px !important;
+  font-size: 0.6875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.feat-icon,
+.pf-icon,
+.roadmap-icon,
+.step-icon,
+.frb-icon,
+.winwin-icon,
+.vault-emoji {
+  width: 2.75rem !important;
+  height: 2.75rem !important;
+  border-radius: var(--wg-radius) !important;
+  background: var(--wg-surface-muted) !important;
+  border: 1px solid var(--wg-border) !important;
+  font-size: 1.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.co-logo.google,
+.co-logo.meta,
+.co-logo.stripe,
+.google-logo,
+.meta-logo,
+.stripe-logo,
+.community-job-logo {
+  background: var(--wg-surface-muted) !important;
+  color: var(--wg-ink) !important;
+  border: 1px solid var(--wg-border) !important;
+  font-weight: 700 !important;
+}
+
+.marquee-section {
+  padding: 2.5rem 0 !important;
+}
+
+.m-item {
+  background: var(--wg-surface) !important;
+  border: 1px solid var(--wg-border) !important;
+  border-radius: var(--wg-radius) !important;
+  font-size: 0.875rem !important;
+  color: var(--wg-ink-muted) !important;
+}
+
+.marquee-wrap::before,
+.marquee-wrap::after {
+  width: 4rem;
+  background: linear-gradient(90deg, var(--wg-surface), transparent) !important;
+}
+
+.marquee-wrap::after {
+  background: linear-gradient(-90deg, var(--wg-surface), transparent) !important;
+}
+
+[data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+@media (max-width: 600px) {
+  .hero-title {
+    max-width: none;
+  }
+
+  .hero-stat {
+    padding: 0.75rem 1rem !important;
+  }
+}
 </style>
 </head>
 
@@ -3591,8 +4162,8 @@ document.head.appendChild(spinStyle);
 </script>
 
 <div style="position:fixed;right:16px;bottom:16px;z-index:1200;display:flex;gap:10px;flex-wrap:wrap">
-  <a href="/login" style="background:#111827;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font:600 13px Inter,sans-serif;box-shadow:0 8px 24px rgba(17,24,39,.2)">Login</a>
-  <a href="/profile" style="background:#fff;color:#111827;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;text-decoration:none;font:600 13px Inter,sans-serif;box-shadow:0 8px 24px rgba(17,24,39,.12)">Profile</a>
+  <a href="/login" style="background:#111827;color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font:600 13px "Source Sans 3",sans-serif;box-shadow:0 8px 24px rgba(17,24,39,.2)">Login</a>
+  <a href="/profile" style="background:#fff;color:#111827;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;text-decoration:none;font:600 13px "Source Sans 3",sans-serif;box-shadow:0 8px 24px rgba(17,24,39,.12)">Profile</a>
 </div>
 
 </body>

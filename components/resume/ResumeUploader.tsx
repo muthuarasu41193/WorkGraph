@@ -131,12 +131,15 @@ export default function ResumeUploader() {
       if (user.email) formData.append("email", user.email);
       if (publicData.publicUrl) formData.append("resume_url", publicData.publicUrl);
 
-      const parseRes = await fetch("/api/parse-resume", {
+      const parseRes = await fetch(
+        process.env.NEXT_PUBLIC_WORKGRAPH_API_URL ? "/api/v2/parse-resume" : "/api/parse-resume",
+        {
         method: "POST",
         headers: await withSupabaseAuthHeaders(),
         body: formData,
         credentials: "include",
-      });
+        },
+      );
       const parseJson = await readApiJson(parseRes);
       if (!parseRes.ok) {
         throw new Error(apiErrorMessage(parseJson) || "Failed to parse resume.");
@@ -145,12 +148,15 @@ export default function ResumeUploader() {
       const parsed = parseJson as { profile?: { email?: string | null } };
       const profileEmail = parsed?.profile?.email || user.email;
       if (profileEmail) {
-        await fetch("/api/ats-score", {
-          method: "POST",
-          headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
-          credentials: "include",
-          body: JSON.stringify({ email: profileEmail }),
-        });
+        await fetch(
+          process.env.NEXT_PUBLIC_WORKGRAPH_API_URL ? "/api/v2/ats-score" : "/api/ats-score",
+          {
+            method: "POST",
+            headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
+            credentials: "include",
+            body: JSON.stringify({ user_id: user.id, email: profileEmail }),
+          },
+        );
       }
 
       setStatus("success");

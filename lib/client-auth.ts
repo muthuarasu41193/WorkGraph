@@ -1,5 +1,31 @@
 import { createBrowserSupabaseClient } from "./supabase";
 
+/** Mirror the browser JWT session into SSR auth cookies (middleware + RSC). */
+export async function syncServerAuthCookies(): Promise<boolean> {
+  try {
+    const supabase = createBrowserSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token || !session.refresh_token) return false;
+
+    const res = await fetch("/api/auth/sync-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      }),
+    });
+
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 /** Ensure the browser session is valid and auth cookies are written for SSR routes. */
 export async function syncClientSession(): Promise<boolean> {
   const supabase = createBrowserSupabaseClient();
@@ -13,7 +39,10 @@ export async function syncClientSession(): Promise<boolean> {
       data: { user },
       error,
     } = await supabase.auth.getUser();
-    if (user && !error) return true;
+    if (user && !error) {
+      await syncServerAuthCookies();
+      return true;
+    }
   }
 
   const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
@@ -22,7 +51,10 @@ export async function syncClientSession(): Promise<boolean> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return Boolean(user);
+  if (!user) return false;
+
+  await syncServerAuthCookies();
+  return true;
 }
 
 /** Wait briefly for Supabase to finish writing auth cookies after sign-in. */

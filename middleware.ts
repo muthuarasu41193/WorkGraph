@@ -1,11 +1,41 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const AUTH_PROVIDER = (
+  process.env.NEXT_PUBLIC_AUTH_PROVIDER ??
+  process.env.AUTH_PROVIDER ??
+  "supabase"
+).toLowerCase();
+
+function supabaseEnvReady(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim(),
+  );
+}
+
 /**
- * Refreshes Supabase Auth cookies so Server Components and Route Handlers receive a valid JWT.
- * @see https://supabase.com/docs/guides/auth/server-side/nextjs
+ * Refreshes auth cookies (Supabase by default; SuperTokens only without Supabase keys).
  */
 export async function middleware(request: NextRequest) {
+  if (!supabaseEnvReady() && AUTH_PROVIDER === "supertokens") {
+    const uri = process.env.SUPERTOKENS_CONNECTION_URI?.trim();
+    if (!uri) return NextResponse.next({ request });
+
+    try {
+      const { initSuperTokensBackend } = await import("./lib/supertokens/backend");
+      initSuperTokensBackend();
+      const { withSession } = await import("supertokens-node/nextjs");
+      return withSession(
+        request,
+        async () => NextResponse.next({ request }),
+        { sessionRequired: false },
+      );
+    } catch {
+      return NextResponse.next({ request });
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

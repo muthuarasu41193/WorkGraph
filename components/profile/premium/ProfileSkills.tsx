@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Sparkles, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
@@ -13,6 +12,9 @@ import {
 } from "../../../lib/profile-save-events";
 import ProfileCard from "../primitives/ProfileCard";
 import SectionHeader from "../primitives/SectionHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   userId: string;
@@ -89,65 +91,47 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
         title="Skills"
         description="Top skills recruiters and ATS systems scan first."
         action={
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => setShowAdd((v) => !v)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--wg-color-border)] text-[var(--wg-color-primary)] hover:bg-[var(--wg-color-surface-variant)]"
             aria-label="Add skill"
           >
             <Plus className="h-4 w-4" />
-          </button>
+          </Button>
         }
       />
 
-      <AnimatePresence>
-        {showAdd ? (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="mb-4 flex gap-2 overflow-hidden"
-          >
-            <input
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && void addSkill()}
-              placeholder="Add a skill"
-              className="flex-1 rounded-xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-3 py-2 text-sm"
-            />
-            <button
-              type="button"
-              onClick={() => void addSkill()}
-              className="rounded-xl bg-[var(--wg-color-primary)] px-4 py-2 text-sm font-medium text-white"
-            >
-              Add
-            </button>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {showAdd ? (
+        <div className="mb-4 flex gap-2 overflow-hidden transition-all">
+          <Input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && void addSkill()}
+            placeholder="Add a skill"
+            className="flex-1"
+          />
+          <Button type="button" onClick={() => void addSkill()}>
+            Add
+          </Button>
+        </div>
+      ) : null}
 
       <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--wg-color-text-tertiary)]">
-              {cat.label}
-            </p>
+            <p className="mb-2 text-xs font-semibold text-[var(--wg-color-text-tertiary)]">{cat.label}</p>
             <div className="flex flex-wrap gap-2">
               {cat.skills.map((skill) => (
-                <motion.span
+                <Badge
                   key={skill.name}
-                  layout
-                  whileHover={{ scale: 1.03 }}
-                  className={[
-                    "group inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium ring-1 transition",
-                    skill.top
-                      ? "bg-[var(--wg-color-primary)]/10 text-[var(--wg-color-primary)] ring-[var(--wg-color-primary)]/25"
-                      : "bg-[var(--wg-color-surface-variant)] text-[var(--wg-color-text-secondary)] ring-[var(--wg-color-border)]",
-                  ].join(" ")}
+                  variant={skill.top ? "default" : "outline"}
+                  className="group gap-2 px-2.5 py-1 text-sm font-medium transition-colors hover:shadow-sm"
                 >
                   {skill.name}
                   {skill.endorsements > 0 ? (
-                    <span className="text-[10px] tabular-nums text-[var(--wg-color-text-tertiary)]">
+                    <span className="text-[10px] tabular-nums text-muted-foreground">
                       {skill.endorsements}
                     </span>
                   ) : null}
@@ -162,11 +146,9 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                     </button>
                   ) : null}
                   {skill.top ? (
-                    <span className="rounded-md bg-[var(--wg-color-primary)]/15 px-1 text-[9px] font-bold uppercase text-[var(--wg-color-primary)]">
-                      Top
-                    </span>
+                    <span className="rounded px-1 text-[10px] font-semibold">Top</span>
                   ) : null}
-                </motion.span>
+                </Badge>
               ))}
             </div>
           </div>

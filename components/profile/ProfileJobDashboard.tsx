@@ -26,22 +26,20 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Box,
-  Button,
-  Checkbox,
-  Chip,
   Dialog,
-  DialogActions,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Slider,
-  TextField,
-  Typography,
-} from "@mui/material";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type Props = {
   stats: JobPipelineCounts;
@@ -229,10 +227,9 @@ export default function ProfileJobDashboard({
   }, []);
 
   return (
-    <section
-      aria-labelledby="job-dashboard-heading"
-      className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-4 sm:p-6"
-    >
+    <Card className="border-slate-200 shadow-sm transition-shadow hover:shadow-md">
+      <CardContent className="p-4 sm:p-6">
+      <section aria-labelledby="job-dashboard-heading">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
           <div>
@@ -315,14 +312,14 @@ export default function ProfileJobDashboard({
             )}
             <span className="hidden sm:inline">{isRefreshing ? "Syncing…" : "Sync Jobs"}</span>
           </button>
-          <button
+          <Button
             type="button"
             onClick={() => setIsAlertModalOpen(true)}
-            className="inline-flex h-10 items-center gap-2 rounded-[20px] bg-[#1A73E8] px-5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+            className="rounded-full"
           >
             <Bell className="h-4 w-4" aria-hidden />
             <span className="hidden sm:inline">Set Job Alerts</span>
-          </button>
+          </Button>
           <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[#FEF7E0] px-3 py-1.5 text-xs font-medium text-[#F9AB00]">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
             Profile {profileCompleteness}% complete
@@ -502,33 +499,38 @@ export default function ProfileJobDashboard({
         </p>
       ) : null}
 
-      <Dialog
-        open={isAlertModalOpen}
-        onClose={() => setIsAlertModalOpen(false)}
-        fullWidth
-        maxWidth="sm"
-        aria-labelledby="create-job-alert-title"
-      >
-        <DialogTitle id="create-job-alert-title" sx={{ fontWeight: 700, fontSize: 22 }}>
-          Create Job Alert
-        </DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Get notified when new matching jobs are posted
-          </Typography>
-          <Box sx={{ display: "grid", gap: 2 }}>
-            <TextField label="Alert name" value={alertName} onChange={(e) => setAlertName(e.target.value)} size="small" />
-            <Box>
-              <Typography variant="caption" color="text.secondary">Keywords</Typography>
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
+      <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle id="create-job-alert-title">Create Job Alert</DialogTitle>
+            <DialogDescription>
+              Get notified when new matching jobs are posted
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="alert-name">Alert name</Label>
+              <Input id="alert-name" value={alertName} onChange={(e) => setAlertName(e.target.value)} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Keywords</Label>
+              <div className="flex flex-wrap gap-1">
                 {keywords.map((kw) => (
-                  <Chip key={kw} label={kw} onDelete={() => setKeywords((prev) => prev.filter((x) => x !== kw))} />
+                  <Badge key={kw} variant="secondary" className="gap-1 pr-1">
+                    {kw}
+                    <button
+                      type="button"
+                      onClick={() => setKeywords((prev) => prev.filter((x) => x !== kw))}
+                      className="ml-0.5 rounded-full hover:bg-muted"
+                      aria-label={`Remove ${kw}`}
+                    >
+                      <XCircle className="h-3 w-3" />
+                    </button>
+                  </Badge>
                 ))}
-              </Box>
-              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-                <TextField
-                  size="small"
-                  fullWidth
+              </div>
+              <div className="flex gap-2">
+                <Input
                   placeholder="Add keyword"
                   value={keywordInput}
                   onChange={(e) => setKeywordInput(e.target.value)}
@@ -539,38 +541,87 @@ export default function ProfileJobDashboard({
                     }
                   }}
                 />
-                <Button onClick={addKeyword} variant="outlined">Add</Button>
-              </Box>
-            </Box>
-            <TextField label="Location" value={alertLocation} onChange={(e) => setAlertLocation(e.target.value)} size="small" />
-            <Box>
-              <Typography variant="caption" color="text.secondary">Frequency</Typography>
-              <RadioGroup value={frequency} onChange={(e) => setFrequency(e.target.value as "realtime" | "daily" | "weekly")}>
-                <FormControlLabel value="realtime" control={<Radio />} label="Real-time (instant notification)" />
-                <FormControlLabel value="daily" control={<Radio />} label="Daily digest (9 AM)" />
-                <FormControlLabel value="weekly" control={<Radio />} label="Weekly digest (Mondays)" />
-              </RadioGroup>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="text.secondary">Channels</Typography>
-              <FormControlLabel control={<Checkbox checked={emailEnabled} onChange={(e) => setEmailEnabled(e.target.checked)} />} label="Email notifications" />
-              <FormControlLabel control={<Checkbox checked={inAppEnabled} onChange={(e) => setInAppEnabled(e.target.checked)} />} label="In-app notifications" />
-              <FormControlLabel control={<Checkbox checked={smsEnabled} onChange={(e) => setSmsEnabled(e.target.checked)} />} label="SMS (add phone number)" />
-              {smsEnabled ? <TextField size="small" fullWidth placeholder="+1 555 123 4567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} /> : null}
-            </Box>
-            <Box>
-              <Typography variant="caption" color="text.secondary">
+                <Button type="button" variant="outline" onClick={addKeyword}>
+                  Add
+                </Button>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="alert-location">Location</Label>
+              <Input id="alert-location" value={alertLocation} onChange={(e) => setAlertLocation(e.target.value)} />
+            </div>
+            <div className="grid gap-2">
+              <Label>Frequency</Label>
+              <div className="space-y-2">
+                {(
+                  [
+                    { value: "realtime", label: "Real-time (instant notification)" },
+                    { value: "daily", label: "Daily digest (9 AM)" },
+                    { value: "weekly", label: "Weekly digest (Mondays)" },
+                  ] as const
+                ).map((opt) => (
+                  <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="frequency"
+                      value={opt.value}
+                      checked={frequency === opt.value}
+                      onChange={(e) => setFrequency(e.target.value as "realtime" | "daily" | "weekly")}
+                      className="accent-primary"
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Channels</Label>
+              <div className="space-y-2">
+                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                  <Checkbox checked={emailEnabled} onCheckedChange={(c) => setEmailEnabled(c === true)} />
+                  Email notifications
+                </label>
+                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                  <Checkbox checked={inAppEnabled} onCheckedChange={(c) => setInAppEnabled(c === true)} />
+                  In-app notifications
+                </label>
+                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                  <Checkbox checked={smsEnabled} onCheckedChange={(c) => setSmsEnabled(c === true)} />
+                  SMS (add phone number)
+                </label>
+              </div>
+              {smsEnabled ? (
+                <Input placeholder="+1 555 123 4567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+              ) : null}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="match-threshold">
                 Only notify me for jobs with {matchThreshold}%+ match
-              </Typography>
-              <Slider value={matchThreshold} onChange={(_, value) => setMatchThreshold(Number(value))} min={40} max={100} valueLabelDisplay="auto" />
-            </Box>
-          </Box>
+              </Label>
+              <input
+                id="match-threshold"
+                type="range"
+                min={40}
+                max={100}
+                value={matchThreshold}
+                onChange={(e) => setMatchThreshold(Number(e.target.value))}
+                className="w-full accent-primary"
+              />
+              <span className="text-xs text-muted-foreground">{matchThreshold}%</span>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setIsAlertModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={() => setIsAlertModalOpen(false)}>
+              Create Alert
+            </Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsAlertModalOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={() => setIsAlertModalOpen(false)}>Create Alert</Button>
-        </DialogActions>
       </Dialog>
-    </section>
+      </section>
+      </CardContent>
+    </Card>
   );
 }

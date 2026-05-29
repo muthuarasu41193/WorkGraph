@@ -19,6 +19,7 @@ def search_jobs(
     source: str | None = Query(None),
     sources: str | None = Query(None, description="Comma-separated source list"),
     community: bool | None = Query(None),
+    remote_type: str | None = Query(None, description="remote | hybrid | onsite"),
     service: JobService = Depends(get_job_service),
 ) -> PaginatedJobs:
     source_list = [s.strip() for s in sources.split(",")] if sources else None
@@ -29,4 +30,5 @@ def search_jobs(
         source=source,
         sources=source_list,
         community=community,
+        remote_type=remote_type,
     )

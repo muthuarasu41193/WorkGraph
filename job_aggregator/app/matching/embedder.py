@@ -1,29 +1,32 @@
 """
 Local embeddings via sentence-transformers (no paid inference APIs).
 
-Model: sentence-transformers/all-MiniLM-L6-v2 (384-dimensional embeddings).
-
-Batching:
-  Jobs are encoded in configurable batches to reduce overhead / maximize throughput.
-
-Incremental work:
-  Only Job rows with embedding_json IS NULL are encoded after ingestion updates cleared them.
+PyTorch is imported only on first embed call so the REST API can start on low-RAM hosts.
 """
 
 from __future__ import annotations
 
 import json
 import logging
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import EMBED_BATCH_SIZE, EMBEDDING_MODEL_NAME, EMBEDDING_MODEL_VERSION
 from app.models import Job
 
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
 LOG = logging.getLogger(__name__)
+
+
+def _import_sentence_transformer():
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer
 
 
 class JobEmbedder:
@@ -31,17 +34,17 @@ class JobEmbedder:
 
     def __init__(self, model_name: str | None = None):
         self._model_name = model_name or EMBEDDING_MODEL_NAME
-        self._model: SentenceTransformer | None = None
+        self._model: Any = None
 
     @property
     def model(self) -> SentenceTransformer:
         if self._model is None:
             LOG.info("Loading SentenceTransformer model=%s", self._model_name)
+            SentenceTransformer = _import_sentence_transformer()
             self._model = SentenceTransformer(self._model_name)
         return self._model
 
     def embed_text(self, text: str) -> np.ndarray:
-        """Encode a single document → normalized L2 unit vector (as returned by encode)."""
         vec = self.model.encode(
             [text or ""],
             batch_size=1,
@@ -66,11 +69,6 @@ class JobEmbedder:
 
 
 def embed_pending_jobs(session: Session, embedder: JobEmbedder, batch_size: int | None = None) -> int:
-    """
-    Encode every Job lacking embedding_json.
-
-    Returns number of rows updated.
-    """
     pending = session.scalars(select(Job).where(Job.embedding_json.is_(None))).all()
     if not pending:
         LOG.info("No pending jobs requiring embeddings.")

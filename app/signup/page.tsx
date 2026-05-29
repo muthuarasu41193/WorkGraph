@@ -5,8 +5,14 @@ import Link from "next/link";
 import { Lock, Mail, Sparkles } from "lucide-react";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
-import { hardNavigate, waitForSignedIn } from "../../lib/client-auth";
+import { signUpWithPassword } from "../../lib/auth/client";
+import { supertokensEnabled } from "../../lib/auth/config";
+import { hardNavigate, syncServerAuthCookies, waitForSignedIn } from "../../lib/client-auth";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -36,6 +42,17 @@ export default function SignupPage() {
         return;
       }
 
+      if (supertokensEnabled()) {
+        const result = await signUpWithPassword(email, password);
+        if (!result.ok) {
+          setError(humanizeAuthError(result.error ?? "Sign up failed"));
+          return;
+        }
+        setMessage("Account created. Redirecting to profile setup…");
+        hardNavigate("/create-profile");
+        return;
+      }
+
       const supabase = createBrowserSupabaseClient();
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
@@ -53,6 +70,7 @@ export default function SignupPage() {
       if (data.session) {
         const ready = await waitForSignedIn();
         if (ready) {
+          await syncServerAuthCookies();
           hardNavigate("/create-profile");
           return;
         }
@@ -83,23 +101,23 @@ export default function SignupPage() {
     >
       <div className="wg-auth-enter space-y-8">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Sign up</h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign up</h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
             Enter your email and password to create your WorkGraph account.
           </p>
         </div>
 
         <form className="space-y-5" onSubmit={onSubmit}>
-          <div>
-            <label htmlFor="signup-email" className="sr-only">
+          <div className="space-y-2">
+            <Label htmlFor="signup-email" className="sr-only">
               Email
-            </label>
+            </Label>
             <div className="relative">
               <Mail
-                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground"
                 aria-hidden
               />
-              <input
+              <Input
                 id="signup-email"
                 type="email"
                 required
@@ -109,21 +127,21 @@ export default function SignupPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email"
-                className="h-12 w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-3 text-[15px] text-slate-900 outline-none ring-emerald-950/[0.04] transition placeholder:text-slate-400 focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="h-12 pl-11"
               />
             </div>
           </div>
 
-          <div>
-            <label htmlFor="signup-password" className="sr-only">
+          <div className="space-y-2">
+            <Label htmlFor="signup-password" className="sr-only">
               Password
-            </label>
+            </Label>
             <div className="relative">
               <Lock
-                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground"
                 aria-hidden
               />
-              <input
+              <Input
                 id="signup-password"
                 type="password"
                 required
@@ -131,21 +149,21 @@ export default function SignupPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password (min 8 chars)"
-                className="h-12 w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-3 text-[15px] text-slate-900 outline-none ring-emerald-950/[0.04] transition placeholder:text-slate-400 focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="h-12 pl-11"
               />
             </div>
           </div>
 
-          <div>
-            <label htmlFor="signup-confirm-password" className="sr-only">
+          <div className="space-y-2">
+            <Label htmlFor="signup-confirm-password" className="sr-only">
               Confirm password
-            </label>
+            </Label>
             <div className="relative">
               <Lock
-                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground"
                 aria-hidden
               />
-              <input
+              <Input
                 id="signup-confirm-password"
                 type="password"
                 required
@@ -153,45 +171,39 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 placeholder="Confirm password"
-                className="h-12 w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-3 text-[15px] text-slate-900 outline-none ring-emerald-950/[0.04] transition placeholder:text-slate-400 focus:border-emerald-800 focus:ring-4 focus:ring-emerald-900/12"
+                className="h-12 pl-11"
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:opacity-55"
-          >
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[15px]">
             {isSubmitting ? "Creating account…" : "Create account"}
             {!isSubmitting ? <Sparkles className="h-4 w-4" aria-hidden /> : null}
-          </button>
+          </Button>
         </form>
 
         {message ? (
-          <div className="space-y-3 rounded-xl border border-emerald-200/90 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
-            <p>{message}</p>
-            <p className="text-xs leading-relaxed text-emerald-900/90">
-              After you confirm your email, sign in with the same password to upload your resume.
-            </p>
-            <Link
-              href="/login?next=/create-profile"
-              className="inline-flex w-full items-center justify-center rounded-full border border-emerald-800/30 bg-white py-2.5 text-sm font-semibold text-emerald-950 transition hover:bg-emerald-50"
-            >
-              Go to sign in
-            </Link>
-          </div>
+          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+            <AlertDescription className="space-y-3 text-center">
+              <p>{message}</p>
+              <p className="text-xs leading-relaxed text-emerald-900/90">
+                After you confirm your email, sign in with the same password to upload your resume.
+              </p>
+              <Button asChild variant="outline" className="w-full rounded-full border-emerald-300 bg-white text-emerald-950 hover:bg-emerald-50">
+                <Link href="/login?next=/create-profile">Go to sign in</Link>
+              </Button>
+            </AlertDescription>
+          </Alert>
         ) : null}
         {error ? (
-          <p className="rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-center text-sm text-red-900">{error}</p>
+          <Alert variant="destructive">
+            <AlertDescription className="text-center">{error}</AlertDescription>
+          </Alert>
         ) : null}
 
-        <p className="text-center text-[14px] text-slate-600">
+        <p className="text-center text-[14px] text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            href="/login?next=/create-profile"
-            className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
-          >
+          <Link href="/login?next=/create-profile" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign in
           </Link>
         </p>

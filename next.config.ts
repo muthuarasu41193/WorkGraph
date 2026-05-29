@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   // Native/pdf tooling — avoid bundling issues on Vercel.
   serverExternalPackages: ["pdf-parse", "@napi-rs/canvas"],
 

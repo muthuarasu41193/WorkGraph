@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Briefcase,
   Camera,
@@ -12,7 +11,6 @@ import {
   Pencil,
   Mail,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
@@ -25,12 +23,18 @@ import {
 } from "../../../lib/profile-save-events";
 import ProfileBadge from "../primitives/ProfileBadge";
 import ProfileButton from "../primitives/ProfileButton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
   profile: Profile;
   userId: string;
   openToWork?: boolean;
 };
+
+const inputClass =
+  "border-slate-200 bg-background focus-visible:ring-primary/20";
 
 export default function ProfileHero({ profile, userId, openToWork = true }: Props) {
   const [photoUrl, setPhotoUrl] = useState(profile.photo_url);
@@ -57,7 +61,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
 
   const years =
     profile.years_of_experience != null
-      ? `${profile.years_of_experience}+ yrs experience`
+      ? `${profile.years_of_experience}+ years`
       : "Experience not set";
 
   const saveBasics = async () => {
@@ -115,171 +119,155 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
   ].filter((s) => s.href);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface)] shadow-[0_8px_40px_-20px_rgba(0,0,0,0.12)]">
-      {/* Cover banner */}
-      <div className="relative h-32 sm:h-40 md:h-44">
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-[#1a73e8]/90 via-[#669df6]/80 to-[#8ab4f8]/70"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        />
-        <motion.div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-          animate={{ backgroundPosition: ["0px 0px", "48px 48px"] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-
-      <div className="relative px-5 pb-6 sm:px-8 sm:pb-8">
-        <motion.div
-          className="-mt-14 sm:-mt-16"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.45 }}
-        >
+    <header className="wg-profile-hero px-5 py-6 sm:px-7 sm:py-7">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="group relative h-28 w-28 overflow-hidden rounded-2xl ring-4 ring-[var(--wg-color-surface)] sm:h-32 sm:w-32"
+            className="group relative mx-auto shrink-0 sm:mx-0"
             aria-label="Change profile photo"
           >
-            {photoUrl ? (
-              <Image src={photoUrl} alt="" fill unoptimized className="object-cover" sizes="128px" />
-            ) : (
-              <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[var(--wg-color-primary)] to-[#1557b0] text-2xl font-bold text-white">
+            <Avatar className="h-[88px] w-[88px] border-2 border-border">
+              {photoUrl ? <AvatarImage src={photoUrl} alt="" /> : null}
+              <AvatarFallback className="bg-primary text-lg font-bold text-primary-foreground">
                 {initials}
-              </span>
-            )}
-            <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
-              <Camera className="h-5 w-5 text-white" />
+              </AvatarFallback>
+            </Avatar>
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
+              <Camera className="h-4 w-4 text-white" />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
           </button>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => void handleUpload(e.target.files?.[0])} />
-        </motion.div>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => void handleUpload(e.target.files?.[0])}
+          />
 
-        <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0 flex-1 space-y-3">
-            <motion.div className="flex flex-wrap items-center gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+          <div className="min-w-0 flex-1 text-center sm:text-left">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
+              Professional profile
+            </p>
+
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               {openToWork ? <ProfileBadge tone="success">Open to work</ProfileBadge> : null}
-              <ProfileBadge tone="info">{years}</ProfileBadge>
-            </motion.div>
+              <ProfileBadge tone="muted">{years}</ProfileBadge>
+            </div>
 
             {isEditing ? (
-              <input
+              <Input
                 value={form.full_name}
                 onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
-                className="w-full rounded-xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-3 py-2 text-2xl font-semibold"
+                className={`${inputClass} mt-3 text-xl font-semibold`}
               />
             ) : (
-              <h1 className="text-2xl font-bold tracking-tight text-[var(--wg-color-text-primary)] sm:text-3xl">
+              <h1 className="mt-2 text-[1.625rem] font-bold leading-tight tracking-tight text-foreground">
                 {form.full_name || "Your name"}
               </h1>
             )}
 
             {isEditing ? (
-              <input
+              <Input
                 value={form.headline}
                 onChange={(e) => setForm((f) => ({ ...f, headline: e.target.value }))}
                 placeholder="Role / title"
-                className="w-full rounded-xl border border-[var(--wg-color-border)] px-3 py-2 text-base"
+                className={`${inputClass} mt-2 text-sm`}
               />
             ) : (
-              <p className="flex items-center gap-2 text-base font-medium text-[var(--wg-color-text-secondary)]">
-                <Briefcase className="h-4 w-4 shrink-0 text-[var(--wg-color-text-tertiary)]" />
+              <p className="mt-1 flex items-center justify-center gap-2 text-[15px] text-muted-foreground sm:justify-start">
+                <Briefcase className="h-4 w-4 shrink-0 opacity-60" />
                 {form.headline || "Add your current role"}
               </p>
             )}
 
             {isEditing ? (
-              <input
+              <Input
                 value={form.location}
                 onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                className="w-full rounded-xl border border-[var(--wg-color-border)] px-3 py-2 text-sm"
+                className={`${inputClass} mt-2 text-sm`}
               />
             ) : (
-              <p className="flex items-center gap-1.5 text-sm text-[var(--wg-color-text-tertiary)]">
-                <MapPin className="h-4 w-4" />
+              <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-muted-foreground sm:justify-start">
+                <MapPin className="h-3.5 w-3.5 opacity-70" />
                 {form.location || "Add location"}
               </p>
             )}
-
-            {isEditing ? (
-              <textarea
-                value={form.summary}
-                onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
-                rows={3}
-                placeholder="Professional bio"
-                className="w-full rounded-xl border border-[var(--wg-color-border)] px-3 py-2 text-sm leading-relaxed"
-              />
-            ) : form.summary ? (
-              <p className="max-w-2xl text-sm leading-relaxed text-[var(--wg-color-text-secondary)]">{form.summary}</p>
-            ) : (
-              <p className="text-sm italic text-[var(--wg-color-text-tertiary)]">Add a short professional bio</p>
-            )}
-
-            {socials.length > 0 ? (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {socials.map(({ href, icon: Icon, label }) => (
-                  <Link
-                    key={label}
-                    href={href!}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--wg-color-border)] text-[var(--wg-color-text-secondary)] transition hover:border-[var(--wg-color-primary)] hover:text-[var(--wg-color-primary)]"
-                    aria-label={label}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </Link>
-                ))}
-              </div>
-            ) : null}
           </div>
+        </div>
 
-          <motion.div
-            className="flex flex-wrap gap-2 lg:flex-col lg:items-stretch"
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {isEditing ? (
-              <>
-                <ProfileButton variant="primary" onClick={() => void saveBasics()} disabled={isSaving}>
-                  {isSaving ? "Saving…" : "Save profile"}
+        <div className="flex shrink-0 flex-wrap justify-center gap-2 border-t border-[var(--wg-color-border)] pt-4 lg:border-t-0 lg:pt-0">
+          {isEditing ? (
+            <>
+              <ProfileButton variant="primary" onClick={() => void saveBasics()} disabled={isSaving}>
+                {isSaving ? "Saving…" : "Save"}
+              </ProfileButton>
+              <ProfileButton variant="outline" onClick={() => setIsEditing(false)}>
+                Cancel
+              </ProfileButton>
+            </>
+          ) : (
+            <>
+              <ProfileButton variant="primary" icon={<Pencil className="h-4 w-4" />} onClick={() => setIsEditing(true)}>
+                Edit profile
+              </ProfileButton>
+              {profile.resume_url ? (
+                <ProfileButton
+                  variant="outline"
+                  icon={<Download className="h-4 w-4" />}
+                  onClick={() => window.open(profile.resume_url!, "_blank")}
+                >
+                  Resume
                 </ProfileButton>
-                <ProfileButton variant="ghost" onClick={() => setIsEditing(false)}>
-                  Cancel
+              ) : (
+                <ProfileButton variant="outline" icon={<Download className="h-4 w-4" />} disabled>
+                  Resume
                 </ProfileButton>
-              </>
-            ) : (
-              <>
-                <ProfileButton variant="outline" icon={<Pencil className="h-4 w-4" />} onClick={() => setIsEditing(true)}>
-                  Edit profile
-                </ProfileButton>
-                {profile.resume_url ? (
-                  <ProfileButton
-                    variant="secondary"
-                    icon={<Download className="h-4 w-4" />}
-                    onClick={() => window.open(profile.resume_url!, "_blank")}
-                  >
-                    Download resume
-                  </ProfileButton>
-                ) : (
-                  <ProfileButton variant="secondary" icon={<Download className="h-4 w-4" />} disabled>
-                    No resume yet
-                  </ProfileButton>
-                )}
-              </>
-            )}
-          </motion.div>
+              )}
+            </>
+          )}
         </div>
       </div>
-    </section>
+
+      <div className="mt-6 border-t border-[var(--wg-color-border)] pt-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
+          Summary
+        </p>
+        {isEditing ? (
+          <Textarea
+            value={form.summary}
+            onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
+            rows={3}
+            placeholder="Professional summary"
+            className={`${inputClass} mt-2 text-sm leading-relaxed`}
+          />
+        ) : form.summary ? (
+          <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">{form.summary}</p>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Add a concise summary for recruiters and hiring managers.
+          </p>
+        )}
+
+        {socials.length > 0 ? (
+          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+            {socials.map(({ href, icon: Icon, label }) => (
+              <Link
+                key={label}
+                href={href!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2.5 py-1.5 text-xs font-semibold text-[var(--wg-color-text-secondary)] hover:border-[var(--wg-color-primary)] hover:text-[var(--wg-color-primary)]"
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </Link>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </header>
   );
 }

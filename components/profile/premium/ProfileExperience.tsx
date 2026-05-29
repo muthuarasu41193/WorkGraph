@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import { Briefcase, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
@@ -13,6 +12,10 @@ import {
 } from "../../../lib/profile-save-events";
 import ProfileCard from "../primitives/ProfileCard";
 import SectionHeader from "../primitives/SectionHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type Props = {
   userId: string;
@@ -42,88 +45,84 @@ function ExperienceItem({
   const initial = (item.company || "C")[0]?.toUpperCase();
 
   return (
-    <motion.article
-      layout
-      className="relative pl-8 before:absolute before:left-[11px] before:top-8 before:h-[calc(100%-8px)] before:w-px before:bg-[var(--wg-color-border)] last:before:hidden"
-    >
-      <span className="absolute left-0 top-1 flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--wg-color-surface-variant)] text-xs font-bold text-[var(--wg-color-primary)] ring-1 ring-[var(--wg-color-border)]">
+    <article className="relative pl-8 before:absolute before:left-[11px] before:top-8 before:h-[calc(100%-8px)] before:w-px before:bg-border last:before:hidden">
+      <span className="absolute left-0 top-1 flex h-6 w-6 items-center justify-center rounded-lg bg-muted text-xs font-bold text-primary ring-1 ring-border">
         {initial}
       </span>
 
-      <div className="rounded-xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)]/50 p-4 transition hover:border-[var(--wg-color-primary)]/30">
+      <div className="rounded-lg border border-border bg-muted/40 p-4 transition-shadow hover:shadow-sm">
         <button
           type="button"
           className="flex w-full items-start justify-between gap-3 text-left"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
         >
-          <motion.div>
-            <h3 className="font-semibold text-[var(--wg-color-text-primary)]">{item.title || "Role title"}</h3>
-            <p className="text-sm text-[var(--wg-color-text-secondary)]">
+          <div>
+            <h3 className="font-semibold text-foreground">{item.title || "Role title"}</h3>
+            <p className="text-sm text-muted-foreground">
               {item.company || "Company"} · {item.duration || "Duration"}
             </p>
-          </motion.div>
-          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-            <ChevronDown className="h-5 w-5 text-[var(--wg-color-text-tertiary)]" />
-          </motion.span>
+          </div>
+          <ChevronDown
+            className={cn("h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
+          />
         </button>
 
-        <AnimatePresence initial={false}>
-          {open ? (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
-              <div className="mt-4 space-y-3 border-t border-[var(--wg-color-border)] pt-4">
-                {bullets.length > 0 ? (
-                  <ul className="list-disc space-y-1.5 pl-5 text-sm text-[var(--wg-color-text-secondary)]">
-                    {bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-[var(--wg-color-text-secondary)]">
-                    {item.description || "Add impact bullets in the description field."}
-                  </p>
-                )}
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <input
-                    value={item.title}
-                    onChange={(e) => onUpdate(index, "title", e.target.value)}
-                    placeholder="Title"
-                    className="rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface)] px-2 py-1.5 text-xs"
-                  />
-                  <input
-                    value={item.company}
-                    onChange={(e) => onUpdate(index, "company", e.target.value)}
-                    placeholder="Company"
-                    className="rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface)] px-2 py-1.5 text-xs"
-                  />
-                </div>
-                <textarea
-                  value={item.description}
-                  onChange={(e) => onUpdate(index, "description", e.target.value)}
-                  rows={3}
-                  placeholder="Achievements (one per line)"
-                  className="w-full rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface)] px-2 py-1.5 text-xs"
+        <div
+          className={cn(
+            "grid transition-all duration-250 ease-out",
+            open ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+          )}
+        >
+          <div className="overflow-hidden">
+            <div className="space-y-3 border-t border-border pt-4">
+              {bullets.length > 0 ? (
+                <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+                  {bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {item.description || "Add impact bullets in the description field."}
+                </p>
+              )}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Input
+                  value={item.title}
+                  onChange={(e) => onUpdate(index, "title", e.target.value)}
+                  placeholder="Title"
+                  className="h-8 text-xs"
                 />
-                <button
-                  type="button"
-                  onClick={() => onRemove(index)}
-                  className="inline-flex items-center gap-1 text-xs text-[var(--wg-color-error)]"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Remove role
-                </button>
+                <Input
+                  value={item.company}
+                  onChange={(e) => onUpdate(index, "company", e.target.value)}
+                  placeholder="Company"
+                  className="h-8 text-xs"
+                />
               </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+              <Textarea
+                value={item.description}
+                onChange={(e) => onUpdate(index, "description", e.target.value)}
+                rows={3}
+                placeholder="Achievements (one per line)"
+                className="text-xs"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => onRemove(index)}
+                className="h-auto px-0 text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Remove role
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-    </motion.article>
+    </article>
   );
 }
 
@@ -184,23 +183,19 @@ export default function ProfileExperience({ userId, experience }: Props) {
         title="Experience"
         description="Timeline of roles, impact, and achievements."
         action={
-          <button
-            type="button"
-            onClick={() => void addItem()}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--wg-color-text-primary)] px-3 py-2 text-xs font-semibold text-[var(--wg-color-surface)]"
-          >
+          <Button type="button" size="sm" onClick={() => void addItem()}>
             <Plus className="h-3.5 w-3.5" />
             Add role
-          </button>
+          </Button>
         }
       />
 
       {items.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-[var(--wg-color-border)] p-8 text-center text-sm text-[var(--wg-color-text-tertiary)]">
+        <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           No experience yet. Add your first role to build credibility.
         </p>
       ) : (
-        <motion.div className="space-y-6" layout>
+        <div className="space-y-6">
           {items.map((item, i) => (
             <ExperienceItem
               key={`${item.company}-${item.title}-${i}`}
@@ -210,7 +205,7 @@ export default function ProfileExperience({ userId, experience }: Props) {
               onRemove={(idx) => void removeItem(idx)}
             />
           ))}
-        </motion.div>
+        </div>
       )}
     </ProfileCard>
   );

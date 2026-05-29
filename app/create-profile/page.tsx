@@ -20,8 +20,24 @@ import {
   withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
 import { describeFetchError } from "../../lib/auth-errors";
-import { hardNavigate, loginRedirectPath, syncClientSession } from "../../lib/client-auth";
+import { ensureClientSession } from "../../lib/auth/session-client";
+import { supertokensEnabled } from "../../lib/auth/config";
+import {
+  hardNavigate,
+  loginRedirectPath,
+  syncClientSession,
+  syncServerAuthCookies,
+} from "../../lib/client-auth";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
+import { atsScorePath, parseResumePath } from "../../lib/workgraph-api-routes";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type ManualState = {
   email: string;
@@ -81,19 +97,14 @@ export default function CreateProfilePage() {
   useEffect(() => {
     async function bootstrap() {
       try {
-        const ok = await syncClientSession();
-        if (!ok) {
+        const session = await ensureClientSession();
+        if (!session) {
           hardNavigate(loginRedirectPath("/create-profile"));
           return;
         }
-
-        const supabase = createBrowserSupabaseClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (user?.email) {
-          setUploadEmail((prev) => prev || user.email || "");
-          setManual((prev) => ({ ...prev, email: prev.email || user.email || "" }));
+        if (session.email) {
+          setUploadEmail((prev) => prev || session.email || "");
+          setManual((prev) => ({ ...prev, email: prev.email || session.email || "" }));
         }
         setAuthReady(true);
       } catch (err) {
@@ -105,11 +116,12 @@ export default function CreateProfilePage() {
   }, []);
 
   async function requireSignedInUser() {
-    const ok = await syncClientSession();
-    if (!ok) {
+    const session = await ensureClientSession();
+    if (!session) {
       hardNavigate(loginRedirectPath("/create-profile"));
       throw new Error("Redirecting to sign in...");
     }
+    return session;
   }
 
   const acceptedTypes = useMemo(
@@ -155,7 +167,7 @@ export default function CreateProfilePage() {
       data.append("file", file);
       if (uploadEmail.trim()) data.append("email", uploadEmail.trim());
 
-      const parseRes = await fetch("/api/parse-resume", {
+      const parseRes = await fetch(parseResumePath(), {
         method: "POST",
         headers: await withSupabaseAuthHeaders(),
         body: data,
@@ -178,17 +190,21 @@ export default function CreateProfilePage() {
         (typeof profile?.email === "string" && profile.email.trim()) || uploadEmail.trim();
 
       setLoadingPhase("score");
-      if (email) {
-        await fetch("/api/ats-score", {
+      const session = await ensureClientSession();
+      if (session?.userId) {
+        await fetch(atsScorePath(), {
           method: "POST",
           headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ user_id: session.userId, email }),
         });
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      await syncClientSession();
+      if (!supertokensEnabled()) {
+        await syncClientSession();
+        await syncServerAuthCookies();
+      }
       hardNavigate("/profile");
     } catch (err) {
       setError(describeFetchError(err));
@@ -234,17 +250,21 @@ export default function CreateProfilePage() {
         throw new Error(apiErrorMessage(saveJson) || "Could not save your profile.");
       }
 
-      if (payload.email) {
-        await fetch("/api/ats-score", {
+      const session = await ensureClientSession();
+      if (session?.userId) {
+        await fetch(atsScorePath(), {
           method: "POST",
           headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
-          body: JSON.stringify({ email: payload.email }),
+          body: JSON.stringify({ user_id: session.userId, email: payload.email }),
         });
       }
 
       setMessage("Profile saved. Taking you to your profile.");
-      await syncClientSession();
+      if (!supertokensEnabled()) {
+        await syncClientSession();
+        await syncServerAuthCookies();
+      }
       hardNavigate("/profile");
     } catch (err) {
       setError(describeFetchError(err));
@@ -262,7 +282,7 @@ export default function CreateProfilePage() {
         panelDescription="Checking your session…"
         highlights={["Secure sign-in required", "Resume import", "Manual entry"]}
       >
-        <div className="flex items-center justify-center py-16 text-sm text-slate-600">
+        <div className="flex items-center justify-center py-16 text-sm text-muted-foreground">
           <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
           Verifying sign-in…
         </div>
@@ -285,352 +305,311 @@ export default function CreateProfilePage() {
       <div className="wg-auth-enter space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Create your profile</h2>
-            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-slate-600">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">Create your profile</h2>
+            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
               Signed-in accounts only. Choose import or manual entry — you can edit everything later.
             </p>
           </div>
-          <Link
-            href="/profile"
-            className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
-          >
-            View profile
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Link>
+          <Button asChild variant="link" className="shrink-0 px-0">
+            <Link href="/profile">
+              View profile
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </Button>
         </div>
 
-        <div
-          className="inline-flex h-11 w-full rounded-full bg-emerald-50/70 p-1 ring-1 ring-emerald-100/90 sm:w-auto sm:min-w-[340px]"
-          role="tablist"
-          aria-label="Profile creation method"
+        <Tabs
+          value={mode}
+          onValueChange={(v) => {
+            setMode(v as Mode);
+            setError("");
+          }}
         >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "resume"}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-200 ${
-              mode === "resume"
-                ? "bg-white text-emerald-950 shadow-sm ring-1 ring-emerald-200/80"
-                : "text-emerald-900/65 hover:text-emerald-950"
-            }`}
-            onClick={() => {
-              setMode("resume");
-              setError("");
-            }}
-          >
-            <UploadCloud className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-            Import resume
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "manual"}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-all duration-200 ${
-              mode === "manual"
-                ? "bg-white text-emerald-950 shadow-sm ring-1 ring-emerald-200/80"
-                : "text-emerald-900/65 hover:text-emerald-950"
-            }`}
-            onClick={() => {
-              setMode("manual");
-              setError("");
-            }}
-          >
-            <PenLine className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-            Manual entry
-          </button>
-        </div>
+          <TabsList className="h-11 w-full rounded-full bg-muted/60 p-1 sm:w-auto sm:min-w-[340px]">
+            <TabsTrigger value="resume" className="flex-1 gap-2 rounded-full">
+              <UploadCloud className="h-4 w-4 shrink-0" aria-hidden />
+              Import resume
+            </TabsTrigger>
+            <TabsTrigger value="manual" className="flex-1 gap-2 rounded-full">
+              <PenLine className="h-4 w-4 shrink-0" aria-hidden />
+              Manual entry
+            </TabsTrigger>
+          </TabsList>
 
-        <section
-          className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_24px_80px_-24px_rgb(15_23_42/0.12)] sm:p-8"
-          aria-live="polite"
-        >
-          {message ? (
-            <p className="mb-6 rounded-xl border border-emerald-200/80 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{message}</p>
-          ) : null}
-          {error ? (
-            <p className="mb-6 rounded-xl border border-red-200/90 bg-red-50 px-4 py-3 text-sm text-red-900">{error}</p>
-          ) : null}
+          <TabsContent value="resume" className="mt-6">
+            <Card className="border-slate-200 shadow-md">
+              <CardContent className="space-y-6 p-6 sm:p-8">
+                {message ? (
+                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                    <AlertDescription>{message}</AlertDescription>
+                  </Alert>
+                ) : null}
+                {error ? (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                ) : null}
 
-          {mode === "resume" ? (
-            <form className="space-y-6" onSubmit={handleUpload}>
-              <div>
-                <label htmlFor="profile-email-fallback" className="block text-sm font-semibold text-slate-900">
-                  Contact email <span className="font-normal text-slate-500">(optional)</span>
-                </label>
-                <p className="mt-1 text-xs text-slate-500">If your file doesn&apos;t include a readable email.</p>
-                <input
-                  id="profile-email-fallback"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@company.com"
-                  value={uploadEmail}
-                  onChange={(e) => setUploadEmail(e.target.value)}
-                  disabled={isLoading}
-                  className="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                />
-              </div>
-
-              <div>
-                <span className="block text-sm font-semibold text-slate-900">Resume file</span>
-                <p className="mt-1 text-xs text-slate-500">
-                  PDF or DOCX · up to {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
-                </p>
-
-                {!file ? (
-                  <div
-                    {...getRootProps()}
-                    className={`group mt-3 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-200 ${
-                      isDragActive
-                        ? "scale-[1.01] border-emerald-500 bg-emerald-50/70"
-                        : "border-slate-200 bg-gradient-to-b from-emerald-50/35 via-white to-white hover:border-emerald-200 hover:shadow-[0_12px_40px_-28px_rgb(16_185_129/0.14)]"
-                    } ${isLoading ? "pointer-events-none opacity-50" : ""}`}
-                  >
-                    <input {...getInputProps()} />
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-md ring-1 ring-slate-200/80 transition-transform duration-200 group-hover:scale-105">
-                      <FileText className="h-6 w-6 text-emerald-600" aria-hidden />
-                    </div>
-                    <p className="mt-5 text-[15px] font-semibold text-slate-900">
-                      {isDragActive ? "Drop your file here" : "Drag & drop your resume"}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500">or click to browse — PDF or DOCX</p>
-                  </div>
-                ) : (
-                  <div className="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5">
-                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-slate-900">{file.name}</p>
-                      <p className="text-xs text-slate-500">{formatBytes(file.size)}</p>
-                    </div>
-                    <button
-                      type="button"
+                <form className="space-y-6" onSubmit={handleUpload}>
+                  <div className="space-y-2">
+                    <Label htmlFor="profile-email-fallback">
+                      Contact email <span className="font-normal text-muted-foreground">(optional)</span>
+                    </Label>
+                    <p className="text-xs text-muted-foreground">If your file doesn&apos;t include a readable email.</p>
+                    <Input
+                      id="profile-email-fallback"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@company.com"
+                      value={uploadEmail}
+                      onChange={(e) => setUploadEmail(e.target.value)}
                       disabled={isLoading}
-                      onClick={() => setFile(null)}
-                      className="shrink-0 text-xs font-semibold text-slate-700 underline-offset-2 hover:underline disabled:opacity-50"
-                    >
-                      Remove
-                    </button>
+                      className="h-11"
+                    />
                   </div>
-                )}
-              </div>
 
-              <button
-                type="submit"
-                disabled={isLoading || !file}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:bg-emerald-100 disabled:text-emerald-400"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    {loadingPhase === "score" ? "Finalizing…" : "Reading resume…"}
-                  </>
-                ) : (
-                  <>
-                    Continue
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </>
-                )}
-              </button>
-            </form>
-          ) : (
-            <form className="space-y-5" onSubmit={handleManual}>
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label htmlFor="manual-email" className="block text-sm font-semibold text-slate-900">
-                    Email <span className="text-red-600">*</span>
-                  </label>
-                  <input
-                    id="manual-email"
-                    required
-                    type="email"
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    value={manual.email}
-                    onChange={(e) => setManual((p) => ({ ...p, email: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label htmlFor="manual-name" className="block text-sm font-semibold text-slate-900">
-                    Full name
-                  </label>
-                  <input
-                    id="manual-name"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="Jordan Lee"
-                    value={manual.full_name}
-                    onChange={(e) => setManual((p) => ({ ...p, full_name: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label htmlFor="manual-headline" className="block text-sm font-semibold text-slate-900">
-                    Professional headline
-                  </label>
-                  <input
-                    id="manual-headline"
-                    type="text"
-                    placeholder="Product engineer · ML infrastructure"
-                    value={manual.headline}
-                    onChange={(e) => setManual((p) => ({ ...p, headline: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="manual-location" className="block text-sm font-semibold text-slate-900">
-                    Location
-                  </label>
-                  <input
-                    id="manual-location"
-                    type="text"
-                    placeholder="Chennai, India"
-                    value={manual.location}
-                    onChange={(e) => setManual((p) => ({ ...p, location: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="manual-li" className="block text-sm font-semibold text-slate-900">
-                    LinkedIn
-                  </label>
-                  <input
-                    id="manual-li"
-                    type="url"
-                    placeholder="https://linkedin.com/in/…"
-                    value={manual.linkedin_url}
-                    onChange={(e) => setManual((p) => ({ ...p, linkedin_url: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="manual-gh" className="block text-sm font-semibold text-slate-900">
-                    GitHub
-                  </label>
-                  <input
-                    id="manual-gh"
-                    type="url"
-                    placeholder="https://github.com/…"
-                    value={manual.github_url}
-                    onChange={(e) => setManual((p) => ({ ...p, github_url: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label htmlFor="manual-website" className="block text-sm font-semibold text-slate-900">
-                    Website / Portfolio
-                  </label>
-                  <input
-                    id="manual-website"
-                    type="url"
-                    placeholder="https://yourportfolio.com"
-                    value={manual.website_url}
-                    onChange={(e) => setManual((p) => ({ ...p, website_url: e.target.value }))}
-                    disabled={isLoading}
-                    className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                  />
-                </div>
-              </div>
+                  <div className="space-y-2">
+                    <Label>Resume file</Label>
+                    <p className="text-xs text-muted-foreground">
+                      PDF or DOCX · up to {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
+                    </p>
 
-              <div>
-                <label htmlFor="manual-summary" className="block text-sm font-semibold text-slate-900">
-                  Professional summary
-                </label>
-                <textarea
-                  id="manual-summary"
-                  rows={3}
-                  placeholder="Write a concise summary recruiters can skim quickly."
-                  value={manual.summary}
-                  onChange={(e) => setManual((p) => ({ ...p, summary: e.target.value }))}
-                  disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                />
-              </div>
+                    {!file ? (
+                      <div
+                        {...getRootProps()}
+                        className={cn(
+                          "group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-200",
+                          isDragActive
+                            ? "scale-[1.01] border-primary bg-primary/5"
+                            : "border-border bg-gradient-to-b from-muted/40 via-background to-background hover:border-primary/40 hover:shadow-md",
+                          isLoading && "pointer-events-none opacity-50"
+                        )}
+                      >
+                        <input {...getInputProps()} />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-200 group-hover:scale-105">
+                          <FileText className="h-6 w-6 text-primary" aria-hidden />
+                        </div>
+                        <p className="mt-5 text-[15px] font-semibold text-foreground">
+                          {isDragActive ? "Drop your file here" : "Drag & drop your resume"}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">or click to browse — PDF or DOCX</p>
+                      </div>
+                    ) : (
+                      <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3.5">
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
+                        </div>
+                        <Button type="button" variant="ghost" size="sm" disabled={isLoading} onClick={() => setFile(null)}>
+                          Remove
+                        </Button>
+                      </div>
+                    )}
+                  </div>
 
-              <div>
-                <label htmlFor="manual-skills" className="block text-sm font-semibold text-slate-900">
-                  Skills
-                </label>
-                <p className="mt-1 text-xs text-slate-500">One per line.</p>
-                <textarea
-                  id="manual-skills"
-                  rows={4}
-                  placeholder={"TypeScript\nDistributed systems\nStakeholder communication"}
-                  value={manual.skills}
-                  onChange={(e) => setManual((p) => ({ ...p, skills: e.target.value }))}
-                  disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                />
-              </div>
+                  <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-[15px]">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        {loadingPhase === "score" ? "Finalizing…" : "Reading resume…"}
+                      </>
+                    ) : (
+                      <>
+                        Continue
+                        <ArrowRight className="h-4 w-4" aria-hidden />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              <div>
-                <label htmlFor="manual-exp" className="block text-sm font-semibold text-slate-900">
-                  Experience
-                </label>
-                <p className="mt-1 text-xs text-slate-500">Bullets or roles, one per line.</p>
-                <textarea
-                  id="manual-exp"
-                  rows={4}
-                  placeholder="Senior Engineer — Acme (2021–present)…"
-                  value={manual.experience}
-                  onChange={(e) => setManual((p) => ({ ...p, experience: e.target.value }))}
-                  disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                />
-              </div>
+          <TabsContent value="manual" className="mt-6">
+            <Card className="border-slate-200 shadow-md">
+              <CardContent className="space-y-5 p-6 sm:p-8">
+                {message ? (
+                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                    <AlertDescription>{message}</AlertDescription>
+                  </Alert>
+                ) : null}
+                {error ? (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                ) : null}
 
-              <div>
-                <label htmlFor="manual-edu" className="block text-sm font-semibold text-slate-900">
-                  Education
-                </label>
-                <p className="mt-1 text-xs text-slate-500">One entry per line.</p>
-                <textarea
-                  id="manual-edu"
-                  rows={3}
-                  placeholder="M.S. Computer Science — State University"
-                  value={manual.education}
-                  onChange={(e) => setManual((p) => ({ ...p, education: e.target.value }))}
-                  disabled={isLoading}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-[15px] outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12 disabled:opacity-60"
-                />
-              </div>
+                <form className="space-y-5" onSubmit={handleManual}>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="manual-email">
+                        Email <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="manual-email"
+                        required
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@company.com"
+                        value={manual.email}
+                        onChange={(e) => setManual((p) => ({ ...p, email: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="manual-name">Full name</Label>
+                      <Input
+                        id="manual-name"
+                        type="text"
+                        autoComplete="name"
+                        placeholder="Jordan Lee"
+                        value={manual.full_name}
+                        onChange={(e) => setManual((p) => ({ ...p, full_name: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="manual-headline">Professional headline</Label>
+                      <Input
+                        id="manual-headline"
+                        type="text"
+                        placeholder="Product engineer · ML infrastructure"
+                        value={manual.headline}
+                        onChange={(e) => setManual((p) => ({ ...p, headline: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-location">Location</Label>
+                      <Input
+                        id="manual-location"
+                        type="text"
+                        placeholder="Chennai, India"
+                        value={manual.location}
+                        onChange={(e) => setManual((p) => ({ ...p, location: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-li">LinkedIn</Label>
+                      <Input
+                        id="manual-li"
+                        type="url"
+                        placeholder="https://linkedin.com/in/…"
+                        value={manual.linkedin_url}
+                        onChange={(e) => setManual((p) => ({ ...p, linkedin_url: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-gh">GitHub</Label>
+                      <Input
+                        id="manual-gh"
+                        type="url"
+                        placeholder="https://github.com/…"
+                        value={manual.github_url}
+                        onChange={(e) => setManual((p) => ({ ...p, github_url: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="manual-website">Website / Portfolio</Label>
+                      <Input
+                        id="manual-website"
+                        type="url"
+                        placeholder="https://yourportfolio.com"
+                        value={manual.website_url}
+                        onChange={(e) => setManual((p) => ({ ...p, website_url: e.target.value }))}
+                        disabled={isLoading}
+                        className="h-11"
+                      />
+                    </div>
+                  </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-emerald-900 text-[15px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,0.08)_inset] transition hover:bg-emerald-950 disabled:cursor-not-allowed disabled:bg-emerald-100 disabled:text-emerald-400"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    Saving…
-                  </>
-                ) : (
-                  <>
-                    Save profile
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </>
-                )}
-              </button>
-            </form>
-          )}
-        </section>
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-summary">Professional summary</Label>
+                    <Textarea
+                      id="manual-summary"
+                      rows={3}
+                      placeholder="Write a concise summary recruiters can skim quickly."
+                      value={manual.summary}
+                      onChange={(e) => setManual((p) => ({ ...p, summary: e.target.value }))}
+                      disabled={isLoading}
+                    />
+                  </div>
 
-        <p className="text-center text-xs leading-relaxed text-slate-400">
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-skills">Skills</Label>
+                    <p className="text-xs text-muted-foreground">One per line.</p>
+                    <Textarea
+                      id="manual-skills"
+                      rows={4}
+                      placeholder={"TypeScript\nDistributed systems\nStakeholder communication"}
+                      value={manual.skills}
+                      onChange={(e) => setManual((p) => ({ ...p, skills: e.target.value }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-exp">Experience</Label>
+                    <p className="text-xs text-muted-foreground">Bullets or roles, one per line.</p>
+                    <Textarea
+                      id="manual-exp"
+                      rows={4}
+                      placeholder="Senior Engineer — Acme (2021–present)…"
+                      value={manual.experience}
+                      onChange={(e) => setManual((p) => ({ ...p, experience: e.target.value }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-edu">Education</Label>
+                    <p className="text-xs text-muted-foreground">One entry per line.</p>
+                    <Textarea
+                      id="manual-edu"
+                      rows={3}
+                      placeholder="M.S. Computer Science — State University"
+                      value={manual.education}
+                      onChange={(e) => setManual((p) => ({ ...p, education: e.target.value }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-[15px]">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        Saving…
+                      </>
+                    ) : (
+                      <>
+                        Save profile
+                        <ArrowRight className="h-4 w-4" aria-hidden />
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <p className="text-center text-xs leading-relaxed text-muted-foreground/70">
           Trouble importing? Confirm you&apos;re signed in, then try manual entry or a different file format.
         </p>
 
-        <p className="text-center text-sm text-slate-600">
+        <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link
-            href="/login?next=/create-profile"
-            className="font-semibold text-emerald-900 underline decoration-emerald-200 underline-offset-[5px] hover:text-emerald-950 hover:decoration-emerald-700"
-          >
+          <Link href="/login?next=/create-profile" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign in
           </Link>
         </p>

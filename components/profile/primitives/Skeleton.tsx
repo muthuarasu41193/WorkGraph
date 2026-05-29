@@ -1,28 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton as UiSkeleton } from "@/components/ui/skeleton";
 
 export function Skeleton({ className = "" }: { className?: string }) {
-  return (
-    <div
-      role="status"
-      aria-label="Loading"
-      className={["rounded-xl wg-skeleton-shimmer", className].join(" ")}
-    />
-  );
+  return <UiSkeleton className={className} />;
 }
 
 export function SkeletonCard() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-3 rounded-2xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface)] p-6"
-    >
-      <Skeleton className="h-4 w-1/3" />
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-3 w-5/6" />
-      <Skeleton className="h-24 w-full" />
-    </motion.div>
+    <Card className="border-slate-200 shadow-sm">
+      <CardContent className="space-y-3 p-6">
+        <UiSkeleton className="h-4 w-1/3" />
+        <UiSkeleton className="h-3 w-full" />
+        <UiSkeleton className="h-3 w-5/6" />
+        <UiSkeleton className="h-24 w-full" />
+      </CardContent>
+    </Card>
   );
 }

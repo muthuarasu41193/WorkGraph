@@ -1,0 +1,130 @@
+/* WorkGraph profile dashboard — Shadcn design system */
+.wg-profile-root,
+.wg-profile-app {
+  --wg-color-primary: #2563eb;
+  --wg-color-primary-dark: #1d4ed8;
+  --wg-color-accent: #a855f7;
+  --wg-color-success: #16a34a;
+  --wg-color-warning: #f59e0b;
+  --wg-color-error: #ef4444;
+  --wg-color-surface: #ffffff;
+  --wg-color-surface-variant: #f8fafc;
+  --wg-color-page: #f1f5f9;
+  --wg-color-border: #e2e8f0;
+  --wg-color-text-primary: #0f172a;
+  --wg-color-text-secondary: #475569;
+  --wg-color-text-tertiary: #64748b;
+  --wg-profile-radius: 0.75rem;
+  --wg-profile-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  min-height: 100dvh;
+  background: var(--wg-color-page);
+  color: var(--wg-color-text-primary);
+  font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="dark"] .wg-profile-root,
+[data-theme="dark"] .wg-profile-app {
+  --wg-color-primary: #60a5fa;
+  --wg-color-primary-dark: #3b82f6;
+  --wg-color-accent: #c084fc;
+  --wg-color-success: #4ade80;
+  --wg-color-warning: #fbbf24;
+  --wg-color-error: #f87171;
+  --wg-color-surface: #1e293b;
+  --wg-color-surface-variant: #0f172a;
+  --wg-color-page: #020617;
+  --wg-color-border: #334155;
+  --wg-color-text-primary: #f1f5f9;
+  --wg-color-text-secondary: #94a3b8;
+  --wg-color-text-tertiary: #64748b;
+}
+
+/* Top navigation */
+.wg-profile-app .wg-profile-nav {
+  background: var(--wg-color-surface);
+  border-bottom: 1px solid var(--wg-color-border);
+  box-shadow: var(--wg-profile-shadow);
+  backdrop-filter: blur(8px);
+}
+
+/* Hero card */
+.wg-profile-app .wg-profile-hero {
+  background: var(--wg-color-surface);
+  border: 1px solid var(--wg-color-border);
+  border-radius: var(--wg-profile-radius);
+  box-shadow: var(--wg-profile-shadow);
+  transition: box-shadow 0.2s ease;
+}
+
+.wg-profile-app .wg-profile-hero:hover {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* Section panels */
+.wg-profile-app .wg-profile-card {
+  background: var(--wg-color-surface);
+  border-radius: var(--wg-profile-radius);
+}
+
+.wg-profile-app .wg-profile-card--neutral {
+  border-left-color: var(--wg-color-border) !important;
+}
+
+/* KPI strip under hero */
+.wg-profile-app .wg-profile-kpi {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: var(--wg-color-border);
+  border: 1px solid var(--wg-color-border);
+  border-radius: var(--wg-profile-radius);
+  box-shadow: var(--wg-profile-shadow);
+}
+
+@media (min-width: 640px) {
+  .wg-profile-app .wg-profile-kpi {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.wg-profile-app .wg-profile-kpi > div {
+  background: var(--wg-color-surface);
+  padding: 1rem 1.25rem;
+  transition: background-color 0.15s ease;
+}
+
+.wg-profile-app .wg-profile-kpi > div:hover {
+  background: var(--wg-color-surface-variant);
+}
+
+.wg-profile-app .wg-profile-kpi dt {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--wg-color-text-tertiary);
+}
+
+.wg-profile-app .wg-profile-kpi dd {
+  margin-top: 0.25rem;
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--wg-color-primary);
+}
+
+/* Sidebar widgets */
+.wg-profile-app .wg-profile-aside .wg-profile-card:first-child {
+  border-left: 3px solid var(--wg-color-accent) !important;
+}
+
+/* Kill old gradient leaks */
+.wg-profile-app .bg-gradient-to-br,
+.wg-profile-app [class*="from-[#1a73e8]"],
+.wg-profile-app [class*="via-[#669df6]"] {
+  background: var(--wg-color-surface-variant) !important;
+  background-image: none !important;
+}

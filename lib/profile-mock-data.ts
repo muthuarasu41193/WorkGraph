@@ -30,6 +30,7 @@ export type JobMatchPreview = {
   salaryRange: string;
   workMode: "Remote" | "Hybrid" | "On-site";
   location: string;
+  applyUrl?: string;
 };
 
 export const MOCK_SKILL_CATEGORIES: SkillCategory[] = [

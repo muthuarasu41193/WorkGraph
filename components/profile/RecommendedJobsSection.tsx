@@ -35,24 +35,26 @@ import {
   X,
 } from "lucide-react";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Chip,
-  Drawer,
-  FormControlLabel,
-  FormControl,
-  InputLabel,
-  MenuItem,
   Select,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 const SOURCE_STYLES: Record<
   RecommendedJobCard["source"],
@@ -171,6 +173,19 @@ const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_as
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    setMatches(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [query]);
+  return matches;
+}
+
 const FILTER_TRIGGER_BASE_CLASS =
   "inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2";
 const FILTER_TRIGGER_INACTIVE_CLASS =
@@ -1127,24 +1142,23 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
 
       {jobs.length > 0 ? (
         <>
-          <Box sx={{ display: { md: "none" } }}>
+          <div className="md:hidden">
             <Button
+              type="button"
               onClick={() => setIsMobileFiltersOpen(true)}
-              variant="outlined"
-              startIcon={<SlidersHorizontal size={16} />}
-              sx={{ borderRadius: "20px", textTransform: "none" }}
+              variant="outline"
+              className="rounded-full"
               aria-label="Open filters panel"
             >
+              <SlidersHorizontal className="h-4 w-4" />
               Filters
               {activeFilterCount > 0 ? (
-                <Chip
-                  label={activeFilterCount}
-                  size="small"
-                  sx={{ ml: 1, bgcolor: "primary.main", color: "primary.contrastText", height: 20 }}
-                />
+                <Badge variant="default" className="ml-1">
+                  {activeFilterCount}
+                </Badge>
               ) : null}
             </Button>
-          </Box>
+          </div>
 
           <section className="sticky top-[68px] z-[100] hidden border-b border-[#DADCE0] bg-[rgba(255,255,255,0.95)] py-3 backdrop-blur-[8px] md:block">
             <div className="wg-no-scrollbar flex items-center gap-2 overflow-x-auto">
@@ -1358,39 +1372,33 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         </>
       ) : null}
 
-      <Drawer
-        anchor="bottom"
-        open={isMobileFiltersOpen}
-        onClose={() => setIsMobileFiltersOpen(false)}
-        sx={{ display: { md: "none" } }}
-      >
-        <Box sx={{ p: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Filters</Typography>
-            <Button onClick={() => setIsMobileFiltersOpen(false)} size="small">Close</Button>
-          </Box>
-          <Box sx={{ display: "grid", gap: 2 }}>
-            <TextField
-              size="small"
+      <Sheet open={isMobileFiltersOpen} onOpenChange={setIsMobileFiltersOpen}>
+        <SheetContent side="bottom" className="md:hidden">
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+          </SheetHeader>
+          <div className="grid gap-4 px-1 pb-4">
+            <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search job titles, companies..."
-              fullWidth
             />
-            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 1 }}>
+            <div className="grid grid-cols-2 gap-2">
               {DATE_OPTIONS.map((d) => (
                 <Button
                   key={d.id}
-                  variant={dateWindow === d.id ? "contained" : "outlined"}
+                  type="button"
+                  variant={dateWindow === d.id ? "default" : "outline"}
                   onClick={() => setDateWindow(d.id)}
-                  sx={{ textTransform: "none", borderRadius: "16px" }}
+                  className="rounded-2xl"
                 >
                   {d.label}
                 </Button>
               ))}
-            </Box>
+            </div>
             <Button
-              variant="outlined"
+              type="button"
+              variant="outline"
               onClick={() => {
                 clearFilters();
                 setIsMobileFiltersOpen(false);
@@ -1398,48 +1406,43 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             >
               Clear all filters
             </Button>
-          </Box>
-        </Box>
-      </Drawer>
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      <Drawer
-        anchor={isMobile ? "bottom" : "right"}
-        open={isMoreFiltersOpen}
-        onClose={() => setIsMoreFiltersOpen(false)}
-      >
-        <Box sx={{ p: 3, width: { xs: "100vw", sm: 420 } }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h6">Advanced Filters</Typography>
-            <Button onClick={() => setIsMoreFiltersOpen(false)}>Close</Button>
-          </Box>
-          <Box sx={{ display: "grid", gap: 2 }}>
-            <TextField
-              size="small"
-              label="Skills required"
-              placeholder="React, Python, SQL"
-              value={requiredSkillsInput}
-              onChange={(e) => setRequiredSkillsInput(e.target.value)}
-              helperText="Separate multiple skills with commas."
-              fullWidth
-            />
-            <TextField
-              size="small"
-              label="Company"
-              placeholder="Search company..."
-              value={companyQuery}
-              onChange={(e) => setCompanyQuery(e.target.value)}
-              fullWidth
-            />
-            <Box>
-              <Typography variant="caption" color="text.secondary">Benefits</Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+      <Sheet open={isMoreFiltersOpen} onOpenChange={setIsMoreFiltersOpen}>
+        <SheetContent side={isMobile ? "bottom" : "right"} className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Advanced Filters</SheetTitle>
+          </SheetHeader>
+          <div className="grid gap-4 px-1 pb-4">
+            <div className="grid gap-2">
+              <Label htmlFor="req-skills">Skills required</Label>
+              <Input
+                id="req-skills"
+                placeholder="React, Python, SQL"
+                value={requiredSkillsInput}
+                onChange={(e) => setRequiredSkillsInput(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Separate multiple skills with commas.</p>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="company-filter">Company</Label>
+              <Input
+                id="company-filter"
+                placeholder="Search company..."
+                value={companyQuery}
+                onChange={(e) => setCompanyQuery(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Benefits</Label>
+              <div className="flex flex-wrap gap-2">
                 {BENEFIT_OPTIONS.map((benefit) => (
-                  <Chip
+                  <Badge
                     key={benefit}
-                    label={benefit}
-                    clickable
-                    color={benefits.has(benefit) ? "primary" : "default"}
-                    variant={benefits.has(benefit) ? "filled" : "outlined"}
+                    variant={benefits.has(benefit) ? "default" : "outline"}
+                    className="cursor-pointer"
                     onClick={() =>
                       setBenefits((prev) => {
                         const next = new Set(prev);
@@ -1448,54 +1451,63 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                         return next;
                       })
                     }
-                  />
+                  >
+                    {benefit}
+                  </Badge>
                 ))}
-              </Box>
-            </Box>
-            <FormControlLabel
-              control={<Checkbox checked={visaSponsorshipOnly} onChange={(e) => setVisaSponsorshipOnly(e.target.checked)} />}
-              label="Visa sponsorship"
-            />
-            <FormControlLabel
-              control={<Checkbox checked={easyApplyOnly} onChange={(e) => setEasyApplyOnly(e.target.checked)} />}
-              label="Easy Apply"
-            />
-          </Box>
-        </Box>
-      </Drawer>
+              </div>
+            </div>
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <Checkbox checked={visaSponsorshipOnly} onCheckedChange={(c) => setVisaSponsorshipOnly(c === true)} />
+              Visa sponsorship
+            </label>
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <Checkbox checked={easyApplyOnly} onCheckedChange={(c) => setEasyApplyOnly(c === true)} />
+              Easy Apply
+            </label>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
       {jobs.length > 0 ? (
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
-          <ToggleButtonGroup
-            exclusive
-            value={viewMode}
-            onChange={(_, next) => {
-              if (next) setViewMode(next);
-            }}
-            size="small"
-            aria-label="Choose jobs list view"
-          >
-            <ToggleButton value="list" aria-label="List view"><LayoutList size={16} /></ToggleButton>
-            <ToggleButton value="grid" aria-label="Grid view"><LayoutGrid size={16} /></ToggleButton>
-          </ToggleButtonGroup>
-          <FormControl size="small" sx={{ minWidth: 220 }}>
-            <InputLabel id="jobs-sort-label">Sort</InputLabel>
-            <Select
-              labelId="jobs-sort-label"
-              label="Sort"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+        <div className="flex items-center justify-between gap-2">
+          <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
+            <Button
+              type="button"
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="icon-sm"
+              onClick={() => setViewMode("list")}
+              aria-label="List view"
+              aria-pressed={viewMode === "list"}
             >
-              <MenuItem value="best">Best Match</MenuItem>
-              <MenuItem value="newest">Newest First</MenuItem>
-              <MenuItem value="salary_desc">Salary: High to Low</MenuItem>
-              <MenuItem value="salary_asc">Salary: Low to High</MenuItem>
-              <MenuItem value="company_asc">Company Name A-Z</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
+              <LayoutList className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant={viewMode === "grid" ? "default" : "ghost"}
+              size="icon-sm"
+              onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
+              aria-pressed={viewMode === "grid"}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+          </div>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+            <SelectTrigger className="min-w-[220px]">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="best">Best Match</SelectItem>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="salary_desc">Salary: High to Low</SelectItem>
+              <SelectItem value="salary_asc">Salary: Low to High</SelectItem>
+              <SelectItem value="company_asc">Company Name A-Z</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       ) : null}
 
       {showSkeleton ? (
@@ -1564,9 +1576,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   setExpandedJobId((prev) => (prev === job.id ? null : job.id));
                 }
               }}
-              className={`group relative cursor-pointer rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-5 transition-all duration-200 ease-in hover:border-[#1A73E8] hover:shadow-[0_4px_16px_rgba(26,115,232,0.12)] wg-job-card-enter ${viewMode === "grid" ? "flex min-h-[320px] flex-col" : ""}`}
-              component="article"
+              className={cn(
+                "group relative cursor-pointer border-slate-200 shadow-sm transition-all duration-200 hover:border-primary hover:shadow-lg wg-job-card-enter",
+                viewMode === "grid" && "flex min-h-[320px] flex-col"
+              )}
             >
+              <CardContent className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 gap-3">
                   <div
@@ -1717,6 +1732,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   </div>
                 </div>
               ) : null}
+              </CardContent>
             </Card>
           );
         })

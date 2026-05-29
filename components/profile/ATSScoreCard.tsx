@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import { CheckCircle, Lightbulb, Loader2, XCircle } from "lucide-react";
 import type { ATSFeedback } from "../../lib/types";
 import { apiErrorMessage, readApiJson } from "../../lib/api-fetch";
-
-type Tab = "strengths" | "weaknesses" | "suggestions";
+import { atsScorePath } from "../../lib/workgraph-api-routes";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Props = {
   userId: string;
@@ -22,7 +24,7 @@ function gradeFromScore(score: number): string {
 }
 
 export default function ATSScoreCard({ userId, score, feedback }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("strengths");
+  const [activeTab, setActiveTab] = useState<"strengths" | "weaknesses" | "suggestions">("strengths");
   const [loading, setLoading] = useState(false);
   const [localFeedback, setLocalFeedback] = useState<ATSFeedback | null>(feedback);
 
@@ -30,15 +32,15 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
   const grade = localFeedback?.grade ?? gradeFromScore(currentScore);
 
   const ringColor = useMemo(() => {
-    if (currentScore >= 80) return "#1E8E3E";
-    if (currentScore >= 60) return "#F9AB00";
-    return "#D93025";
+    if (currentScore >= 80) return "#16a34a";
+    if (currentScore >= 60) return "#f59e0b";
+    return "#ef4444";
   }, [currentScore]);
 
   const analyze = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/ats-score", {
+      const res = await fetch(atsScorePath(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -91,90 +93,81 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <section id="ats-score" className="scroll-mt-28 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
-      <h2 className="mb-1 text-[18px] font-semibold text-[#2C2C2E]">ATS Score</h2>
-      <p className="mb-4 text-xs font-normal text-[#8E8E93]">Your parsed resume quality and action points.</p>
-
-      {localFeedback || score !== null ? (
-        <>
-          <div className="mx-auto mb-4 flex w-fit flex-col items-center">
-            <div className="relative h-36 w-36">
-              <svg className="-rotate-90" viewBox="0 0 140 140">
-                <circle cx="70" cy="70" r={radius} fill="none" stroke="#DADCE0" strokeWidth="10" />
-                <circle
-                  cx="70"
-                  cy="70"
-                  r={radius}
-                  fill="none"
-                  stroke={ringColor}
-                  strokeWidth="10"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={offset}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-3xl font-bold text-[#1D1D1F]">{currentScore}</p>
-                <p className="text-sm font-medium text-[#8E8E93]">{grade}</p>
+    <Card id="ats-score" className="scroll-mt-28 border-slate-200 shadow-sm transition-shadow hover:shadow-md">
+      <CardHeader>
+        <CardTitle className="text-lg font-semibold">ATS Score</CardTitle>
+        <CardDescription>Your parsed resume quality and action points.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {localFeedback || score !== null ? (
+          <>
+            <div className="mx-auto mb-4 flex w-fit flex-col items-center">
+              <div className="relative h-36 w-36">
+                <svg className="-rotate-90" viewBox="0 0 140 140">
+                  <circle cx="70" cy="70" r={radius} fill="none" stroke="hsl(var(--border))" strokeWidth="10" />
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r={radius}
+                    fill="none"
+                    stroke={ringColor}
+                    strokeWidth="10"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                    strokeLinecap="round"
+                    className="transition-[stroke-dashoffset] duration-700"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-3xl font-bold text-foreground">{currentScore}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{grade}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="mb-3 flex rounded-lg border border-[#DADCE0] p-1" role="tablist" aria-label="ATS analysis tabs">
-            {(["strengths", "weaknesses", "suggestions"] as Tab[]).map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                role="tab"
-                aria-selected={activeTab === tab}
-                aria-controls={`ats-tabpanel-${tab}`}
-                id={`ats-tab-${tab}`}
-                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 ${
-                  activeTab === tab ? "bg-[#1A73E8] text-white" : "text-[#3A3A3C]"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          <ul
-            className="space-y-2"
-            role="tabpanel"
-            id={`ats-tabpanel-${activeTab}`}
-            aria-labelledby={`ats-tab-${activeTab}`}
-            aria-live="polite"
-          >
-            {tabItems.length ? (
-              tabItems.map((item, idx) => (
-                <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm font-normal text-[#3A3A3C]">
-                  {activeTab === "strengths" ? (
-                    <CheckCircle className="mt-0.5 h-4 w-4 text-[#1E8E3E]" />
-                  ) : activeTab === "weaknesses" ? (
-                    <XCircle className="mt-0.5 h-4 w-4 text-[#D93025]" />
-                  ) : (
-                    <Lightbulb className="mt-0.5 h-4 w-4 text-[#1A73E8]" />
-                  )}
-                  <span>{item}</span>
-                </li>
-              ))
-            ) : (
-              <li className="text-sm font-normal text-[#8E8E93]">No analysis points available.</li>
-            )}
-          </ul>
-        </>
-      ) : (
-        <button
-          type="button"
-          onClick={() => void analyze()}
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl bg-[#1A73E8] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
-        >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {loading ? "Analyzing..." : "Analyze My Resume"}
-        </button>
-      )}
-    </section>
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsList className="mb-3 w-full">
+                <TabsTrigger value="strengths" className="flex-1 capitalize">
+                  Strengths
+                </TabsTrigger>
+                <TabsTrigger value="weaknesses" className="flex-1 capitalize">
+                  Weaknesses
+                </TabsTrigger>
+                <TabsTrigger value="suggestions" className="flex-1 capitalize">
+                  Suggestions
+                </TabsTrigger>
+              </TabsList>
+              {(["strengths", "weaknesses", "suggestions"] as const).map((tab) => (
+                <TabsContent key={tab} value={tab}>
+                  <ul className="space-y-2" aria-live="polite">
+                    {(tab === activeTab ? tabItems : []).length ? (
+                      tabItems.map((item, idx) => (
+                        <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          {tab === "strengths" ? (
+                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                          ) : tab === "weaknesses" ? (
+                            <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                          ) : (
+                            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                          )}
+                          <span>{item}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-sm text-muted-foreground">No analysis points available.</li>
+                    )}
+                  </ul>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </>
+        ) : (
+          <Button type="button" onClick={() => void analyze()} disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {loading ? "Analyzing..." : "Analyze My Resume"}
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

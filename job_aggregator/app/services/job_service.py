@@ -86,10 +86,25 @@ class JobService:
         source: str | None = None,
         sources: list[str] | None = None,
         community: bool | None = None,
+        remote_type: str | None = None,
     ) -> PaginatedJobs:
         query = q.strip()
         if not query:
             return PaginatedJobs(items=[], page=page, page_size=page_size, total=0, total_pages=0)
+
+        from app.services.typesense_index import search_jobs_typesense
+
+        ts = search_jobs_typesense(
+            q=query,
+            page=page,
+            page_size=page_size,
+            source=source,
+            community=community,
+            remote_type=remote_type,
+        )
+        if ts is not None and ts.items:
+            return ts
+
         total = self._repo.count(source=source, sources=sources, community=community, q=query)
         rows = self._repo.list_jobs(
             page=page,

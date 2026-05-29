@@ -14,8 +14,19 @@ function parseMatchPercent(label: string): number {
   return Math.min(99, Math.max(50, Number(m[1])));
 }
 
+export type JobMatchPreviewExt = JobMatchPreview & { applyUrl?: string };
+
+/** Prefer AI semantic matches; else map Supabase job cards; else mock. */
+export function resolveProfileJobMatches(
+  semantic?: JobMatchPreviewExt[] | null,
+  jobs?: RecommendedJobCard[],
+): JobMatchPreviewExt[] {
+  if (semantic?.length) return semantic.slice(0, 12);
+  return jobCardsToMatches(jobs);
+}
+
 /** Map live recommended jobs to horizontal match cards; fall back to mock. */
-export function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreview[] {
+export function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreviewExt[] {
   if (!jobs?.length) return MOCK_JOB_MATCHES;
 
   return jobs.slice(0, 6).map((job) => ({
@@ -26,5 +37,6 @@ export function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreview[
     salaryRange: "See listing",
     workMode: inferWorkMode(job.location),
     location: job.location,
+    applyUrl: job.applyUrl ?? undefined,
   }));
 }

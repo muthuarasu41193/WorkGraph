@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import uuid
 from collections.abc import Generator
 
 from fastapi import Header, HTTPException, status
@@ -45,3 +46,29 @@ def verify_ingest_key(authorization: str | None = Header(default=None)) -> None:
         token = authorization[7:].strip()
     if token != expected:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid ingest token")
+
+
+def require_user_id(
+    x_user_id: str | None = Header(default=None, alias="X-User-Id"),
+    authorization: str | None = Header(default=None),
+) -> uuid.UUID:
+    """
+    Resolve WorkGraph user from BFF-forwarded header or service bearer + user claim.
+  BFF sets X-User-Id after SuperTokens/Supabase session validation.
+    """
+    if x_user_id:
+        try:
+            return uuid.UUID(x_user_id.strip())
+        except ValueError as exc:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid X-User-Id") from exc
+
+    expected = (os.getenv("JOB_AGGREGATOR_API_KEY") or "").strip()
+    if expected and authorization and authorization.lower().startswith("bearer "):
+        token = authorization[7:].strip()
+        if token == expected:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail="X-User-Id required with service bearer",
+            )
+
+    raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Authentication required")

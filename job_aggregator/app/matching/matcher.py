@@ -10,18 +10,25 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.matching.embedder import JobEmbedder
 from app.models import Job
 
+if TYPE_CHECKING:
+    from app.matching.embedder import JobEmbedder
 
-def match_resume_text(session: Session, embedder: JobEmbedder, resume_text: str, top_k: int = 20) -> list[dict[str, Any]]:
+
+def match_resume_text(
+    session: Session,
+    embedder: "JobEmbedder",
+    resume_text: str,
+    top_k: int = 20,
+) -> list[dict[str, Any]]:
     doc = (resume_text or "").strip()
     if not doc:
         raise ValueError("Resume text is empty.")
@@ -57,7 +64,12 @@ def match_resume_text(session: Session, embedder: JobEmbedder, resume_text: str,
     return results
 
 
-def match_resume_file(session: Session, embedder: JobEmbedder, resume_path: Path, top_k: int = 20) -> list[dict[str, Any]]:
+def match_resume_file(
+    session: Session,
+    embedder: "JobEmbedder",
+    resume_path: Path,
+    top_k: int = 20,
+) -> list[dict[str, Any]]:
     path = resume_path.expanduser().resolve()
     if not path.is_file():
         raise FileNotFoundError(f"Resume file not found: {path}")

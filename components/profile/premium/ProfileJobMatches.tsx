@@ -1,68 +1,87 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Bookmark, MapPin, Sparkles, Zap } from "lucide-react";
+import { Bookmark, MapPin, Zap } from "lucide-react";
 import { useState } from "react";
 import type { JobMatchPreview } from "../../../lib/profile-mock-data";
-import { MOCK_JOB_MATCHES } from "../../../lib/profile-mock-data";
+import type { JobMatchPreviewExt } from "./job-match-utils";
 import ProfileCard from "../primitives/ProfileCard";
 import ProfileBadge from "../primitives/ProfileBadge";
 import ProfileButton from "../primitives/ProfileButton";
 import SectionHeader from "../primitives/SectionHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Props = {
-  jobs?: JobMatchPreview[];
+  jobs?: JobMatchPreviewExt[];
 };
 
-export default function ProfileJobMatches({ jobs = MOCK_JOB_MATCHES }: Props) {
+export default function ProfileJobMatches({ jobs = [] }: Props) {
+  const list = jobs.length ? jobs : [];
   const [saved, setSaved] = useState<Set<string>>(new Set());
 
   return (
     <ProfileCard id="matches" padding="lg">
       <SectionHeader
-        icon={Sparkles}
         eyebrow="Opportunities"
         title="Top job matches"
-        description="Roles aligned to your skills with live match scoring."
+        description={
+          list.some((j) => j.matchPercent >= 70)
+            ? "AI-ranked by resume similarity (local embeddings)."
+            : "Roles aligned to your skills with match scoring."
+        }
       />
 
-      <div className="flex gap-4 overflow-x-auto pb-2 wg-no-scrollbar snap-x snap-mandatory">
-        {jobs.map((job, i) => (
-          <motion.article
+      {list.length === 0 ? (
+        <p className="text-sm text-[var(--wg-color-text-secondary)]">
+          Add resume text or run job ingest, then set{" "}
+          <code className="text-xs">WORKGRAPH_API_URL</code> for semantic matches.
+        </p>
+      ) : null}
+
+      <div className="flex gap-3 overflow-x-auto pb-1 wg-no-scrollbar">
+        {list.map((job) => (
+          <Card
             key={job.id}
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06 }}
-            whileHover={{ y: -4 }}
-            className="w-[min(100%,320px)] shrink-0 snap-start rounded-2xl border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)]/40 p-5 shadow-sm"
+            className="w-[min(100%,300px)] shrink-0 border-slate-200 shadow-sm transition-shadow hover:shadow-md"
           >
-            <motion.div className="flex items-start justify-between gap-2">
-              <div>
+            <CardContent className="p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
                 <p className="text-xs font-medium text-[var(--wg-color-text-tertiary)]">{job.company}</p>
-                <h3 className="mt-0.5 font-semibold text-[var(--wg-color-text-primary)]">{job.title}</h3>
+                <h3 className="mt-0.5 font-semibold leading-snug text-[var(--wg-color-text-primary)]">{job.title}</h3>
               </div>
-              <span className="rounded-xl bg-[var(--wg-color-success)]/15 px-2 py-1 text-sm font-bold tabular-nums text-[var(--wg-color-success)]">
+              <span className="shrink-0 rounded-md bg-[var(--wg-color-surface-variant)] px-2 py-1 text-sm font-bold tabular-nums text-[var(--wg-color-primary)]">
                 {job.matchPercent}%
               </span>
-            </motion.div>
+            </div>
 
-            <p className="mt-2 text-sm font-medium text-[var(--wg-color-text-secondary)]">{job.salaryRange}</p>
-            <p className="mt-1 flex items-center gap-1 text-xs text-[var(--wg-color-text-tertiary)]">
+            <p className="mt-2 text-sm text-[var(--wg-color-text-secondary)]">{job.salaryRange}</p>
+            <p className="mt-0.5 flex items-center gap-1 text-xs text-[var(--wg-color-text-tertiary)]">
               <MapPin className="h-3.5 w-3.5" />
               {job.location}
             </p>
 
-            <div className="mt-3 flex flex-wrap gap-1.5">
+            <div className="mt-3">
               <ProfileBadge tone={job.workMode === "Remote" ? "success" : "info"}>{job.workMode}</ProfileBadge>
             </div>
 
-            <div className="mt-4 flex items-center gap-2">
-              <ProfileButton variant="primary" className="flex-1 py-2 text-xs" icon={<Zap className="h-3.5 w-3.5" />}>
-                Easy apply
-              </ProfileButton>
-              <button
+            <div className="mt-4 flex items-center gap-2 border-t border-border pt-4">
+              {job.applyUrl ? (
+                <Button asChild size="sm" className="flex-1">
+                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
+                    <Zap className="h-3.5 w-3.5" />
+                    View role
+                  </a>
+                </Button>
+              ) : (
+                <ProfileButton variant="primary" className="flex-1 py-2 text-xs" icon={<Zap className="h-3.5 w-3.5" />}>
+                  Easy apply
+                </ProfileButton>
+              )}
+              <Button
                 type="button"
+                variant="outline"
+                size="icon-sm"
                 onClick={() =>
                   setSaved((prev) => {
                     const next = new Set(prev);
@@ -71,18 +90,13 @@ export default function ProfileJobMatches({ jobs = MOCK_JOB_MATCHES }: Props) {
                     return next;
                   })
                 }
-                className={[
-                  "inline-flex h-10 w-10 items-center justify-center rounded-xl border transition",
-                  saved.has(job.id)
-                    ? "border-[var(--wg-color-primary)] bg-[var(--wg-color-primary)]/10 text-[var(--wg-color-primary)] wg-bookmark-bounce"
-                    : "border-[var(--wg-color-border)]",
-                ].join(" ")}
                 aria-label={saved.has(job.id) ? "Unsave job" : "Save job"}
               >
-                <Bookmark className={`h-4 w-4 ${saved.has(job.id) ? "fill-current" : ""}`} />
-              </button>
+                <Bookmark className={`h-4 w-4 ${saved.has(job.id) ? "fill-current text-primary" : ""}`} />
+              </Button>
             </div>
-          </motion.article>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </ProfileCard>

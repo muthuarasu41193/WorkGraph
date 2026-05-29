@@ -1,7 +1,7 @@
 "use client";
 
-import type { ComponentType, ReactNode } from "react";
-import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   BarChart3,
   Calendar,
@@ -19,15 +19,15 @@ function Widget({
   children,
 }: {
   title: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   children: ReactNode;
 }) {
   return (
-    <ProfileCard padding="sm" hover>
-      <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--wg-color-text-tertiary)]">
-        <Icon className="h-3.5 w-3.5" />
+    <ProfileCard padding="sm" neutral>
+      <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold text-[var(--wg-color-text-primary)]">
+        <Icon className="h-3.5 w-3.5 text-[var(--wg-color-text-tertiary)]" />
         {title}
-      </p>
+      </h3>
       {children}
     </ProfileCard>
   );
@@ -37,77 +37,78 @@ export default function ProfileSidebar() {
   const data = MOCK_SIDEBAR;
 
   return (
-    <aside className="space-y-4 xl:sticky xl:top-[4.5rem] xl:max-h-[calc(100dvh-5rem)] xl:overflow-y-auto xl:pr-1">
+    <aside className="wg-profile-aside space-y-4 lg:sticky lg:top-[3.75rem] lg:max-h-[calc(100dvh-4.5rem)] lg:overflow-y-auto">
       <Widget title="Profile analytics" icon={BarChart3}>
-        <dl className="grid grid-cols-2 gap-3 text-sm">
+        <dl className="grid grid-cols-2 gap-4">
           <div>
-            <dt className="text-[var(--wg-color-text-tertiary)]">Views</dt>
-            <dd className="text-xl font-bold tabular-nums">{data.analytics.profileViews}</dd>
+            <dt className="text-xs text-[var(--wg-color-text-tertiary)]">Profile views</dt>
+            <dd className="mt-0.5 text-xl font-bold tabular-nums text-[var(--wg-color-text-primary)]">
+              {data.analytics.profileViews}
+            </dd>
           </div>
           <div>
-            <dt className="text-[var(--wg-color-text-tertiary)]">Search</dt>
-            <dd className="text-xl font-bold tabular-nums">{data.analytics.searchAppearances}</dd>
+            <dt className="text-xs text-[var(--wg-color-text-tertiary)]">Search appearances</dt>
+            <dd className="mt-0.5 text-xl font-bold tabular-nums text-[var(--wg-color-text-primary)]">
+              {data.analytics.searchAppearances}
+            </dd>
           </div>
         </dl>
-        <p className="mt-2 text-xs text-[var(--wg-color-success)]">{data.analytics.trend} vs last week</p>
+        <p className="mt-3 text-xs font-medium text-emerald-700 dark:text-emerald-400">{data.analytics.trend} vs last week</p>
       </Widget>
 
       <Widget title="Recruiter views" icon={Eye}>
-        <p className="text-2xl font-bold tabular-nums">{data.recruiterViews}</p>
-        <p className="text-xs text-[var(--wg-color-text-secondary)]">This week</p>
+        <p className="text-2xl font-bold tabular-nums text-[var(--wg-color-text-primary)]">{data.recruiterViews}</p>
+        <p className="mt-0.5 text-xs text-[var(--wg-color-text-tertiary)]">This week</p>
       </Widget>
 
       <Widget title="Interview tracker" icon={Calendar}>
-        <ul className="space-y-2">
+        <ul className="divide-y divide-[var(--wg-color-border)]">
           {data.interviews.map((iv) => (
-            <li
-              key={iv.company}
-              className="flex items-center justify-between rounded-lg bg-[var(--wg-color-surface-variant)] px-3 py-2 text-sm"
-            >
-              <span className="font-medium">{iv.company}</span>
-              <span className="text-xs text-[var(--wg-color-text-tertiary)]">{iv.date}</span>
+            <li key={iv.company} className="flex items-center justify-between py-2.5 text-sm first:pt-0 last:pb-0">
+              <span className="font-medium text-[var(--wg-color-text-primary)]">{iv.company}</span>
+              <span className="text-xs tabular-nums text-[var(--wg-color-text-tertiary)]">{iv.date}</span>
             </li>
           ))}
         </ul>
       </Widget>
 
       <Widget title="Trending skills" icon={TrendingUp}>
-        <motion.div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           {data.trendingSkills.map((s) => (
             <span
               key={s}
-              className="rounded-lg bg-[var(--wg-color-surface-variant)] px-2 py-1 text-xs font-medium text-[var(--wg-color-text-secondary)]"
+              className="rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2 py-1 text-xs font-medium text-[var(--wg-color-text-secondary)]"
             >
               {s}
             </span>
           ))}
-        </motion.div>
+        </div>
       </Widget>
 
       <Widget title="Suggested connections" icon={UserPlus}>
         <ul className="space-y-3">
           {data.connections.map((c) => (
-            <li key={c.id} className="flex gap-2">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--wg-color-primary)]/15 text-xs font-bold text-[var(--wg-color-primary)]">
+            <li key={c.id} className="flex gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] text-xs font-bold text-[var(--wg-color-primary)]">
                 {c.name[0]}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{c.name}</p>
+                <p className="truncate text-sm font-medium text-[var(--wg-color-text-primary)]">{c.name}</p>
                 <p className="truncate text-xs text-[var(--wg-color-text-tertiary)]">
                   {c.role} · {c.company}
                 </p>
-                <p className="text-[10px] text-[var(--wg-color-text-tertiary)]">{c.mutual} mutual</p>
+                <p className="text-[11px] text-[var(--wg-color-text-tertiary)]">{c.mutual} mutual connections</p>
               </div>
             </li>
           ))}
         </ul>
       </Widget>
 
-      <ProfileCard padding="sm" className="border-[var(--wg-color-primary)]/25 bg-[var(--wg-color-primary)]/5">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--wg-color-primary)]">
-          <Lightbulb className="h-3.5 w-3.5" />
+      <ProfileCard padding="sm">
+        <h3 className="flex items-center gap-2 text-xs font-semibold text-[var(--wg-color-text-primary)]">
+          <Lightbulb className="h-3.5 w-3.5 text-[var(--wg-color-primary)]" />
           Daily tip
-        </p>
+        </h3>
         <p className="mt-2 text-sm leading-relaxed text-[var(--wg-color-text-secondary)]">{data.dailyTip}</p>
       </ProfileCard>
     </aside>

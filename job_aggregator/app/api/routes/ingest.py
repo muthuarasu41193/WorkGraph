@@ -19,3 +19,13 @@ def ingest_community() -> dict:
 
     with session_scope() as session:
         return IngestService().run_community_sync(session)
+
+
+@router.post("/typesense/sync", dependencies=[Depends(verify_ingest_key)])
+def sync_typesense() -> dict:
+    """Index jobs table into Typesense for typo-tolerant search."""
+    from app.database import session_scope
+    from app.services.typesense_index import sync_all_jobs
+
+    with session_scope() as session:
+        return sync_all_jobs(session)

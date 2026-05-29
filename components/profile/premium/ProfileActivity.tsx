@@ -1,7 +1,6 @@
 "use client";
 
-import type { ComponentType } from "react";
-import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   Bookmark,
@@ -14,7 +13,7 @@ import { MOCK_ACTIVITIES, type ProfileActivity } from "../../../lib/profile-mock
 import ProfileCard from "../primitives/ProfileCard";
 import SectionHeader from "../primitives/SectionHeader";
 
-const ICONS: Record<ProfileActivity["type"], ComponentType<{ className?: string }>> = {
+const ICONS: Record<ProfileActivity["type"], LucideIcon> = {
   applied: Briefcase,
   saved: Bookmark,
   recruiter: UserCheck,
@@ -36,28 +35,20 @@ export default function ProfileActivity({ activities = MOCK_ACTIVITIES }: Props)
         description="Applications, saves, recruiter touchpoints, and posts."
       />
 
-      <ul className="space-y-1">
-        {activities.map((item, i) => {
+      <ul className="divide-y divide-[var(--wg-color-border)]">
+        {activities.map((item) => {
           const Icon = ICONS[item.type];
           return (
-            <motion.li
-              key={item.id}
-              initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.04 }}
-              whileHover={{ backgroundColor: "var(--wg-color-surface-variant)" }}
-              className="flex gap-3 rounded-xl px-3 py-3 transition"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--wg-color-surface-variant)] text-[var(--wg-color-primary)]">
-                <Icon className="h-4 w-4" />
+            <li key={item.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] text-[var(--wg-color-text-secondary)]">
+                <Icon className="h-3.5 w-3.5" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-[var(--wg-color-text-primary)]">{item.title}</p>
-                <p className="text-xs text-[var(--wg-color-text-secondary)]">{item.subtitle}</p>
+                <p className="text-xs text-[var(--wg-color-text-tertiary)]">{item.subtitle}</p>
               </div>
               <span className="shrink-0 text-xs tabular-nums text-[var(--wg-color-text-tertiary)]">{item.timeAgo}</span>
-            </motion.li>
+            </li>
           );
         })}
       </ul>
