@@ -14,7 +14,10 @@ function resolveHandler(): AuthHandler | null {
     handler = null;
     return handler;
   }
-  initSuperTokensBackend();
+  if (!initSuperTokensBackend()) {
+    handler = null;
+    return handler;
+  }
   handler = getAppDirRequestHandler();
   return handler;
 }

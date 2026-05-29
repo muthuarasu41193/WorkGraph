@@ -5,13 +5,12 @@ import { supertokensAppInfo } from "./appInfo";
 
 let initialized = false;
 
-export function initSuperTokensBackend(): void {
-  if (initialized) return;
+/** Returns false when SuperTokens env is incomplete (safe during build and on Vercel). */
+export function initSuperTokensBackend(): boolean {
+  if (initialized) return true;
 
   const connectionURI = process.env.SUPERTOKENS_CONNECTION_URI?.trim();
-  if (!connectionURI) {
-    throw new Error("SUPERTOKENS_CONNECTION_URI is required when AUTH_PROVIDER=supertokens");
-  }
+  if (!connectionURI) return false;
 
   SuperTokens.init({
     appInfo: supertokensAppInfo,
@@ -29,4 +28,5 @@ export function initSuperTokensBackend(): void {
   });
 
   initialized = true;
+  return true;
 }

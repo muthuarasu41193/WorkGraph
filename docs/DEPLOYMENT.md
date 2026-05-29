@@ -79,3 +79,7 @@ These are **optional** profiles. PostHog requires additional ClickHouse/Redis se
 ## Stripe / Razorpay
 
 Optional env keys in `.env.workgraph.example`. Subscription gating uses `wg_subscriptions` — free tier works with zero payment keys.
+
+## Vercel (Next.js frontend)
+
+See **[VERCEL.md](./VERCEL.md)** for push-to-deploy workflow, required env vars, and troubleshooting.

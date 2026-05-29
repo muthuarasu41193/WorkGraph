@@ -30,7 +30,7 @@ export async function getSessionUser(request?: Request): Promise<SessionUser | n
   if (supertokensEnabled()) {
     try {
       const { initSuperTokensBackend } = await import("../supertokens/backend");
-      initSuperTokensBackend();
+      if (!initSuperTokensBackend()) return null;
       const { getSSRSession } = await import("supertokens-node/nextjs");
 
       let cookieList: { name: string; value: string }[];

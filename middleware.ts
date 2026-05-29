@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
 
     try {
       const { initSuperTokensBackend } = await import("./lib/supertokens/backend");
-      initSuperTokensBackend();
+      if (!initSuperTokensBackend()) return NextResponse.next({ request });
       const { withSession } = await import("supertokens-node/nextjs");
       return withSession(
         request,
