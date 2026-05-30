@@ -16,27 +16,33 @@ function parseMatchPercent(label: string): number {
 
 export type JobMatchPreviewExt = JobMatchPreview & { applyUrl?: string };
 
-/** Prefer AI semantic matches; else map Supabase job cards; else mock. */
+/** Prefer AI semantic matches; else map Supabase job cards; mock only in demo mode. */
 export function resolveProfileJobMatches(
   semantic?: JobMatchPreviewExt[] | null,
   jobs?: RecommendedJobCard[],
+  feedKind: "live" | "demo" = "demo",
 ): JobMatchPreviewExt[] {
   if (semantic?.length) return semantic.slice(0, 12);
-  return jobCardsToMatches(jobs);
+  return jobCardsToMatches(jobs, feedKind);
 }
 
-/** Map live recommended jobs to horizontal match cards; fall back to mock. */
-export function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreviewExt[] {
-  if (!jobs?.length) return MOCK_JOB_MATCHES;
-
-  return jobs.slice(0, 6).map((job) => ({
-    id: job.id,
-    title: job.title,
-    company: job.company,
-    matchPercent: parseMatchPercent(job.matchLabel),
-    salaryRange: "See listing",
-    workMode: inferWorkMode(job.location),
-    location: job.location,
-    applyUrl: job.applyUrl ?? undefined,
-  }));
+/** Map live recommended jobs to horizontal match cards; mock only when feed is demo. */
+export function jobCardsToMatches(
+  jobs?: RecommendedJobCard[],
+  feedKind: "live" | "demo" = "demo",
+): JobMatchPreviewExt[] {
+  if (jobs?.length) {
+    return jobs.slice(0, 6).map((job) => ({
+      id: job.id,
+      title: job.title,
+      company: job.company,
+      matchPercent: parseMatchPercent(job.matchLabel),
+      salaryRange: "See listing",
+      workMode: inferWorkMode(job.location),
+      location: job.location,
+      applyUrl: job.applyUrl ?? undefined,
+    }));
+  }
+  if (feedKind === "live") return [];
+  return MOCK_JOB_MATCHES;
 }

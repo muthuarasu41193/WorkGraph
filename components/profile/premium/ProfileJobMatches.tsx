@@ -2,7 +2,6 @@
 
 import { Bookmark, MapPin, Zap } from "lucide-react";
 import { useState } from "react";
-import type { JobMatchPreview } from "../../../lib/profile-mock-data";
 import type { JobMatchPreviewExt } from "./job-match-utils";
 import ProfileCard from "../primitives/ProfileCard";
 import ProfileBadge from "../primitives/ProfileBadge";
@@ -13,9 +12,11 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
   jobs?: JobMatchPreviewExt[];
+  liveListings?: number;
+  feedKind?: "live" | "demo";
 };
 
-export default function ProfileJobMatches({ jobs = [] }: Props) {
+export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKind = "demo" }: Props) {
   const list = jobs.length ? jobs : [];
   const [saved, setSaved] = useState<Set<string>>(new Set());
 
@@ -33,8 +34,20 @@ export default function ProfileJobMatches({ jobs = [] }: Props) {
 
       {list.length === 0 ? (
         <p className="text-sm text-[var(--wg-color-text-secondary)]">
-          Add resume text or run job ingest, then set{" "}
-          <code className="text-xs">WORKGRAPH_API_URL</code> for semantic matches.
+          {feedKind === "live" && liveListings > 0 ? (
+            <>
+              Browse{" "}
+              <a href="#recommended-jobs" className="font-medium text-primary underline-offset-2 hover:underline">
+                {liveListings.toLocaleString()} live listings
+              </a>{" "}
+              below — ranked for your skills.
+            </>
+          ) : (
+            <>
+              Add resume text or run job ingest, then set{" "}
+              <code className="text-xs">WORKGRAPH_API_URL</code> for semantic matches.
+            </>
+          )}
         </p>
       ) : null}
 

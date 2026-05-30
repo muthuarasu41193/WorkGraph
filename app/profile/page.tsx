@@ -17,11 +17,14 @@ export default async function ProfilePage() {
   const profile = await loadUserProfile(sessionUser.id);
   if (!profile) redirect("/create-profile");
 
-  let jobDashboard = {
-    recommended: [] as Awaited<ReturnType<typeof loadProfileJobDashboard>>["recommended"],
-    communityPosts: [] as Awaited<ReturnType<typeof loadProfileJobDashboard>>["communityPosts"],
+  let jobDashboard: Awaited<ReturnType<typeof loadProfileJobDashboard>> = {
+    pipeline: { applied: 0, interview: 0, offers: 0, saved: 0 },
+    recommended: [],
+    communityPosts: [],
     liveListings: 0,
-    listingsBySource: {} as Record<string, number>,
+    listingsBySource: {},
+    feedKind: "demo",
+    feedDemoHint: "empty_table",
   };
 
   if (supabaseConfigured()) {
@@ -40,6 +43,11 @@ export default async function ProfilePage() {
       userId={sessionUser.id}
       recommendedJobs={jobDashboard.recommended}
       semanticJobMatches={semanticJobMatches}
+      jobPipeline={jobDashboard.pipeline}
+      liveListings={jobDashboard.liveListings}
+      listingsBySource={jobDashboard.listingsBySource}
+      feedKind={jobDashboard.feedKind}
+      feedDemoHint={jobDashboard.feedDemoHint}
     />
   );
 }

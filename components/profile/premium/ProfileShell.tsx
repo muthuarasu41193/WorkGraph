@@ -1,6 +1,6 @@
 "use client";
 
-import type { RecommendedJobCard } from "../../../lib/job-dashboard";
+import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "../../../lib/job-dashboard";
 import type { Profile } from "../../../lib/types";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import DashboardHydrator from "../../dashboard/DashboardHydrator";
@@ -17,6 +17,8 @@ import ProfileAiInsights from "./ProfileAiInsights";
 import ProfileJobMatches from "./ProfileJobMatches";
 import ProfileActivity from "./ProfileActivity";
 import ProfileSidebar from "./ProfileSidebar";
+import ProfileJobDashboard from "../ProfileJobDashboard";
+import RecommendedJobsSection from "../RecommendedJobsSection";
 import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
 
 export type ProfileShellProps = {
@@ -24,6 +26,11 @@ export type ProfileShellProps = {
   userId: string;
   recommendedJobs?: RecommendedJobCard[];
   semanticJobMatches?: JobMatchPreviewExt[] | null;
+  jobPipeline?: JobPipelineCounts;
+  liveListings?: number;
+  listingsBySource?: Partial<Record<string, number>>;
+  feedKind?: "live" | "demo";
+  feedDemoHint?: FeedDemoHint | null;
 };
 
 function ProfileKpiStrip({ profile }: { profile: Profile }) {
@@ -57,19 +64,37 @@ export default function ProfileShell({
   userId,
   recommendedJobs,
   semanticJobMatches,
+  jobPipeline,
+  liveListings = 0,
+  listingsBySource = {},
+  feedKind = "demo",
+  feedDemoHint,
 }: ProfileShellProps) {
-  const jobMatches = resolveProfileJobMatches(semanticJobMatches, recommendedJobs);
+  const jobMatches = resolveProfileJobMatches(semanticJobMatches, recommendedJobs, feedKind);
   const wgEnabled = workgraphApiEnabled();
+  const jobsFeed = recommendedJobs ?? [];
 
   const overview = (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
       <div className="min-w-0 space-y-5">
+        <ProfileJobDashboard
+          stats={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
+          profileCompleteness={profile.profile_completeness ?? 0}
+          liveListings={liveListings}
+          listingsBySource={listingsBySource}
+        />
         <ProfileCompleteness
           profile={profile}
           atsScore={profile.ats_score}
           atsFeedback={profile.ats_feedback}
         />
-        <ProfileJobMatches jobs={jobMatches} />
+        <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
+        <RecommendedJobsSection
+          jobs={jobsFeed}
+          skillHints={profile.skills}
+          feedKind={feedKind}
+          feedDemoHint={feedDemoHint}
+        />
         <ProfileAiInsights />
         <ProfileSkills userId={userId} initialSkills={profile.skills} />
         <ProfileExperience userId={userId} experience={profile.work_experience} />
