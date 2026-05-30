@@ -40,6 +40,7 @@ export type JobFeedSource =
   | "indeed"
   | "glassdoor"
   | "levels"
+  | "facebook"
   | "other";
 
 export type JobCardKind = "listing" | "post";
@@ -295,7 +296,7 @@ function normalizeSource(raw: string): JobFeedSource {
   ) {
     return s;
   }
-  if (s === "linkedin" || s === "reddit" || s === "x" || s === "twitter" || s === "indeed" || s === "glassdoor" || s === "levels") {
+  if (s === "linkedin" || s === "reddit" || s === "x" || s === "twitter" || s === "indeed" || s === "glassdoor" || s === "levels" || s === "facebook") {
     return s === "twitter" ? "x" : s;
   }
   return "other";

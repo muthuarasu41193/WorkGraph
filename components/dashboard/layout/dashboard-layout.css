@@ -1,0 +1,85 @@
+/* WorkGraph dashboard shell — unique slate + indigo system (not LinkedIn clone) */
+.wg-dash-root {
+  --dash-radius: 8px;
+  --dash-topnav-h: 60px;
+  --dash-sidebar-w: 240px;
+  --dash-sidebar-collapsed-w: 72px;
+  --dash-content-max: 1200px;
+  --dash-page-bg: #f4f6fb;
+  --dash-surface: #ffffff;
+  --dash-accent: #2563eb;
+  --dash-accent-soft: rgba(37, 99, 235, 0.08);
+  min-height: 100dvh;
+  background: var(--dash-page-bg);
+  scroll-behavior: smooth;
+}
+
+.dark .wg-dash-root,
+[data-theme="dark"] .wg-dash-root {
+  --dash-page-bg: #0b1120;
+  --dash-surface: #0f172a;
+  --dash-accent-soft: rgba(96, 165, 250, 0.12);
+}
+
+.wg-dash-main {
+  min-height: calc(100dvh - var(--dash-topnav-h));
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .wg-dash-main {
+    padding-bottom: 1.5rem;
+  }
+}
+
+.wg-dash-content {
+  max-width: var(--dash-content-max);
+  animation: wg-dash-fade-in 0.28s ease-out;
+}
+
+@keyframes wg-dash-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wg-dash-section-card {
+  border-radius: var(--dash-radius);
+  background: var(--dash-surface);
+  border: 1px solid rgb(226 232 240 / 0.9);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+.dark .wg-dash-section-card,
+[data-theme="dark"] .wg-dash-section-card {
+  border-color: rgb(51 65 85 / 0.8);
+}
+
+.wg-dash-skeleton-pulse {
+  animation: wg-dash-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes wg-dash-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Touch targets */
+.wg-dash-root button,
+.wg-dash-root a[role="button"] {
+  min-height: 44px;
+}
+
+.wg-dash-root .wg-dash-compact-btn {
+  min-height: 36px;
+}

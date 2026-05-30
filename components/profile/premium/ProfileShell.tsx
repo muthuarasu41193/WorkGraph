@@ -4,9 +4,10 @@ import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "../../
 import type { Profile } from "../../../lib/types";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import DashboardHydrator from "../../dashboard/DashboardHydrator";
-import DashboardTabs from "../../dashboard/DashboardTabs";
-import ProfileThemeProvider from "../theme/ProfileThemeProvider";
-import ProfileTopBar from "../ProfileTopBar";
+import DashboardLayout from "../../dashboard/layout/DashboardLayout";
+import { DashboardProvider } from "../../dashboard/DashboardProvider";
+import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
+import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
 import ProfileHero from "./ProfileHero";
 import ProfileCompleteness from "./ProfileCompleteness";
@@ -19,12 +20,16 @@ import ProfileActivity from "./ProfileActivity";
 import ProfileSidebar from "./ProfileSidebar";
 import ProfileJobDashboard from "../ProfileJobDashboard";
 import RecommendedJobsSection from "../RecommendedJobsSection";
+import HiddenJobsSection from "../../dashboard/sections/HiddenJobsSection";
+import InterviewVaultSection from "../../dashboard/sections/InterviewVaultSection";
+import JobNewsSection from "../../dashboard/sections/JobNewsSection";
 import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
 
 export type ProfileShellProps = {
   profile: Profile;
   userId: string;
   recommendedJobs?: RecommendedJobCard[];
+  communityPosts?: RecommendedJobCard[];
   semanticJobMatches?: JobMatchPreviewExt[] | null;
   jobPipeline?: JobPipelineCounts;
   liveListings?: number;
@@ -59,10 +64,11 @@ function ProfileKpiStrip({ profile }: { profile: Profile }) {
   );
 }
 
-export default function ProfileShell({
+function ProfileShellInner({
   profile,
   userId,
-  recommendedJobs,
+  recommendedJobs = [],
+  communityPosts = [],
   semanticJobMatches,
   jobPipeline,
   liveListings = 0,
@@ -70,32 +76,75 @@ export default function ProfileShell({
   feedKind = "demo",
   feedDemoHint,
 }: ProfileShellProps) {
+  const { theme, toggle } = useProfileTheme();
   const jobMatches = resolveProfileJobMatches(semanticJobMatches, recommendedJobs, feedKind);
   const wgEnabled = workgraphApiEnabled();
-  const jobsFeed = recommendedJobs ?? [];
+  const atsJobs = recommendedJobs.filter((j) => !j.isCommunity);
 
-  const overview = (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-      <div className="min-w-0 space-y-5">
+  const dashboardValue = {
+    profile,
+    userId,
+    recommendedJobs,
+    communityPosts,
+    semanticJobMatches: semanticJobMatches ?? null,
+    jobPipeline: jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 },
+    liveListings,
+    listingsBySource,
+    feedKind,
+    feedDemoHint,
+  };
+
+  const sections = {
+    home: (
+      <div className="space-y-5">
+        <ProfileHero profile={profile} userId={userId} />
+        <ProfileKpiStrip profile={profile} />
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+          <div className="min-w-0 space-y-5">
+            <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
+            <ProfileCompleteness
+              profile={profile}
+              atsScore={profile.ats_score}
+              atsFeedback={profile.ats_feedback}
+            />
+            <ProfileAiInsights />
+            <ProfileActivity />
+          </div>
+          <ProfileSidebar />
+        </div>
+      </div>
+    ),
+    jobs: (
+      <div className="space-y-5">
+        <header>
+          <h1 className="text-2xl font-bold tracking-tight">Jobs</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Live listings ranked for your skills and experience.
+          </p>
+        </header>
         <ProfileJobDashboard
           stats={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
           profileCompleteness={profile.profile_completeness ?? 0}
           liveListings={liveListings}
           listingsBySource={listingsBySource}
         />
-        <ProfileCompleteness
-          profile={profile}
-          atsScore={profile.ats_score}
-          atsFeedback={profile.ats_feedback}
-        />
-        <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
         <RecommendedJobsSection
-          jobs={jobsFeed}
+          jobs={atsJobs.length ? atsJobs : recommendedJobs}
           skillHints={profile.skills}
           feedKind={feedKind}
           feedDemoHint={feedDemoHint}
         />
-        <ProfileAiInsights />
+      </div>
+    ),
+    "hidden-jobs": <HiddenJobsSection />,
+    vault: <InterviewVaultSection />,
+    profile: (
+      <div className="space-y-5">
+        <header>
+          <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Keep your resume data accurate and ATS-ready.</p>
+        </header>
+        <ProfileHero profile={profile} userId={userId} />
         <ProfileSkills userId={userId} initialSkills={profile.skills} />
         <ProfileExperience userId={userId} experience={profile.work_experience} />
         <ProfileEducation
@@ -103,27 +152,27 @@ export default function ProfileShell({
           education={profile.education}
           certifications={profile.certifications}
         />
-        <ProfileActivity />
       </div>
-      <ProfileSidebar />
-    </div>
-  );
+    ),
+    "job-news": <JobNewsSection />,
+  };
 
+  return (
+    <DashboardProvider value={dashboardValue}>
+      {wgEnabled ? <DashboardHydrator /> : null}
+      <DashboardLayout isDark={theme === "dark"} onToggleTheme={toggle}>
+        <DashboardViewRouter sections={sections} />
+      </DashboardLayout>
+      <ProfileSaveStatus />
+    </DashboardProvider>
+  );
+}
+
+export default function ProfileShell(props: ProfileShellProps) {
   return (
     <ProfileThemeProvider>
       <div className="wg-profile-app">
-        {wgEnabled ? <DashboardHydrator /> : null}
-        <ProfileTopBar profileName={profile.full_name} />
-
-        <main className="mx-auto w-full max-w-[1120px] px-4 py-6 sm:px-6 lg:py-8">
-          <div className="space-y-5">
-            <ProfileHero profile={profile} userId={userId} />
-            <ProfileKpiStrip profile={profile} />
-            <DashboardTabs overview={overview} workgraphEnabled={wgEnabled} />
-          </div>
-        </main>
-
-        <ProfileSaveStatus />
+        <ProfileShellInner {...props} />
       </div>
     </ProfileThemeProvider>
   );

@@ -48,6 +48,7 @@ export default async function ProfilePage() {
       listingsBySource={jobDashboard.listingsBySource}
       feedKind={jobDashboard.feedKind}
       feedDemoHint={jobDashboard.feedDemoHint}
+      communityPosts={jobDashboard.communityPosts}
     />
   );
 }

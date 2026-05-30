@@ -98,6 +98,7 @@ const SOURCE_STYLES: Record<
   indeed: { label: "Indeed", className: "bg-blue-600/12 text-blue-800 ring-blue-500/20" },
   glassdoor: { label: "Glassdoor", className: "bg-emerald-700/10 text-emerald-900 ring-emerald-600/15" },
   levels: { label: "Levels.fyi", className: "bg-violet-600/12 text-violet-900 ring-violet-500/20" },
+  facebook: { label: "Facebook", className: "bg-blue-700/12 text-blue-900 ring-blue-600/20" },
   rss: { label: "RSS", className: "bg-orange-500/12 text-orange-900 ring-orange-400/25" },
   other: { label: "Other ATS", className: "bg-[#F8F9FA] text-[#3A3A3C] ring-[#DADCE0]" },
 };
