@@ -148,7 +148,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               sizes="96px"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-600 to-teal-700 text-3xl font-bold text-white">
+            <div className="flex h-full w-full items-center justify-center bg-primary text-3xl font-bold text-primary-foreground">
               {initials}
             </div>
           )}
@@ -177,7 +177,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   value={form.full_name}
                   onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
                   placeholder="Your full name"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
                 />
               ) : (
                 <h1 className="text-3xl font-bold tracking-tight text-[#1D1D1F]">{form.full_name || "Your Name"}</h1>
@@ -218,7 +218,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               value={form.headline}
               onChange={(e) => setForm((prev) => ({ ...prev, headline: e.target.value }))}
               placeholder="Professional headline"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
             <p className="mt-1 text-base font-semibold text-[#1D1D1F]">{form.headline || "Add a professional headline"}</p>
@@ -229,7 +229,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               value={form.location}
               onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
               placeholder="Location"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
             <p className="mt-2 inline-flex items-center gap-1 text-sm font-normal text-[#3A3A3C]">
@@ -244,7 +244,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               onChange={(e) => setForm((prev) => ({ ...prev, summary: e.target.value }))}
               placeholder="Write a short professional summary"
               rows={3}
-              className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+              className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : form.summary ? (
             <p className="mt-3 text-sm font-normal leading-6 text-[#3A3A3C]">{form.summary}</p>

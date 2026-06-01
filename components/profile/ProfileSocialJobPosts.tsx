@@ -66,7 +66,7 @@ function ArbeitnowLogo() {
 function RssLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#7C3AED" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="#B91C1C" />
       <path
         d="M7 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0-6a8 8 0 0 1 8 8"
         stroke="white"
@@ -137,8 +137,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Curated job RSS feeds (Jobicy, We Work Remotely, and more) normalized into the same community lane as social posts.",
     ctaLabel: "Open listing",
     destinationUrl: "https://weworkremotely.com/",
-    brandShellClassName: "bg-violet-50 text-violet-700 ring-1 ring-violet-500/15",
-    badgeClassName: "bg-violet-600/10 text-violet-700",
+    brandShellClassName: "bg-stone-100 text-stone-800 ring-1 ring-stone-200/80",
+    badgeClassName: "bg-stone-100 text-stone-800 ring-1 ring-stone-200/80",
     fallback: {
       id: "community-rss-fallback",
       title: "Remote role from RSS feed",

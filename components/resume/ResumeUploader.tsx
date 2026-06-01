@@ -168,11 +168,11 @@ export default function ResumeUploader() {
 
   if (status === "uploading") {
     return (
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
-        <p className="mb-3 text-sm font-medium text-[#111827]">Uploading your resume...</p>
-        <div className="h-2 overflow-hidden rounded-full bg-[#EDE9FE]">
+      <div className="rounded-[14px] border border-border bg-card p-8 shadow-sm">
+        <p className="mb-3 text-sm font-medium text-foreground">Uploading your resume...</p>
+        <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full bg-[#7C3AED] transition-all duration-200"
+            className="h-full bg-primary transition-all duration-200"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -182,20 +182,20 @@ export default function ResumeUploader() {
 
   if (status === "parsing") {
     return (
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#7C3AED]" />
-        <p className="mt-4 text-base font-semibold text-[#111827]">Analyzing your resume…</p>
-        <p className="mt-1 text-sm text-[#6B7280]">Usually finishes in a few seconds</p>
+      <div className="rounded-[14px] border border-border bg-card p-8 text-center shadow-sm">
+        <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
+        <p className="mt-4 text-base font-semibold text-foreground">Analyzing your resume…</p>
+        <p className="mt-1 text-sm text-muted-foreground">Usually finishes in a few seconds</p>
       </div>
     );
   }
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+      <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
         <CheckCircle className="mx-auto h-10 w-10 text-emerald-600" />
-        <p className="mt-4 text-base font-semibold text-[#111827]">Resume parsed successfully!</p>
-        <p className="mt-1 text-sm text-[#6B7280]">Redirecting to your profile...</p>
+        <p className="mt-4 text-base font-semibold text-foreground">Resume parsed successfully!</p>
+        <p className="mt-1 text-sm text-muted-foreground">Redirecting to your profile...</p>
       </div>
     );
   }
@@ -204,12 +204,12 @@ export default function ResumeUploader() {
     return (
       <div className="rounded-2xl border border-[#FECACA] bg-white p-8 text-center shadow-sm">
         <AlertCircle className="mx-auto h-10 w-10 text-rose-600" />
-        <p className="mt-4 text-base font-semibold text-[#111827]">Upload failed</p>
-        <p className="mt-1 text-sm text-[#6B7280]">{errorMessage}</p>
+        <p className="mt-4 text-base font-semibold text-foreground">Upload failed</p>
+        <p className="mt-1 text-sm text-muted-foreground">{errorMessage}</p>
         <button
           type="button"
           onClick={reset}
-          className="mt-5 rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-medium text-[#111827]"
+          className="mt-5 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground"
         >
           Try Again
         </button>
@@ -219,12 +219,12 @@ export default function ResumeUploader() {
 
   if (status === "selected" && selectedFile) {
     return (
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
         <div className="flex items-center gap-3">
-          <FileText className="h-6 w-6 text-[#6B7280]" />
+          <FileText className="h-6 w-6 text-muted-foreground" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-[#111827]">{selectedFile.name}</p>
-            <p className="text-xs text-[#6B7280]">{formatFileSize(selectedFile.size)}</p>
+            <p className="truncate text-sm font-medium text-foreground">{selectedFile.name}</p>
+            <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
           </div>
           <Check className="h-5 w-5 text-emerald-600" />
         </div>
@@ -232,7 +232,7 @@ export default function ResumeUploader() {
         <button
           type="button"
           onClick={handleUpload}
-          className="mt-6 w-full rounded-lg bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] px-4 py-2.5 text-sm font-semibold text-white"
+          className="mt-6 w-full rounded-[14px] bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Upload Resume
         </button>
@@ -241,19 +241,19 @@ export default function ResumeUploader() {
   }
 
   return (
-    <div className="rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
       <div
         {...getRootProps()}
         className={`cursor-pointer rounded-xl border-2 border-dashed p-10 text-center transition ${
-          isDragActive ? "border-[#7C3AED] bg-[#FAF5FF]" : "border-[#E5E7EB]"
+          isDragActive ? "border-primary bg-primary/5" : "border-border"
         }`}
       >
         <input {...getInputProps()} />
-        <Upload className="mx-auto h-10 w-10 text-[#9CA3AF]" />
-        <p className="mt-4 text-base font-semibold text-[#111827]">Drag and drop your resume here</p>
-        <p className="mt-1 text-sm text-[#6B7280]">or click to browse</p>
+        <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
+        <p className="mt-4 text-base font-semibold text-foreground">Drag and drop your resume here</p>
+        <p className="mt-1 text-sm text-muted-foreground">or click to browse</p>
       </div>
-      <p className="mt-4 text-center text-xs text-[#6B7280]">
+      <p className="mt-4 text-center text-xs text-muted-foreground">
         Supports PDF and DOCX · Max {MAX_RESUME_UPLOAD_LABEL}
       </p>
     </div>

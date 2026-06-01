@@ -68,57 +68,42 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const SOURCE_STYLES: Record<
-  RecommendedJobCard["source"],
-  { label: string; className: string }
-> = {
-  greenhouse: {
-    label: "Greenhouse",
-    className: "bg-emerald-600/12 text-emerald-900 ring-emerald-600/25",
-  },
-  lever: {
-    label: "Lever",
-    className: "bg-orange-500/12 text-orange-900 ring-orange-400/25",
-  },
-  adzuna: {
-    label: "Adzuna",
-    className: "bg-sky-600/12 text-sky-950 ring-sky-500/25",
-  },
-  usajobs: {
-    label: "USAJobs",
-    className: "bg-blue-800/12 text-blue-950 ring-blue-700/20",
-  },
-  workday: {
-    label: "Workday",
-    className: "bg-[#E8F0FE] text-[#1557B0] ring-[#1A73E8]/25",
-  },
-  smartrecruiters: {
-    label: "SmartRecruiters",
-    className: "bg-cyan-500/12 text-cyan-800 ring-cyan-500/25",
-  },
-  ashby: {
-    label: "Ashby",
-    className: "bg-violet-600/12 text-violet-900 ring-violet-500/25",
-  },
-  jobvite: { label: "Jobvite", className: "bg-rose-500/12 text-rose-800 ring-rose-500/25" },
-  bamboohr: { label: "BambooHR", className: "bg-lime-500/12 text-lime-900 ring-lime-500/25" },
-  icims: { label: "iCIMS", className: "bg-indigo-500/12 text-indigo-900 ring-indigo-500/25" },
-  taleo: { label: "Taleo", className: "bg-slate-500/12 text-slate-800 ring-slate-400/25" },
-  linkedin: { label: "LinkedIn", className: "bg-[#0a66c2]/12 text-[#0a66c2] ring-[#0a66c2]/20" },
-  reddit: { label: "Reddit", className: "bg-orange-500/12 text-orange-800 ring-orange-400/25" },
-  x: { label: "X", className: "bg-slate-900/10 text-slate-900 ring-slate-500/20" },
-  remoteok: { label: "RemoteOK", className: "bg-emerald-600/12 text-emerald-900 ring-emerald-500/20" },
-  remotejobs: { label: "RemoteJobs.org", className: "bg-sky-600/12 text-sky-900 ring-sky-500/20" },
-  hackernews: { label: "Hacker News", className: "bg-orange-500/12 text-orange-900 ring-orange-400/25" },
-  jobicy: { label: "Jobicy", className: "bg-fuchsia-600/12 text-fuchsia-900 ring-fuchsia-500/20" },
-  arbeitnow: { label: "Arbeitnow", className: "bg-cyan-600/12 text-cyan-900 ring-cyan-500/20" },
-  indeed: { label: "Indeed", className: "bg-blue-600/12 text-blue-800 ring-blue-500/20" },
-  glassdoor: { label: "Glassdoor", className: "bg-emerald-700/10 text-emerald-900 ring-emerald-600/15" },
-  levels: { label: "Levels.fyi", className: "bg-violet-600/12 text-violet-900 ring-violet-500/20" },
-  facebook: { label: "Facebook", className: "bg-blue-700/12 text-blue-900 ring-blue-600/20" },
-  rss: { label: "RSS", className: "bg-orange-500/12 text-orange-900 ring-orange-400/25" },
-  other: { label: "Other ATS", className: "bg-[#F8F9FA] text-[#3A3A3C] ring-[#DADCE0]" },
+import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
+
+const SOURCE_LABELS: Record<RecommendedJobCard["source"], string> = {
+  greenhouse: "Greenhouse",
+  lever: "Lever",
+  adzuna: "Adzuna",
+  usajobs: "USAJobs",
+  workday: "Workday",
+  smartrecruiters: "SmartRecruiters",
+  ashby: "Ashby",
+  jobvite: "Jobvite",
+  bamboohr: "BambooHR",
+  icims: "iCIMS",
+  taleo: "Taleo",
+  linkedin: "LinkedIn",
+  reddit: "Reddit",
+  x: "X",
+  remoteok: "RemoteOK",
+  remotejobs: "RemoteJobs.org",
+  hackernews: "Hacker News",
+  jobicy: "Jobicy",
+  arbeitnow: "Arbeitnow",
+  indeed: "Indeed",
+  glassdoor: "Glassdoor",
+  levels: "Levels.fyi",
+  facebook: "Facebook",
+  rss: "RSS",
+  other: "Other ATS",
 };
+
+const SOURCE_STYLES = Object.fromEntries(
+  (Object.keys(SOURCE_LABELS) as RecommendedJobCard["source"][]).map((source) => [
+    source,
+    { label: SOURCE_LABELS[source], className: WG_PLATFORM_CHIP_CLASS },
+  ]),
+) as Record<RecommendedJobCard["source"], { label: string; className: string }>;
 
 const DATE_OPTIONS = [
   { id: "any" as const, label: "Any time" },
@@ -2108,7 +2093,7 @@ export default function RecommendedJobsSection({
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 gap-3">
                   <div
-                    className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} relative shrink-0 overflow-hidden rounded-lg border border-[#DADCE0] bg-gradient-to-br from-[#E8F0FE] to-[#F8F9FA]`}
+                    className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} relative shrink-0 overflow-hidden rounded-[14px] border border-border bg-muted`}
                     aria-label={`${job.company} logo placeholder`}
                   >
                     <Building2 className="absolute left-1.5 top-1.5 h-3.5 w-3.5 text-[#5F6368]" aria-hidden />
@@ -2411,7 +2396,7 @@ export default function RecommendedJobsSection({
         same <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">DATABASE_URL</code> as Supabase.{" "}
         <Link
           href="/create-profile"
-          className="font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           Refresh resume
         </Link>{" "}

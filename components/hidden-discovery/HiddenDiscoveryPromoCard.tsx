@@ -9,14 +9,14 @@ export default function HiddenDiscoveryPromoCard() {
   const { navigate } = useDashboardNavigation();
 
   return (
-    <Card className="wg-dash-section-card overflow-hidden border-blue-200/60 bg-gradient-to-br from-blue-50/80 to-indigo-50/40 dark:border-blue-900/40 dark:from-blue-950/40 dark:to-indigo-950/20">
+    <Card className="wg-dash-section-card overflow-hidden border-border bg-card">
       <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-primary text-primary-foreground shadow-sm">
             <Radar className="h-6 w-6" aria-hidden />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+            <h2 className="text-base font-semibold text-foreground">
               Hidden Jobs Discovery
             </h2>
             <p className="mt-1 max-w-xl text-sm text-muted-foreground">

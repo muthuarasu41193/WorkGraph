@@ -94,7 +94,7 @@ export default function EducationSection({ userId, education }: Props) {
         <button
           type="button"
           onClick={() => void addItem()}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-md border border-slate-900 bg-slate-900 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-slate-800 sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
           Add credential

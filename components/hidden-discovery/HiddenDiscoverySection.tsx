@@ -54,7 +54,7 @@ export default function HiddenDiscoverySection() {
         <div>
           <h1
             id="hidden-discovery-heading"
-            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50"
+            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground"
           >
             <Radar className="h-7 w-7 text-primary" />
             Hidden Jobs Discovery
@@ -86,7 +86,7 @@ export default function HiddenDiscoverySection() {
         </div>
       </header>
 
-      <Card className="wg-dash-section-card border-blue-200/50 bg-muted/30">
+      <Card className="wg-dash-section-card border-border bg-muted/40">
         <CardContent className="space-y-2 p-4 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Quick start</p>
           <ol className="list-decimal space-y-1 pl-5">

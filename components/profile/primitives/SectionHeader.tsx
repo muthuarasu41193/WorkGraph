@@ -22,7 +22,7 @@ export default function SectionHeader({
     <header className="mb-5 flex flex-col gap-3 border-b border-[var(--wg-color-border)] pb-5 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="mb-1 text-xs font-semibold tracking-wide text-[var(--wg-color-primary)]">{eyebrow}</p>
+          <p className="wg-label-mono mb-1">{eyebrow}</p>
         ) : null}
         <div className="flex items-center gap-2.5">
           {Icon ? (

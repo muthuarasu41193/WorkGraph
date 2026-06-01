@@ -18,7 +18,7 @@ const toneStyles: Record<Tone, string> = {
   default: "",
   success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
   warning: "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200",
-  info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-200",
+  info: "border-border bg-muted text-foreground",
   muted: "text-muted-foreground",
 };
 

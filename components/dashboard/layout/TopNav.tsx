@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { useState } from "react";
+import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 
 type Props = {
   sidebarCollapsed?: boolean;
@@ -40,7 +41,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
       .join("") || "WG";
 
   return (
-    <header className="wg-dash-topnav sticky top-0 z-50 h-[60px] border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/90">
+    <header className="wg-dash-topnav sticky top-0 z-50 h-[60px] border-b backdrop-blur-md">
       <div className="flex h-full items-center gap-3 px-3 md:gap-4 md:px-5">
         {/* Logo + mobile menu */}
         <div className="flex shrink-0 items-center gap-2">
@@ -63,13 +64,8 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
             </SheetContent>
           </Sheet>
 
-          <Link href="/profile" className="flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 text-sm font-bold text-white shadow-sm">
-              WG
-            </span>
-            <span className="hidden font-semibold tracking-tight text-slate-900 dark:text-slate-50 sm:inline">
-              WorkGraph
-            </span>
+          <Link href="/profile" className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <WorkGraphLogo iconClassName="h-8 w-8" className="gap-2" />
           </Link>
         </div>
 
@@ -125,7 +121,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                 aria-label="Account menu"
               >
                 <Avatar size="lg">
-                  <AvatarFallback className="bg-blue-100 text-sm font-semibold text-blue-800 dark:bg-blue-950 dark:text-blue-200">
+                  <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
                     {initials}
                   </AvatarFallback>
                 </Avatar>

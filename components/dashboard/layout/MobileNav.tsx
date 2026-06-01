@@ -9,7 +9,7 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="wg-dash-mobilenav fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-md md:hidden dark:border-slate-800 dark:bg-slate-950/95"
+      className="wg-dash-mobilenav fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 backdrop-blur-md md:hidden"
       aria-label="Mobile dashboard navigation"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-6 gap-0 px-1 pb-[env(safe-area-inset-bottom)]">
@@ -23,7 +23,7 @@ export default function MobileNav() {
                 onClick={() => navigate(route.id)}
                 className={cn(
                   "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 px-0.5 py-1.5 text-[10px] font-medium transition-colors",
-                  active ? "text-blue-600 dark:text-blue-400" : "text-slate-500",
+                  active ? "text-[var(--dash-accent)]" : "text-muted-foreground",
                 )}
                 aria-current={active ? "page" : undefined}
                 aria-label={route.label}
