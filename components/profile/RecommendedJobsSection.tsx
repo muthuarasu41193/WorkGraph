@@ -14,6 +14,8 @@ import {
   CalendarDays,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ChevronUp,
   GraduationCap,
   ExternalLink,
@@ -185,8 +187,24 @@ const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_as
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
-const JOBS_API_PAGE_SIZE = 100;
-const CATALOG_FILTER_PAGE_SIZE = 300;
+const MAX_PAGINATION_TOKENS = 7;
+
+type PaginationToken = number | "ellipsis";
+
+function buildPaginationTokens(current: number, totalPages: number): PaginationToken[] {
+  if (totalPages <= 1) return [1];
+  if (totalPages <= MAX_PAGINATION_TOKENS) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+  const tokens: PaginationToken[] = [1];
+  const windowStart = Math.max(2, current - 1);
+  const windowEnd = Math.min(totalPages - 1, current + 1);
+  if (windowStart > 2) tokens.push("ellipsis");
+  for (let page = windowStart; page <= windowEnd; page += 1) tokens.push(page);
+  if (windowEnd < totalPages - 1) tokens.push("ellipsis");
+  tokens.push(totalPages);
+  return tokens;
+}
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -594,7 +612,6 @@ export default function RecommendedJobsSection({
   feedDemoHint,
   liveListings = 0,
 }: Props) {
-  const autoLoadRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -628,7 +645,8 @@ export default function RecommendedJobsSection({
   const [dateWindow, setDateWindow] = useState<"any" | "1" | "7" | "30">(initialDateWindow);
   const [sources, setSources] = useState<Set<JobFeedSource>>(initialSources);
   const [skillsPick, setSkillsPick] = useState<Set<string>>(initialSkillsPick);
-  const [visible, setVisible] = useState(PAGE_SIZE);
+  const initialJobsPage = Math.max(1, parseNumberParam(searchParams.get("jobsPage"), 1));
+  const [currentPage, setCurrentPage] = useState(initialJobsPage);
   const [matchScore, setMatchScore] = useState<"any" | "90" | "75" | "60">(initialMatchScore);
   const [jobTypes, setJobTypes] = useState<Set<JobTypeOption>>(initialJobTypes);
   const [locationMode, setLocationMode] = useState<"any" | "remote" | "hybrid" | "onsite">(initialLocationMode);
@@ -660,20 +678,14 @@ export default function RecommendedJobsSection({
   );
   const [savedJobs, setSavedJobs] = useState<Set<string>>(() => new Set());
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [autoLoadEnabled, setAutoLoadEnabled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isInitialLoading] = useState(false);
-  const [isFetchingPage, setIsFetchingPage] = useState(false);
-  const [extraJobs, setExtraJobs] = useState<RecommendedJobCard[]>([]);
-  const [apiPage, setApiPage] = useState(1);
-  const [hasMoreOnServer, setHasMoreOnServer] = useState(
-    feedKind === "live" && liveListings > initialJobs.length
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [pageJobs, setPageJobs] = useState<RecommendedJobCard[]>(() => initialJobs.slice(0, PAGE_SIZE));
+  const [catalogTotal, setCatalogTotal] = useState(
+    feedKind === "live" ? liveListings || initialJobs.length : initialJobs.length
   );
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [serverFilteredJobs, setServerFilteredJobs] = useState<RecommendedJobCard[] | null>(null);
-  const [serverMatchTotal, setServerMatchTotal] = useState<number | null>(null);
-  const [isFilterFetching, setIsFilterFetching] = useState(false);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
@@ -726,33 +738,109 @@ export default function RecommendedJobsSection({
     jobTypes,
   ]);
 
-  const serverCatalogReady =
-    useServerCatalogFetch && serverFilteredJobs !== null && !isFilterFetching;
+  const serverCatalogReady = useServerCatalogFetch && !isPageLoading;
+
+  const demoFilteredSorted = useMemo(() => {
+    if (feedKind !== "demo") return null;
+    const enriched = initialJobs.map((job) => ({
+      job,
+      meta: deriveJobMeta(job),
+      score: getMatchScore(job, skillHints),
+    }));
+    const q = query.trim().toLowerCase();
+    const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
+    const filteredRows = enriched.filter(({ job, meta, score }) => {
+      if (q && !searchTermsMatch(meta.searchBlob, q)) return false;
+      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
+      if (sources.size > 0 && !sources.has(job.source)) return false;
+      if (!locationMatches(job, meta, locationMode, locationQuery)) return false;
+      if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
+      if (!jobTypeMatches(meta, jobTypes)) return false;
+      if (matchScore !== "any" && score < Number(matchScore)) return false;
+      if (skillsPick.size > 0) {
+        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
+        const hasAny = [...skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
+        if (!hasAny) return false;
+      }
+      if (!experienceMatches(meta, experienceLevel)) return false;
+      if (salaryFilterActive) {
+        if (!meta.salary) return false;
+        if (meta.salary.currency !== currency) return false;
+        if (meta.salary.period !== salaryPeriod) return false;
+        if (meta.salary.maxK < salaryMin || meta.salary.minK > salaryMax) return false;
+      }
+      if (companySize !== "any" && meta.companySize !== companySize) {
+        const sizeBlob = meta.searchBlob;
+        const sizeHint =
+          companySize === "Startup (1-50)"
+            ? ["startup", "early stage", "seed"]
+            : companySize === "Small (51-200)"
+              ? ["small team", "51-200"]
+              : companySize === "Medium (201-1000)"
+                ? ["midsize", "201-1000"]
+                : companySize === "Large (1000+)"
+                  ? ["large company", "1000+"]
+                  : ["enterprise", "10k+"];
+        if (!sizeHint.some((h) => sizeBlob.includes(h))) return false;
+      }
+      if (!industriesMatch(meta, industries)) return false;
+      if (normalizedRequiredSkills.length > 0) {
+        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
+        if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
+      }
+      if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
+      if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
+      if (easyApplyOnly && !meta.isEasyApply) return false;
+      return true;
+    });
+    const rows = [...filteredRows];
+    rows.sort((a, b) => {
+      if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
+      if (sortBy === "newest") {
+        return (new Date(b.job.postedAtIso || 0).getTime() || 0) - (new Date(a.job.postedAtIso || 0).getTime() || 0);
+      }
+      if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
+      if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
+      return b.score - a.score;
+    });
+    return rows;
+  }, [
+    feedKind,
+    initialJobs,
+    skillHints,
+    query,
+    dateWindow,
+    sources,
+    locationMode,
+    locationQuery,
+    companyQuery,
+    jobTypes,
+    matchScore,
+    skillsPick,
+    experienceLevel,
+    salaryFilterActive,
+    salaryMin,
+    salaryMax,
+    currency,
+    salaryPeriod,
+    companySize,
+    industries,
+    normalizedRequiredSkills,
+    benefits,
+    visaSponsorshipOnly,
+    easyApplyOnly,
+    sortBy,
+  ]);
 
   const jobs = useMemo(() => {
-    if (useServerCatalogFetch) {
-      if (isFilterFetching) return [];
-      if (serverFilteredJobs !== null) return serverFilteredJobs;
-      return [];
+    if (feedKind === "demo" && demoFilteredSorted) {
+      const start = (currentPage - 1) * PAGE_SIZE;
+      return demoFilteredSorted.slice(start, start + PAGE_SIZE).map((row) => row.job);
     }
-    if (extraJobs.length === 0) return initialJobs;
-    const seen = new Set(initialJobs.map((j) => j.id));
-    const merged = [...initialJobs];
-    for (const job of extraJobs) {
-      if (!seen.has(job.id)) {
-        seen.add(job.id);
-        merged.push(job);
-      }
-    }
-    return merged;
-  }, [initialJobs, extraJobs, serverFilteredJobs, useServerCatalogFetch, isFilterFetching]);
+    return pageJobs;
+  }, [feedKind, demoFilteredSorted, currentPage, pageJobs]);
 
-  const totalIndexed =
-    serverMatchTotal !== null
-      ? serverMatchTotal
-      : liveListings > 0
-        ? liveListings
-        : jobs.length;
+  const totalIndexed = feedKind === "demo" ? demoFilteredSorted?.length ?? 0 : catalogTotal;
 
   const enrichedJobs = useMemo(
     () =>
@@ -873,10 +961,22 @@ export default function RecommendedJobsSection({
     return rows;
   }, [filtered, sortBy]);
 
-  const visibleJobs = useMemo(() => sortedJobs.slice(0, visible), [sortedJobs, visible]);
-  const totalMatched = sortedJobs.length;
-  const rangeStart = totalMatched === 0 ? 0 : 1;
-  const rangeEnd = Math.min(visible, totalMatched);
+  const visibleJobs = sortedJobs;
+  const totalMatched = totalIndexed;
+  const totalPages = Math.max(1, Math.ceil(totalMatched / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const rangeStart = visibleJobs.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
+  const rangeEnd = visibleJobs.length === 0 ? 0 : rangeStart + visibleJobs.length - 1;
+  const paginationTokens = useMemo(
+    () => buildPaginationTokens(safePage, totalPages),
+    [safePage, totalPages]
+  );
+
+  const goToPage = useCallback((page: number) => {
+    const next = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [totalPages]);
 
   const buildJobsApiQuery = useCallback(
     (page: number, pageSize: number) => {
@@ -899,206 +999,61 @@ export default function RecommendedJobsSection({
     [skillHints, catalogFilters]
   );
 
-  const fetchJobsPage = useCallback(
-    async (page: number, pageSize = JOBS_API_PAGE_SIZE) => {
-      if (feedKind !== "live" || isFetchingPage) return false;
-      setIsFetchingPage(true);
-      setFetchError(null);
-      try {
-        const res = await fetch(`/api/jobs?${buildJobsApiQuery(page, pageSize)}`, { cache: "no-store" });
-        if (res.ok) {
-          const payload = (await res.json()) as {
-            ok?: boolean;
-            jobs?: RecommendedJobCard[];
-            total?: number;
-            has_more?: boolean;
-          };
-          if (payload.ok && payload.jobs) {
-            if (useServerCatalogFetch) {
-              setServerFilteredJobs((prev) => {
-                const merged = page === 1 ? [] : [...(prev ?? [])];
-                const seen = new Set(merged.map((j) => j.id));
-                for (const job of payload.jobs!) {
-                  if (!seen.has(job.id)) {
-                    seen.add(job.id);
-                    merged.push(job);
-                  }
-                }
-                return merged;
-              });
-              if (page === 1) {
-                setServerMatchTotal(payload.total ?? payload.jobs.length);
-              }
-            } else if (payload.jobs.length > 0) {
-              setExtraJobs((prev) => {
-                const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
-                const next = [...prev];
-                for (const job of payload.jobs!) {
-                  if (!seen.has(job.id)) {
-                    seen.add(job.id);
-                    next.push(job);
-                  }
-                }
-                return next;
-              });
-            }
-            setApiPage(page);
-            setHasMoreOnServer(Boolean(payload.has_more));
-            return true;
-          }
-        }
-
-        const { createBrowserSupabaseClient } = await import("@/lib/supabase");
-        const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
-        const supabase = createBrowserSupabaseClient();
-        const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-          page,
-          pageSize,
-          filters: catalogFilters,
-        });
-        if (fallback.jobs) {
-          if (useServerCatalogFetch) {
-            setServerFilteredJobs((prev) => {
-              const merged = page === 1 ? [] : [...(prev ?? [])];
-              const seen = new Set(merged.map((j) => j.id));
-              for (const job of fallback.jobs!) {
-                if (!seen.has(job.id)) {
-                  seen.add(job.id);
-                  merged.push(job);
-                }
-              }
-              return merged;
-            });
-            if (page === 1) setServerMatchTotal(fallback.total);
-          } else if (fallback.jobs.length > 0) {
-            setExtraJobs((prev) => {
-              const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
-              const next = [...prev];
-              for (const job of fallback.jobs!) {
-                if (!seen.has(job.id)) {
-                  seen.add(job.id);
-                  next.push(job);
-                }
-              }
-              return next;
-            });
-          }
-          setApiPage(page);
-          setHasMoreOnServer(fallback.hasMore);
-          return true;
-        }
-        setFetchError("Could not load more jobs.");
-        return false;
-      } catch {
-        setFetchError("Network error while loading jobs.");
-        return false;
-      } finally {
-        setIsFetchingPage(false);
-      }
-    },
-    [
-      feedKind,
-      initialJobs,
-      isFetchingPage,
-      skillHints,
-      buildJobsApiQuery,
-      useServerCatalogFetch,
-      catalogFilters,
-    ]
-  );
-
   useEffect(() => {
-    if (!useServerCatalogFetch) {
-      setServerFilteredJobs(null);
-      setServerMatchTotal(null);
-      return;
-    }
+    if (feedKind !== "live") return;
 
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
       void (async () => {
-        setIsFilterFetching(true);
+        setIsPageLoading(true);
         setFetchError(null);
-        setServerFilteredJobs(null);
         try {
-          const merged: RecommendedJobCard[] = [];
-          const seen = new Set<string>();
-          let total = 0;
-          let page = 1;
-          let hasMore = true;
-          const maxPages = 5;
-
-          while (hasMore && page <= maxPages && !controller.signal.aborted) {
-            const res = await fetch(`/api/jobs?${buildJobsApiQuery(page, CATALOG_FILTER_PAGE_SIZE)}`, {
-              cache: "no-store",
-              signal: controller.signal,
-            });
-            const payload = (await res.json()) as {
-              ok?: boolean;
-              jobs?: RecommendedJobCard[];
-              total?: number;
-              has_more?: boolean;
-            };
-            if (!res.ok || !payload.ok || !payload.jobs) {
-              setFetchError("Could not search jobs. Try different filters.");
-              return;
-            }
-            total = payload.total ?? total;
-            for (const job of payload.jobs) {
-              if (!seen.has(job.id)) {
-                seen.add(job.id);
-                merged.push(job);
-              }
-            }
-            hasMore = Boolean(payload.has_more);
-            page += 1;
+          const res = await fetch(`/api/jobs?${buildJobsApiQuery(currentPage, PAGE_SIZE)}`, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          const payload = (await res.json()) as {
+            ok?: boolean;
+            jobs?: RecommendedJobCard[];
+            total?: number;
+          };
+          if (controller.signal.aborted) return;
+          if (res.ok && payload.ok && payload.jobs) {
+            setPageJobs(payload.jobs);
+            setCatalogTotal(payload.total ?? payload.jobs.length);
+            return;
           }
 
+          const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+          const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
+          const supabase = createBrowserSupabaseClient();
+          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+            filters: catalogFilters,
+          });
           if (controller.signal.aborted) return;
-          setServerFilteredJobs(merged);
-          setServerMatchTotal(total || merged.length);
-          setHasMoreOnServer(hasMore);
-          setApiPage(page - 1);
-          setVisible(PAGE_SIZE);
+          if (fallback.jobs) {
+            setPageJobs(fallback.jobs);
+            setCatalogTotal(fallback.total);
+            return;
+          }
+          setFetchError("Could not load jobs for this page.");
         } catch {
           if (!controller.signal.aborted) {
-            setFetchError("Network error while searching jobs.");
+            setFetchError("Network error while loading jobs.");
           }
         } finally {
-          if (!controller.signal.aborted) setIsFilterFetching(false);
+          if (!controller.signal.aborted) setIsPageLoading(false);
         }
       })();
-    }, 400);
+    }, 150);
 
     return () => {
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [useServerCatalogFetch, buildJobsApiQuery]);
-
-  const loadMoreJobs = useCallback(async () => {
-    if (isLoadingMore) return;
-    setIsLoadingMore(true);
-    const nextVisible = visible + PAGE_SIZE;
-    if (nextVisible <= sortedJobs.length) {
-      setVisible(nextVisible);
-      setIsLoadingMore(false);
-      return;
-    }
-    if (hasMoreOnServer && feedKind === "live") {
-      const loaded = await fetchJobsPage(apiPage + 1);
-      if (loaded) setVisible(nextVisible);
-    }
-    setIsLoadingMore(false);
-  }, [
-    apiPage,
-    fetchJobsPage,
-    feedKind,
-    hasMoreOnServer,
-    isLoadingMore,
-    sortedJobs.length,
-    visible,
-  ]);
+  }, [feedKind, currentPage, buildJobsApiQuery, skillHints, catalogFilters]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
@@ -1110,7 +1065,7 @@ export default function RecommendedJobsSection({
       }
       return next;
     });
-    setVisible(PAGE_SIZE);
+    setCurrentPage(1);
   }
 
   const clearFilters = useCallback(() => {
@@ -1135,9 +1090,7 @@ export default function RecommendedJobsSection({
     setBenefits(new Set());
     setVisaSponsorshipOnly(false);
     setEasyApplyOnly(false);
-    setServerFilteredJobs(null);
-    setServerMatchTotal(null);
-    setVisible(PAGE_SIZE);
+    setCurrentPage(1);
   }, []);
 
   useEffect(() => {
@@ -1191,6 +1144,8 @@ export default function RecommendedJobsSection({
       else params.delete("jobsLayout");
       if (sortBy !== "best") params.set("sort", sortBy);
       else params.delete("sort");
+      if (currentPage > 1) params.set("jobsPage", String(currentPage));
+      else params.delete("jobsPage");
       const nextQuery = params.toString();
       const currentQuery = searchParams.toString();
       if (nextQuery === currentQuery) return;
@@ -1221,6 +1176,7 @@ export default function RecommendedJobsSection({
     easyApplyOnly,
     viewMode,
     sortBy,
+    currentPage,
     pathname,
     router,
     searchParams,
@@ -1273,7 +1229,7 @@ export default function RecommendedJobsSection({
   }, []);
 
   useEffect(() => {
-    setVisible(PAGE_SIZE);
+    setCurrentPage(1);
   }, [
     query,
     dateWindow,
@@ -1299,33 +1255,21 @@ export default function RecommendedJobsSection({
   ]);
 
   useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 400);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!autoLoadEnabled) return;
-    if (!autoLoadRef.current) return;
-    if (visible >= sortedJobs.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first?.isIntersecting && !isLoadingMore) {
-          loadMoreJobs();
-        }
-      },
-      { threshold: 0, rootMargin: "0px 0px 20% 0px" }
-    );
-    observer.observe(autoLoadRef.current);
-    return () => observer.disconnect();
-  }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
-
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = (isInitialLoading || (isFilterFetching && useServerCatalogFetch)) && jobs.length === 0;
-  const showLoadMoreSpinner =
-    (isLoadingMore || isFetchingPage || (isFilterFetching && !useServerCatalogFetch)) && jobs.length > 0;
+  const showSkeleton = (isInitialLoading || isPageLoading) && jobs.length === 0;
+  const showPageLoadingOverlay = isPageLoading && jobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1341,7 +1285,7 @@ export default function RecommendedJobsSection({
         setSearchInput("");
         setDateWindow("any");
         setSources(new Set());
-        setVisible(PAGE_SIZE);
+        setCurrentPage(1);
         if (skillHints.length > 0) {
           setSkillsPick(new Set([skillHints[0]]));
         }
@@ -1353,7 +1297,7 @@ export default function RecommendedJobsSection({
       setDateWindow("any");
       setSources(new Set());
       setSkillsPick(new Set());
-      setVisible(PAGE_SIZE);
+      setCurrentPage(1);
     };
     window.addEventListener("wg:job-filter", handler as EventListener);
     return () => window.removeEventListener("wg:job-filter", handler as EventListener);
@@ -1364,7 +1308,7 @@ export default function RecommendedJobsSection({
       const ce = event as CustomEvent<{ source?: string | null }>;
       if (!ce.detail) return;
       const source = ce.detail.source;
-      setVisible(PAGE_SIZE);
+      setCurrentPage(1);
       if (!source) {
         setSources(new Set());
         return;
@@ -1579,9 +1523,8 @@ export default function RecommendedJobsSection({
 
       {feedKind === "live" && liveListings > 0 ? (
         <p className="text-sm text-[#5F6368]">
-          Browsing <span className="font-semibold text-[#1A73E8]">{jobs.length.toLocaleString()}</span> loaded listings
-          {liveListings > jobs.length ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}.
-          {hasMoreOnServer ? " Use Load more to fetch additional pages." : ""}
+          <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs match your criteria
+          {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}. Browse by page below.
         </p>
       ) : null}
 
@@ -1629,7 +1572,7 @@ export default function RecommendedJobsSection({
                 ) : null}
                 {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[#8E8E93]" /> : null}
               </div>
-              {query.trim() && !isSearching && !isFilterFetching && filtered.length === 0 ? (
+              {query.trim() && !isSearching && !isPageLoading && filtered.length === 0 ? (
                 <p className="ml-2 text-xs text-[#8E8E93]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
 
@@ -1649,7 +1592,7 @@ export default function RecommendedJobsSection({
                       type="button"
                       onClick={() => {
                         setMatchScore(o.id as "any" | "90" | "75" | "60");
-                        setVisible(PAGE_SIZE);
+                        setCurrentPage(1);
                       }}
                       className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
                     >
@@ -1677,7 +1620,7 @@ export default function RecommendedJobsSection({
                             else next.add(type);
                             return next;
                           });
-                          setVisible(PAGE_SIZE);
+                          setCurrentPage(1);
                         }}
                       />
                       {type}
@@ -1699,7 +1642,7 @@ export default function RecommendedJobsSection({
                         type="button"
                         onClick={() => {
                           setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
-                          setVisible(PAGE_SIZE);
+                          setCurrentPage(1);
                         }}
                         className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}
                       >
@@ -1828,18 +1771,10 @@ export default function RecommendedJobsSection({
 
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
             Showing <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()} matched jobs</span>
-            {useServerCatalogFetch ? (
-              <>
-                {" "}
-                from <span className="text-[#8E8E93]">{jobs.length.toLocaleString()} loaded</span>
-              </>
-            ) : (
-              <>
-                {" "}
-                out of <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
-              </>
-            )}
-            {isFilterFetching || isFetchingPage ? (
+            {" "}
+            · Page <span className="font-semibold text-[#1A73E8]">{safePage}</span> of{" "}
+            <span className="text-[#8E8E93]">{totalPages.toLocaleString()}</span>
+            {isPageLoading ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
                 Loading more…
@@ -1969,7 +1904,13 @@ export default function RecommendedJobsSection({
             >
               Clear all filters
             </Button>
-            <Button type="button" onClick={() => setIsMobileFiltersOpen(false)}>
+            <Button
+              type="button"
+              onClick={() => {
+                setCurrentPage(1);
+                setIsMobileFiltersOpen(false);
+              }}
+            >
               Apply filters
             </Button>
           </div>
@@ -2037,7 +1978,7 @@ export default function RecommendedJobsSection({
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
-      {(jobs.length > 0 || isFetchingPage) ? (
+      {(jobs.length > 0 || isPageLoading) ? (
         <div className="flex items-center justify-between gap-2">
           <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
             <Button
@@ -2106,7 +2047,24 @@ export default function RecommendedJobsSection({
           ))}
         </div>
       ) : (
-      <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3"}>
+      <div className="relative">
+        {showPageLoadingOverlay ? (
+          <div
+            className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-white/60 pt-8 backdrop-blur-[1px]"
+            aria-hidden
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#DADCE0] bg-white px-4 py-2 text-sm text-[#3A3A3C] shadow-sm">
+              <Loader2 className="h-4 w-4 animate-spin text-[#1A73E8]" />
+              Loading page {safePage}…
+            </span>
+          </div>
+        ) : null}
+      <div
+        className={cn(
+          viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3",
+          showPageLoadingOverlay && "opacity-60 transition-opacity duration-200"
+        )}
+      >
         {shouldVirtualize ? null : visibleJobs.map(({ job, meta, score }, i) => {
           const src = SOURCE_STYLES[job.source];
           const applyHref = job.applyUrl?.trim();
@@ -2304,42 +2262,64 @@ export default function RecommendedJobsSection({
         })
         }
       </div>
+      </div>
       )}
 
-      {sortedJobs.length > visible || (hasMoreOnServer && feedKind === "live") ? (
-        <div className="space-y-3">
+      {totalMatched > 0 ? (
+        <nav
+          className="mt-6 flex flex-col items-center gap-3 border-t border-[#DADCE0] pt-5"
+          aria-label="Job results pagination"
+        >
           <p className="text-[13px] text-[#8E8E93]">
-            Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} matched jobs
+            Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} jobs
           </p>
-          <button
-            type="button"
-            onClick={loadMoreJobs}
-            disabled={isLoadingMore}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-white px-5 py-3 text-sm font-medium text-[#1A73E8] transition hover:bg-[#F8F9FA] disabled:cursor-wait disabled:opacity-70"
-          >
-            {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            {isLoadingMore ? "Loading..." : `Load ${Math.min(PAGE_SIZE, sortedJobs.length - visible)} more jobs`}
-          </button>
-          {showLoadMoreSpinner ? (
-            <p className="text-center text-xs text-[#8E8E93]">Loading more results…</p>
+          {totalPages > 1 ? (
+            <div className="flex flex-wrap items-center justify-center gap-1">
+              <button
+                type="button"
+                onClick={() => goToPage(safePage - 1)}
+                disabled={safePage <= 1 || isPageLoading}
+                aria-label="Previous page"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              {paginationTokens.map((token, index) =>
+                token === "ellipsis" ? (
+                  <span key={`ellipsis-${index}`} className="px-1 text-sm text-[#8E8E93]">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={token}
+                    type="button"
+                    onClick={() => goToPage(token)}
+                    disabled={isPageLoading}
+                    aria-label={`Page ${token}`}
+                    aria-current={token === safePage ? "page" : undefined}
+                    className={cn(
+                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-medium transition",
+                      token === safePage
+                        ? "bg-[#1A73E8] text-white shadow-sm"
+                        : "border border-[#DADCE0] bg-white text-[#3A3A3C] hover:border-[#1A73E8] hover:bg-[#E8F0FE]"
+                    )}
+                  >
+                    {token}
+                  </button>
+                )
+              )}
+              <button
+                type="button"
+                onClick={() => goToPage(safePage + 1)}
+                disabled={safePage >= totalPages || isPageLoading}
+                aria-label="Next page"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           ) : null}
-          <div className="flex items-center gap-2 text-xs text-[#8E8E93]">
-            <input
-              id="auto-load-jobs"
-              type="checkbox"
-              checked={autoLoadEnabled}
-              onChange={(e) => setAutoLoadEnabled(e.target.checked)}
-            />
-            <label htmlFor="auto-load-jobs">Auto-load more when nearing end</label>
-          </div>
-          <div ref={autoLoadRef} aria-hidden className="h-1 w-full" />
-        </div>
-      ) : null}
-
-      {sortedJobs.length <= visible && sortedJobs.length > 0 ? (
-        <p className="text-[13px] text-[#8E8E93]">
-          Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} matched jobs
-        </p>
+        </nav>
       ) : null}
 
       {!showSkeleton && filtered.length === 0 && jobs.length > 0 && skillHints.length > 0 ? (
@@ -2359,7 +2339,7 @@ export default function RecommendedJobsSection({
               type="button"
               onClick={() => {
                 clearFilters();
-                setVisible(PAGE_SIZE);
+                setCurrentPage(1);
               }}
               className="text-sm font-medium text-[#1A73E8] underline underline-offset-2"
             >
