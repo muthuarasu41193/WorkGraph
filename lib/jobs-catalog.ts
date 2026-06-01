@@ -134,44 +134,131 @@ export function mapJobRowToCard(row: JobRow, skills: string[] = []): Recommended
   };
 }
 
+export type JobsCatalogFilters = {
+  q?: string;
+  sources?: string[];
+  dateWindow?: "any" | "1" | "7" | "30";
+  locationMode?: "any" | "remote" | "hybrid" | "onsite";
+  locationQuery?: string;
+  company?: string;
+};
+
 export type LiveJobsPageResult = {
   rows: JobRow[] | null;
   total: number;
   page: number;
   pageSize: number;
   hasMore: boolean;
+  filtered: boolean;
 };
+
+function sanitizeIlike(value: string): string {
+  return value.replace(/[%_,]/g, " ").trim();
+}
+
+function postedAtCutoff(dateWindow: JobsCatalogFilters["dateWindow"]): string | null {
+  if (!dateWindow || dateWindow === "any") return null;
+  const days = Number(dateWindow);
+  if (!Number.isFinite(days) || days <= 0) return null;
+  return new Date(Date.now() - days * 86400000).toISOString();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
+  if (!filters) return builder;
+
+  if (filters.sources && filters.sources.length > 0) {
+    builder = builder.in("source", filters.sources);
+  }
+
+  const company = filters.company?.trim();
+  if (company) {
+    builder = builder.ilike("company", `%${sanitizeIlike(company)}%`);
+  }
+
+  const locationQuery = filters.locationQuery?.trim();
+  if (locationQuery) {
+    const loc = `%${sanitizeIlike(locationQuery)}%`;
+    builder = builder.or(`location.ilike.${loc},description.ilike.${loc}`);
+  }
+
+  if (filters.locationMode && filters.locationMode !== "any") {
+    if (filters.locationMode === "remote") {
+      builder = builder.or(
+        "location.ilike.%remote%,description.ilike.%remote%,description.ilike.%work from home%,description.ilike.%distributed%"
+      );
+    } else if (filters.locationMode === "hybrid") {
+      builder = builder.or("location.ilike.%hybrid%,description.ilike.%hybrid%");
+    } else if (filters.locationMode === "onsite") {
+      builder = builder.not("location", "ilike", "%remote%");
+    }
+  }
+
+  const cutoff = postedAtCutoff(filters.dateWindow);
+  if (cutoff) {
+    builder = builder.gte("posted_at", cutoff);
+  }
+
+  const q = filters.q?.trim();
+  if (q) {
+    const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    for (const term of terms) {
+      const pattern = `%${sanitizeIlike(term)}%`;
+      builder = builder.or(
+        `title.ilike.${pattern},company.ilike.${pattern},description.ilike.${pattern},location.ilike.${pattern}`
+      );
+    }
+  }
+
+  return builder;
+}
+
+function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
+  if (!filters) return false;
+  return Boolean(
+    filters.q?.trim() ||
+      (filters.sources && filters.sources.length > 0) ||
+      (filters.dateWindow && filters.dateWindow !== "any") ||
+      (filters.locationMode && filters.locationMode !== "any") ||
+      filters.locationQuery?.trim() ||
+      filters.company?.trim()
+  );
+}
 
 /** Single page of live listings — used by the Jobs tab API (fast, no bulk download). */
 export async function fetchLiveJobsPage(
   supabase: SupabaseClient,
-  options: { page?: number; pageSize?: number }
+  options: { page?: number; pageSize?: number; filters?: JobsCatalogFilters }
 ): Promise<LiveJobsPageResult> {
   const page = Math.max(1, options.page ?? 1);
   const pageSize = Math.min(200, Math.max(1, options.pageSize ?? 100));
   const offset = (page - 1) * pageSize;
+  const filters = options.filters;
+  const filtered = hasActiveCatalogFilters(filters);
 
-  const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
+  let countQuery = supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
+  countQuery = applyJobsCatalogFilters(countQuery, filters);
+  const totalRes = await countQuery;
+
   if (totalRes.error) {
     console.warn("[jobs-catalog] jobs count error:", totalRes.error.message, totalRes.error.code);
-    return { rows: null, total: 0, page, pageSize, hasMore: false };
+    return { rows: null, total: 0, page, pageSize, hasMore: false, filtered };
   }
 
   const total = totalRes.count ?? 0;
   if (total === 0) {
-    return { rows: [], total: 0, page, pageSize, hasMore: false };
+    return { rows: [], total: 0, page, pageSize, hasMore: false, filtered };
   }
 
-  const { data, error } = await supabase
-    .from("jobs")
-    .select(JOB_SELECT_COLUMNS)
-    .eq("is_community", false)
+  let dataQuery = supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false);
+  dataQuery = applyJobsCatalogFilters(dataQuery, filters);
+  const { data, error } = await dataQuery
     .order("posted_at", { ascending: false })
     .range(offset, offset + pageSize - 1);
 
   if (error) {
     console.warn("[jobs-catalog] jobs page select error:", error.message, error.code);
-    return { rows: null, total, page, pageSize, hasMore: false };
+    return { rows: null, total, page, pageSize, hasMore: false, filtered };
   }
 
   const rows = (data ?? []) as JobRow[];
@@ -181,30 +268,40 @@ export async function fetchLiveJobsPage(
     page,
     pageSize,
     hasMore: offset + rows.length < total,
+    filtered,
   };
 }
 
 export async function loadLiveJobCardsPage(
   supabase: SupabaseClient,
-  skills: string[] = [],
-  options: { page?: number; pageSize?: number }
+  profileSkills: string[] = [],
+  options: { page?: number; pageSize?: number; filters?: JobsCatalogFilters }
 ): Promise<{
   jobs: RecommendedJobCard[] | null;
   total: number;
   page: number;
   pageSize: number;
   hasMore: boolean;
+  filtered: boolean;
 }> {
   const result = await fetchLiveJobsPage(supabase, options);
   if (result.rows === null) {
-    return { jobs: null, total: result.total, page: result.page, pageSize: result.pageSize, hasMore: false };
+    return {
+      jobs: null,
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
+      hasMore: false,
+      filtered: result.filtered,
+    };
   }
   return {
-    jobs: result.rows.map((row) => mapJobRowToCard(row, skills)),
+    jobs: result.rows.map((row) => mapJobRowToCard(row, profileSkills)),
     total: result.total,
     page: result.page,
     pageSize: result.pageSize,
     hasMore: result.hasMore,
+    filtered: result.filtered,
   };
 }
 

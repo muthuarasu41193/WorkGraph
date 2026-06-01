@@ -448,6 +448,31 @@ function parseBooleanParam(value: string | null): boolean {
   return value === "1" || value === "true";
 }
 
+function searchTermsMatch(blob: string, rawQuery: string): boolean {
+  const trimmed = rawQuery.trim().toLowerCase();
+  if (!trimmed) return true;
+  const terms = trimmed.split(/\s+/).filter((t) => t.length > 0);
+  if (terms.length === 0) return true;
+  return terms.every((term) => blob.includes(term));
+}
+
+const JOB_TYPE_KEYWORDS: Record<JobTypeOption, string[]> = {
+  "Full-time": ["full-time", "full time"],
+  "Part-time": ["part-time", "part time"],
+  Contract: ["contract", "contractor"],
+  Freelance: ["freelance", "freelancer"],
+  Internship: ["internship", "intern"],
+  Temporary: ["temporary", "temp role"],
+};
+
+function jobTypeMatches(meta: DerivedJobMeta, selected: Set<JobTypeOption>): boolean {
+  if (selected.size === 0) return true;
+  if (meta.jobTypes.some((type) => selected.has(type))) return true;
+  return [...selected].some((type) =>
+    JOB_TYPE_KEYWORDS[type].some((keyword) => meta.searchBlob.includes(keyword))
+  );
+}
+
 type Props = {
   jobs: RecommendedJobCard[];
   skillHints: string[];
@@ -525,7 +550,7 @@ export default function RecommendedJobsSection({
   const isMobile = useMediaQuery("(max-width:767px)");
   const initialDateWindow = parseEnumParam(searchParams.get("date"), DATE_WINDOW_OPTIONS, "any");
   const initialSources = parseCsvSet(searchParams.get("src"), JOB_FEED_SOURCE_OPTIONS);
-  const initialSkillsPick = parseStringSet(searchParams.get("skills"));
+  const initialSkillsPick = parseStringSet(searchParams.get("skillPick") ?? searchParams.get("skills"));
   const initialMatchScore = parseEnumParam(searchParams.get("match"), MATCH_SCORE_OPTIONS, "any");
   const initialJobTypes = parseCsvSet(searchParams.get("type"), JOB_TYPE_OPTIONS);
   const initialLocationMode = parseEnumParam(searchParams.get("locMode"), LOCATION_MODE_OPTIONS, "any");
@@ -595,6 +620,9 @@ export default function RecommendedJobsSection({
     feedKind === "live" && liveListings > initialJobs.length
   );
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [serverFilteredJobs, setServerFilteredJobs] = useState<RecommendedJobCard[] | null>(null);
+  const [serverMatchTotal, setServerMatchTotal] = useState<number | null>(null);
+  const [isFilterFetching, setIsFilterFetching] = useState(false);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
@@ -602,7 +630,20 @@ export default function RecommendedJobsSection({
   const query = deferredSearchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
 
+  const needsServerFetch = useMemo(() => {
+    if (feedKind !== "live") return false;
+    return Boolean(
+      query.trim() ||
+        sources.size > 0 ||
+        dateWindow !== "any" ||
+        locationMode !== "any" ||
+        locationQuery.trim() ||
+        companyQuery.trim()
+    );
+  }, [feedKind, query, sources, dateWindow, locationMode, locationQuery, companyQuery]);
+
   const jobs = useMemo(() => {
+    if (serverFilteredJobs !== null) return serverFilteredJobs;
     if (extraJobs.length === 0) return initialJobs;
     const seen = new Set(initialJobs.map((j) => j.id));
     const merged = [...initialJobs];
@@ -613,9 +654,14 @@ export default function RecommendedJobsSection({
       }
     }
     return merged;
-  }, [initialJobs, extraJobs]);
+  }, [initialJobs, extraJobs, serverFilteredJobs]);
 
-  const totalIndexed = liveListings > 0 ? liveListings : jobs.length;
+  const totalIndexed =
+    serverMatchTotal !== null
+      ? serverMatchTotal
+      : liveListings > 0
+        ? liveListings
+        : jobs.length;
 
   const enrichedJobs = useMemo(
     () =>
@@ -660,19 +706,21 @@ export default function RecommendedJobsSection({
     const q = query.trim().toLowerCase();
     const normalizedLocationQuery = locationQuery.trim().toLowerCase();
     const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
+    const serverAlreadyFiltered = needsServerFetch && serverFilteredJobs !== null;
     return enrichedJobs.filter(({ job, meta, score }) => {
-      if (q) {
-        if (!meta.searchBlob.includes(q)) return false;
+      if (!serverAlreadyFiltered) {
+        if (q && !searchTermsMatch(meta.searchBlob, q)) return false;
+        if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
+        if (sources.size > 0 && !sources.has(job.source)) return false;
+        if (locationMode !== "any" && meta.locationMode !== locationMode) return false;
+        if (normalizedLocationQuery) {
+          const locationBlob = normalizeText(job.location, job.description);
+          if (!locationBlob.includes(normalizedLocationQuery)) return false;
+        }
+        if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
       }
-      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
       if (matchScore !== "any" && score < Number(matchScore)) return false;
-      if (sources.size > 0 && !sources.has(job.source)) return false; // empty set = all platforms
-      if (jobTypes.size > 0 && !meta.jobTypes.some((type) => jobTypes.has(type))) return false;
-      if (locationMode !== "any" && meta.locationMode !== locationMode) return false;
-      if (normalizedLocationQuery) {
-        const locationBlob = normalizeText(job.location, job.description);
-        if (!locationBlob.includes(normalizedLocationQuery)) return false;
-      }
+      if (!jobTypeMatches(meta, jobTypes)) return false;
       if (skillsPick.size > 0) {
         const hasAny = [...skillsPick].some((sk) =>
           job.matchedSkills.some((m) => m.toLowerCase() === sk.toLowerCase())
@@ -692,7 +740,6 @@ export default function RecommendedJobsSection({
         const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
         if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
       }
-      if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
       if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
       if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
       if (easyApplyOnly && !meta.isEasyApply) return false;
@@ -721,6 +768,8 @@ export default function RecommendedJobsSection({
     visaSponsorshipOnly,
     easyApplyOnly,
     salaryFilterActive,
+    needsServerFetch,
+    serverFilteredJobs,
   ]);
 
   const sortedJobs = useMemo(() => {
@@ -742,36 +791,68 @@ export default function RecommendedJobsSection({
   const rangeStart = totalMatched === 0 ? 0 : 1;
   const rangeEnd = Math.min(visible, totalMatched);
 
+  const buildJobsApiQuery = useCallback(
+    (page: number, pageSize: number) => {
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("page_size", String(pageSize));
+      if (skillHints.length > 0) {
+        params.set("profile_skills", skillHints.join(","));
+      }
+      if (query.trim()) params.set("q", query.trim());
+      if (sources.size > 0) params.set("src", [...sources].sort().join(","));
+      if (dateWindow !== "any") params.set("date", dateWindow);
+      if (locationMode !== "any") params.set("locMode", locationMode);
+      if (locationQuery.trim()) params.set("loc", locationQuery.trim());
+      if (companyQuery.trim()) params.set("company", companyQuery.trim());
+      return params.toString();
+    },
+    [skillHints, query, sources, dateWindow, locationMode, locationQuery, companyQuery]
+  );
+
   const fetchJobsPage = useCallback(
-    async (page: number) => {
+    async (page: number, pageSize = JOBS_API_PAGE_SIZE) => {
       if (feedKind !== "live" || isFetchingPage) return false;
       setIsFetchingPage(true);
       setFetchError(null);
-      const skillsQuery =
-        skillHints.length > 0 ? `&skills=${encodeURIComponent(skillHints.join(","))}` : "";
       try {
-        const res = await fetch(
-          `/api/jobs?page=${page}&page_size=${JOBS_API_PAGE_SIZE}${skillsQuery}`,
-          { cache: "no-store" }
-        );
+        const res = await fetch(`/api/jobs?${buildJobsApiQuery(page, pageSize)}`, { cache: "no-store" });
         if (res.ok) {
           const payload = (await res.json()) as {
             ok?: boolean;
             jobs?: RecommendedJobCard[];
+            total?: number;
             has_more?: boolean;
           };
-          if (payload.ok && payload.jobs?.length) {
-            setExtraJobs((prev) => {
-              const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
-              const next = [...prev];
-              for (const job of payload.jobs!) {
-                if (!seen.has(job.id)) {
-                  seen.add(job.id);
-                  next.push(job);
+          if (payload.ok && payload.jobs) {
+            if (needsServerFetch) {
+              setServerFilteredJobs((prev) => {
+                const merged = page === 1 ? [] : [...(prev ?? [])];
+                const seen = new Set(merged.map((j) => j.id));
+                for (const job of payload.jobs!) {
+                  if (!seen.has(job.id)) {
+                    seen.add(job.id);
+                    merged.push(job);
+                  }
                 }
+                return merged;
+              });
+              if (page === 1) {
+                setServerMatchTotal(payload.total ?? payload.jobs.length);
               }
-              return next;
-            });
+            } else if (payload.jobs.length > 0) {
+              setExtraJobs((prev) => {
+                const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
+                const next = [...prev];
+                for (const job of payload.jobs!) {
+                  if (!seen.has(job.id)) {
+                    seen.add(job.id);
+                    next.push(job);
+                  }
+                }
+                return next;
+              });
+            }
             setApiPage(page);
             setHasMoreOnServer(Boolean(payload.has_more));
             return true;
@@ -783,20 +864,43 @@ export default function RecommendedJobsSection({
         const supabase = createBrowserSupabaseClient();
         const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
           page,
-          pageSize: JOBS_API_PAGE_SIZE,
+          pageSize,
+          filters: {
+            q: query.trim() || undefined,
+            sources: sources.size > 0 ? [...sources] : undefined,
+            dateWindow,
+            locationMode,
+            locationQuery: locationQuery.trim() || undefined,
+            company: companyQuery.trim() || undefined,
+          },
         });
-        if (fallback.jobs?.length) {
-          setExtraJobs((prev) => {
-            const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
-            const next = [...prev];
-            for (const job of fallback.jobs!) {
-              if (!seen.has(job.id)) {
-                seen.add(job.id);
-                next.push(job);
+        if (fallback.jobs) {
+          if (needsServerFetch) {
+            setServerFilteredJobs((prev) => {
+              const merged = page === 1 ? [] : [...(prev ?? [])];
+              const seen = new Set(merged.map((j) => j.id));
+              for (const job of fallback.jobs!) {
+                if (!seen.has(job.id)) {
+                  seen.add(job.id);
+                  merged.push(job);
+                }
               }
-            }
-            return next;
-          });
+              return merged;
+            });
+            if (page === 1) setServerMatchTotal(fallback.total);
+          } else if (fallback.jobs.length > 0) {
+            setExtraJobs((prev) => {
+              const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
+              const next = [...prev];
+              for (const job of fallback.jobs!) {
+                if (!seen.has(job.id)) {
+                  seen.add(job.id);
+                  next.push(job);
+                }
+              }
+              return next;
+            });
+          }
           setApiPage(page);
           setHasMoreOnServer(fallback.hasMore);
           return true;
@@ -810,8 +914,70 @@ export default function RecommendedJobsSection({
         setIsFetchingPage(false);
       }
     },
-    [feedKind, initialJobs, isFetchingPage, skillHints]
+    [
+      feedKind,
+      initialJobs,
+      isFetchingPage,
+      skillHints,
+      buildJobsApiQuery,
+      needsServerFetch,
+      query,
+      sources,
+      dateWindow,
+      locationMode,
+      locationQuery,
+      companyQuery,
+    ]
   );
+
+  useEffect(() => {
+    if (!needsServerFetch) {
+      setServerFilteredJobs(null);
+      setServerMatchTotal(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        setIsFilterFetching(true);
+        setFetchError(null);
+        try {
+          const res = await fetch(`/api/jobs?${buildJobsApiQuery(1, 200)}`, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          const payload = (await res.json()) as {
+            ok?: boolean;
+            jobs?: RecommendedJobCard[];
+            total?: number;
+            has_more?: boolean;
+          };
+          if (controller.signal.aborted) return;
+          if (res.ok && payload.ok && payload.jobs) {
+            setServerFilteredJobs(payload.jobs);
+            setServerMatchTotal(payload.total ?? payload.jobs.length);
+            setHasMoreOnServer(Boolean(payload.has_more));
+            setApiPage(1);
+            setVisible(PAGE_SIZE);
+          } else {
+            setFetchError("Could not search jobs. Try different filters.");
+          }
+        } catch {
+          if (!controller.signal.aborted) {
+            setFetchError("Network error while searching jobs.");
+          }
+        } finally {
+          if (!controller.signal.aborted) setIsFilterFetching(false);
+        }
+      })();
+    }, 400);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [needsServerFetch, buildJobsApiQuery]);
 
   const loadMoreJobs = useCallback(async () => {
     if (isLoadingMore) return;
@@ -872,6 +1038,8 @@ export default function RecommendedJobsSection({
     setBenefits(new Set());
     setVisaSponsorshipOnly(false);
     setEasyApplyOnly(false);
+    setServerFilteredJobs(null);
+    setServerMatchTotal(null);
     setVisible(PAGE_SIZE);
   }, []);
 
@@ -889,7 +1057,8 @@ export default function RecommendedJobsSection({
       if (dateWindow !== "any") params.set("date", dateWindow);
       else params.delete("date");
       setListParam("src", sources);
-      setListParam("skills", skillsPick);
+      setListParam("skillPick", skillsPick);
+      params.delete("skills");
       if (matchScore !== "any") params.set("match", matchScore);
       else params.delete("match");
       setListParam("type", jobTypes);
@@ -921,8 +1090,10 @@ export default function RecommendedJobsSection({
       else params.delete("easy");
       const dashboardView = resolveDashboardRouteFromSearchParams(searchParams);
       params.set("view", dashboardView);
-      params.set("jobsLayout", viewMode);
-      params.set("sort", sortBy);
+      if (viewMode !== "list") params.set("jobsLayout", viewMode);
+      else params.delete("jobsLayout");
+      if (sortBy !== "best") params.set("sort", sortBy);
+      else params.delete("sort");
       const nextQuery = params.toString();
       const currentQuery = searchParams.toString();
       if (nextQuery === currentQuery) return;
@@ -1055,8 +1226,8 @@ export default function RecommendedJobsSection({
   }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = isInitialLoading && jobs.length === 0;
-  const showLoadMoreSpinner = (isLoadingMore || isFetchingPage) && jobs.length > 0;
+  const showSkeleton = (isInitialLoading || isFilterFetching) && jobs.length === 0;
+  const showLoadMoreSpinner = (isLoadingMore || isFetchingPage || isFilterFetching) && jobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1360,7 +1531,7 @@ export default function RecommendedJobsSection({
                 ) : null}
                 {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[#8E8E93]" /> : null}
               </div>
-              {query.trim() && !isSearching && filtered.length === 0 ? (
+              {query.trim() && !isSearching && !isFilterFetching && filtered.length === 0 ? (
                 <p className="ml-2 text-xs text-[#8E8E93]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
 
@@ -1543,7 +1714,7 @@ export default function RecommendedJobsSection({
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
             Showing <span className="font-semibold text-[#1A73E8]">{filtered.length.toLocaleString()} matched jobs</span> out of{" "}
             <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
-            {isFetchingPage ? (
+            {isFilterFetching || isFetchingPage ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
                 Loading more…
