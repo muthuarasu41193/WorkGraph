@@ -11,6 +11,12 @@ import type {
   JobRow,
   RecommendedJobCard,
 } from "./job-dashboard";
+import {
+  buildMatchLabelFromScore,
+  rankJobRows,
+  scoreJobRow,
+  type ProfileMatchInput,
+} from "./job-match";
 
 export type { JobRow };
 
@@ -94,28 +100,40 @@ function classificationLabel(value: CommunityJobClassification): string {
   }
 }
 
-function matchedProfileSkills(row: JobRow, skills: string[]): string[] {
-  const hay = `${row.title}\n${row.description}`.toLowerCase();
-  return skills
-    .map((sk) => sk.trim())
-    .filter(Boolean)
-    .filter((sk) => hay.includes(sk.toLowerCase()));
+function profileFromSkills(
+  skills: string[],
+  extras?: { headline?: string | null; summary?: string | null }
+): ProfileMatchInput {
+  return {
+    skills,
+    headline: extras?.headline,
+    summary: extras?.summary,
+  };
 }
 
-function buildMatchLabel(row: JobRow, skills: string[]): string {
-  const hits = matchedProfileSkills(row, skills);
-  if (hits.length > 0) {
-    const shown = hits.slice(0, 4);
-    return `Skill overlap: ${shown.join(", ")}${hits.length > 4 ? "…" : ""}`;
-  }
+function buildMatchLabel(
+  row: JobRow,
+  skills: string[],
+  profile?: ProfileMatchInput
+): string {
+  const scored = scoreJobRow(row, profile ?? profileFromSkills(skills));
   if (row.is_community) {
     const source = normalizeSource(row.source);
+    if (scored.matchedSkills.length > 0) {
+      return `${scored.matchPercent}% match · ${normalizeKind(row.kind) === "post" ? "Community post" : "Community listing"} · ${source}`;
+    }
     return `${normalizeKind(row.kind) === "post" ? "Community post" : "Community listing"} · ${classificationLabel(normalizeClassification(row.classification))} · via ${source}`;
   }
-  return `${row.company} · via ${row.source} ATS`;
+  return buildMatchLabelFromScore(row, scored, skills);
 }
 
-export function mapJobRowToCard(row: JobRow, skills: string[] = []): RecommendedJobCard {
+export function mapJobRowToCard(
+  row: JobRow,
+  skills: string[] = [],
+  profile?: ProfileMatchInput
+): RecommendedJobCard {
+  const matchProfile = profile ?? profileFromSkills(skills);
+  const scored = scoreJobRow(row, matchProfile);
   return {
     id: row.external_id || String(row.id),
     title: row.title || "Role",
@@ -123,13 +141,13 @@ export function mapJobRowToCard(row: JobRow, skills: string[] = []): Recommended
     location: row.location || "Location TBD",
     description: row.description || "",
     source: normalizeSource(row.source),
-    matchLabel: buildMatchLabel(row, skills),
+    matchLabel: buildMatchLabel(row, skills, matchProfile),
     postedAgo: formatPostedAgo(row.posted_at),
     postedAtIso: row.posted_at,
     kind: normalizeKind(row.kind),
     classification: normalizeClassification(row.classification),
     isCommunity: Boolean(row.is_community),
-    matchedSkills: matchedProfileSkills(row, skills),
+    matchedSkills: scored.matchedSkills,
     applyUrl: row.apply_url,
   };
 }
@@ -305,10 +323,18 @@ export async function fetchLiveJobsPage(
   };
 }
 
+const PROFILE_RANK_CANDIDATE_CAP = 5000;
+const PROFILE_RANK_FILTERED_CAP = 2500;
+
 export async function loadLiveJobCardsPage(
   supabase: SupabaseClient,
   profileSkills: string[] = [],
-  options: { page?: number; pageSize?: number; filters?: JobsCatalogFilters }
+  options: {
+    page?: number;
+    pageSize?: number;
+    filters?: JobsCatalogFilters;
+    profile?: ProfileMatchInput;
+  }
 ): Promise<{
   jobs: RecommendedJobCard[] | null;
   total: number;
@@ -316,7 +342,60 @@ export async function loadLiveJobCardsPage(
   pageSize: number;
   hasMore: boolean;
   filtered: boolean;
+  ranked?: boolean;
 }> {
+  const page = Math.max(1, options.page ?? 1);
+  const pageSize = Math.min(200, Math.max(1, options.pageSize ?? 100));
+  const profile =
+    options.profile ??
+    profileFromSkills(profileSkills, {});
+  const hasSkills = profile.skills.some((s) => s.trim().length > 0);
+
+  if (hasSkills) {
+    const filters = options.filters;
+    const filtered = hasActiveCatalogFilters(filters);
+    let candidates: JobRow[] | null = null;
+
+    if (filtered) {
+      const batch = await fetchLiveJobsPage(supabase, {
+        page: 1,
+        pageSize: Math.min(PROFILE_RANK_FILTERED_CAP, 2000),
+        filters,
+      });
+      candidates = batch.rows;
+    } else {
+      const catalog = await fetchLiveJobsCatalog(supabase, {
+        maxRows: PROFILE_RANK_CANDIDATE_CAP,
+      });
+      candidates = catalog.rows;
+    }
+
+    if (candidates === null) {
+      return {
+        jobs: null,
+        total: 0,
+        page,
+        pageSize,
+        hasMore: false,
+        filtered,
+        ranked: true,
+      };
+    }
+
+    const ranked = rankJobRows(candidates, profile);
+    const offset = (page - 1) * pageSize;
+    const slice = ranked.slice(offset, offset + pageSize);
+    return {
+      jobs: slice.map((row) => mapJobRowToCard(row, profile.skills, profile)),
+      total: ranked.length,
+      page,
+      pageSize,
+      hasMore: offset + slice.length < ranked.length,
+      filtered,
+      ranked: true,
+    };
+  }
+
   const result = await fetchLiveJobsPage(supabase, options);
   if (result.rows === null) {
     return {
@@ -326,15 +405,17 @@ export async function loadLiveJobCardsPage(
       pageSize: result.pageSize,
       hasMore: false,
       filtered: result.filtered,
+      ranked: false,
     };
   }
   return {
-    jobs: result.rows.map((row) => mapJobRowToCard(row, profileSkills)),
+    jobs: result.rows.map((row) => mapJobRowToCard(row, profileSkills, profile)),
     total: result.total,
     page: result.page,
     pageSize: result.pageSize,
     hasMore: result.hasMore,
     filtered: result.filtered,
+    ranked: false,
   };
 }
 

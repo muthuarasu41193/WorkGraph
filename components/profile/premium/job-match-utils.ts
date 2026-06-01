@@ -9,9 +9,11 @@ function inferWorkMode(location: string): JobMatchPreview["workMode"] {
 }
 
 function parseMatchPercent(label: string): number {
+  const matchPct = label.match(/(\d{1,3})%\s*match/i);
+  if (matchPct) return Math.min(99, Math.max(48, Number(matchPct[1])));
   const m = label.match(/(\d{1,3})/);
   if (!m) return 75;
-  return Math.min(99, Math.max(50, Number(m[1])));
+  return Math.min(99, Math.max(48, Number(m[1])));
 }
 
 export type JobMatchPreviewExt = JobMatchPreview & { applyUrl?: string };

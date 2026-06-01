@@ -7,24 +7,13 @@ import {
   Bell,
   Bookmark,
   Briefcase,
-  Building2,
   CheckCircle2,
-  Cpu,
-  Database,
-  FileSpreadsheet,
-  Globe2,
-  Leaf,
   LoaderCircle,
-  Radar,
   RefreshCw,
-  SlidersHorizontal,
   Sparkles,
   TrendingUp,
-  Workflow,
-  Wrench,
   XCircle,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,7 +35,6 @@ type Props = {
   profileCompleteness: number;
   /** Total rows in public.jobs (Python ATS ingest target table). */
   liveListings: number;
-  listingsBySource: Partial<Record<string, number>>;
   lastSyncedLabel?: string;
 };
 
@@ -75,12 +63,10 @@ export default function ProfileJobDashboard({
   stats,
   profileCompleteness,
   liveListings,
-  listingsBySource,
   lastSyncedLabel = "2 mins ago",
 }: Props) {
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
-  const [activeSource, setActiveSource] = useState<string | null>(null);
   const [syncStatus, setSyncStatus] = useState<"idle" | "success" | "error">("idle");
   const [isSectionLoading, setIsSectionLoading] = useState(true);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -96,7 +82,6 @@ export default function ProfileJobDashboard({
   const [matchThreshold, setMatchThreshold] = useState(70);
   const totalTracked = stats.applied + stats.interview + stats.offers + stats.saved;
   const matchedCount = liveListings > 0 ? Math.min(liveListings, Math.max(totalTracked, Math.round(liveListings * 0.1))) : 0;
-  const sourceEntries = Object.entries(listingsBySource).filter(([, n]) => (n ?? 0) > 0);
 
   function refreshListings() {
     if (typeof navigator !== "undefined" && !navigator.onLine) {
@@ -114,102 +99,6 @@ export default function ProfileJobDashboard({
   function triggerFilter(filter: DashboardFilter) {
     document.querySelector("#recommended-jobs")?.scrollIntoView({ behavior: "smooth", block: "start" });
     window.dispatchEvent(new CustomEvent("wg:job-filter", { detail: { filter } }));
-  }
-
-  const sourceItems: Array<{
-    key: string;
-    name: string;
-    icon: LucideIcon;
-    status: "synced" | "syncing" | "error";
-    lastSync: string;
-    countLabel: string;
-  }> = [
-    {
-      key: "greenhouse",
-      name: "Greenhouse",
-      icon: Building2,
-      status: "synced",
-      lastSync: "Last synced 2 mins ago",
-      countLabel: (listingsBySource.greenhouse ?? 3241).toLocaleString(),
-    },
-    {
-      key: "lever",
-      name: "Lever",
-      icon: Wrench,
-      status: "synced",
-      lastSync: "Last synced 4 mins ago",
-      countLabel: (listingsBySource.lever ?? 2108).toLocaleString(),
-    },
-    {
-      key: "adzuna",
-      name: "Adzuna",
-      icon: Globe2,
-      status: "synced",
-      lastSync: "Global search API",
-      countLabel: (listingsBySource.adzuna ?? 0).toLocaleString(),
-    },
-    {
-      key: "workday",
-      name: "Workday",
-      icon: Briefcase,
-      status: "syncing",
-      lastSync: "Sync in progress",
-      countLabel: "Syncing…",
-    },
-    {
-      key: "smartrecruiters",
-      name: "SmartRecruiters",
-      icon: Sparkles,
-      status: "synced",
-      lastSync: "Last synced 6 mins ago",
-      countLabel: (listingsBySource.smartrecruiters ?? 1456).toLocaleString(),
-    },
-    {
-      key: "ashby",
-      name: "Ashby",
-      icon: Workflow,
-      status: "synced",
-      lastSync: "Last synced 3 mins ago",
-      countLabel: (listingsBySource.ashby ?? 891).toLocaleString(),
-    },
-    {
-      key: "jobvite",
-      name: "Jobvite",
-      icon: Cpu,
-      status: "error",
-      lastSync: "Sync failed 12 mins ago",
-      countLabel: "Error",
-    },
-    {
-      key: "bamboohr",
-      name: "BambooHR",
-      icon: Leaf,
-      status: "synced",
-      lastSync: "Last synced 8 mins ago",
-      countLabel: (listingsBySource.bamboohr ?? 734).toLocaleString(),
-    },
-    {
-      key: "icims",
-      name: "iCIMS",
-      icon: Database,
-      status: "synced",
-      lastSync: "Last synced 5 mins ago",
-      countLabel: (listingsBySource.icims ?? 612).toLocaleString(),
-    },
-    {
-      key: "taleo",
-      name: "Taleo",
-      icon: FileSpreadsheet,
-      status: "synced",
-      lastSync: "Last synced 7 mins ago",
-      countLabel: (listingsBySource.taleo ?? 508).toLocaleString(),
-    },
-  ];
-
-  function selectSource(source: string | null) {
-    setActiveSource(source);
-    window.dispatchEvent(new CustomEvent("wg:job-source-filter", { detail: { source } }));
-    document.querySelector("#recommended-jobs")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function addKeyword() {
@@ -242,59 +131,6 @@ export default function ProfileJobDashboard({
               Live • Last synced {lastSyncedLabel}
             </span>
           </div>
-          <p className="mt-3 text-sm font-normal text-[#3A3A3C]">
-            Pipeline cards reflect your tracker rows. The live count is ATS-only (
-            <code className="rounded bg-[#E8F0FE] px-1 py-0.5 text-[11px] text-[#1557B0]">is_community=false</code>
-            ) — Reddit, RSS, and other community posts appear in the section below.
-          </p>
-          {liveListings > 0 ? (
-            <div className="mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="inline-flex items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-[#E8F0FE] px-3 py-1 text-xs font-medium text-[#1557B0] sm:gap-1.5">
-                <Radar className="h-3.5 w-3.5 text-[#1A73E8]" aria-hidden />
-                {liveListings.toLocaleString()} live ATS jobs indexed
-              </span>
-              <button
-                type="button"
-                onClick={refreshListings}
-                disabled={isRefreshing}
-                className="inline-flex items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-[#FFFFFF] px-3 py-1 text-xs font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:gap-1.5"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 text-[#1A73E8] ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
-                {isRefreshing ? "Refreshing…" : "Refresh listings"}
-              </button>
-              {sourceEntries.map(([src, n]) => (
-                <span
-                  key={src}
-                  className="rounded-[8px] bg-[#F8F9FA] px-2.5 py-1 text-xs font-medium capitalize text-[#3A3A3C] ring-1 ring-[#DADCE0]"
-                >
-                  {src}: {(n ?? 0).toLocaleString()}
-                </span>
-              ))}
-              <a
-                href="#recommended-jobs"
-                className="inline-flex items-center gap-1 rounded-[20px] border border-[#DADCE0] bg-[#FFFFFF] px-3 py-1 text-xs font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:gap-1.5"
-              >
-                <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
-                Filter live jobs
-              </a>
-            </div>
-          ) : (
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <p className="text-xs leading-relaxed text-[#8E8E93]">
-                No indexed listings yet — run ATS ingest or community sync against Supabase after migration{" "}
-                <code className="rounded bg-[#F8F9FA] px-1 py-0.5 text-[11px]">20260202120000_jobs_board</code>.
-              </p>
-              <button
-                type="button"
-                onClick={refreshListings}
-                disabled={isRefreshing}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-[20px] border border-[#DADCE0] bg-[#FFFFFF] px-3 py-1 text-xs font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
-                {isRefreshing ? "Checking…" : "Check again"}
-              </button>
-            </div>
-          )}
         </div>
         <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
           <button
@@ -327,67 +163,7 @@ export default function ProfileJobDashboard({
         </div>
       </div>
 
-      <section className="mb-5 rounded-xl border border-[#DADCE0] bg-white px-6 py-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold text-[#1D1D1F]">Job Sources</h3>
-          <a href="#recommended-jobs" className="text-xs font-medium text-[#1A73E8] hover:underline">
-            View all integrations
-          </a>
-        </div>
-        <div className="wg-no-scrollbar flex gap-2 overflow-x-auto pb-1">
-          {sourceItems.map((source) => {
-            const SourceIcon = source.icon;
-            const isActive = activeSource === source.key;
-            const statusClass =
-              source.status === "synced"
-                ? "bg-[#1E8E3E]"
-                : source.status === "syncing"
-                  ? "bg-[#F9AB00]"
-                  : "bg-[#D93025]";
-            return (
-              <button
-                key={source.key}
-                type="button"
-                title={source.lastSync}
-                onClick={() => selectSource(source.key)}
-                className={`inline-flex shrink-0 items-center gap-2 rounded-[20px] border px-4 py-2 transition ${
-                  isActive
-                    ? "border-[#1A73E8] bg-[#1A73E8] text-white"
-                    : "border-[#DADCE0] bg-[#F8F9FA] text-[#1D1D1F] hover:border-[#1A73E8] hover:bg-[#E8F0FE]"
-                }`}
-              >
-                <span className="inline-flex h-5 w-5 items-center justify-center text-sm">
-                  <SourceIcon className="h-4 w-4" aria-hidden />
-                </span>
-                <span className="text-[13px] font-medium">{source.name}</span>
-                <span
-                  className={`rounded-[20px] px-2 py-0.5 text-xs font-semibold ${
-                    isActive ? "bg-white/20 text-white" : "bg-[#E8F0FE] text-[#1A73E8]"
-                  }`}
-                >
-                  {source.countLabel}
-                </span>
-                <span className={`h-2 w-2 rounded-full ${statusClass}`} aria-hidden />
-                {source.status === "error" ? (
-                  <span
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      refreshListings();
-                    }}
-                    className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                      isActive ? "bg-white/25 text-white" : "bg-[#FCE8E6] text-[#D93025]"
-                    }`}
-                  >
-                    Retry
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "200ms" }}>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
         {isSectionLoading ? (
           Array.from({ length: 4 }).map((_, idx) => (
             <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-4 md:px-6 md:py-5">

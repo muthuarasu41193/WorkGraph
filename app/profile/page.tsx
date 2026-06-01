@@ -32,6 +32,7 @@ export default async function ProfilePage() {
     jobDashboard = await loadProfileJobDashboard(supabase, sessionUser.id, {
       skills: profile.skills,
       headline: profile.headline,
+      summary: profile.summary,
     });
   }
 

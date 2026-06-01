@@ -129,10 +129,11 @@ function ProfileShellInner({
       <ProfileJobsView
         jobs={atsJobs.length ? atsJobs : recommendedJobs}
         skillHints={profile.skills}
+        profileHeadline={profile.headline}
+        profileSummary={profile.summary}
         feedKind={feedKind}
         feedDemoHint={feedDemoHint}
         liveListings={liveListings}
-        listingsBySource={listingsBySource}
         jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
         profileCompleteness={profile.profile_completeness ?? 0}
       />

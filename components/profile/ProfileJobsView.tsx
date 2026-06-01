@@ -7,10 +7,11 @@ import RecommendedJobsSection from "./RecommendedJobsSection";
 type Props = {
   jobs: RecommendedJobCard[];
   skillHints: string[];
+  profileHeadline?: string | null;
+  profileSummary?: string | null;
   feedKind: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
   liveListings: number;
-  listingsBySource: Partial<Record<string, number>>;
   jobPipeline: JobPipelineCounts;
   profileCompleteness: number;
 };
@@ -19,10 +20,11 @@ type Props = {
 export default function ProfileJobsView({
   jobs,
   skillHints,
+  profileHeadline,
+  profileSummary,
   feedKind,
   feedDemoHint,
   liveListings,
-  listingsBySource,
   jobPipeline,
   profileCompleteness,
 }: Props) {
@@ -38,11 +40,12 @@ export default function ProfileJobsView({
         stats={jobPipeline}
         profileCompleteness={profileCompleteness}
         liveListings={liveListings}
-        listingsBySource={listingsBySource}
       />
       <RecommendedJobsSection
         jobs={jobs}
         skillHints={skillHints}
+        profileHeadline={profileHeadline}
+        profileSummary={profileSummary}
         feedKind={feedKind}
         feedDemoHint={feedDemoHint}
         liveListings={liveListings}

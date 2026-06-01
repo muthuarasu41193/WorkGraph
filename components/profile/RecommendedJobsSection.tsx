@@ -41,6 +41,7 @@ import {
   resolveJobsLayoutFromSearchParams,
 } from "@/lib/dashboard-routes";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
+import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -545,6 +546,8 @@ function industriesMatch(meta: DerivedJobMeta, selected: Set<IndustryOption>): b
 type Props = {
   jobs: RecommendedJobCard[];
   skillHints: string[];
+  profileHeadline?: string | null;
+  profileSummary?: string | null;
   feedKind: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
   /** Total indexed live rows — used while the full catalog loads client-side. */
@@ -585,17 +588,11 @@ function passesDateFilter(iso: string | null | undefined, windowId: "any" | "1" 
   return t >= cutoff;
 }
 
-function getMatchScore(job: RecommendedJobCard, skillHints: string[]): number {
-  const normalizedHints = skillHints.map((s) => s.toLowerCase());
-  const hintHits = normalizedHints.filter((hint) =>
-    job.matchedSkills.some((matched) => matched.toLowerCase() === hint)
-  ).length;
-  const titleLocationBlob = `${job.title} ${job.location}`.toLowerCase();
-  const titleHits = normalizedHints.filter((hint) => titleLocationBlob.includes(hint)).length;
-  const recencyBonus = job.postedAtIso ? Math.max(0, 6 - Math.floor((Date.now() - new Date(job.postedAtIso).getTime()) / 86400000)) : 0;
-  const raw = 58 + job.matchedSkills.length * 6 + hintHits * 4 + titleHits * 2 + recencyBonus;
-  return Math.max(56, Math.min(98, raw));
+function getMatchScore(job: RecommendedJobCard, profile: ProfileMatchInput): number {
+  return scoreJobCard(job, profile).matchPercent;
 }
+
+const MIN_PROFILE_RELEVANCE_SCORE = 8;
 
 function companyInitials(name: string): string {
   const cleaned = name.trim();
@@ -608,10 +605,21 @@ function companyInitials(name: string): string {
 export default function RecommendedJobsSection({
   jobs: initialJobs,
   skillHints,
+  profileHeadline = null,
+  profileSummary = null,
   feedKind,
   feedDemoHint,
   liveListings = 0,
 }: Props) {
+  const profileMatch = useMemo<ProfileMatchInput>(
+    () => ({
+      skills: skillHints,
+      headline: profileHeadline,
+      summary: profileSummary,
+    }),
+    [skillHints, profileHeadline, profileSummary]
+  );
+  const profileMatchActive = skillHints.length > 0;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -635,10 +643,10 @@ export default function RecommendedJobsSection({
   const hint =
     skillHints.length > 0
       ? feedKind === "live"
-        ? `Ranked from your jobs database — boosted when titles/descriptions mention ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
+        ? `Sorted by fit to your resume — skills, headline, and summary matched against each role (${skillHints.slice(0, 4).join(", ")}${skillHints.length > 4 ? "…" : ""}).`
         : `Demo cards — once ingest fills Postgres, listings personalize against ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
       : feedKind === "live"
-        ? "Ranked using your headline, summary text, and saved skills vs each posting (ATS ingest and/or community sync)."
+        ? "Add skills, headline, and summary on your profile so we can rank roles that fit your background."
         : "Add skills to your profile to sharpen ranking after ingest runs.";
 
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
@@ -745,7 +753,7 @@ export default function RecommendedJobsSection({
     const enriched = initialJobs.map((job) => ({
       job,
       meta: deriveJobMeta(job),
-      score: getMatchScore(job, skillHints),
+      score: getMatchScore(job, profileMatch),
     }));
     const q = query.trim().toLowerCase();
     const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
@@ -807,7 +815,7 @@ export default function RecommendedJobsSection({
   }, [
     feedKind,
     initialJobs,
-    skillHints,
+    profileMatch,
     query,
     dateWindow,
     sources,
@@ -847,9 +855,9 @@ export default function RecommendedJobsSection({
       jobs.map((job) => ({
         job,
         meta: deriveJobMeta(job),
-        score: getMatchScore(job, skillHints),
+        score: getMatchScore(job, profileMatch),
       })),
-    [jobs, skillHints]
+    [jobs, profileMatch]
   );
 
   const platformsInFeed = useMemo(() => {
@@ -919,10 +927,19 @@ export default function RecommendedJobsSection({
       if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
       if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
       if (easyApplyOnly && !meta.isEasyApply) return false;
+      if (profileMatchActive && feedKind === "live") {
+        const relevance = scoreJobCard(job, profileMatch);
+        if (relevance.matchedSkills.length === 0 && relevance.score < MIN_PROFILE_RELEVANCE_SCORE) {
+          return false;
+        }
+      }
       return true;
     });
   }, [
     enrichedJobs,
+    profileMatch,
+    profileMatchActive,
+    feedKind,
     serverCatalogReady,
     query,
     dateWindow,
@@ -986,6 +1003,8 @@ export default function RecommendedJobsSection({
       if (skillHints.length > 0) {
         params.set("profile_skills", skillHints.join(","));
       }
+      if (profileHeadline?.trim()) params.set("profile_headline", profileHeadline.trim());
+      if (profileSummary?.trim()) params.set("profile_summary", profileSummary.trim().slice(0, 2000));
       const f = catalogFilters;
       if (f.q) params.set("q", f.q);
       if (f.sources?.length) params.set("src", [...f.sources].sort().join(","));
@@ -996,7 +1015,7 @@ export default function RecommendedJobsSection({
       if (f.jobTypes?.length) params.set("type", f.jobTypes.join(","));
       return params.toString();
     },
-    [skillHints, catalogFilters]
+    [skillHints, profileHeadline, profileSummary, catalogFilters]
   );
 
   useEffect(() => {
@@ -1027,11 +1046,12 @@ export default function RecommendedJobsSection({
           const { createBrowserSupabaseClient } = await import("@/lib/supabase");
           const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
           const supabase = createBrowserSupabaseClient();
-          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-            page: currentPage,
-            pageSize: PAGE_SIZE,
-            filters: catalogFilters,
-          });
+        const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+          page: currentPage,
+          pageSize: PAGE_SIZE,
+          filters: catalogFilters,
+          profile: profileMatch,
+        });
           if (controller.signal.aborted) return;
           if (fallback.jobs) {
             setPageJobs(fallback.jobs);
@@ -1053,7 +1073,7 @@ export default function RecommendedJobsSection({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [feedKind, currentPage, buildJobsApiQuery, skillHints, catalogFilters]);
+  }, [feedKind, currentPage, buildJobsApiQuery, skillHints, catalogFilters, profileMatch]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
@@ -1417,7 +1437,11 @@ export default function RecommendedJobsSection({
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Job board</p>
           <h2 className="mt-1 text-[18px] font-semibold text-[#2C2C2E] sm:text-[18px]">
-            {feedKind === "live" ? "Browse live job listings" : "Sample roles (run ingest or community sync for live data)"}
+            {feedKind === "live"
+              ? profileMatchActive
+                ? "Jobs matching your profile"
+                : "Browse live job listings"
+              : "Sample roles (run ingest or community sync for live data)"}
           </h2>
           <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-[#3A3A3C]">{hint}</p>
         </div>

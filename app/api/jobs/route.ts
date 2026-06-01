@@ -39,15 +39,22 @@ export async function GET(request: Request) {
   const profileSkills = parseListParam(
     searchParams.get("profile_skills") ?? searchParams.get("skills")
   );
+  const profileHeadline = searchParams.get("profile_headline")?.trim() || null;
+  const profileSummary = searchParams.get("profile_summary")?.trim()?.slice(0, 2000) || null;
   const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
   const pageSize = Math.min(200, Math.max(1, Number(searchParams.get("page_size") || "100") || 100));
   const filters = parseCatalogFilters(searchParams);
 
   const supabase = createServerSupabaseClient(await cookies());
-  const { jobs, total, hasMore, filtered } = await loadLiveJobCardsPage(supabase, profileSkills, {
+  const { jobs, total, hasMore, filtered, ranked } = await loadLiveJobCardsPage(supabase, profileSkills, {
     page,
     pageSize,
     filters,
+    profile: {
+      skills: profileSkills,
+      headline: profileHeadline,
+      summary: profileSummary,
+    },
   });
 
   if (jobs === null) {
@@ -75,6 +82,7 @@ export async function GET(request: Request) {
     page_size: pageSize,
     has_more: hasMore,
     filtered,
+    ranked: Boolean(ranked),
     loaded: jobs.length,
     source: "live",
   });

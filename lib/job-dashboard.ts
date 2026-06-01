@@ -9,6 +9,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchLiveJobsCatalog, mapJobRowToCard } from "./jobs-catalog";
+import { rankJobRows, type ProfileMatchInput } from "./job-match";
 
 export { fetchLiveJobsCatalog, LIVE_JOBS_FETCH_PAGE_SIZE, mapJobRowToCard } from "./jobs-catalog";
 
@@ -310,34 +311,8 @@ function normalizeSource(raw: string): JobFeedSource {
   return "other";
 }
 
-function rankJobs(rows: JobRow[], skills: string[], headline: string | null, limit: number): JobRow[] {
-  const needles = skills.map((s) => s.trim().toLowerCase()).filter(Boolean);
-  const headTerms =
-    headline
-      ?.toLowerCase()
-      .split(/\W+/u)
-      .filter((w) => w.length > 3) ?? [];
-
-  const scored = rows.map((row) => {
-    const hay = `${row.title} ${row.company} ${row.description}`.toLowerCase();
-    let score = 0;
-    for (const sk of needles) {
-      if (hay.includes(sk)) score += 3;
-    }
-    for (const t of headTerms) {
-      if (hay.includes(t)) score += 1;
-    }
-    const ts = row.posted_at ? new Date(row.posted_at).getTime() : 0;
-    if (!Number.isNaN(ts)) score += Math.min(ts / 1e13, 2);
-    return { row, score };
-  });
-
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, limit).map((s) => s.row);
-}
-
-function rowToCard(row: JobRow, skills: string[]): RecommendedJobCard {
-  return mapJobRowToCard(row, skills);
+function rowToCard(row: JobRow, profile: ProfileMatchInput): RecommendedJobCard {
+  return mapJobRowToCard(row, profile.skills, profile);
 }
 
 async function fetchPipelineCounts(supabase: SupabaseClient, userId: string): Promise<JobPipelineCounts> {
@@ -373,7 +348,7 @@ async function fetchListingStats(
 }
 
 async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> {
-  const { rows } = await fetchLiveJobsCatalog(supabase, { maxRows: 150 });
+  const { rows } = await fetchLiveJobsCatalog(supabase, { maxRows: 5000 });
   return rows;
 }
 
@@ -426,8 +401,13 @@ function countBySourceFromJobRows(rows: JobRow[]): Partial<Record<JobFeedSource,
 export async function loadProfileJobDashboard(
   supabase: SupabaseClient,
   userId: string,
-  profile: { skills: string[]; headline: string | null }
+  profile: { skills: string[]; headline: string | null; summary?: string | null }
 ): Promise<ProfileJobsPayload> {
+  const matchProfile: ProfileMatchInput = {
+    skills: profile.skills,
+    headline: profile.headline,
+    summary: profile.summary ?? null,
+  };
   noStore();
   const pipeline = await fetchPipelineCounts(supabase, userId);
   const stats = await fetchListingStats(supabase);
@@ -435,7 +415,9 @@ export async function loadProfileJobDashboard(
   if (!stats.ok) {
     const communityRows = await fetchCommunityRows(supabase);
     const communityPosts =
-      communityRows && communityRows.length > 0 ? communityRows.map((row) => rowToCard(row, [])) : DEMO_COMMUNITY_POSTS;
+      communityRows && communityRows.length > 0
+        ? communityRows.map((row) => rowToCard(row, { skills: [], headline: null, summary: null }))
+        : DEMO_COMMUNITY_POSTS;
     return {
       pipeline,
       liveListings: 0,
@@ -450,7 +432,9 @@ export async function loadProfileJobDashboard(
   if (stats.total > 0) {
     const [communityRows, atsRows] = await Promise.all([fetchCommunityRows(supabase), fetchJobRows(supabase)]);
     const communityPosts =
-      communityRows && communityRows.length > 0 ? communityRows.map((row) => rowToCard(row, [])) : DEMO_COMMUNITY_POSTS;
+      communityRows && communityRows.length > 0
+        ? communityRows.map((row) => rowToCard(row, { skills: [], headline: null, summary: null }))
+        : DEMO_COMMUNITY_POSTS;
 
     if (!atsRows) {
       return {
@@ -476,9 +460,9 @@ export async function loadProfileJobDashboard(
       };
     }
 
-    const ranked = rankJobs(atsRows, profile.skills, profile.headline, 150);
+    const ranked = rankJobRows(atsRows, matchProfile, { limit: 150 });
     const recommended =
-      ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
+      ranked.length > 0 ? ranked.map((r) => rowToCard(r, matchProfile)) : DEMO_RECOMMENDED_JOBS;
 
     return {
       pipeline,
@@ -495,7 +479,7 @@ export async function loadProfileJobDashboard(
   const communityForRank = await fetchCommunityRowsForRanking(supabase);
   const communityPosts =
     communityForRank && communityForRank.length > 0
-      ? communityForRank.slice(0, 24).map((row) => rowToCard(row, []))
+      ? communityForRank.slice(0, 24).map((row) => rowToCard(row, { skills: [], headline: null, summary: null }))
       : DEMO_COMMUNITY_POSTS;
 
   if (!communityForRank || communityForRank.length === 0) {
@@ -510,9 +494,9 @@ export async function loadProfileJobDashboard(
     };
   }
 
-  const ranked = rankJobs(communityForRank, profile.skills, profile.headline, 250);
+  const ranked = rankJobRows(communityForRank, matchProfile, { limit: 250 });
   const recommended =
-    ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
+    ranked.length > 0 ? ranked.map((r) => rowToCard(r, matchProfile)) : DEMO_RECOMMENDED_JOBS;
   const listingsBySource = countBySourceFromJobRows(communityForRank);
 
   return {
