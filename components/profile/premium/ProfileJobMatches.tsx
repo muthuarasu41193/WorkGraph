@@ -33,7 +33,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
       />
 
       {list.length === 0 ? (
-        <p className="text-sm text-[var(--wg-color-text-secondary)]">
+        <p className="text-sm text-[var(--wg-color-text-primary)]/85">
           {feedKind === "live" && liveListings > 0 ? (
             <>
               Browse{" "}
@@ -68,7 +68,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
               </span>
             </div>
 
-            <p className="mt-2 text-sm text-[var(--wg-color-text-secondary)]">{job.salaryRange}</p>
+            <p className="mt-2 text-sm text-[var(--wg-color-text-primary)]/85">{job.salaryRange}</p>
             <p className="mt-0.5 flex items-center gap-1 text-xs text-[var(--wg-color-text-tertiary)]">
               <MapPin className="h-3.5 w-3.5" />
               {job.location}

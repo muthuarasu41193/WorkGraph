@@ -119,7 +119,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
             </span>
           ))
         ) : (
-          <p className="text-sm text-slate-600">No skills added yet.</p>
+          <p className="text-sm text-foreground/85">No skills added yet.</p>
         )}
       </div>
     </section>

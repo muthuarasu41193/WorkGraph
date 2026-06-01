@@ -54,7 +54,7 @@ export default function ProfileAiInsights() {
       </div>
 
       <div className="mt-4 flex items-center justify-between rounded-lg border border-[var(--wg-color-border)] px-4 py-3">
-        <span className="text-sm text-[var(--wg-color-text-secondary)]">Profile strength score</span>
+        <span className="text-sm font-medium text-[var(--wg-color-text-primary)]">Profile strength score</span>
         <ProfileBadge tone="success">{data.strengthScore}%</ProfileBadge>
       </div>
     </ProfileCard>
@@ -78,7 +78,7 @@ function InsightBlock({
       </p>
       <ul className="space-y-1.5">
         {items.map((item) => (
-          <li key={item} className="flex items-start gap-2 text-sm text-[var(--wg-color-text-secondary)]">
+          <li key={item} className="flex items-start gap-2 text-sm font-medium text-[var(--wg-color-text-primary)]">
             <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--wg-color-primary)]" />
             {item}
           </li>

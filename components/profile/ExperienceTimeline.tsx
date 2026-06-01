@@ -84,9 +84,9 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
             <Briefcase className="h-4 w-4" strokeWidth={1.75} />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">Career arc</p>
-            <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-slate-900">Roles & impact</h2>
-            <p className="mt-1 max-w-md text-xs leading-relaxed text-slate-600">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Career arc</p>
+            <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground">Roles & impact</h2>
+            <p className="mt-1 max-w-md text-xs leading-relaxed text-foreground/85">
               One block per position — title and company read like a résumé line; details stay in the margin note.
             </p>
           </div>
@@ -128,13 +128,13 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                         value={item.title}
                         onChange={(e) => void updateField(idx, "title", e.target.value)}
                         placeholder="Role title"
-                        className={`${inputReset} w-full text-lg font-semibold tracking-tight text-slate-900`}
+                        className={`${inputReset} w-full text-lg font-semibold tracking-tight text-foreground`}
                       />
                       <input
                         value={item.company}
                         onChange={(e) => void updateField(idx, "company", e.target.value)}
                         placeholder="Organization"
-                        className={`${inputReset} w-full text-xs font-semibold uppercase tracking-[0.14em] text-slate-600`}
+                        className={`${inputReset} w-full text-xs font-semibold uppercase tracking-[0.14em] text-foreground/85`}
                       />
                     </div>
                     <input
@@ -159,7 +159,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
         </ol>
 
         {!items.length ? (
-          <p className="px-6 py-10 text-center text-sm text-slate-500">
+          <p className="px-6 py-10 text-center text-sm text-muted-foreground">
             No roles yet. Use <span className="font-semibold text-slate-700">Add role</span> to start your timeline.
           </p>
         ) : null}

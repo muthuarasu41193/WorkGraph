@@ -48,7 +48,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                     "group flex w-full min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     active
                       ? "wg-dash-nav-active font-semibold"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-foreground/70 hover:bg-muted hover:text-foreground",
                     collapsed && "justify-center px-2",
                   )}
                   aria-current={active ? "page" : undefined}
@@ -56,7 +56,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                   <Icon
                     className={cn(
                       "h-5 w-5 shrink-0 stroke-[1.75]",
-                      active ? "text-[var(--dash-accent)]" : "text-muted-foreground group-hover:text-foreground",
+                      active ? "text-[var(--dash-accent)]" : "text-foreground/55 group-hover:text-foreground",
                     )}
                     aria-hidden
                   />

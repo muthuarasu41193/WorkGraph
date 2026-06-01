@@ -77,7 +77,7 @@ export default function ProfileSidebar() {
           {data.trendingSkills.map((s) => (
             <span
               key={s}
-              className="rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2 py-1 text-xs font-medium text-[var(--wg-color-text-secondary)]"
+              className="rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2 py-1 text-xs font-medium text-[var(--wg-color-text-primary)]/85"
             >
               {s}
             </span>
@@ -109,7 +109,7 @@ export default function ProfileSidebar() {
           <Lightbulb className="h-3.5 w-3.5 text-[var(--wg-color-primary)]" />
           Daily tip
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--wg-color-text-secondary)]">{data.dailyTip}</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--wg-color-text-primary)]/85">{data.dailyTip}</p>
       </ProfileCard>
     </aside>
   );

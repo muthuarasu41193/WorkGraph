@@ -11,9 +11,9 @@
   --wg-color-surface-variant: #fafaf9;
   --wg-color-page: #fafaf9;
   --wg-color-border: #e7e5e4;
-  --wg-color-text-primary: #0f172a;
-  --wg-color-text-secondary: #64748b;
-  --wg-color-text-tertiary: #64748b;
+  --wg-color-text-primary: #09090b;
+  --wg-color-text-secondary: #27272a;
+  --wg-color-text-tertiary: #52525b;
   --wg-profile-radius: 14px;
   --wg-profile-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   min-height: 100dvh;

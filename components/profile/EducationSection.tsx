@@ -84,9 +84,9 @@ export default function EducationSection({ userId, education }: Props) {
             <GraduationCap className="h-4 w-4" strokeWidth={1.75} />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">Credentials</p>
-            <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-slate-900">Education</h2>
-            <p className="mt-1 max-w-md text-xs leading-relaxed text-slate-600">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Credentials</p>
+            <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground">Education</h2>
+            <p className="mt-1 max-w-md text-xs leading-relaxed text-foreground/85">
               Degree first, school second — year sits in its own lane so scanners and humans parse it fast.
             </p>
           </div>
@@ -133,13 +133,13 @@ export default function EducationSection({ userId, education }: Props) {
                       value={item.degree}
                       onChange={(e) => void updateField(idx, "degree", e.target.value)}
                       placeholder="Degree or program"
-                      className={`${inputReset} w-full pr-8 text-base font-semibold text-slate-900 sm:pr-10`}
+                      className={`${inputReset} w-full pr-8 text-base font-semibold text-foreground sm:pr-10`}
                     />
                     <input
                       value={item.institution}
                       onChange={(e) => void updateField(idx, "institution", e.target.value)}
                       placeholder="Institution"
-                      className={`${inputReset} mt-1.5 w-full pr-8 text-sm text-slate-600 sm:pr-10`}
+                      className={`${inputReset} mt-1.5 w-full pr-8 text-sm text-foreground/85 sm:pr-10`}
                     />
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function EducationSection({ userId, education }: Props) {
             ))}
           </ul>
         ) : (
-          <p className="px-6 py-10 text-center text-sm text-slate-500">
+          <p className="px-6 py-10 text-center text-sm text-muted-foreground">
             No credentials yet. Use <span className="font-semibold text-slate-700">Add credential</span> to add one.
           </p>
         )}

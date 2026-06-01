@@ -31,7 +31,7 @@ export default function HiddenJobsSection() {
   return (
     <section className="space-y-4" aria-labelledby="hidden-jobs-heading">
       <header>
-        <h1 id="hidden-jobs-heading" className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+        <h1 id="hidden-jobs-heading" className="text-2xl font-bold tracking-tight text-foreground">
           Hidden Jobs
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">

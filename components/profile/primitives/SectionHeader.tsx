@@ -37,7 +37,7 @@ export default function SectionHeader({
         {description ? (
           <p
             className={[
-              "mt-1.5 max-w-prose text-sm leading-relaxed text-[var(--wg-color-text-secondary)]",
+              "mt-1.5 max-w-prose text-sm leading-relaxed text-[var(--wg-color-text-primary)]/80",
               Icon ? "sm:pl-[2.625rem]" : "",
             ].join(" ")}
           >

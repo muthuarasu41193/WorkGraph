@@ -56,7 +56,7 @@ export default function HiddenOpportunityCard({
               </Badge>
             ) : null}
           </div>
-          <h2 className="text-base font-semibold leading-snug text-slate-900 dark:text-slate-50">
+          <h2 className="text-base font-semibold leading-snug text-foreground">
             {opportunity.title}
           </h2>
           <p className="text-sm text-muted-foreground">

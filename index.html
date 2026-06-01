@@ -34,9 +34,9 @@
   --bg: #FAFAF9;
   --card: #FFFFFF;
   --border: #E7E5E4;
-  --text: #0F172A;
-  --muted: #64748B;
-  --secondary: #64748B;
+  --text: #09090B;
+  --muted: #3F3F46;
+  --secondary: #27272A;
   --surface: #FFFFFF;
   --surface-strong: #FFFFFF;
   --border-soft: #E7E5E4;
@@ -285,7 +285,7 @@ a, button, input, textarea {
 
 .hero-subtitle {
   font-size: clamp(1.0625rem, 1.8vw, 1.1875rem);
-  color: var(--muted);
+  color: var(--secondary);
   max-width: 42rem; margin: 0 auto 2.5rem;
   line-height: 1.7;
 }
@@ -848,12 +848,12 @@ a, button, input, textarea {
 
 .community-badge.live {
   background: rgba(15,23,42,.08);
-  color: #64748B;
+  color: #3F3F46;
 }
 
 .community-badge.demo {
   background: rgba(15,23,42,.08);
-  color: #64748B;
+  color: #3F3F46;
 }
 
 .community-priority.low {
@@ -1809,8 +1809,8 @@ a, button, input, textarea {
 .icon-theme-green i { color: var(--green) !important; }
 
 /* Light professional refresh */
-h1, h2, h3, h4, h5, h6 { font-weight: 600; color: #111827; }
-p, li, .section-head p, .hero-subtitle { color: #4B5563; }
+h1, h2, h3, h4, h5, h6 { font-weight: 600; color: #09090B; }
+p, li, .section-head p, .hero-subtitle { color: #27272A; }
 .section { padding: 124px 0; }
 .section-head { max-width: 760px; margin: 0 auto 68px; }
 .section-head h2 {
@@ -1826,14 +1826,14 @@ p, li, .section-head p, .hero-subtitle { color: #4B5563; }
 }
 .gradient-text {
   background: none !important;
-  -webkit-text-fill-color: #111827 !important;
-  color: #111827 !important;
+  -webkit-text-fill-color: #09090B !important;
+  color: #09090B !important;
 }
 .hero-title {
   font-weight: 600;
   letter-spacing: -1.2px;
   line-height: 1.12;
-  color: #111827;
+  color: #09090B;
   margin-bottom: 30px;
 }
 .hero-subtitle {
@@ -1859,12 +1859,12 @@ p, li, .section-head p, .hero-subtitle { color: #4B5563; }
 /* Accessibility micro-pass: contrast and state clarity */
 :root {
   --border: #D1D5DB;
-  --muted: #4B5563;
+  --muted: #27272A;
   --secondary: #374151;
 }
 
 body {
-  color: #111827;
+  color: #09090B;
 }
 
 .nav-links a,
@@ -1878,7 +1878,7 @@ body {
 .fct-notes,
 .plan-list li.no,
 .price-period {
-  color: #4B5563 !important;
+  color: #27272A !important;
 }
 
 .url-bar,
@@ -1891,7 +1891,7 @@ body {
 }
 
 .form-input::placeholder {
-  color: #6B7280;
+  color: #52525B;
   opacity: 1;
 }
 
@@ -1912,7 +1912,7 @@ body {
 .nav-links a:hover,
 .footer-col a:hover,
 .social-link:hover {
-  color: #111827 !important;
+  color: #09090B !important;
 }
 
 .cta-button:focus-visible,
@@ -1949,10 +1949,10 @@ body {
 .announcement-bar {
   background: #FFFFFF;
   border-bottom: 1px solid #E5E7EB;
-  color: #4B5563;
+  color: #27272A;
 }
 .announce-dot { background: #B91C1C; animation: none; }
-.announce-cta { color: #0F172A; border-color: #E7E5E4; }
+.announce-cta { color: #09090B; border-color: #E7E5E4; }
 .navbar {
   background: rgba(255,255,255,.9);
   border-bottom: 1px solid #E5E7EB;
@@ -1979,10 +1979,10 @@ body {
   box-shadow: 0 10px 30px rgba(17,24,39,.08);
 }
 .browser-top { background: #F3F4F6; border-bottom: 1px solid #E5E7EB; }
-.url-bar { background: #FFFFFF; border: 1px solid #E5E7EB; color: #6B7280; }
+.url-bar { background: #FFFFFF; border: 1px solid #E5E7EB; color: #52525B; }
 .form-input {
   background: #FFFFFF;
-  color: #111827;
+  color: #09090B;
   border: 1px solid #D1D5DB;
 }
 .form-input:focus {
@@ -2000,7 +2000,7 @@ body {
 .feat-icon, .pf-icon, .roadmap-icon, .step-icon, .frb-icon, .winwin-icon, .vault-emoji {
   background: #F9FAFB !important;
   border: 1px solid #E5E7EB !important;
-  color: #111827 !important;
+  color: #09090B !important;
 }
 .lucide, .step-arrow svg, .winwin-divider svg {
   color: #374151 !important;
@@ -2046,7 +2046,7 @@ body {
 }
 .co-logo.google, .co-logo.meta, .co-logo.stripe, .google-logo, .meta-logo, .stripe-logo {
   background: #F3F4F6 !important;
-  color: #111827 !important;
+  color: #09090B !important;
   border: 1px solid #E5E7EB;
 }
 
@@ -2101,9 +2101,9 @@ body {
 :root {
   --wg-font: var(--font);
   --wg-mono: var(--font-mono);
-  --wg-ink: #0F172A;
-  --wg-ink-muted: #64748B;
-  --wg-ink-subtle: #64748B;
+  --wg-ink: #09090B;
+  --wg-ink-muted: #27272A;
+  --wg-ink-subtle: #52525B;
   --wg-surface: #FAFAF9;
   --wg-surface-muted: #FAFAF9;
   --wg-border: #E7E5E4;
