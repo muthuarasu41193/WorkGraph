@@ -1124,7 +1124,7 @@ export default function RecommendedJobsSection({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [serverFilterKey, clientFilterState, sortBy]);
+  }, [clientFilterState, sortBy]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
