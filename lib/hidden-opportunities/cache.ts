@@ -2,7 +2,7 @@ import type { HiddenOpportunity } from "./types";
 
 const CACHE_TTL_MS = 30 * 60 * 1000;
 /** Bump when provider logic changes so stale merged feeds are not reused. */
-const CACHE_SCHEMA_VERSION = 2;
+const CACHE_SCHEMA_VERSION = 3;
 
 type CacheEntry = {
   version: number;
