@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   DEFAULT_DASHBOARD_ROUTE,
   type DashboardRouteId,
-  isDashboardRouteId,
+  resolveDashboardRouteFromSearchParams,
 } from "@/lib/dashboard-routes";
 
 export function useDashboardNavigation() {
@@ -13,10 +13,10 @@ export function useDashboardNavigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const activeRoute = useMemo((): DashboardRouteId => {
-    const view = searchParams.get("view");
-    return isDashboardRouteId(view) ? view : DEFAULT_DASHBOARD_ROUTE;
-  }, [searchParams]);
+  const activeRoute = useMemo(
+    (): DashboardRouteId => resolveDashboardRouteFromSearchParams(searchParams),
+    [searchParams],
+  );
 
   const navigate = useCallback(
     (route: DashboardRouteId) => {

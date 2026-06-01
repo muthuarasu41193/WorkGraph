@@ -369,22 +369,11 @@ async function fetchListingStats(
     return { ok: false, error: totalRes.error.message, code: totalRes.error.code };
   }
 
-  const bySource: Partial<Record<JobFeedSource, number>> = {};
-
-  await Promise.all(
-    LIVE_LISTING_SOURCES.map(async (src) => {
-      const r = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("source", src).eq("is_community", false);
-      if (!r.error && typeof r.count === "number") {
-        bySource[src] = r.count;
-      }
-    })
-  );
-
-  return { ok: true, total: totalRes.count ?? 0, bySource };
+  return { ok: true, total: totalRes.count ?? 0, bySource: {} };
 }
 
 async function fetchJobRows(supabase: SupabaseClient): Promise<JobRow[] | null> {
-  const { rows } = await fetchLiveJobsCatalog(supabase, { maxRows: 500 });
+  const { rows } = await fetchLiveJobsCatalog(supabase, { maxRows: 150 });
   return rows;
 }
 
@@ -487,7 +476,7 @@ export async function loadProfileJobDashboard(
       };
     }
 
-    const ranked = rankJobs(atsRows, profile.skills, profile.headline, 500);
+    const ranked = rankJobs(atsRows, profile.skills, profile.headline, 150);
     const recommended =
       ranked.length > 0 ? ranked.map((r) => rowToCard(r, profile.skills)) : DEMO_RECOMMENDED_JOBS;
 

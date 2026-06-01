@@ -76,6 +76,28 @@ export function isDashboardRouteId(value: string | null | undefined): value is D
   return DASHBOARD_ROUTES.some((route) => route.id === value);
 }
 
+const JOB_LIST_LAYOUT_VALUES = new Set(["list", "grid"]);
+
+/** Reads `?view=` for dashboard routing; ignores legacy list/grid layout values. */
+export function resolveDashboardRouteFromSearchParams(
+  params: Pick<URLSearchParams, "get">,
+): DashboardRouteId {
+  const view = params.get("view");
+  if (isDashboardRouteId(view)) return view;
+  if (view && JOB_LIST_LAYOUT_VALUES.has(view)) return "jobs";
+  return DEFAULT_DASHBOARD_ROUTE;
+}
+
+export function resolveJobsLayoutFromSearchParams(
+  params: Pick<URLSearchParams, "get">,
+): "list" | "grid" {
+  const layout = params.get("jobsLayout");
+  if (layout === "list" || layout === "grid") return layout;
+  const legacyView = params.get("view");
+  if (legacyView === "list" || legacyView === "grid") return legacyView;
+  return "list";
+}
+
 export function getDashboardRoute(id: DashboardRouteId): DashboardRoute {
   return DASHBOARD_ROUTES.find((route) => route.id === id) ?? DASHBOARD_ROUTES[0];
 }

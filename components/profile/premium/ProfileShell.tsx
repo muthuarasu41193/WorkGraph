@@ -1,6 +1,8 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "../../../lib/job-dashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Profile } from "../../../lib/types";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import DashboardHydrator from "../../dashboard/DashboardHydrator";
@@ -18,12 +20,21 @@ import ProfileAiInsights from "./ProfileAiInsights";
 import ProfileJobMatches from "./ProfileJobMatches";
 import ProfileActivity from "./ProfileActivity";
 import ProfileSidebar from "./ProfileSidebar";
-import ProfileJobDashboard from "../ProfileJobDashboard";
-import RecommendedJobsSection from "../RecommendedJobsSection";
 import HiddenJobsSection from "../../dashboard/sections/HiddenJobsSection";
 import InterviewVaultSection from "../../dashboard/sections/InterviewVaultSection";
 import JobNewsSection from "../../dashboard/sections/JobNewsSection";
 import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
+
+const ProfileJobsView = dynamic(() => import("../ProfileJobsView"), {
+  loading: () => (
+    <div className="space-y-5" aria-busy="true" aria-label="Loading jobs">
+      <Skeleton className="h-8 w-32" />
+      <Skeleton className="h-40 w-full rounded-xl" />
+      <Skeleton className="h-64 w-full rounded-xl" />
+    </div>
+  ),
+  ssr: false,
+});
 
 export type ProfileShellProps = {
   profile: Profile;
@@ -115,27 +126,16 @@ function ProfileShellInner({
       </div>
     ),
     jobs: (
-      <div className="space-y-5">
-        <header>
-          <h1 className="text-2xl font-bold tracking-tight">Jobs</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Live listings ranked for your skills and experience.
-          </p>
-        </header>
-        <ProfileJobDashboard
-          stats={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
-          profileCompleteness={profile.profile_completeness ?? 0}
-          liveListings={liveListings}
-          listingsBySource={listingsBySource}
-        />
-        <RecommendedJobsSection
-          jobs={atsJobs.length ? atsJobs : recommendedJobs}
-          skillHints={profile.skills}
-          feedKind={feedKind}
-          feedDemoHint={feedDemoHint}
-          liveListings={liveListings}
-        />
-      </div>
+      <ProfileJobsView
+        jobs={atsJobs.length ? atsJobs : recommendedJobs}
+        skillHints={profile.skills}
+        feedKind={feedKind}
+        feedDemoHint={feedDemoHint}
+        liveListings={liveListings}
+        listingsBySource={listingsBySource}
+        jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
+        profileCompleteness={profile.profile_completeness ?? 0}
+      />
     ),
     "hidden-jobs": <HiddenJobsSection />,
     vault: <InterviewVaultSection />,

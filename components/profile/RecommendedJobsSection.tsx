@@ -34,6 +34,10 @@ import {
   UserSearch,
   X,
 } from "lucide-react";
+import {
+  resolveDashboardRouteFromSearchParams,
+  resolveJobsLayoutFromSearchParams,
+} from "@/lib/dashboard-routes";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -181,6 +185,7 @@ const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_as
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
+const JOBS_API_PAGE_SIZE = 100;
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -571,7 +576,9 @@ export default function RecommendedJobsSection({
   const [easyApplyOnly, setEasyApplyOnly] = useState(parseBooleanParam(searchParams.get("easy")));
   const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
   const [isMatchProfileExpanded, setIsMatchProfileExpanded] = useState(true);
-  const [viewMode, setViewMode] = useState<"list" | "grid">(parseEnumParam(searchParams.get("view"), VIEW_MODE_OPTIONS, "list"));
+  const [viewMode, setViewMode] = useState<"list" | "grid">(() =>
+    resolveJobsLayoutFromSearchParams(searchParams)
+  );
   const [sortBy, setSortBy] = useState<"best" | "newest" | "salary_desc" | "salary_asc" | "company_asc">(
     parseEnumParam(searchParams.get("sort"), SORT_OPTIONS, "best")
   );
@@ -580,11 +587,14 @@ export default function RecommendedJobsSection({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [autoLoadEnabled, setAutoLoadEnabled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(feedKind === "live");
-  const [isCatalogLoading, setIsCatalogLoading] = useState(feedKind === "live");
-  const [catalogJobs, setCatalogJobs] = useState<RecommendedJobCard[]>([]);
-  const [catalogTotal, setCatalogTotal] = useState(liveListings);
-  const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [isInitialLoading] = useState(false);
+  const [isFetchingPage, setIsFetchingPage] = useState(false);
+  const [extraJobs, setExtraJobs] = useState<RecommendedJobCard[]>([]);
+  const [apiPage, setApiPage] = useState(1);
+  const [hasMoreOnServer, setHasMoreOnServer] = useState(
+    feedKind === "live" && liveListings > initialJobs.length
+  );
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
@@ -592,8 +602,20 @@ export default function RecommendedJobsSection({
   const query = deferredSearchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
 
-  const jobs = feedKind === "live" && catalogJobs.length > 0 ? catalogJobs : initialJobs;
-  const totalIndexed = catalogTotal > 0 ? catalogTotal : liveListings > 0 ? liveListings : jobs.length;
+  const jobs = useMemo(() => {
+    if (extraJobs.length === 0) return initialJobs;
+    const seen = new Set(initialJobs.map((j) => j.id));
+    const merged = [...initialJobs];
+    for (const job of extraJobs) {
+      if (!seen.has(job.id)) {
+        seen.add(job.id);
+        merged.push(job);
+      }
+    }
+    return merged;
+  }, [initialJobs, extraJobs]);
+
+  const totalIndexed = liveListings > 0 ? liveListings : jobs.length;
 
   const enrichedJobs = useMemo(
     () =>
@@ -613,9 +635,9 @@ export default function RecommendedJobsSection({
 
   const sourceFilterOptions = useMemo(() => {
     if (platformsInFeed.length > 0) return platformsInFeed;
-    if (isCatalogLoading || feedKind === "live") return [...JOB_FEED_SOURCE_OPTIONS];
+    if (feedKind === "live") return [...JOB_FEED_SOURCE_OPTIONS];
     return platformsInFeed;
-  }, [platformsInFeed, isCatalogLoading, feedKind]);
+  }, [platformsInFeed, feedKind]);
 
   const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
   const normalizedRequiredSkills = useMemo(
@@ -720,14 +742,100 @@ export default function RecommendedJobsSection({
   const rangeStart = totalMatched === 0 ? 0 : 1;
   const rangeEnd = Math.min(visible, totalMatched);
 
-  const loadMoreJobs = useCallback(() => {
+  const fetchJobsPage = useCallback(
+    async (page: number) => {
+      if (feedKind !== "live" || isFetchingPage) return false;
+      setIsFetchingPage(true);
+      setFetchError(null);
+      const skillsQuery =
+        skillHints.length > 0 ? `&skills=${encodeURIComponent(skillHints.join(","))}` : "";
+      try {
+        const res = await fetch(
+          `/api/jobs?page=${page}&page_size=${JOBS_API_PAGE_SIZE}${skillsQuery}`,
+          { cache: "no-store" }
+        );
+        if (res.ok) {
+          const payload = (await res.json()) as {
+            ok?: boolean;
+            jobs?: RecommendedJobCard[];
+            has_more?: boolean;
+          };
+          if (payload.ok && payload.jobs?.length) {
+            setExtraJobs((prev) => {
+              const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
+              const next = [...prev];
+              for (const job of payload.jobs!) {
+                if (!seen.has(job.id)) {
+                  seen.add(job.id);
+                  next.push(job);
+                }
+              }
+              return next;
+            });
+            setApiPage(page);
+            setHasMoreOnServer(Boolean(payload.has_more));
+            return true;
+          }
+        }
+
+        const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+        const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
+        const supabase = createBrowserSupabaseClient();
+        const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+          page,
+          pageSize: JOBS_API_PAGE_SIZE,
+        });
+        if (fallback.jobs?.length) {
+          setExtraJobs((prev) => {
+            const seen = new Set([...initialJobs, ...prev].map((j) => j.id));
+            const next = [...prev];
+            for (const job of fallback.jobs!) {
+              if (!seen.has(job.id)) {
+                seen.add(job.id);
+                next.push(job);
+              }
+            }
+            return next;
+          });
+          setApiPage(page);
+          setHasMoreOnServer(fallback.hasMore);
+          return true;
+        }
+        setFetchError("Could not load more jobs.");
+        return false;
+      } catch {
+        setFetchError("Network error while loading jobs.");
+        return false;
+      } finally {
+        setIsFetchingPage(false);
+      }
+    },
+    [feedKind, initialJobs, isFetchingPage, skillHints]
+  );
+
+  const loadMoreJobs = useCallback(async () => {
     if (isLoadingMore) return;
     setIsLoadingMore(true);
-    window.setTimeout(() => {
-      setVisible((v) => v + PAGE_SIZE);
+    const nextVisible = visible + PAGE_SIZE;
+    if (nextVisible <= sortedJobs.length) {
+      setVisible(nextVisible);
       setIsLoadingMore(false);
-    }, 450);
-  }, [isLoadingMore]);
+      return;
+    }
+    if (hasMoreOnServer && feedKind === "live") {
+      const loaded = await fetchJobsPage(apiPage + 1);
+      if (loaded) setVisible(nextVisible);
+    }
+    setIsLoadingMore(false);
+  }, [
+    apiPage,
+    fetchJobsPage,
+    feedKind,
+    hasMoreOnServer,
+    isLoadingMore,
+    sortedJobs.length,
+    visible,
+  ]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
@@ -811,7 +919,9 @@ export default function RecommendedJobsSection({
       else params.delete("visa");
       if (easyApplyOnly) params.set("easy", "1");
       else params.delete("easy");
-      params.set("view", viewMode);
+      const dashboardView = resolveDashboardRouteFromSearchParams(searchParams);
+      params.set("view", dashboardView);
+      params.set("jobsLayout", viewMode);
       params.set("sort", sortBy);
       const nextQuery = params.toString();
       const currentQuery = searchParams.toString();
@@ -895,64 +1005,6 @@ export default function RecommendedJobsSection({
   }, []);
 
   useEffect(() => {
-    if (feedKind !== "live") {
-      setIsCatalogLoading(false);
-      setIsInitialLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-    const skillsQuery =
-      skillHints.length > 0 ? `?skills=${encodeURIComponent(skillHints.join(","))}` : "";
-
-    async function loadCatalog() {
-      setIsCatalogLoading(true);
-      setCatalogError(null);
-      try {
-        const res = await fetch(`/api/jobs${skillsQuery}`, { cache: "no-store" });
-        if (res.ok) {
-          const payload = (await res.json()) as {
-            ok?: boolean;
-            jobs?: RecommendedJobCard[];
-            total?: number;
-            loaded?: number;
-            error?: string;
-          };
-          if (!cancelled && payload.ok && payload.jobs) {
-            setCatalogJobs(payload.jobs);
-            setCatalogTotal(payload.total ?? payload.loaded ?? payload.jobs.length);
-            return;
-          }
-        }
-
-        const { createBrowserSupabaseClient } = await import("@/lib/supabase");
-        const { loadLiveJobCards } = await import("@/lib/jobs-catalog");
-        const supabase = createBrowserSupabaseClient();
-        const { jobs, total } = await loadLiveJobCards(supabase, skillHints);
-        if (cancelled) return;
-        if (!jobs) {
-          setCatalogError("Could not load the full job catalog.");
-          return;
-        }
-        setCatalogJobs(jobs);
-        setCatalogTotal(total);
-      } catch {
-        if (!cancelled) setCatalogError("Network error while loading jobs.");
-      } finally {
-        if (!cancelled) {
-          setIsCatalogLoading(false);
-          setIsInitialLoading(false);
-        }
-      }
-    }
-
-    void loadCatalog();
-    return () => {
-      cancelled = true;
-    };
-  }, [feedKind, skillHints]);
-
-  useEffect(() => {
     setVisible(PAGE_SIZE);
   }, [
     query,
@@ -1003,8 +1055,8 @@ export default function RecommendedJobsSection({
   }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = (isInitialLoading || isCatalogLoading) && jobs.length === 0;
-  const showLoadMoreSpinner = isLoadingMore && jobs.length > 0;
+  const showSkeleton = isInitialLoading && jobs.length === 0;
+  const showLoadMoreSpinner = (isLoadingMore || isFetchingPage) && jobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1249,17 +1301,18 @@ export default function RecommendedJobsSection({
         ) : null}
       </section>
 
-      {feedKind === "live" && catalogError ? (
+      {fetchError ? (
         <div className="rounded-xl border border-[#FAD2CF] bg-[#FCE8E6] p-4 text-sm text-[#3A3A3C]">
-          <p className="font-semibold text-[#C5221F]">Could not load the full job catalog</p>
-          <p className="mt-1 text-[#5F6368]">{catalogError} Showing {initialJobs.length.toLocaleString()} jobs from the initial page load.</p>
+          <p className="font-semibold text-[#C5221F]">Could not load more jobs</p>
+          <p className="mt-1 text-[#5F6368]">{fetchError}</p>
         </div>
       ) : null}
 
-      {feedKind === "live" && !catalogError && !isCatalogLoading && catalogJobs.length > 0 ? (
+      {feedKind === "live" && liveListings > 0 ? (
         <p className="text-sm text-[#5F6368]">
-          Loaded <span className="font-semibold text-[#1A73E8]">{catalogJobs.length.toLocaleString()}</span> live listings
-          {catalogTotal > catalogJobs.length ? ` (${catalogTotal.toLocaleString()} indexed in Postgres)` : ""}.
+          Browsing <span className="font-semibold text-[#1A73E8]">{jobs.length.toLocaleString()}</span> loaded listings
+          {liveListings > jobs.length ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}.
+          {hasMoreOnServer ? " Use Load more to fetch additional pages." : ""}
         </p>
       ) : null}
 
@@ -1490,10 +1543,10 @@ export default function RecommendedJobsSection({
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
             Showing <span className="font-semibold text-[#1A73E8]">{filtered.length.toLocaleString()} matched jobs</span> out of{" "}
             <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
-            {isCatalogLoading ? (
+            {isFetchingPage ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                Loading full catalog…
+                Loading more…
               </span>
             ) : null}
           </p>
@@ -1688,7 +1741,7 @@ export default function RecommendedJobsSection({
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
-      {(jobs.length > 0 || isCatalogLoading) ? (
+      {(jobs.length > 0 || isFetchingPage) ? (
         <div className="flex items-center justify-between gap-2">
           <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
             <Button
@@ -1957,7 +2010,7 @@ export default function RecommendedJobsSection({
       </div>
       )}
 
-      {sortedJobs.length > visible ? (
+      {sortedJobs.length > visible || (hasMoreOnServer && feedKind === "live") ? (
         <div className="space-y-3">
           <p className="text-[13px] text-[#8E8E93]">
             Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} matched jobs

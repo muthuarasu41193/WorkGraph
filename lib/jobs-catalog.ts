@@ -134,6 +134,80 @@ export function mapJobRowToCard(row: JobRow, skills: string[] = []): Recommended
   };
 }
 
+export type LiveJobsPageResult = {
+  rows: JobRow[] | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+};
+
+/** Single page of live listings — used by the Jobs tab API (fast, no bulk download). */
+export async function fetchLiveJobsPage(
+  supabase: SupabaseClient,
+  options: { page?: number; pageSize?: number }
+): Promise<LiveJobsPageResult> {
+  const page = Math.max(1, options.page ?? 1);
+  const pageSize = Math.min(200, Math.max(1, options.pageSize ?? 100));
+  const offset = (page - 1) * pageSize;
+
+  const totalRes = await supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
+  if (totalRes.error) {
+    console.warn("[jobs-catalog] jobs count error:", totalRes.error.message, totalRes.error.code);
+    return { rows: null, total: 0, page, pageSize, hasMore: false };
+  }
+
+  const total = totalRes.count ?? 0;
+  if (total === 0) {
+    return { rows: [], total: 0, page, pageSize, hasMore: false };
+  }
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select(JOB_SELECT_COLUMNS)
+    .eq("is_community", false)
+    .order("posted_at", { ascending: false })
+    .range(offset, offset + pageSize - 1);
+
+  if (error) {
+    console.warn("[jobs-catalog] jobs page select error:", error.message, error.code);
+    return { rows: null, total, page, pageSize, hasMore: false };
+  }
+
+  const rows = (data ?? []) as JobRow[];
+  return {
+    rows,
+    total,
+    page,
+    pageSize,
+    hasMore: offset + rows.length < total,
+  };
+}
+
+export async function loadLiveJobCardsPage(
+  supabase: SupabaseClient,
+  skills: string[] = [],
+  options: { page?: number; pageSize?: number }
+): Promise<{
+  jobs: RecommendedJobCard[] | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}> {
+  const result = await fetchLiveJobsPage(supabase, options);
+  if (result.rows === null) {
+    return { jobs: null, total: result.total, page: result.page, pageSize: result.pageSize, hasMore: false };
+  }
+  return {
+    jobs: result.rows.map((row) => mapJobRowToCard(row, skills)),
+    total: result.total,
+    page: result.page,
+    pageSize: result.pageSize,
+    hasMore: result.hasMore,
+  };
+}
+
 /** Paginate through all live ATS / job-board rows for the jobs page. */
 export async function fetchLiveJobsCatalog(
   supabase: SupabaseClient,
