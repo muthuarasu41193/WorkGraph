@@ -141,6 +141,18 @@ export type JobsCatalogFilters = {
   locationMode?: "any" | "remote" | "hybrid" | "onsite";
   locationQuery?: string;
   company?: string;
+  /** e.g. Full-time, Contract — matched via title/description ilike */
+  jobTypes?: string[];
+};
+
+/** Hyphenated keywords only — PostgREST `.or()` treats commas/spaces as delimiters. */
+const JOB_TYPE_DB_KEYWORDS: Record<string, string[]> = {
+  "Full-time": ["full-time", "fulltime"],
+  "Part-time": ["part-time", "parttime"],
+  Contract: ["contract", "contractor"],
+  Freelance: ["freelance", "freelancer"],
+  Internship: ["internship", "intern"],
+  Temporary: ["temporary", "temp-to-hire"],
 };
 
 export type LiveJobsPageResult = {
@@ -185,12 +197,32 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
   if (filters.locationMode && filters.locationMode !== "any") {
     if (filters.locationMode === "remote") {
       builder = builder.or(
-        "location.ilike.%remote%,description.ilike.%remote%,description.ilike.%work from home%,description.ilike.%distributed%"
+        "location.ilike.%remote%,description.ilike.%remote%,description.ilike.%wfh%,description.ilike.%distributed%"
       );
     } else if (filters.locationMode === "hybrid") {
       builder = builder.or("location.ilike.%hybrid%,description.ilike.%hybrid%");
     } else if (filters.locationMode === "onsite") {
-      builder = builder.not("location", "ilike", "%remote%");
+      builder = builder
+        .not("location", "ilike", "%remote%")
+        .not("description", "ilike", "%remote%")
+        .not("description", "ilike", "%wfh%")
+        .not("description", "ilike", "%hybrid%")
+        .neq("location", "")
+        .neq("location", "Location TBD");
+    }
+  }
+
+  if (filters.jobTypes && filters.jobTypes.length > 0) {
+    const orParts: string[] = [];
+    for (const jobType of filters.jobTypes) {
+      const keywords = JOB_TYPE_DB_KEYWORDS[jobType] ?? [jobType.toLowerCase()];
+      for (const keyword of keywords) {
+        const pattern = `%${sanitizeIlike(keyword)}%`;
+        orParts.push(`title.ilike.${pattern}`, `description.ilike.${pattern}`);
+      }
+    }
+    if (orParts.length > 0) {
+      builder = builder.or(orParts.join(","));
     }
   }
 
@@ -213,7 +245,7 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
   return builder;
 }
 
-function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
+export function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
   if (!filters) return false;
   return Boolean(
     filters.q?.trim() ||
@@ -221,7 +253,8 @@ function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
       (filters.dateWindow && filters.dateWindow !== "any") ||
       (filters.locationMode && filters.locationMode !== "any") ||
       filters.locationQuery?.trim() ||
-      filters.company?.trim()
+      filters.company?.trim() ||
+      (filters.jobTypes && filters.jobTypes.length > 0)
   );
 }
 

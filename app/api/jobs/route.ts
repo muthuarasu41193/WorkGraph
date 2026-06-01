@@ -26,6 +26,7 @@ function parseCatalogFilters(searchParams: URLSearchParams): JobsCatalogFilters 
       locMode === "remote" || locMode === "hybrid" || locMode === "onsite" ? locMode : undefined,
     locationQuery: searchParams.get("loc")?.trim() || undefined,
     company: searchParams.get("company")?.trim() || undefined,
+    jobTypes: parseListParam(searchParams.get("type")),
   };
 }
 

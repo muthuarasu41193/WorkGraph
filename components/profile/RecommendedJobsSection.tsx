@@ -186,6 +186,7 @@ const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
 const JOBS_API_PAGE_SIZE = 100;
+const CATALOG_FILTER_PAGE_SIZE = 300;
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -473,6 +474,56 @@ function jobTypeMatches(meta: DerivedJobMeta, selected: Set<JobTypeOption>): boo
   );
 }
 
+const EXPERIENCE_KEYWORDS: Record<ExperienceFilterOption, string[]> = {
+  "Entry (0-2yr)": ["entry level", "entry-level", "junior", "graduate", "new grad", "intern"],
+  "Mid (2-5yr)": ["mid level", "mid-level", "intermediate", "2-5 year", "3 years"],
+  "Senior (5-8yr)": ["senior", "sr.", "5+ years", "5-8 year"],
+  "Lead (8-12yr)": ["lead", "principal", "staff", "8+ years", "manager"],
+  "Executive (12yr+)": ["executive", "director", "vp", "head of", "chief"],
+};
+
+function experienceMatches(meta: DerivedJobMeta, level: "any" | ExperienceFilterOption): boolean {
+  if (level === "any") return true;
+  if (meta.experienceLevel === level) return true;
+  const keywords = EXPERIENCE_KEYWORDS[level];
+  return keywords.some((keyword) => meta.searchBlob.includes(keyword));
+}
+
+function locationMatches(
+  job: RecommendedJobCard,
+  meta: DerivedJobMeta,
+  mode: "any" | "remote" | "hybrid" | "onsite",
+  locationText: string
+): boolean {
+  const blob = normalizeText(job.location, job.description, job.title);
+  const needle = locationText.trim().toLowerCase();
+  if (needle && !blob.includes(needle)) return false;
+  if (mode === "any") return true;
+  if (meta.locationMode === mode) return true;
+  if (mode === "remote") {
+    return /\bremote\b|work from home|\bwfh\b|distributed|anywhere|telecommute/.test(blob);
+  }
+  if (mode === "hybrid") {
+    return /\bhybrid\b|partially remote|flexible location/.test(blob);
+  }
+  if (mode === "onsite") {
+    const hasRemoteSignal = /\bremote\b|work from home|\bwfh\b|distributed/.test(blob);
+    return (
+      /\bon[- ]?site\b|\bin[- ]?office\b/.test(blob) ||
+      (!hasRemoteSignal && Boolean(job.location.trim()) && job.location !== "Location TBD")
+    );
+  }
+  return true;
+}
+
+function industriesMatch(meta: DerivedJobMeta, selected: Set<IndustryOption>): boolean {
+  if (selected.size === 0) return true;
+  if (meta.industries.some((industry) => selected.has(industry))) return true;
+  return [...selected].some((industry) =>
+    INDUSTRY_KEYWORDS[industry].some((keyword) => meta.searchBlob.includes(keyword))
+  );
+}
+
 type Props = {
   jobs: RecommendedJobCard[];
   skillHints: string[];
@@ -630,7 +681,30 @@ export default function RecommendedJobsSection({
   const query = deferredSearchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
 
-  const needsServerFetch = useMemo(() => {
+  const catalogFilters = useMemo(
+    () => ({
+      q: query.trim() || undefined,
+      sources: sources.size > 0 ? [...sources] : undefined,
+      dateWindow,
+      locationMode,
+      locationQuery: locationQuery.trim() || undefined,
+      company: companyQuery.trim() || undefined,
+      jobTypes: jobTypes.size > 0 ? [...jobTypes] : undefined,
+    }),
+    [query, sources, dateWindow, locationMode, locationQuery, companyQuery, jobTypes]
+  );
+
+  const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
+  const normalizedRequiredSkills = useMemo(
+    () =>
+      requiredSkillsInput
+        .split(",")
+        .map((skill) => skill.trim().toLowerCase())
+        .filter(Boolean),
+    [requiredSkillsInput]
+  );
+
+  const useServerCatalogFetch = useMemo(() => {
     if (feedKind !== "live") return false;
     return Boolean(
       query.trim() ||
@@ -638,12 +712,29 @@ export default function RecommendedJobsSection({
         dateWindow !== "any" ||
         locationMode !== "any" ||
         locationQuery.trim() ||
-        companyQuery.trim()
+        companyQuery.trim() ||
+        jobTypes.size > 0
     );
-  }, [feedKind, query, sources, dateWindow, locationMode, locationQuery, companyQuery]);
+  }, [
+    feedKind,
+    query,
+    sources,
+    dateWindow,
+    locationMode,
+    locationQuery,
+    companyQuery,
+    jobTypes,
+  ]);
+
+  const serverCatalogReady =
+    useServerCatalogFetch && serverFilteredJobs !== null && !isFilterFetching;
 
   const jobs = useMemo(() => {
-    if (serverFilteredJobs !== null) return serverFilteredJobs;
+    if (useServerCatalogFetch) {
+      if (isFilterFetching) return [];
+      if (serverFilteredJobs !== null) return serverFilteredJobs;
+      return [];
+    }
     if (extraJobs.length === 0) return initialJobs;
     const seen = new Set(initialJobs.map((j) => j.id));
     const merged = [...initialJobs];
@@ -654,7 +745,7 @@ export default function RecommendedJobsSection({
       }
     }
     return merged;
-  }, [initialJobs, extraJobs, serverFilteredJobs]);
+  }, [initialJobs, extraJobs, serverFilteredJobs, useServerCatalogFetch, isFilterFetching]);
 
   const totalIndexed =
     serverMatchTotal !== null
@@ -685,15 +776,6 @@ export default function RecommendedJobsSection({
     return platformsInFeed;
   }, [platformsInFeed, feedKind]);
 
-  const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
-  const normalizedRequiredSkills = useMemo(
-    () =>
-      requiredSkillsInput
-        .split(",")
-        .map((skill) => skill.trim().toLowerCase())
-        .filter(Boolean),
-    [requiredSkillsInput]
-  );
   const visibleIndustryOptions = useMemo(
     () =>
       INDUSTRY_OPTIONS.filter((industry) =>
@@ -704,38 +786,44 @@ export default function RecommendedJobsSection({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const normalizedLocationQuery = locationQuery.trim().toLowerCase();
     const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
-    const serverAlreadyFiltered = needsServerFetch && serverFilteredJobs !== null;
     return enrichedJobs.filter(({ job, meta, score }) => {
-      if (!serverAlreadyFiltered) {
+      if (!serverCatalogReady) {
         if (q && !searchTermsMatch(meta.searchBlob, q)) return false;
         if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
         if (sources.size > 0 && !sources.has(job.source)) return false;
-        if (locationMode !== "any" && meta.locationMode !== locationMode) return false;
-        if (normalizedLocationQuery) {
-          const locationBlob = normalizeText(job.location, job.description);
-          if (!locationBlob.includes(normalizedLocationQuery)) return false;
-        }
+        if (!locationMatches(job, meta, locationMode, locationQuery)) return false;
         if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
+        if (!jobTypeMatches(meta, jobTypes)) return false;
       }
       if (matchScore !== "any" && score < Number(matchScore)) return false;
-      if (!jobTypeMatches(meta, jobTypes)) return false;
       if (skillsPick.size > 0) {
-        const hasAny = [...skillsPick].some((sk) =>
-          job.matchedSkills.some((m) => m.toLowerCase() === sk.toLowerCase())
-        );
+        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
+        const hasAny = [...skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
         if (!hasAny) return false;
       }
-      if (experienceLevel !== "any" && meta.experienceLevel !== experienceLevel) return false;
+      if (!experienceMatches(meta, experienceLevel)) return false;
       if (salaryFilterActive) {
         if (!meta.salary) return false;
         if (meta.salary.currency !== currency) return false;
         if (meta.salary.period !== salaryPeriod) return false;
         if (meta.salary.maxK < salaryMin || meta.salary.minK > salaryMax) return false;
       }
-      if (companySize !== "any" && meta.companySize !== companySize) return false;
-      if (industries.size > 0 && !meta.industries.some((industry) => industries.has(industry))) return false;
+      if (companySize !== "any" && meta.companySize !== companySize) {
+        const sizeBlob = meta.searchBlob;
+        const sizeHint =
+          companySize === "Startup (1-50)"
+            ? ["startup", "early stage", "seed"]
+            : companySize === "Small (51-200)"
+              ? ["small team", "51-200"]
+              : companySize === "Medium (201-1000)"
+                ? ["midsize", "201-1000"]
+                : companySize === "Large (1000+)"
+                  ? ["large company", "1000+"]
+                  : ["enterprise", "10k+"];
+        if (!sizeHint.some((h) => sizeBlob.includes(h))) return false;
+      }
+      if (!industriesMatch(meta, industries)) return false;
       if (normalizedRequiredSkills.length > 0) {
         const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
         if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
@@ -747,6 +835,7 @@ export default function RecommendedJobsSection({
     });
   }, [
     enrichedJobs,
+    serverCatalogReady,
     query,
     dateWindow,
     matchScore,
@@ -768,8 +857,6 @@ export default function RecommendedJobsSection({
     visaSponsorshipOnly,
     easyApplyOnly,
     salaryFilterActive,
-    needsServerFetch,
-    serverFilteredJobs,
   ]);
 
   const sortedJobs = useMemo(() => {
@@ -799,15 +886,17 @@ export default function RecommendedJobsSection({
       if (skillHints.length > 0) {
         params.set("profile_skills", skillHints.join(","));
       }
-      if (query.trim()) params.set("q", query.trim());
-      if (sources.size > 0) params.set("src", [...sources].sort().join(","));
-      if (dateWindow !== "any") params.set("date", dateWindow);
-      if (locationMode !== "any") params.set("locMode", locationMode);
-      if (locationQuery.trim()) params.set("loc", locationQuery.trim());
-      if (companyQuery.trim()) params.set("company", companyQuery.trim());
+      const f = catalogFilters;
+      if (f.q) params.set("q", f.q);
+      if (f.sources?.length) params.set("src", [...f.sources].sort().join(","));
+      if (f.dateWindow && f.dateWindow !== "any") params.set("date", f.dateWindow);
+      if (f.locationMode && f.locationMode !== "any") params.set("locMode", f.locationMode);
+      if (f.locationQuery) params.set("loc", f.locationQuery);
+      if (f.company) params.set("company", f.company);
+      if (f.jobTypes?.length) params.set("type", f.jobTypes.join(","));
       return params.toString();
     },
-    [skillHints, query, sources, dateWindow, locationMode, locationQuery, companyQuery]
+    [skillHints, catalogFilters]
   );
 
   const fetchJobsPage = useCallback(
@@ -825,7 +914,7 @@ export default function RecommendedJobsSection({
             has_more?: boolean;
           };
           if (payload.ok && payload.jobs) {
-            if (needsServerFetch) {
+            if (useServerCatalogFetch) {
               setServerFilteredJobs((prev) => {
                 const merged = page === 1 ? [] : [...(prev ?? [])];
                 const seen = new Set(merged.map((j) => j.id));
@@ -865,17 +954,10 @@ export default function RecommendedJobsSection({
         const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
           page,
           pageSize,
-          filters: {
-            q: query.trim() || undefined,
-            sources: sources.size > 0 ? [...sources] : undefined,
-            dateWindow,
-            locationMode,
-            locationQuery: locationQuery.trim() || undefined,
-            company: companyQuery.trim() || undefined,
-          },
+          filters: catalogFilters,
         });
         if (fallback.jobs) {
-          if (needsServerFetch) {
+          if (useServerCatalogFetch) {
             setServerFilteredJobs((prev) => {
               const merged = page === 1 ? [] : [...(prev ?? [])];
               const seen = new Set(merged.map((j) => j.id));
@@ -920,18 +1002,13 @@ export default function RecommendedJobsSection({
       isFetchingPage,
       skillHints,
       buildJobsApiQuery,
-      needsServerFetch,
-      query,
-      sources,
-      dateWindow,
-      locationMode,
-      locationQuery,
-      companyQuery,
+      useServerCatalogFetch,
+      catalogFilters,
     ]
   );
 
   useEffect(() => {
-    if (!needsServerFetch) {
+    if (!useServerCatalogFetch) {
       setServerFilteredJobs(null);
       setServerMatchTotal(null);
       return;
@@ -942,27 +1019,47 @@ export default function RecommendedJobsSection({
       void (async () => {
         setIsFilterFetching(true);
         setFetchError(null);
+        setServerFilteredJobs(null);
         try {
-          const res = await fetch(`/api/jobs?${buildJobsApiQuery(1, 200)}`, {
-            cache: "no-store",
-            signal: controller.signal,
-          });
-          const payload = (await res.json()) as {
-            ok?: boolean;
-            jobs?: RecommendedJobCard[];
-            total?: number;
-            has_more?: boolean;
-          };
-          if (controller.signal.aborted) return;
-          if (res.ok && payload.ok && payload.jobs) {
-            setServerFilteredJobs(payload.jobs);
-            setServerMatchTotal(payload.total ?? payload.jobs.length);
-            setHasMoreOnServer(Boolean(payload.has_more));
-            setApiPage(1);
-            setVisible(PAGE_SIZE);
-          } else {
-            setFetchError("Could not search jobs. Try different filters.");
+          const merged: RecommendedJobCard[] = [];
+          const seen = new Set<string>();
+          let total = 0;
+          let page = 1;
+          let hasMore = true;
+          const maxPages = 5;
+
+          while (hasMore && page <= maxPages && !controller.signal.aborted) {
+            const res = await fetch(`/api/jobs?${buildJobsApiQuery(page, CATALOG_FILTER_PAGE_SIZE)}`, {
+              cache: "no-store",
+              signal: controller.signal,
+            });
+            const payload = (await res.json()) as {
+              ok?: boolean;
+              jobs?: RecommendedJobCard[];
+              total?: number;
+              has_more?: boolean;
+            };
+            if (!res.ok || !payload.ok || !payload.jobs) {
+              setFetchError("Could not search jobs. Try different filters.");
+              return;
+            }
+            total = payload.total ?? total;
+            for (const job of payload.jobs) {
+              if (!seen.has(job.id)) {
+                seen.add(job.id);
+                merged.push(job);
+              }
+            }
+            hasMore = Boolean(payload.has_more);
+            page += 1;
           }
+
+          if (controller.signal.aborted) return;
+          setServerFilteredJobs(merged);
+          setServerMatchTotal(total || merged.length);
+          setHasMoreOnServer(hasMore);
+          setApiPage(page - 1);
+          setVisible(PAGE_SIZE);
         } catch {
           if (!controller.signal.aborted) {
             setFetchError("Network error while searching jobs.");
@@ -977,7 +1074,7 @@ export default function RecommendedJobsSection({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [needsServerFetch, buildJobsApiQuery]);
+  }, [useServerCatalogFetch, buildJobsApiQuery]);
 
   const loadMoreJobs = useCallback(async () => {
     if (isLoadingMore) return;
@@ -1226,8 +1323,9 @@ export default function RecommendedJobsSection({
   }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = (isInitialLoading || isFilterFetching) && jobs.length === 0;
-  const showLoadMoreSpinner = (isLoadingMore || isFetchingPage || isFilterFetching) && jobs.length > 0;
+  const showSkeleton = (isInitialLoading || (isFilterFetching && useServerCatalogFetch)) && jobs.length === 0;
+  const showLoadMoreSpinner =
+    (isLoadingMore || isFetchingPage || (isFilterFetching && !useServerCatalogFetch)) && jobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1546,7 +1644,15 @@ export default function RecommendedJobsSection({
                     { id: "75", label: "75%+ (Good)" },
                     { id: "60", label: "60%+ (Fair)" },
                   ].map((o) => (
-                    <button key={o.id} type="button" onClick={() => setMatchScore(o.id as "any" | "90" | "75" | "60")} className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]">
+                    <button
+                      key={o.id}
+                      type="button"
+                      onClick={() => {
+                        setMatchScore(o.id as "any" | "90" | "75" | "60");
+                        setVisible(PAGE_SIZE);
+                      }}
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
+                    >
                       {o.label}
                       {matchScore === o.id ? <Check className="h-4 w-4 text-[#1A73E8]" /> : null}
                     </button>
@@ -1564,14 +1670,15 @@ export default function RecommendedJobsSection({
                       <input
                         type="checkbox"
                         checked={jobTypes.has(type)}
-                        onChange={() =>
+                        onChange={() => {
                           setJobTypes((prev) => {
                             const next = new Set(prev);
                             if (next.has(type)) next.delete(type);
                             else next.add(type);
                             return next;
-                          })
-                        }
+                          });
+                          setVisible(PAGE_SIZE);
+                        }}
                       />
                       {type}
                     </label>
@@ -1587,7 +1694,15 @@ export default function RecommendedJobsSection({
                   <input value={locationQuery} onChange={(e) => setLocationQuery(e.target.value)} placeholder="Country or city" className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
                   <div className="flex flex-wrap gap-2">
                     {["any", "remote", "hybrid", "onsite"].map((loc) => (
-                      <button key={loc} type="button" onClick={() => setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite")} className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}>
+                      <button
+                        key={loc}
+                        type="button"
+                        onClick={() => {
+                          setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
+                          setVisible(PAGE_SIZE);
+                        }}
+                        className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}
+                      >
                         {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
                       </button>
                     ))}
@@ -1712,8 +1827,18 @@ export default function RecommendedJobsSection({
           ) : null}
 
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
-            Showing <span className="font-semibold text-[#1A73E8]">{filtered.length.toLocaleString()} matched jobs</span> out of{" "}
-            <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
+            Showing <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()} matched jobs</span>
+            {useServerCatalogFetch ? (
+              <>
+                {" "}
+                from <span className="text-[#8E8E93]">{jobs.length.toLocaleString()} loaded</span>
+              </>
+            ) : (
+              <>
+                {" "}
+                out of <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
+              </>
+            )}
             {isFilterFetching || isFetchingPage ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
