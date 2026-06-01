@@ -49,12 +49,20 @@ def sha256_hex(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def http_get_json(url: str, *, params: dict[str, Any] | None = None) -> Any | None:
+def http_get_json(
+    url: str,
+    *,
+    params: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+) -> Any | None:
     """
     GET JSON with exponential backoff retries.
 
     Returns parsed JSON or None if all retries exhausted / non-JSON response.
     """
+    merged_headers = {"Accept": "application/json", "User-Agent": "WorkGraphJobAggregator/1.0"}
+    if headers:
+        merged_headers.update(headers)
     backoff = 1.0
     last_exc: Exception | None = None
     for attempt in range(HTTP_MAX_RETRIES):
@@ -63,7 +71,7 @@ def http_get_json(url: str, *, params: dict[str, Any] | None = None) -> Any | No
                 url,
                 params=params,
                 timeout=HTTP_TIMEOUT_SECONDS,
-                headers={"Accept": "application/json", "User-Agent": "WorkGraphJobAggregator/1.0"},
+                headers=merged_headers,
             )
             if resp.status_code == 429 or 500 <= resp.status_code < 600:
                 LOG.warning("HTTP %s for %s (attempt %s)", resp.status_code, url, attempt + 1)

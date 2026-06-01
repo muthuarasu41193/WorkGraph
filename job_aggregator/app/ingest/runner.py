@@ -24,6 +24,7 @@ from app.ingest.ashby import fetch_ashby_jobs
 from app.ingest.greenhouse import fetch_greenhouse_jobs
 from app.ingest.lever import fetch_lever_jobs
 from app.ingest.sync_rss import fetch_public_feed_jobs
+from app.ingest.usajobs import fetch_usajobs_jobs
 from app.models import Job
 
 LOG = logging.getLogger(__name__)
@@ -80,6 +81,7 @@ def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]],
         "lever_sites": 0,
         "ashby_slugs": 0,
         "adzuna_jobs": 0,
+        "usajobs_jobs": 0,
         "community_jobs": 0,
     }
     all_rows: list[dict[str, Any]] = []
@@ -99,6 +101,10 @@ def collect_normalized_jobs(companies_path: Path) -> tuple[list[dict[str, Any]],
     adzuna_rows = fetch_adzuna_jobs()
     boards["adzuna_jobs"] = len(adzuna_rows)
     all_rows.extend(adzuna_rows)
+
+    usajobs_rows = fetch_usajobs_jobs()
+    boards["usajobs_jobs"] = len(usajobs_rows)
+    all_rows.extend(usajobs_rows)
 
     community_rows = fetch_public_feed_jobs()
     boards["community_jobs"] = len(community_rows)

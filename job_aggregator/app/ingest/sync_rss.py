@@ -14,20 +14,26 @@ from app.ingest.arbeitnow import fetch_arbeitnow_jobs
 from app.ingest.hackernews import fetch_hackernews_jobs
 from app.ingest.jobicy import fetch_jobicy_jobs
 from app.ingest.reddit import fetch_reddit_jobs
+from app.ingest.remotejobs_org import fetch_remotejobs_jobs
 from app.ingest.remoteok import fetch_remoteok_jobs
 from app.ingest.rss_feeds import fetch_rss_jobs
 from app.utils import LOG
 
 FetchFn = Callable[[], list[dict[str, Any]]]
 
+# Live job boards first so RSS duplicates keep board source + is_community=false.
 _FETCHERS: dict[str, FetchFn] = {
     "remoteok": fetch_remoteok_jobs,
-    "reddit": fetch_reddit_jobs,
-    "rss": fetch_rss_jobs,
-    "hackernews": fetch_hackernews_jobs,
     "jobicy": fetch_jobicy_jobs,
     "arbeitnow": fetch_arbeitnow_jobs,
+    "remotejobs": fetch_remotejobs_jobs,
+    "reddit": fetch_reddit_jobs,
+    "hackernews": fetch_hackernews_jobs,
+    "rss": fetch_rss_jobs,
 }
+
+# Job boards ingested alongside community feeds but stored as live listings (Jobs tab).
+_LIVE_LISTING_SOURCES = frozenset({"remoteok", "jobicy", "arbeitnow", "remotejobs"})
 
 _REMOTE_RE = re.compile(r"\bremote\b", re.I)
 _INTERNSHIP_RE = re.compile(r"\b(intern|internship)\b", re.I)
@@ -44,7 +50,7 @@ def _classify(row: dict[str, Any]) -> tuple[str, str]:
     )
     text = text.lower()
 
-    kind = "listing" if source in {"remoteok", "jobicy", "arbeitnow"} else "post"
+    kind = "listing" if source in {"remoteok", "jobicy", "arbeitnow", "remotejobs"} else "post"
     if _INTERNSHIP_RE.search(text):
         return kind, "internship"
     if _FOR_HIRE_RE.search(text):
@@ -62,10 +68,11 @@ def _classify(row: dict[str, Any]) -> tuple[str, str]:
 
 def _normalize_community_row(row: dict[str, Any]) -> dict[str, Any]:
     kind, classification = _classify(row)
+    source = str(row.get("source") or "").strip().lower()
     out = dict(row)
     out["kind"] = str(row.get("kind") or kind)
     out["classification"] = str(row.get("classification") or classification)
-    out["is_community"] = True
+    out["is_community"] = source not in _LIVE_LISTING_SOURCES
     return out
 
 

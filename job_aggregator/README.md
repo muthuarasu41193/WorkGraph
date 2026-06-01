@@ -108,6 +108,20 @@ Set **`ADZUNA_APP_ID`** and **`ADZUNA_APP_KEY`** in `job_aggregator/.env` (or CI
 | `ADZUNA_RESULTS_PER_PAGE` | 1–50 (default 50). |
 | `ADZUNA_MAX_PAGES_PER_QUERY` | Pages per country/query (default 1; raise slowly — each page is an API call). |
 
+### RemoteJobs.org (free remote listings)
+
+Included in the main `ingest` community batch (`source = remotejobs`). **No API key** — see [remotejobs.org/api-access](https://remotejobs.org/api-access).
+
+| Variable | Purpose |
+|----------|---------|
+| `REMOTEJOBS_LIMIT` | Jobs per page, 1–50 (default 50). |
+| `REMOTEJOBS_MAX_PAGES` | Pages per category/query pass (default 4). |
+| `REMOTEJOBS_CATEGORIES` | Category slugs (`programming`, `design`, `data-science`, …). Default: all documented categories. |
+| `REMOTEJOBS_TYPES` | Job types: `full-time`, `part-time`, `contract`, `freelance`. |
+| `REMOTEJOBS_SEARCH_QUERIES` | Keyword searches (`q` param), pipe-separated. |
+
+Attribution (`Powered by RemoteJobs.org`) is appended to each description per their API terms.
+
 ---
 
 ## FastAPI REST API
@@ -134,7 +148,7 @@ Community-only ingest (async HTTP, dedupe by `apply_url`):
 python -m app.main ingest-community
 ```
 
-Configure `REDDIT_SUBREDDITS`, `RSS_FEED_URLS` in `.env` (see `.env.example`).
+Configure `REDDIT_SUBREDDITS`, `RSS_FEED_URLS`, `REMOTEJOBS_*` in `.env` (see `.env.example`).
 
 ---
 

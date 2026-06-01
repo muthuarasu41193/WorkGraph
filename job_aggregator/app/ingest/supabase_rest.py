@@ -94,7 +94,7 @@ def persist_normalized_jobs_via_rest(normalized_jobs: list[dict[str, Any]]) -> d
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates,return=minimal",
     }
-    params = {"on_conflict": "apply_url"}
+    params = {"on_conflict": "external_id"}
 
     try:
         chunk_size = int(os.getenv("JOB_INGEST_REST_CHUNK", str(_DEFAULT_CHUNK)).strip())

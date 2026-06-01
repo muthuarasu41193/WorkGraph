@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
-const COMMUNITY_SOURCE_DEFAULTS = ["remoteok", "arbeitnow", "reddit", "rss", "hackernews"] as const;
-const COMMUNITY_SOURCE_ALL = ["remoteok", "arbeitnow", "reddit", "rss", "hackernews", "jobicy"] as const;
+const COMMUNITY_SOURCE_DEFAULTS = ["remoteok", "arbeitnow", "remotejobs", "reddit", "rss", "hackernews"] as const;
+const COMMUNITY_SOURCE_ALL = ["remoteok", "arbeitnow", "remotejobs", "reddit", "rss", "hackernews", "jobicy"] as const;
 export type CommunitySource = (typeof COMMUNITY_SOURCE_ALL)[number];
 export type CommunityKind = "listing" | "post";
 export type CommunityClassification =
@@ -24,11 +24,13 @@ export type CommunitySyncRow = {
   source: CommunitySource;
   kind: CommunityKind;
   classification: CommunityClassification;
-  is_community: true;
+  is_community: boolean;
   content_hash: string;
   embedding_json: null;
   embedding_model_version: null;
 };
+
+const LIVE_LISTING_SOURCES = new Set<CommunitySource>(["remoteok", "arbeitnow", "jobicy", "remotejobs"]);
 
 type RedditListing = {
   data?: {
@@ -253,7 +255,7 @@ function buildRow(input: {
     source: input.source,
     kind: input.kind,
     classification,
-    is_community: true,
+    is_community: !LIVE_LISTING_SOURCES.has(input.source),
     content_hash: sha256Hex(canonicalJobText(title, company, location, description)),
     embedding_json: null,
     embedding_model_version: null,
@@ -555,12 +557,155 @@ async function fetchJobicyRows(): Promise<CommunitySyncRow[]> {
   return rows;
 }
 
+type RemoteJobsOrgJob = {
+  id?: string;
+  title?: string;
+  url?: string;
+  apply_url?: string;
+  company?: { name?: string; logo_url?: string; website?: string; url?: string } | string;
+  category?: { name?: string; slug?: string } | string;
+  location?: string;
+  salary_min?: number;
+  salary_max?: number;
+  salary_text?: string;
+  type?: string;
+  description?: string;
+  posted_at?: string;
+  is_translated?: boolean;
+  original_language?: string | null;
+};
+
+type RemoteJobsOrgResponse = {
+  data?: RemoteJobsOrgJob[];
+  pagination?: { total?: number; limit?: number; offset?: number; has_more?: boolean };
+};
+
+const REMOTEJOBS_ATTRIBUTION = "Powered by RemoteJobs.org — https://remotejobs.org";
+
+const REMOTEJOBS_DEFAULT_CATEGORIES = [
+  "programming",
+  "design",
+  "marketing",
+  "sales",
+  "writing",
+  "data-science",
+  "devops",
+  "product-management",
+  "customer-support",
+  "finance",
+  "human-resources",
+  "legal",
+] as const;
+
+function remoteJobsSalaryText(job: RemoteJobsOrgJob): string {
+  const salaryText = String(job.salary_text || "").trim();
+  if (salaryText) return `Salary: ${salaryText}`;
+  if (job.salary_min != null && job.salary_max != null) {
+    return `Salary: $${String(job.salary_min)} - $${String(job.salary_max)}`;
+  }
+  if (job.salary_min != null) return `Salary from: $${String(job.salary_min)}`;
+  if (job.salary_max != null) return `Salary up to: $${String(job.salary_max)}`;
+  return "";
+}
+
+function remoteJobsCompanyName(job: RemoteJobsOrgJob): string {
+  if (job.company && typeof job.company === "object") return String(job.company.name || "").trim();
+  return String(job.company || "").trim();
+}
+
+function remoteJobsCategoryLabel(job: RemoteJobsOrgJob): string {
+  if (job.category && typeof job.category === "object") {
+    const name = String(job.category.name || "").trim();
+    const slug = String(job.category.slug || "").trim();
+    if (name && slug) return `${name} (${slug})`;
+    return name || slug;
+  }
+  return String(job.category || "").trim();
+}
+
+async function fetchRemoteJobsOrgRows(): Promise<CommunitySyncRow[]> {
+  const limit = asPositiveInt(process.env.REMOTEJOBS_LIMIT, 50, 1, 50);
+  const maxPages = asPositiveInt(process.env.REMOTEJOBS_MAX_PAGES, 4, 1, 20);
+  const categories = splitCsvEnv(process.env.REMOTEJOBS_CATEGORIES, REMOTEJOBS_DEFAULT_CATEGORIES);
+  const types = splitCsvEnv(process.env.REMOTEJOBS_TYPES, []);
+  const singleType = process.env.REMOTEJOBS_TYPE?.trim() || "";
+  const typeFilters = singleType && !types.includes(singleType) ? [...types, singleType] : types.length > 0 ? types : [""];
+  const queriesRaw = process.env.REMOTEJOBS_SEARCH_QUERIES?.trim() || process.env.REMOTEJOBS_Q?.trim() || "";
+  const queries = queriesRaw
+    ? queriesRaw.includes("|")
+      ? queriesRaw.split("|").map((part) => part.trim()).filter(Boolean)
+      : splitCsvEnv(queriesRaw, [])
+    : [""];
+
+  const rows: CommunitySyncRow[] = [];
+  const seen = new Set<string>();
+
+  for (const category of categories) {
+    for (const jobType of typeFilters) {
+      for (const query of queries) {
+        let offset = 0;
+        for (let page = 0; page < maxPages; page += 1) {
+          const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+          if (category) params.set("category", category);
+          if (jobType) params.set("type", jobType);
+          if (query) params.set("q", query);
+
+          const payload = await fetchJson<RemoteJobsOrgResponse>(
+            `https://remotejobs.org/api/v1/jobs?${params.toString()}`
+          );
+          const batch = payload.data || [];
+          for (const item of batch) {
+            const applyUrl = normalizeUrl(String(item.apply_url || item.url || ""));
+            if (!applyUrl || seen.has(applyUrl)) continue;
+            const categoryLabel = remoteJobsCategoryLabel(item);
+            const translationNote =
+              item.is_translated === true
+                ? item.original_language
+                  ? `Translated from ${String(item.original_language)}`
+                  : "Translated to English"
+                : "";
+            const row = buildRow({
+              source: "remotejobs",
+              externalId: `remotejobs:${String(item.id || applyUrl)}`,
+              title: String(item.title || ""),
+              company: remoteJobsCompanyName(item),
+              location: String(item.location || "Remote"),
+              description: compactText(
+                remoteJobsSalaryText(item),
+                categoryLabel ? `Category: ${categoryLabel}` : "",
+                item.type ? `Type: ${String(item.type)}` : "",
+                translationNote,
+                String(item.description || ""),
+                REMOTEJOBS_ATTRIBUTION
+              ),
+              applyUrl,
+              postedAt: toIso(String(item.posted_at || "")),
+              kind: "listing",
+            });
+            if (!row) continue;
+            rows.push(row);
+            seen.add(applyUrl);
+          }
+
+          const hasMore = payload.pagination?.has_more === true;
+          if (!hasMore || batch.length < limit) break;
+          offset += limit;
+        }
+      }
+    }
+  }
+
+  return rows;
+}
+
 async function fetchSourceRows(source: CommunitySource): Promise<CommunitySyncRow[]> {
   switch (source) {
     case "remoteok":
       return fetchRemoteOkRows();
     case "arbeitnow":
       return fetchArbeitnowRows();
+    case "remotejobs":
+      return fetchRemoteJobsOrgRows();
     case "reddit":
       return fetchRedditRows();
     case "rss":
@@ -614,7 +759,7 @@ export async function syncCommunityJobsViaSupabase(): Promise<{
   });
 
   for (const batch of chunkRows(fetchedRows, 100)) {
-    const { error } = await supabase.from("jobs").upsert(batch, { onConflict: "apply_url", ignoreDuplicates: false });
+    const { error } = await supabase.from("jobs").upsert(batch, { onConflict: "external_id", ignoreDuplicates: false });
     if (error) {
       throw new Error(`Community jobs upsert failed: ${error.message}`);
     }

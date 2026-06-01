@@ -22,9 +22,9 @@ from sqlalchemy.engine.url import URL, make_url
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _REPO_ROOT = _PROJECT_ROOT.parent
 
-# Landing repo secrets (NEXT_PUBLIC_SUPABASE_URL, etc.), then job_aggregator/.env wins.
-for _env_name in (".env", ".env.local"):
-    load_dotenv(_REPO_ROOT / _env_name)
+# Landing repo: base .env, then .env.local overrides empty placeholders, then job_aggregator/.env wins.
+load_dotenv(_REPO_ROOT / ".env")
+load_dotenv(_REPO_ROOT / ".env.local", override=True)
 load_dotenv(_PROJECT_ROOT / ".env", override=True)
 
 

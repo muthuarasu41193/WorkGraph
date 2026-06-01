@@ -133,6 +133,7 @@ function ProfileShellInner({
           skillHints={profile.skills}
           feedKind={feedKind}
           feedDemoHint={feedDemoHint}
+          liveListings={liveListings}
         />
       </div>
     ),

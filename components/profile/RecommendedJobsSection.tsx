@@ -72,6 +72,10 @@ const SOURCE_STYLES: Record<
     label: "Adzuna",
     className: "bg-sky-600/12 text-sky-950 ring-sky-500/25",
   },
+  usajobs: {
+    label: "USAJobs",
+    className: "bg-blue-800/12 text-blue-950 ring-blue-700/20",
+  },
   workday: {
     label: "Workday",
     className: "bg-[#E8F0FE] text-[#1557B0] ring-[#1A73E8]/25",
@@ -92,6 +96,7 @@ const SOURCE_STYLES: Record<
   reddit: { label: "Reddit", className: "bg-orange-500/12 text-orange-800 ring-orange-400/25" },
   x: { label: "X", className: "bg-slate-900/10 text-slate-900 ring-slate-500/20" },
   remoteok: { label: "RemoteOK", className: "bg-emerald-600/12 text-emerald-900 ring-emerald-500/20" },
+  remotejobs: { label: "RemoteJobs.org", className: "bg-sky-600/12 text-sky-900 ring-sky-500/20" },
   hackernews: { label: "Hacker News", className: "bg-orange-500/12 text-orange-900 ring-orange-400/25" },
   jobicy: { label: "Jobicy", className: "bg-fuchsia-600/12 text-fuchsia-900 ring-fuchsia-500/20" },
   arbeitnow: { label: "Arbeitnow", className: "bg-cyan-600/12 text-cyan-900 ring-cyan-500/20" },
@@ -146,6 +151,7 @@ const JOB_FEED_SOURCE_OPTIONS = [
   "greenhouse",
   "lever",
   "adzuna",
+  "usajobs",
   "workday",
   "smartrecruiters",
   "ashby",
@@ -157,6 +163,7 @@ const JOB_FEED_SOURCE_OPTIONS = [
   "reddit",
   "x",
   "remoteok",
+  "remotejobs",
   "hackernews",
   "jobicy",
   "arbeitnow",
@@ -441,6 +448,8 @@ type Props = {
   skillHints: string[];
   feedKind: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
+  /** Total indexed live rows — used while the full catalog loads client-side. */
+  liveListings?: number;
 };
 
 function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
@@ -497,7 +506,13 @@ function companyInitials(name: string): string {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
-export default function RecommendedJobsSection({ jobs, skillHints, feedKind, feedDemoHint }: Props) {
+export default function RecommendedJobsSection({
+  jobs: initialJobs,
+  skillHints,
+  feedKind,
+  feedDemoHint,
+  liveListings = 0,
+}: Props) {
   const autoLoadRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -565,13 +580,20 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [autoLoadEnabled, setAutoLoadEnabled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(feedKind === "live");
+  const [isCatalogLoading, setIsCatalogLoading] = useState(feedKind === "live");
+  const [catalogJobs, setCatalogJobs] = useState<RecommendedJobCard[]>([]);
+  const [catalogTotal, setCatalogTotal] = useState(liveListings);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
   const deferredSearchInput = useDeferredValue(searchInput);
   const query = deferredSearchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
+
+  const jobs = feedKind === "live" && catalogJobs.length > 0 ? catalogJobs : initialJobs;
+  const totalIndexed = catalogTotal > 0 ? catalogTotal : liveListings > 0 ? liveListings : jobs.length;
 
   const enrichedJobs = useMemo(
     () =>
@@ -588,6 +610,12 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
     for (const { job } of enrichedJobs) u.add(job.source);
     return Array.from(u).sort();
   }, [enrichedJobs]);
+
+  const sourceFilterOptions = useMemo(() => {
+    if (platformsInFeed.length > 0) return platformsInFeed;
+    if (isCatalogLoading || feedKind === "live") return [...JOB_FEED_SOURCE_OPTIONS];
+    return platformsInFeed;
+  }, [platformsInFeed, isCatalogLoading, feedKind]);
 
   const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
   const normalizedRequiredSkills = useMemo(
@@ -867,9 +895,88 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   }, []);
 
   useEffect(() => {
-    const t = window.setTimeout(() => setIsInitialLoading(false), 700);
-    return () => window.clearTimeout(t);
-  }, []);
+    if (feedKind !== "live") {
+      setIsCatalogLoading(false);
+      setIsInitialLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const skillsQuery =
+      skillHints.length > 0 ? `?skills=${encodeURIComponent(skillHints.join(","))}` : "";
+
+    async function loadCatalog() {
+      setIsCatalogLoading(true);
+      setCatalogError(null);
+      try {
+        const res = await fetch(`/api/jobs${skillsQuery}`, { cache: "no-store" });
+        if (res.ok) {
+          const payload = (await res.json()) as {
+            ok?: boolean;
+            jobs?: RecommendedJobCard[];
+            total?: number;
+            loaded?: number;
+            error?: string;
+          };
+          if (!cancelled && payload.ok && payload.jobs) {
+            setCatalogJobs(payload.jobs);
+            setCatalogTotal(payload.total ?? payload.loaded ?? payload.jobs.length);
+            return;
+          }
+        }
+
+        const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+        const { loadLiveJobCards } = await import("@/lib/jobs-catalog");
+        const supabase = createBrowserSupabaseClient();
+        const { jobs, total } = await loadLiveJobCards(supabase, skillHints);
+        if (cancelled) return;
+        if (!jobs) {
+          setCatalogError("Could not load the full job catalog.");
+          return;
+        }
+        setCatalogJobs(jobs);
+        setCatalogTotal(total);
+      } catch {
+        if (!cancelled) setCatalogError("Network error while loading jobs.");
+      } finally {
+        if (!cancelled) {
+          setIsCatalogLoading(false);
+          setIsInitialLoading(false);
+        }
+      }
+    }
+
+    void loadCatalog();
+    return () => {
+      cancelled = true;
+    };
+  }, [feedKind, skillHints]);
+
+  useEffect(() => {
+    setVisible(PAGE_SIZE);
+  }, [
+    query,
+    dateWindow,
+    sources,
+    skillsPick,
+    matchScore,
+    jobTypes,
+    locationMode,
+    locationQuery,
+    experienceLevel,
+    salaryMin,
+    salaryMax,
+    currency,
+    salaryPeriod,
+    companySize,
+    industries,
+    normalizedRequiredSkills,
+    companyQuery,
+    benefits,
+    visaSponsorshipOnly,
+    easyApplyOnly,
+    sortBy,
+  ]);
 
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 400);
@@ -896,7 +1003,8 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
   }, [autoLoadEnabled, visible, sortedJobs.length, isLoadingMore, loadMoreJobs]);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = isInitialLoading || isLoadingMore;
+  const showSkeleton = (isInitialLoading || isCatalogLoading) && jobs.length === 0;
+  const showLoadMoreSpinner = isLoadingMore && jobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1141,7 +1249,21 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
         ) : null}
       </section>
 
-      {jobs.length > 0 ? (
+      {feedKind === "live" && catalogError ? (
+        <div className="rounded-xl border border-[#FAD2CF] bg-[#FCE8E6] p-4 text-sm text-[#3A3A3C]">
+          <p className="font-semibold text-[#C5221F]">Could not load the full job catalog</p>
+          <p className="mt-1 text-[#5F6368]">{catalogError} Showing {initialJobs.length.toLocaleString()} jobs from the initial page load.</p>
+        </div>
+      ) : null}
+
+      {feedKind === "live" && !catalogError && !isCatalogLoading && catalogJobs.length > 0 ? (
+        <p className="text-sm text-[#5F6368]">
+          Loaded <span className="font-semibold text-[#1A73E8]">{catalogJobs.length.toLocaleString()}</span> live listings
+          {catalogTotal > catalogJobs.length ? ` (${catalogTotal.toLocaleString()} indexed in Postgres)` : ""}.
+        </p>
+      ) : null}
+
+      {(jobs.length > 0 || liveListings > 0 || feedKind === "live") ? (
         <>
           <div className="md:hidden">
             <Button
@@ -1251,9 +1373,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               </details>
 
               {[
-                { label: "Experience", value: experienceLevel, set: setExperienceLevel, opts: EXPERIENCE_OPTIONS },
-                { label: "Date Posted", value: dateWindow, set: setDateWindow, opts: ["Any time", "Past 24h", "Past week", "Past month"] },
-                { label: "Company Size", value: companySize, set: setCompanySize, opts: COMPANY_SIZE_OPTIONS },
+                { label: "Experience", value: experienceLevel, set: setExperienceLevel, opts: ["Any", ...EXPERIENCE_OPTIONS] as const },
+                { label: "Date Posted", value: dateWindow, set: setDateWindow, opts: ["Any time", "Past 24h", "Past week", "Past month"] as const },
+                { label: "Company Size", value: companySize, set: setCompanySize, opts: ["Any", ...COMPANY_SIZE_OPTIONS] as const },
               ].map((item) => (
                 <details data-filter-dropdown="true" key={item.label} className="relative shrink-0">
                   <summary className={item.value !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
@@ -1268,7 +1390,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                           item.set(
                             (item.label === "Date Posted"
                               ? (opt === "Any time" ? "any" : opt === "Past 24h" ? "1" : opt === "Past week" ? "7" : "30")
-                              : opt) as never
+                              : opt === "Any"
+                                ? "any"
+                                : opt) as never
                           )
                         }
                         className="block w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
@@ -1331,7 +1455,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                   Source {sources.size > 0 ? `· ${sources.size}` : ""} <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-60 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  {platformsInFeed.map((src) => (
+                  {sourceFilterOptions.map((src) => (
                     <label key={src} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
                       <input type="checkbox" checked={sources.has(src)} onChange={() => togglePlatform(src)} />
                       {SOURCE_STYLES[src].label}
@@ -1365,7 +1489,13 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
 
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
             Showing <span className="font-semibold text-[#1A73E8]">{filtered.length.toLocaleString()} matched jobs</span> out of{" "}
-            <span className="text-[#8E8E93]">{jobs.length.toLocaleString()} total</span>
+            <span className="text-[#8E8E93]">{totalIndexed.toLocaleString()} indexed</span>
+            {isCatalogLoading ? (
+              <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                Loading full catalog…
+              </span>
+            ) : null}
           </p>
           <p className="sr-only" aria-live="polite">
             {activeFilterCount === 0 ? "No active filters." : `${activeFilterCount} active filters applied.`}
@@ -1378,7 +1508,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
           <SheetHeader>
             <SheetTitle>Filters</SheetTitle>
           </SheetHeader>
-          <div className="grid gap-4 px-1 pb-4">
+          <div className="grid gap-4 px-1 pb-4 max-h-[70vh] overflow-y-auto">
             <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -1397,6 +1527,89 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
                 </Button>
               ))}
             </div>
+            <div className="grid gap-2">
+              <Label>Location</Label>
+              <Input value={locationQuery} onChange={(e) => setLocationQuery(e.target.value)} placeholder="City or country" />
+              <div className="flex flex-wrap gap-2">
+                {LOCATION_MODE_OPTIONS.filter((loc) => loc !== "any").map((loc) => (
+                  <Button
+                    key={loc}
+                    type="button"
+                    size="sm"
+                    variant={locationMode === loc ? "default" : "outline"}
+                    onClick={() => setLocationMode(loc)}
+                    className="rounded-2xl capitalize"
+                  >
+                    {loc === "onsite" ? "On-site" : loc}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Job type</Label>
+              <div className="flex flex-wrap gap-2">
+                {JOB_TYPE_OPTIONS.map((type) => (
+                  <Badge
+                    key={type}
+                    variant={jobTypes.has(type) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      setJobTypes((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(type)) next.delete(type);
+                        else next.add(type);
+                        return next;
+                      })
+                    }
+                  >
+                    {type}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Source</Label>
+              <div className="flex flex-wrap gap-2">
+                {(sourceFilterOptions.length > 0 ? sourceFilterOptions : [...JOB_FEED_SOURCE_OPTIONS]).map((src) => (
+                  <Badge
+                    key={src}
+                    variant={sources.has(src) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => togglePlatform(src)}
+                  >
+                    {SOURCE_STYLES[src].label}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Match score</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "any", label: "Any" },
+                  { id: "90", label: "90%+" },
+                  { id: "75", label: "75%+" },
+                  { id: "60", label: "60%+" },
+                ].map((o) => (
+                  <Button
+                    key={o.id}
+                    type="button"
+                    variant={matchScore === o.id ? "default" : "outline"}
+                    onClick={() => setMatchScore(o.id as typeof matchScore)}
+                    className="rounded-2xl"
+                  >
+                    {o.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsMoreFiltersOpen(true)}
+            >
+              More filters
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -1406,6 +1619,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
               }}
             >
               Clear all filters
+            </Button>
+            <Button type="button" onClick={() => setIsMobileFiltersOpen(false)}>
+              Apply filters
             </Button>
           </div>
         </SheetContent>
@@ -1472,7 +1688,7 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
-      {jobs.length > 0 ? (
+      {(jobs.length > 0 || isCatalogLoading) ? (
         <div className="flex items-center justify-between gap-2">
           <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
             <Button
@@ -1755,6 +1971,9 @@ export default function RecommendedJobsSection({ jobs, skillHints, feedKind, fee
             {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {isLoadingMore ? "Loading..." : `Load ${Math.min(PAGE_SIZE, sortedJobs.length - visible)} more jobs`}
           </button>
+          {showLoadMoreSpinner ? (
+            <p className="text-center text-xs text-[#8E8E93]">Loading more results…</p>
+          ) : null}
           <div className="flex items-center gap-2 text-xs text-[#8E8E93]">
             <input
               id="auto-load-jobs"

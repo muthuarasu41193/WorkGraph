@@ -34,6 +34,7 @@ function normalizeSource(raw: string): JobFeedSource {
   const value = raw.toLowerCase().trim();
   if (
     value === "remoteok" ||
+    value === "remotejobs" ||
     value === "reddit" ||
     value === "hackernews" ||
     value === "jobicy" ||

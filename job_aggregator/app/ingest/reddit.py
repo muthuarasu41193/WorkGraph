@@ -25,14 +25,27 @@ def _load_subreddits() -> list[str]:
     return split_csv(raw)
 
 
+def _reddit_headers() -> dict[str, str]:
+    ua = os.getenv("REDDIT_USER_AGENT", "").strip()
+    if not ua:
+        ua = "WorkGraphJobIngest/1.0 (job aggregator; +https://github.com/)"
+    return {"User-Agent": ua}
+
+
 def _fetch_listing(subreddit: str, *, query: str, limit: int) -> list[dict[str, Any]]:
+    headers = _reddit_headers()
     if query:
         payload = http_get_json(
             f"https://www.reddit.com/r/{subreddit}/search.json",
             params={"q": query, "restrict_sr": "1", "sort": "new", "limit": limit},
+            headers=headers,
         )
     else:
-        payload = http_get_json(f"https://www.reddit.com/r/{subreddit}/new.json", params={"limit": limit})
+        payload = http_get_json(
+            f"https://www.reddit.com/r/{subreddit}/new.json",
+            params={"limit": limit},
+            headers=headers,
+        )
 
     if not isinstance(payload, dict):
         return []
