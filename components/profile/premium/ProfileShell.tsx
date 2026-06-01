@@ -21,6 +21,8 @@ import ProfileJobMatches from "./ProfileJobMatches";
 import ProfileActivity from "./ProfileActivity";
 import ProfileSidebar from "./ProfileSidebar";
 import HiddenJobsSection from "../../dashboard/sections/HiddenJobsSection";
+import HiddenDiscoverySection from "../../hidden-discovery/HiddenDiscoverySection";
+import HiddenDiscoveryPromoCard from "../../hidden-discovery/HiddenDiscoveryPromoCard";
 import InterviewVaultSection from "../../dashboard/sections/InterviewVaultSection";
 import JobNewsSection from "../../dashboard/sections/JobNewsSection";
 import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
@@ -110,6 +112,7 @@ function ProfileShellInner({
       <div className="space-y-5">
         <ProfileHero profile={profile} userId={userId} />
         <ProfileKpiStrip profile={profile} />
+        <HiddenDiscoveryPromoCard />
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
           <div className="min-w-0 space-y-5">
             <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
@@ -139,6 +142,7 @@ function ProfileShellInner({
       />
     ),
     "hidden-jobs": <HiddenJobsSection />,
+    "job-discovery": <HiddenDiscoverySection />,
     vault: <InterviewVaultSection />,
     profile: (
       <div className="space-y-5">

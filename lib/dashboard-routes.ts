@@ -5,6 +5,7 @@ import {
   FileText,
   Home,
   Newspaper,
+  Radar,
   User,
 } from "lucide-react";
 
@@ -13,6 +14,7 @@ export type DashboardRouteId =
   | "home"
   | "jobs"
   | "hidden-jobs"
+  | "job-discovery"
   | "vault"
   | "profile"
   | "job-news";
@@ -41,11 +43,18 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     description: "Browse live job listings matched to your profile",
   },
   {
+    id: "job-discovery",
+    label: "Hidden Jobs Discovery",
+    shortLabel: "Discover",
+    icon: Radar,
+    description: "Hiring posts from Reddit, Hacker News, and GitHub (not ATS job boards)",
+  },
+  {
     id: "hidden-jobs",
-    label: "Hidden Jobs",
-    shortLabel: "Hidden",
+    label: "Dismissed Jobs",
+    shortLabel: "Dismissed",
     icon: EyeOff,
-    description: "Roles you chose to hide — restore anytime",
+    description: "Roles you hid from your Jobs feed — restore anytime",
   },
   {
     id: "vault",
