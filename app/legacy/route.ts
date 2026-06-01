@@ -1,13 +1,6 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import { NextResponse } from "next/server";
 
-export async function GET() {
-  const htmlPath = path.join(process.cwd(), "index.html");
-  const html = await readFile(htmlPath, "utf8");
-  return new Response(html, {
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "cache-control": "no-store",
-    },
-  });
+/** Permanent redirect — marketing page now lives at `/`. */
+export async function GET(request: Request) {
+  return NextResponse.redirect(new URL("/", request.url), 308);
 }
