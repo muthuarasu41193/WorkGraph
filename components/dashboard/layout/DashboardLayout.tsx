@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useState, type ReactNode } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
@@ -42,22 +41,6 @@ function DashboardLayoutInner({ children, isDark, onToggleTheme }: Props) {
   );
 }
 
-function DashboardLayoutFallback() {
-  return (
-    <div className="wg-dash-root p-6">
-      <Skeleton className="mb-4 h-[60px] w-full rounded-lg" />
-      <div className="flex gap-4">
-        <Skeleton className="hidden h-96 w-60 rounded-lg md:block" />
-        <Skeleton className="h-96 flex-1 rounded-lg" />
-      </div>
-    </div>
-  );
-}
-
 export default function DashboardLayout(props: Props) {
-  return (
-    <Suspense fallback={<DashboardLayoutFallback />}>
-      <DashboardLayoutInner {...props} />
-    </Suspense>
-  );
+  return <DashboardLayoutInner {...props} />;
 }

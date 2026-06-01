@@ -1,12 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useMemo } from "react";
 import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "../../../lib/job-dashboard";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { Profile } from "../../../lib/types";
-import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import DashboardHydrator from "../../dashboard/DashboardHydrator";
 import DashboardLayout from "../../dashboard/layout/DashboardLayout";
+import DashboardSectionSkeleton from "../../dashboard/DashboardSectionSkeleton";
 import { DashboardProvider } from "../../dashboard/DashboardProvider";
 import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
 import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
@@ -20,21 +19,33 @@ import ProfileAiInsights from "./ProfileAiInsights";
 import ProfileJobMatches from "./ProfileJobMatches";
 import ProfileActivity from "./ProfileActivity";
 import ProfileSidebar from "./ProfileSidebar";
-import HiddenJobsSection from "../../dashboard/sections/HiddenJobsSection";
-import HiddenDiscoverySection from "../../hidden-discovery/HiddenDiscoverySection";
 import HiddenDiscoveryPromoCard from "../../hidden-discovery/HiddenDiscoveryPromoCard";
-import InterviewVaultSection from "../../dashboard/sections/InterviewVaultSection";
-import JobNewsSection from "../../dashboard/sections/JobNewsSection";
 import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
+import { workgraphApiEnabled } from "../../../lib/workgraph-api";
+import type { Profile } from "../../../lib/types";
 
 const ProfileJobsView = dynamic(() => import("../ProfileJobsView"), {
-  loading: () => (
-    <div className="space-y-5" aria-busy="true" aria-label="Loading jobs">
-      <Skeleton className="h-8 w-32" />
-      <Skeleton className="h-40 w-full rounded-xl" />
-      <Skeleton className="h-64 w-full rounded-xl" />
-    </div>
-  ),
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
+
+const HiddenJobsSection = dynamic(() => import("../../dashboard/sections/HiddenJobsSection"), {
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
+
+const HiddenDiscoverySection = dynamic(() => import("../../hidden-discovery/HiddenDiscoverySection"), {
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
+
+const InterviewVaultSection = dynamic(() => import("../../dashboard/sections/InterviewVaultSection"), {
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
+
+const JobNewsSection = dynamic(() => import("../../dashboard/sections/JobNewsSection"), {
+  loading: () => <DashboardSectionSkeleton />,
   ssr: false,
 });
 
@@ -90,78 +101,111 @@ function ProfileShellInner({
   feedDemoHint,
 }: ProfileShellProps) {
   const { theme, toggle } = useProfileTheme();
-  const jobMatches = resolveProfileJobMatches(semanticJobMatches, recommendedJobs, feedKind);
+  const jobMatches = useMemo(
+    () => resolveProfileJobMatches(semanticJobMatches, recommendedJobs, feedKind),
+    [semanticJobMatches, recommendedJobs, feedKind],
+  );
   const wgEnabled = workgraphApiEnabled();
-  const atsJobs = recommendedJobs.filter((j) => !j.isCommunity);
+  const atsJobs = useMemo(
+    () => recommendedJobs.filter((j) => !j.isCommunity),
+    [recommendedJobs],
+  );
 
-  const dashboardValue = {
-    profile,
-    userId,
-    recommendedJobs,
-    communityPosts,
-    semanticJobMatches: semanticJobMatches ?? null,
-    jobPipeline: jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 },
-    liveListings,
-    listingsBySource,
-    feedKind,
-    feedDemoHint,
-  };
+  const dashboardValue = useMemo(
+    () => ({
+      profile,
+      userId,
+      recommendedJobs,
+      communityPosts,
+      semanticJobMatches: semanticJobMatches ?? null,
+      jobPipeline: jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 },
+      liveListings,
+      listingsBySource,
+      feedKind,
+      feedDemoHint,
+    }),
+    [
+      profile,
+      userId,
+      recommendedJobs,
+      communityPosts,
+      semanticJobMatches,
+      jobPipeline,
+      liveListings,
+      listingsBySource,
+      feedKind,
+      feedDemoHint,
+    ],
+  );
 
-  const sections = {
-    home: (
-      <div className="space-y-5">
-        <ProfileHero profile={profile} userId={userId} />
-        <ProfileKpiStrip profile={profile} />
-        <HiddenDiscoveryPromoCard />
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-          <div className="min-w-0 space-y-5">
-            <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
-            <ProfileCompleteness
-              profile={profile}
-              atsScore={profile.ats_score}
-              atsFeedback={profile.ats_feedback}
-            />
-            <ProfileAiInsights />
-            <ProfileActivity />
+  const sections = useMemo(
+    () => ({
+      home: (
+        <div className="space-y-5">
+          <ProfileHero profile={profile} userId={userId} />
+          <ProfileKpiStrip profile={profile} />
+          <HiddenDiscoveryPromoCard />
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+            <div className="min-w-0 space-y-5">
+              <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
+              <ProfileCompleteness
+                profile={profile}
+                atsScore={profile.ats_score}
+                atsFeedback={profile.ats_feedback}
+              />
+              <ProfileAiInsights />
+              <ProfileActivity />
+            </div>
+            <ProfileSidebar />
           </div>
-          <ProfileSidebar />
         </div>
-      </div>
-    ),
-    jobs: (
-      <ProfileJobsView
-        jobs={atsJobs.length ? atsJobs : recommendedJobs}
-        skillHints={profile.skills}
-        profileHeadline={profile.headline}
-        profileSummary={profile.summary}
-        feedKind={feedKind}
-        feedDemoHint={feedDemoHint}
-        liveListings={liveListings}
-        jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
-        profileCompleteness={profile.profile_completeness ?? 0}
-      />
-    ),
-    "hidden-jobs": <HiddenJobsSection />,
-    "job-discovery": <HiddenDiscoverySection />,
-    vault: <InterviewVaultSection />,
-    profile: (
-      <div className="space-y-5">
-        <header>
-          <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Keep your resume data accurate and ATS-ready.</p>
-        </header>
-        <ProfileHero profile={profile} userId={userId} />
-        <ProfileSkills userId={userId} initialSkills={profile.skills} />
-        <ProfileExperience userId={userId} experience={profile.work_experience} />
-        <ProfileEducation
-          userId={userId}
-          education={profile.education}
-          certifications={profile.certifications}
+      ),
+      jobs: (
+        <ProfileJobsView
+          jobs={atsJobs.length ? atsJobs : recommendedJobs}
+          skillHints={profile.skills}
+          profileHeadline={profile.headline}
+          profileSummary={profile.summary}
+          feedKind={feedKind}
+          feedDemoHint={feedDemoHint}
+          liveListings={liveListings}
+          jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
+          profileCompleteness={profile.profile_completeness ?? 0}
         />
-      </div>
-    ),
-    "job-news": <JobNewsSection />,
-  };
+      ),
+      "hidden-jobs": <HiddenJobsSection />,
+      "job-discovery": <HiddenDiscoverySection />,
+      vault: <InterviewVaultSection />,
+      profile: (
+        <div className="space-y-5">
+          <header>
+            <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Keep your resume data accurate and ATS-ready.</p>
+          </header>
+          <ProfileHero profile={profile} userId={userId} />
+          <ProfileSkills userId={userId} initialSkills={profile.skills} />
+          <ProfileExperience userId={userId} experience={profile.work_experience} />
+          <ProfileEducation
+            userId={userId}
+            education={profile.education}
+            certifications={profile.certifications}
+          />
+        </div>
+      ),
+      "job-news": <JobNewsSection />,
+    }),
+    [
+      profile,
+      userId,
+      jobMatches,
+      liveListings,
+      feedKind,
+      atsJobs,
+      recommendedJobs,
+      feedDemoHint,
+      jobPipeline,
+    ],
+  );
 
   return (
     <DashboardProvider value={dashboardValue}>

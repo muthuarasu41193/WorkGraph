@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { HiddenJobsQuery, HiddenJobsResponse, HiddenOpportunity } from "@/lib/hidden-opportunities/types";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import type { HiddenJobsQuery, HiddenJobsResponse } from "@/lib/hidden-opportunities/types";
 
 export type HiddenJobsFilters = {
   q: string;
@@ -32,45 +33,36 @@ function buildSearchParams(filters: HiddenJobsFilters): string {
   return params.toString();
 }
 
+async function fetchHiddenJobs(queryString: string): Promise<HiddenJobsResponse> {
+  const res = await fetch(`/api/hidden-jobs?${queryString}`);
+  const json = (await res.json()) as HiddenJobsResponse & { error?: string };
+  if (!res.ok || !json.ok) {
+    throw new Error(json.error || `Request failed (${res.status})`);
+  }
+  return json;
+}
+
 export function useHiddenJobs(initialFilters: Partial<HiddenJobsFilters> = {}) {
   const [filters, setFilters] = useState<HiddenJobsFilters>({ ...DEFAULT_FILTERS, ...initialFilters });
-  const [data, setData] = useState<HiddenJobsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const queryKey = useMemo(() => buildSearchParams(filters), [filters]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/hidden-jobs?${queryKey}`, { cache: "no-store" });
-      const json = (await res.json()) as HiddenJobsResponse & { error?: string };
-      if (!res.ok || !json.ok) {
-        throw new Error(json.error || `Request failed (${res.status})`);
-      }
-      setData(json);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load opportunities");
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [queryKey]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  const opportunities: HiddenOpportunity[] = data?.opportunities ?? [];
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
+    queryKey: ["hidden-jobs", queryKey],
+    queryFn: () => fetchHiddenJobs(queryKey),
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    placeholderData: (previous) => previous,
+  });
 
   return {
     filters,
     setFilters,
-    opportunities,
+    opportunities: data?.opportunities ?? [],
     meta: data?.meta ?? null,
-    loading,
-    error,
-    reload: load,
+    loading: isLoading,
+    fetching: isFetching,
+    error: error instanceof Error ? error.message : error ? String(error) : null,
+    reload: () => void refetch(),
   };
 }

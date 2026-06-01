@@ -1,12 +1,11 @@
 "use client";
 
-import { Suspense, type ReactNode } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { type ReactNode } from "react";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
+import { DASHBOARD_ROUTES } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
-import HiddenJobsSection from "./HiddenJobsSection";
-import InterviewVaultSection from "./InterviewVaultSection";
-import JobNewsSection from "./JobNewsSection";
+import { useProfileNavStore } from "@/stores/profile-nav-store";
+import { cn } from "@/lib/utils";
 
 type SectionMap = Record<DashboardRouteId, ReactNode>;
 
@@ -14,24 +13,32 @@ type Props = {
   sections: SectionMap;
 };
 
-function DashboardViewInner({ sections }: Props) {
+export default function DashboardViewRouter({ sections }: Props) {
   const { activeRoute } = useDashboardNavigation();
-  return <div key={activeRoute}>{sections[activeRoute]}</div>;
-}
+  const mountedRoutes = useProfileNavStore((s) => s.mountedRoutes);
 
-export default function DashboardViewRouter(props: Props) {
   return (
-    <Suspense
-      fallback={
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-64 w-full rounded-lg" />
-        </div>
-      }
-    >
-      <DashboardViewInner {...props} />
-    </Suspense>
+    <div className="wg-dash-views relative min-h-[320px]">
+      {DASHBOARD_ROUTES.map((route) => {
+        if (!mountedRoutes[route.id]) return null;
+        const isActive = activeRoute === route.id;
+        return (
+          <div
+            key={route.id}
+            id={`dashboard-view-${route.id}`}
+            className={cn(
+              "wg-dash-view outline-none",
+              isActive
+                ? "animate-in fade-in-0 duration-150"
+                : "hidden",
+            )}
+            hidden={!isActive}
+            aria-hidden={!isActive}
+          >
+            {sections[route.id]}
+          </div>
+        );
+      })}
+    </div>
   );
 }
-
-export { HiddenJobsSection, InterviewVaultSection, JobNewsSection };

@@ -1,36 +1,64 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useCallback, useEffect, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import {
   DEFAULT_DASHBOARD_ROUTE,
   type DashboardRouteId,
-  resolveDashboardRouteFromSearchParams,
 } from "@/lib/dashboard-routes";
+import { readRouteFromLocation, useProfileNavStore } from "@/stores/profile-nav-store";
 
+/**
+ * Client-side dashboard tabs — updates URL with replaceState instead of Next router.push
+ * so /profile does not re-run the server page on every tab click.
+ */
 export function useDashboardNavigation() {
-  const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const activeRoute = useProfileNavStore((s) => s.activeRoute);
+  const setActiveRoute = useProfileNavStore((s) => s.setActiveRoute);
+  const hydrateFromUrl = useProfileNavStore((s) => s.hydrateFromUrl);
 
-  const activeRoute = useMemo(
-    (): DashboardRouteId => resolveDashboardRouteFromSearchParams(searchParams),
-    [searchParams],
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => useProfileNavStore.getState().hydrated,
+    () => false,
   );
+
+  useEffect(() => {
+    hydrateFromUrl();
+  }, [hydrateFromUrl]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const route = readRouteFromLocation();
+      startTransition(() => {
+        setActiveRoute(route);
+      });
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [setActiveRoute]);
 
   const navigate = useCallback(
     (route: DashboardRouteId) => {
-      const params = new URLSearchParams(searchParams.toString());
+      if (route === activeRoute) return;
+
+      startTransition(() => {
+        setActiveRoute(route);
+      });
+
+      const params = new URLSearchParams(window.location.search);
       if (route === DEFAULT_DASHBOARD_ROUTE) {
         params.delete("view");
       } else {
         params.set("view", route);
       }
       const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      const nextUrl = qs ? `${pathname}?${qs}` : pathname;
+      window.history.replaceState(window.history.state, "", nextUrl);
     },
-    [pathname, router, searchParams],
+    [activeRoute, pathname, setActiveRoute],
   );
 
-  return { activeRoute, navigate };
+  return { activeRoute: hydrated ? activeRoute : readRouteFromLocation(), navigate };
 }

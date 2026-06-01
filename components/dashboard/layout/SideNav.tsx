@@ -39,6 +39,11 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                     navigate(route.id);
                     onNavigate?.();
                   }}
+                  onMouseEnter={() => {
+                    if (route.id === "job-discovery") {
+                      void fetch("/api/hidden-jobs?sort=relevant", { priority: "low" } as RequestInit);
+                    }
+                  }}
                   className={cn(
                     "group flex w-full min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                     active
