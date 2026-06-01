@@ -706,22 +706,20 @@ export default function RecommendedJobsSection({
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
   const deferredSearchInput = useDeferredValue(searchInput);
-  const deferredLocationQuery = useDeferredValue(locationQuery);
-  const deferredCompanyQuery = useDeferredValue(companyQuery);
-  const query = deferredSearchInput.trim();
+  const query = searchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
 
   const catalogFilters = useMemo(
     () => ({
-      q: query.trim() || undefined,
+      q: query || undefined,
       sources: sources.size > 0 ? [...sources] : undefined,
       dateWindow,
       locationMode,
-      locationQuery: deferredLocationQuery.trim() || undefined,
-      company: deferredCompanyQuery.trim() || undefined,
+      locationQuery: locationQuery.trim() || undefined,
+      company: companyQuery.trim() || undefined,
       jobTypes: jobTypes.size > 0 ? [...jobTypes] : undefined,
     }),
-    [query, sources, dateWindow, locationMode, deferredLocationQuery, deferredCompanyQuery, jobTypes]
+    [query, sources, dateWindow, locationMode, locationQuery, companyQuery, jobTypes]
   );
 
   const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
@@ -740,8 +738,8 @@ export default function RecommendedJobsSection({
       dateWindow,
       sources,
       locationMode,
-      locationQuery: deferredLocationQuery,
-      companyQuery: deferredCompanyQuery,
+      locationQuery,
+      companyQuery,
       jobTypes,
       matchScore,
       skillsPick,
@@ -763,8 +761,8 @@ export default function RecommendedJobsSection({
       dateWindow,
       sources,
       locationMode,
-      deferredLocationQuery,
-      deferredCompanyQuery,
+      locationQuery,
+      companyQuery,
       jobTypes,
       matchScore,
       skillsPick,
@@ -792,13 +790,19 @@ export default function RecommendedJobsSection({
   // (top row + Advanced) run against the same pooled job set.
   const useCatalogMode = feedKind === "live";
 
-  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[] | null>(() =>
-    feedKind === "live" && initialJobs.length > 0 ? initialJobs : null
+  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[]>(() =>
+    feedKind === "live" ? initialJobs : []
   );
+  const [catalogLoaded, setCatalogLoaded] = useState(false);
+
+  const jobsForFiltering = useMemo(() => {
+    if (feedKind === "demo") return initialJobs;
+    if (catalogLoaded && catalogPool.length > 0) return catalogPool;
+    return catalogPool.length > 0 ? catalogPool : initialJobs;
+  }, [feedKind, initialJobs, catalogLoaded, catalogPool]);
 
   const listingPipeline = useMemo(() => {
-    const sourceJobs =
-      feedKind === "demo" ? initialJobs : useCatalogMode ? (catalogPool ?? []) : pageJobs;
+    const sourceJobs = feedKind === "demo" ? initialJobs : useCatalogMode ? jobsForFiltering : pageJobs;
     const enriched = sourceJobs.map((job) => ({
       job,
       meta: deriveJobMeta(job),
@@ -824,7 +828,7 @@ export default function RecommendedJobsSection({
     feedKind,
     initialJobs,
     useCatalogMode,
-    catalogPool,
+    jobsForFiltering,
     pageJobs,
     profileMatch,
     clientFilterState,
@@ -893,58 +897,57 @@ export default function RecommendedJobsSection({
 
   useEffect(() => {
     if (!useCatalogMode) {
-      setCatalogPool(null);
+      setCatalogLoaded(false);
       return;
     }
 
     const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      void (async () => {
-        setIsPageLoading(true);
-        setFetchError(null);
-        try {
-          const res = await fetch(`/api/jobs?${buildCatalogFetchQuery(CATALOG_FETCH_SIZE)}`, {
-            cache: "no-store",
-            signal: controller.signal,
-          });
-          const payload = (await res.json()) as {
-            ok?: boolean;
-            jobs?: RecommendedJobCard[];
-          };
-          if (controller.signal.aborted) return;
-          if (res.ok && payload.ok && payload.jobs) {
-            setCatalogPool(payload.jobs);
-            return;
-          }
-
-          const { createBrowserSupabaseClient } = await import("@/lib/supabase");
-          const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
-          const supabase = createBrowserSupabaseClient();
-          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-            page: 1,
-            pageSize: CATALOG_FETCH_SIZE,
-            rankByProfile: false,
-            profile: profileMatch,
-          });
-          if (controller.signal.aborted) return;
-          if (fallback.jobs) {
-            setCatalogPool(fallback.jobs);
-            return;
-          }
-          setFetchError("Could not load jobs for your filters.");
-        } catch {
-          if (!controller.signal.aborted) {
-            setFetchError("Network error while loading jobs.");
-          }
-        } finally {
-          if (!controller.signal.aborted) setIsPageLoading(false);
+    void (async () => {
+      setIsPageLoading(true);
+      setFetchError(null);
+      try {
+        const res = await fetch(`/api/jobs?${buildCatalogFetchQuery(CATALOG_FETCH_SIZE)}`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const payload = (await res.json()) as {
+          ok?: boolean;
+          jobs?: RecommendedJobCard[];
+        };
+        if (controller.signal.aborted) return;
+        if (res.ok && payload.ok && payload.jobs && payload.jobs.length > 0) {
+          setCatalogPool(payload.jobs);
+          setCatalogLoaded(true);
+          return;
         }
-      })();
-    }, 350);
+
+        const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+        const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
+        const supabase = createBrowserSupabaseClient();
+        const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+          page: 1,
+          pageSize: CATALOG_FETCH_SIZE,
+          rankByProfile: false,
+          profile: profileMatch,
+        });
+        if (controller.signal.aborted) return;
+        if (fallback.jobs && fallback.jobs.length > 0) {
+          setCatalogPool(fallback.jobs);
+          setCatalogLoaded(true);
+          return;
+        }
+        setFetchError("Could not load the full job catalog for filtering.");
+      } catch {
+        if (!controller.signal.aborted) {
+          setFetchError("Network error while loading jobs.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsPageLoading(false);
+      }
+    })();
 
     return () => {
       controller.abort();
-      window.clearTimeout(timer);
     };
   }, [useCatalogMode, buildCatalogFetchQuery, skillHints, profileMatch]);
 
@@ -983,7 +986,6 @@ export default function RecommendedJobsSection({
     setBenefits(new Set());
     setVisaSponsorshipOnly(false);
     setEasyApplyOnly(false);
-    setCatalogPool(null);
     setCurrentPage(1);
   }, []);
 
@@ -1122,9 +1124,47 @@ export default function RecommendedJobsSection({
     };
   }, []);
 
+  const filterResetKey = useMemo(
+    () =>
+      JSON.stringify({
+        q: query,
+        dateWindow,
+        sources: [...sources].sort(),
+        locationMode,
+        locationQuery: locationQuery.trim(),
+        companyQuery: companyQuery.trim(),
+        jobTypes: [...jobTypes].sort(),
+        matchScore,
+        experienceLevel,
+        salaryFilterActive,
+        companySize,
+        industries: [...industries].sort(),
+        benefits: [...benefits].sort(),
+        visaSponsorshipOnly,
+        easyApplyOnly,
+      }),
+    [
+      query,
+      dateWindow,
+      sources,
+      locationMode,
+      locationQuery,
+      companyQuery,
+      jobTypes,
+      matchScore,
+      experienceLevel,
+      salaryFilterActive,
+      companySize,
+      industries,
+      benefits,
+      visaSponsorshipOnly,
+      easyApplyOnly,
+    ]
+  );
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [clientFilterState, sortBy]);
+  }, [filterResetKey, sortBy]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -1582,13 +1622,25 @@ export default function RecommendedJobsSection({
             {" "}
             · Page <span className="font-semibold text-[#1A73E8]">{safePage}</span> of{" "}
             <span className="text-[#8E8E93]">{totalPages.toLocaleString()}</span>
+            {feedKind === "live" ? (
+              <span className="text-[#8E8E93]">
+                {" "}
+                · Filtering {jobsForFiltering.length.toLocaleString()}
+                {liveListings > 0 ? ` of ${liveListings.toLocaleString()} indexed` : ""} loaded jobs
+              </span>
+            ) : null}
             {isPageLoading ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                Loading more…
+                Loading full catalog…
               </span>
             ) : null}
           </p>
+          {feedKind === "live" && !catalogLoaded && !isPageLoading && liveListings > jobsForFiltering.length ? (
+            <p className="mt-1 text-xs text-amber-700">
+              Filters are running on a preview set ({jobsForFiltering.length.toLocaleString()} jobs). The full catalog is still loading — counts may change.
+            </p>
+          ) : null}
           <p className="sr-only" aria-live="polite">
             {activeFilterCount === 0 ? "No active filters." : `${activeFilterCount} active filters applied.`}
           </p>

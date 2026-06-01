@@ -54,21 +54,42 @@ export type EnrichedJobRow = {
 };
 
 const JOB_TYPE_KEYWORDS: Record<string, string[]> = {
-  "Full-time": ["full-time", "full time", "fulltime", "permanent", "salaried"],
+  "Full-time": ["full-time", "full time", "fulltime", "permanent", "salaried", "fte"],
   "Part-time": ["part-time", "part time", "parttime"],
-  Contract: ["contract", "contractor", "contract-to-hire", "c2h"],
+  Contract: ["contract", "contractor", "contract-to-hire", "c2h", "1099"],
   Freelance: ["freelance", "freelancer", "gig"],
-  Internship: ["internship", "intern", "co-op", "coop"],
+  Internship: ["internship", "intern", "co-op", "coop", "summer intern"],
   Temporary: ["temporary", "temp role", "temp-to-hire", "seasonal"],
 };
 
+/** Title-only hints when description omits employment type (common on ATS rows). */
+const JOB_TYPE_TITLE_HINTS: Record<string, RegExp> = {
+  Internship: /\b(intern|internship|co-?op)\b/i,
+  Contract: /\b(contract|contractor)\b/i,
+  Freelance: /\bfreelance/i,
+  Temporary: /\b(temp|temporary|seasonal)\b/i,
+  "Part-time": /\bpart[-\s]?time\b/i,
+  "Full-time": /\bfull[-\s]?time\b/i,
+};
+
+const REMOTE_FEED_SOURCES = new Set<JobFeedSource>([
+  "remoteok",
+  "remotejobs",
+  "jobicy",
+  "arbeitnow",
+]);
+
 const REMOTE_RE =
-  /\bremote\b|work from home|work-from-home|\bwfh\b|distributed team|fully remote|remote[-\s]?first|telecommute|anywhere/i;
-const HYBRID_RE = /\bhybrid\b|partially remote|flexible location|remote[-\s]?friendly/i;
+  /\bremote\b|work from home|work-from-home|\bwfh\b|distributed team|fully remote|remote[-\s]?first|telecommute|anywhere|work remotely/i;
+const HYBRID_RE = /\bhybrid\b|partially remote|flexible location|remote[-\s]?friendly|flexible work/i;
 const ONSITE_RE = /\bon[- ]?site\b|\bin[- ]?office\b|\bin person\b|\bin-person\b/i;
 
 function jobHaystack(job: RecommendedJobCard): string {
-  return `${job.title} ${job.company} ${job.location} ${job.description}`.toLowerCase();
+  return `${job.title} ${job.company} ${job.location} ${job.description} ${job.matchLabel} ${job.matchedSkills.join(" ")}`.toLowerCase();
+}
+
+function locationBlob(job: RecommendedJobCard): string {
+  return `${job.location} ${job.title} ${job.company}`.toLowerCase();
 }
 
 function matchesLocationMode(
@@ -78,28 +99,44 @@ function matchesLocationMode(
 ): boolean {
   const hay = jobHaystack(job);
   const loc = job.location.trim().toLowerCase();
+  const locBlob = locationBlob(job);
 
   if (mode === "remote") {
-    return meta.locationMode === "remote" || REMOTE_RE.test(hay) || REMOTE_RE.test(loc);
+    if (REMOTE_FEED_SOURCES.has(job.source)) return true;
+    if (job.classification === "remote") return true;
+    return meta.locationMode === "remote" || REMOTE_RE.test(hay) || REMOTE_RE.test(loc) || REMOTE_RE.test(locBlob);
   }
   if (mode === "hybrid") {
-    return meta.locationMode === "hybrid" || HYBRID_RE.test(hay);
+    return meta.locationMode === "hybrid" || HYBRID_RE.test(hay) || HYBRID_RE.test(locBlob);
   }
   if (meta.locationMode === "onsite") return true;
-  const hasRemoteSignal = REMOTE_RE.test(hay);
+  const hasRemoteSignal = REMOTE_RE.test(hay) || REMOTE_RE.test(loc);
   return (
     ONSITE_RE.test(hay) ||
     (!hasRemoteSignal && loc.length > 0 && loc !== "location tbd" && !REMOTE_RE.test(loc))
   );
 }
 
+function matchesLocationQuery(job: RecommendedJobCard, needle: string): boolean {
+  const n = needle.trim().toLowerCase();
+  if (!n) return true;
+  const loc = job.location.toLowerCase();
+  if (loc.includes(n)) return true;
+  return jobHaystack(job).includes(n);
+}
+
 function matchesJobTypes(job: RecommendedJobCard, meta: DerivedJobMeta, selected: Set<string>): boolean {
   if (selected.size === 0) return true;
   const hay = jobHaystack(job);
+  const title = job.title;
+
   if (meta.jobTypes.some((type) => selected.has(type))) return true;
-  return [...selected].some((type) =>
-    (JOB_TYPE_KEYWORDS[type] ?? [type.toLowerCase()]).some((kw) => hay.includes(kw))
-  );
+
+  return [...selected].some((type) => {
+    const titleHint = JOB_TYPE_TITLE_HINTS[type];
+    if (titleHint?.test(title)) return true;
+    return (JOB_TYPE_KEYWORDS[type] ?? [type.toLowerCase()]).some((kw) => hay.includes(kw));
+  });
 }
 
 export function hasClientOnlyJobFilters(state: JobListingFilterState): boolean {
@@ -166,11 +203,7 @@ export function applyJobListingFilters(
     }
     if (state.sources.size > 0 && !state.sources.has(job.source)) return false;
 
-    const needle = state.locationQuery.trim().toLowerCase();
-    if (needle) {
-      const locHay = jobHaystack(job);
-      if (!locHay.includes(needle)) return false;
-    }
+    if (!matchesLocationQuery(job, state.locationQuery)) return false;
     if (state.locationMode !== "any" && !matchesLocationMode(job, meta, state.locationMode)) {
       return false;
     }
