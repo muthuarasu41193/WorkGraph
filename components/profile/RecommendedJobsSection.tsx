@@ -786,8 +786,10 @@ export default function RecommendedJobsSection({
     [catalogFilters, clientFilterState]
   );
 
-  const useCatalogMode = feedKind === "live" && userFiltersActive;
-  const usePageRankedBrowse = feedKind === "live" && !useCatalogMode;
+  // Always use catalog mode for the live feed so all filters
+  // (top row + Advanced) run against the same pooled job set.
+  const useCatalogMode = feedKind === "live";
+  const usePageRankedBrowse = false;
 
   const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[] | null>(null);
 
