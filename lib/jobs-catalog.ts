@@ -384,9 +384,8 @@ export async function loadLiveJobCardsPage(
       options.pageSize ?? LIVE_JOBS_CLIENT_FILTER_CAP,
       LIVE_JOBS_CLIENT_FILTER_CAP
     );
-    const bulk = filtered
-      ? await fetchFilteredLiveJobsCatalog(supabase, { filters, maxRows })
-      : await fetchLiveJobsCatalog(supabase, { maxRows });
+    // Client applies job type / location / etc. — always load an unfiltered catalog slice.
+    const bulk = await fetchLiveJobsCatalog(supabase, { maxRows });
     if (bulk.rows === null) {
       return {
         jobs: null,

@@ -49,7 +49,8 @@ export async function GET(request: Request) {
     pageSizeCap,
     Math.max(1, Number(searchParams.get("page_size") || "100") || 100)
   );
-  const filters = parseCatalogFilters(searchParams);
+  const clientCatalog = searchParams.get("catalog") === "1";
+  const filters = clientCatalog ? undefined : parseCatalogFilters(searchParams);
 
   const supabase = createServerSupabaseClient(await cookies());
   const { jobs, total, hasMore, filtered, ranked } = await loadLiveJobCardsPage(supabase, profileSkills, {

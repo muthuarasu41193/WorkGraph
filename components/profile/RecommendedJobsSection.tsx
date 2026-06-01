@@ -361,19 +361,21 @@ function inferExperienceLevel(text: string): ExperienceFilterOption | null {
 
 function inferJobTypes(text: string): JobTypeOption[] {
   const matches: JobTypeOption[] = [];
-  if (/\bfull[-\s]?time\b/i.test(text)) matches.push("Full-time");
-  if (/\bpart[-\s]?time\b/i.test(text)) matches.push("Part-time");
-  if (/\bcontract(or)?\b|freelance contract/i.test(text)) matches.push("Contract");
+  if (/\bfull[-\s]?time\b|fulltime|\bpermanent\b/i.test(text)) matches.push("Full-time");
+  if (/\bpart[-\s]?time\b|parttime/i.test(text)) matches.push("Part-time");
+  if (/\bcontract(or)?\b|contract-to-hire|\bc2h\b/i.test(text)) matches.push("Contract");
   if (/\bfreelance(r)?\b/i.test(text)) matches.push("Freelance");
-  if (/\bintern(ship)?\b/i.test(text)) matches.push("Internship");
-  if (/\btemporary\b|\btemp\b/i.test(text)) matches.push("Temporary");
+  if (/\bintern(ship)?\b|co-op|\bcoop\b/i.test(text)) matches.push("Internship");
+  if (/\btemporary\b|\btemp\b|seasonal/i.test(text)) matches.push("Temporary");
   return matches;
 }
 
 function inferLocationMode(location: string, description: string): "remote" | "hybrid" | "onsite" {
   const text = normalizeText(location, description);
-  if (/\bremote\b|work from home|distributed/i.test(text)) return "remote";
-  if (/\bhybrid\b/i.test(text)) return "hybrid";
+  if (/\bremote\b|work from home|work-from-home|\bwfh\b|distributed|fully remote|remote[-\s]?first/i.test(text)) {
+    return "remote";
+  }
+  if (/\bhybrid\b|partially remote|flexible location/i.test(text)) return "hybrid";
   return "onsite";
 }
 
@@ -789,11 +791,10 @@ export default function RecommendedJobsSection({
   // Always use catalog mode for the live feed so all filters
   // (top row + Advanced) run against the same pooled job set.
   const useCatalogMode = feedKind === "live";
-  const usePageRankedBrowse = false;
 
-  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[] | null>(null);
-
-  const serverFilterKey = useMemo(() => JSON.stringify(catalogFilters), [catalogFilters]);
+  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[] | null>(() =>
+    feedKind === "live" && initialJobs.length > 0 ? initialJobs : null
+  );
 
   const listingPipeline = useMemo(() => {
     const sourceJobs =
@@ -873,29 +874,21 @@ export default function RecommendedJobsSection({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [totalPages]);
 
-  const buildJobsApiQuery = useCallback(
-    (page: number, pageSize: number) => {
+  const buildCatalogFetchQuery = useCallback(
+    (pageSize: number) => {
       const params = new URLSearchParams();
-      params.set("page", String(page));
+      params.set("page", "1");
       params.set("page_size", String(pageSize));
+      params.set("catalog", "1");
+      params.set("rank_profile", "0");
       if (skillHints.length > 0) {
         params.set("profile_skills", skillHints.join(","));
       }
       if (profileHeadline?.trim()) params.set("profile_headline", profileHeadline.trim());
       if (profileSummary?.trim()) params.set("profile_summary", profileSummary.trim().slice(0, 2000));
-      const f = catalogFilters;
-      if (f.q) params.set("q", f.q);
-      if (f.sources?.length) params.set("src", [...f.sources].sort().join(","));
-      if (f.dateWindow && f.dateWindow !== "any") params.set("date", f.dateWindow);
-      if (f.locationMode && f.locationMode !== "any") params.set("locMode", f.locationMode);
-      if (f.locationQuery) params.set("loc", f.locationQuery);
-      if (f.company) params.set("company", f.company);
-      if (f.jobTypes?.length) params.set("type", f.jobTypes.join(","));
-      if (useCatalogMode) params.set("rank_profile", "0");
-      else if (profileMatchActive) params.set("rank_profile", "1");
       return params.toString();
     },
-    [skillHints, profileHeadline, profileSummary, catalogFilters, useCatalogMode, profileMatchActive]
+    [skillHints, profileHeadline, profileSummary]
   );
 
   useEffect(() => {
@@ -910,7 +903,7 @@ export default function RecommendedJobsSection({
         setIsPageLoading(true);
         setFetchError(null);
         try {
-          const res = await fetch(`/api/jobs?${buildJobsApiQuery(1, CATALOG_FETCH_SIZE)}`, {
+          const res = await fetch(`/api/jobs?${buildCatalogFetchQuery(CATALOG_FETCH_SIZE)}`, {
             cache: "no-store",
             signal: controller.signal,
           });
@@ -930,7 +923,6 @@ export default function RecommendedJobsSection({
           const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
             page: 1,
             pageSize: CATALOG_FETCH_SIZE,
-            filters: catalogFilters,
             rankByProfile: false,
             profile: profileMatch,
           });
@@ -954,65 +946,7 @@ export default function RecommendedJobsSection({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [useCatalogMode, serverFilterKey, buildJobsApiQuery, skillHints, catalogFilters, profileMatch]);
-
-  useEffect(() => {
-    if (!usePageRankedBrowse) return;
-
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      void (async () => {
-        setIsPageLoading(true);
-        setFetchError(null);
-        try {
-          const res = await fetch(`/api/jobs?${buildJobsApiQuery(currentPage, PAGE_SIZE)}`, {
-            cache: "no-store",
-            signal: controller.signal,
-          });
-          const payload = (await res.json()) as {
-            ok?: boolean;
-            jobs?: RecommendedJobCard[];
-            total?: number;
-          };
-          if (controller.signal.aborted) return;
-          if (res.ok && payload.ok && payload.jobs) {
-            setPageJobs(payload.jobs);
-            setCatalogTotal(payload.total ?? payload.jobs.length);
-            return;
-          }
-
-          const { createBrowserSupabaseClient } = await import("@/lib/supabase");
-          const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
-          const supabase = createBrowserSupabaseClient();
-          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-            page: currentPage,
-            pageSize: PAGE_SIZE,
-            filters: catalogFilters,
-            rankByProfile: profileMatchActive,
-            profile: profileMatch,
-          });
-          if (controller.signal.aborted) return;
-          if (fallback.jobs) {
-            setPageJobs(fallback.jobs);
-            setCatalogTotal(fallback.total);
-            return;
-          }
-          setFetchError("Could not load jobs for this page.");
-        } catch {
-          if (!controller.signal.aborted) {
-            setFetchError("Network error while loading jobs.");
-          }
-        } finally {
-          if (!controller.signal.aborted) setIsPageLoading(false);
-        }
-      })();
-    }, 150);
-
-    return () => {
-      controller.abort();
-      window.clearTimeout(timer);
-    };
-  }, [usePageRankedBrowse, currentPage, buildJobsApiQuery, skillHints, catalogFilters, profileMatch, profileMatchActive]);
+  }, [useCatalogMode, buildCatalogFetchQuery, skillHints, profileMatch]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
