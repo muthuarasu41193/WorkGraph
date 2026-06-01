@@ -41,6 +41,11 @@ import {
   resolveJobsLayoutFromSearchParams,
 } from "@/lib/dashboard-routes";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
+import {
+  applyJobListingFilters,
+  hasAnyUserJobFilters,
+  type JobListingFilterState,
+} from "../../lib/job-listing-filters";
 import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -188,6 +193,7 @@ const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_as
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 20;
+const CATALOG_FETCH_SIZE = 4000;
 const MAX_PAGINATION_TOKENS = 7;
 
 type PaginationToken = number | "ellipsis";
@@ -698,6 +704,8 @@ export default function RecommendedJobsSection({
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
   const deferredSearchInput = useDeferredValue(searchInput);
+  const deferredLocationQuery = useDeferredValue(locationQuery);
+  const deferredCompanyQuery = useDeferredValue(companyQuery);
   const query = deferredSearchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
 
@@ -707,11 +715,11 @@ export default function RecommendedJobsSection({
       sources: sources.size > 0 ? [...sources] : undefined,
       dateWindow,
       locationMode,
-      locationQuery: locationQuery.trim() || undefined,
-      company: companyQuery.trim() || undefined,
+      locationQuery: deferredLocationQuery.trim() || undefined,
+      company: deferredCompanyQuery.trim() || undefined,
       jobTypes: jobTypes.size > 0 ? [...jobTypes] : undefined,
     }),
-    [query, sources, dateWindow, locationMode, locationQuery, companyQuery, jobTypes]
+    [query, sources, dateWindow, locationMode, deferredLocationQuery, deferredCompanyQuery, jobTypes]
   );
 
   const salaryFilterActive = salaryMin > 0 || salaryMax < 500 || currency !== "USD" || salaryPeriod !== "year";
@@ -724,84 +732,81 @@ export default function RecommendedJobsSection({
     [requiredSkillsInput]
   );
 
-  const useServerCatalogFetch = useMemo(() => {
-    if (feedKind !== "live") return false;
-    return Boolean(
-      query.trim() ||
-        sources.size > 0 ||
-        dateWindow !== "any" ||
-        locationMode !== "any" ||
-        locationQuery.trim() ||
-        companyQuery.trim() ||
-        jobTypes.size > 0
-    );
-  }, [
-    feedKind,
-    query,
-    sources,
-    dateWindow,
-    locationMode,
-    locationQuery,
-    companyQuery,
-    jobTypes,
-  ]);
+  const clientFilterState = useMemo<JobListingFilterState>(
+    () => ({
+      q: query,
+      dateWindow,
+      sources,
+      locationMode,
+      locationQuery: deferredLocationQuery,
+      companyQuery: deferredCompanyQuery,
+      jobTypes,
+      matchScore,
+      skillsPick,
+      experienceLevel,
+      salaryFilterActive,
+      salaryMin,
+      salaryMax,
+      currency,
+      salaryPeriod,
+      companySize,
+      industries,
+      normalizedRequiredSkills,
+      benefits,
+      visaSponsorshipOnly,
+      easyApplyOnly,
+    }),
+    [
+      query,
+      dateWindow,
+      sources,
+      locationMode,
+      deferredLocationQuery,
+      deferredCompanyQuery,
+      jobTypes,
+      matchScore,
+      skillsPick,
+      experienceLevel,
+      salaryFilterActive,
+      salaryMin,
+      salaryMax,
+      currency,
+      salaryPeriod,
+      companySize,
+      industries,
+      normalizedRequiredSkills,
+      benefits,
+      visaSponsorshipOnly,
+      easyApplyOnly,
+    ]
+  );
 
-  const serverCatalogReady = useServerCatalogFetch && !isPageLoading;
+  const userFiltersActive = useMemo(
+    () => hasAnyUserJobFilters(catalogFilters, clientFilterState),
+    [catalogFilters, clientFilterState]
+  );
 
-  const demoFilteredSorted = useMemo(() => {
-    if (feedKind !== "demo") return null;
-    const enriched = initialJobs.map((job) => ({
+  const useCatalogMode = feedKind === "live" && userFiltersActive;
+  const usePageRankedBrowse = feedKind === "live" && !useCatalogMode;
+
+  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[] | null>(null);
+
+  const serverFilterKey = useMemo(() => JSON.stringify(catalogFilters), [catalogFilters]);
+
+  const listingPipeline = useMemo(() => {
+    const sourceJobs =
+      feedKind === "demo" ? initialJobs : useCatalogMode ? (catalogPool ?? []) : pageJobs;
+    const enriched = sourceJobs.map((job) => ({
       job,
       meta: deriveJobMeta(job),
       score: getMatchScore(job, profileMatch),
     }));
-    const q = query.trim().toLowerCase();
-    const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
-    const filteredRows = enriched.filter(({ job, meta, score }) => {
-      if (q && !searchTermsMatch(meta.searchBlob, q)) return false;
-      if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
-      if (sources.size > 0 && !sources.has(job.source)) return false;
-      if (!locationMatches(job, meta, locationMode, locationQuery)) return false;
-      if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
-      if (!jobTypeMatches(meta, jobTypes)) return false;
-      if (matchScore !== "any" && score < Number(matchScore)) return false;
-      if (skillsPick.size > 0) {
-        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
-        const hasAny = [...skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
-        if (!hasAny) return false;
-      }
-      if (!experienceMatches(meta, experienceLevel)) return false;
-      if (salaryFilterActive) {
-        if (!meta.salary) return false;
-        if (meta.salary.currency !== currency) return false;
-        if (meta.salary.period !== salaryPeriod) return false;
-        if (meta.salary.maxK < salaryMin || meta.salary.minK > salaryMax) return false;
-      }
-      if (companySize !== "any" && meta.companySize !== companySize) {
-        const sizeBlob = meta.searchBlob;
-        const sizeHint =
-          companySize === "Startup (1-50)"
-            ? ["startup", "early stage", "seed"]
-            : companySize === "Small (51-200)"
-              ? ["small team", "51-200"]
-              : companySize === "Medium (201-1000)"
-                ? ["midsize", "201-1000"]
-                : companySize === "Large (1000+)"
-                  ? ["large company", "1000+"]
-                  : ["enterprise", "10k+"];
-        if (!sizeHint.some((h) => sizeBlob.includes(h))) return false;
-      }
-      if (!industriesMatch(meta, industries)) return false;
-      if (normalizedRequiredSkills.length > 0) {
-        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
-        if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
-      }
-      if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
-      if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
-      if (easyApplyOnly && !meta.isEasyApply) return false;
-      return true;
+    const filtered = applyJobListingFilters(enriched, clientFilterState, {
+      profile: profileMatch,
+      requireProfileOverlap: profileMatchActive && feedKind === "live" && !userFiltersActive,
+      minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
     });
-    const rows = [...filteredRows];
+    const rows = [...filtered];
     rows.sort((a, b) => {
       if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
       if (sortBy === "newest") {
@@ -815,56 +820,28 @@ export default function RecommendedJobsSection({
   }, [
     feedKind,
     initialJobs,
+    useCatalogMode,
+    catalogPool,
+    pageJobs,
     profileMatch,
-    query,
-    dateWindow,
-    sources,
-    locationMode,
-    locationQuery,
-    companyQuery,
-    jobTypes,
-    matchScore,
-    skillsPick,
-    experienceLevel,
-    salaryFilterActive,
-    salaryMin,
-    salaryMax,
-    currency,
-    salaryPeriod,
-    companySize,
-    industries,
-    normalizedRequiredSkills,
-    benefits,
-    visaSponsorshipOnly,
-    easyApplyOnly,
+    clientFilterState,
+    profileMatchActive,
+    userFiltersActive,
     sortBy,
   ]);
 
-  const jobs = useMemo(() => {
-    if (feedKind === "demo" && demoFilteredSorted) {
-      const start = (currentPage - 1) * PAGE_SIZE;
-      return demoFilteredSorted.slice(start, start + PAGE_SIZE).map((row) => row.job);
-    }
-    return pageJobs;
-  }, [feedKind, demoFilteredSorted, currentPage, pageJobs]);
+  const visibleJobs = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return listingPipeline.slice(start, start + PAGE_SIZE);
+  }, [listingPipeline, currentPage]);
 
-  const totalIndexed = feedKind === "demo" ? demoFilteredSorted?.length ?? 0 : catalogTotal;
-
-  const enrichedJobs = useMemo(
-    () =>
-      jobs.map((job) => ({
-        job,
-        meta: deriveJobMeta(job),
-        score: getMatchScore(job, profileMatch),
-      })),
-    [jobs, profileMatch]
-  );
+  const totalMatched = listingPipeline.length;
 
   const platformsInFeed = useMemo(() => {
     const u = new Set<JobFeedSource>();
-    for (const { job } of enrichedJobs) u.add(job.source);
+    for (const { job } of listingPipeline) u.add(job.source);
     return Array.from(u).sort();
-  }, [enrichedJobs]);
+  }, [listingPipeline]);
 
   const sourceFilterOptions = useMemo(() => {
     if (platformsInFeed.length > 0) return platformsInFeed;
@@ -879,107 +856,6 @@ export default function RecommendedJobsSection({
       ),
     [industrySearch]
   );
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const normalizedCompanyQuery = companyQuery.trim().toLowerCase();
-    return enrichedJobs.filter(({ job, meta, score }) => {
-      if (!serverCatalogReady) {
-        if (q && !searchTermsMatch(meta.searchBlob, q)) return false;
-        if (!passesDateFilter(job.postedAtIso, dateWindow)) return false;
-        if (sources.size > 0 && !sources.has(job.source)) return false;
-        if (!locationMatches(job, meta, locationMode, locationQuery)) return false;
-        if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
-        if (!jobTypeMatches(meta, jobTypes)) return false;
-      }
-      if (matchScore !== "any" && score < Number(matchScore)) return false;
-      if (skillsPick.size > 0) {
-        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
-        const hasAny = [...skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
-        if (!hasAny) return false;
-      }
-      if (!experienceMatches(meta, experienceLevel)) return false;
-      if (salaryFilterActive) {
-        if (!meta.salary) return false;
-        if (meta.salary.currency !== currency) return false;
-        if (meta.salary.period !== salaryPeriod) return false;
-        if (meta.salary.maxK < salaryMin || meta.salary.minK > salaryMax) return false;
-      }
-      if (companySize !== "any" && meta.companySize !== companySize) {
-        const sizeBlob = meta.searchBlob;
-        const sizeHint =
-          companySize === "Startup (1-50)"
-            ? ["startup", "early stage", "seed"]
-            : companySize === "Small (51-200)"
-              ? ["small team", "51-200"]
-              : companySize === "Medium (201-1000)"
-                ? ["midsize", "201-1000"]
-                : companySize === "Large (1000+)"
-                  ? ["large company", "1000+"]
-                  : ["enterprise", "10k+"];
-        if (!sizeHint.some((h) => sizeBlob.includes(h))) return false;
-      }
-      if (!industriesMatch(meta, industries)) return false;
-      if (normalizedRequiredSkills.length > 0) {
-        const skillBlob = normalizeText(job.title, job.description, job.matchedSkills.join(" "));
-        if (!normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
-      }
-      if (benefits.size > 0 && !Array.from(benefits).every((benefit) => meta.benefits.includes(benefit))) return false;
-      if (visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
-      if (easyApplyOnly && !meta.isEasyApply) return false;
-      if (profileMatchActive && feedKind === "live") {
-        const relevance = scoreJobCard(job, profileMatch);
-        if (relevance.matchedSkills.length === 0 && relevance.score < MIN_PROFILE_RELEVANCE_SCORE) {
-          return false;
-        }
-      }
-      return true;
-    });
-  }, [
-    enrichedJobs,
-    profileMatch,
-    profileMatchActive,
-    feedKind,
-    serverCatalogReady,
-    query,
-    dateWindow,
-    matchScore,
-    sources,
-    skillsPick,
-    jobTypes,
-    locationMode,
-    locationQuery,
-    experienceLevel,
-    salaryMin,
-    salaryMax,
-    currency,
-    salaryPeriod,
-    companySize,
-    industries,
-    normalizedRequiredSkills,
-    companyQuery,
-    benefits,
-    visaSponsorshipOnly,
-    easyApplyOnly,
-    salaryFilterActive,
-  ]);
-
-  const sortedJobs = useMemo(() => {
-    const rows = [...filtered];
-    rows.sort((a, b) => {
-      if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
-      if (sortBy === "newest") {
-        return (new Date(b.job.postedAtIso || 0).getTime() || 0) - (new Date(a.job.postedAtIso || 0).getTime() || 0);
-      }
-      if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
-      if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
-      return b.score - a.score;
-    });
-    return rows;
-  }, [filtered, sortBy]);
-
-  const visibleJobs = sortedJobs;
-  const totalMatched = totalIndexed;
   const totalPages = Math.max(1, Math.ceil(totalMatched / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
   const rangeStart = visibleJobs.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
@@ -1013,13 +889,73 @@ export default function RecommendedJobsSection({
       if (f.locationQuery) params.set("loc", f.locationQuery);
       if (f.company) params.set("company", f.company);
       if (f.jobTypes?.length) params.set("type", f.jobTypes.join(","));
+      if (useCatalogMode) params.set("rank_profile", "0");
+      else if (profileMatchActive) params.set("rank_profile", "1");
       return params.toString();
     },
-    [skillHints, profileHeadline, profileSummary, catalogFilters]
+    [skillHints, profileHeadline, profileSummary, catalogFilters, useCatalogMode, profileMatchActive]
   );
 
   useEffect(() => {
-    if (feedKind !== "live") return;
+    if (!useCatalogMode) {
+      setCatalogPool(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        setIsPageLoading(true);
+        setFetchError(null);
+        try {
+          const res = await fetch(`/api/jobs?${buildJobsApiQuery(1, CATALOG_FETCH_SIZE)}`, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          const payload = (await res.json()) as {
+            ok?: boolean;
+            jobs?: RecommendedJobCard[];
+          };
+          if (controller.signal.aborted) return;
+          if (res.ok && payload.ok && payload.jobs) {
+            setCatalogPool(payload.jobs);
+            return;
+          }
+
+          const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+          const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
+          const supabase = createBrowserSupabaseClient();
+          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+            page: 1,
+            pageSize: CATALOG_FETCH_SIZE,
+            filters: catalogFilters,
+            rankByProfile: false,
+            profile: profileMatch,
+          });
+          if (controller.signal.aborted) return;
+          if (fallback.jobs) {
+            setCatalogPool(fallback.jobs);
+            return;
+          }
+          setFetchError("Could not load jobs for your filters.");
+        } catch {
+          if (!controller.signal.aborted) {
+            setFetchError("Network error while loading jobs.");
+          }
+        } finally {
+          if (!controller.signal.aborted) setIsPageLoading(false);
+        }
+      })();
+    }, 350);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [useCatalogMode, serverFilterKey, buildJobsApiQuery, skillHints, catalogFilters, profileMatch]);
+
+  useEffect(() => {
+    if (!usePageRankedBrowse) return;
 
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
@@ -1046,12 +982,13 @@ export default function RecommendedJobsSection({
           const { createBrowserSupabaseClient } = await import("@/lib/supabase");
           const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
           const supabase = createBrowserSupabaseClient();
-        const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-          page: currentPage,
-          pageSize: PAGE_SIZE,
-          filters: catalogFilters,
-          profile: profileMatch,
-        });
+          const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+            filters: catalogFilters,
+            rankByProfile: profileMatchActive,
+            profile: profileMatch,
+          });
           if (controller.signal.aborted) return;
           if (fallback.jobs) {
             setPageJobs(fallback.jobs);
@@ -1073,7 +1010,7 @@ export default function RecommendedJobsSection({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [feedKind, currentPage, buildJobsApiQuery, skillHints, catalogFilters, profileMatch]);
+  }, [usePageRankedBrowse, currentPage, buildJobsApiQuery, skillHints, catalogFilters, profileMatch, profileMatchActive]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
@@ -1110,6 +1047,7 @@ export default function RecommendedJobsSection({
     setBenefits(new Set());
     setVisaSponsorshipOnly(false);
     setEasyApplyOnly(false);
+    setCatalogPool(null);
     setCurrentPage(1);
   }, []);
 
@@ -1250,29 +1188,7 @@ export default function RecommendedJobsSection({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [
-    query,
-    dateWindow,
-    sources,
-    skillsPick,
-    matchScore,
-    jobTypes,
-    locationMode,
-    locationQuery,
-    experienceLevel,
-    salaryMin,
-    salaryMax,
-    currency,
-    salaryPeriod,
-    companySize,
-    industries,
-    normalizedRequiredSkills,
-    companyQuery,
-    benefits,
-    visaSponsorshipOnly,
-    easyApplyOnly,
-    sortBy,
-  ]);
+  }, [serverFilterKey, clientFilterState, sortBy]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -1288,8 +1204,8 @@ export default function RecommendedJobsSection({
   }, []);
 
   const skeletonCount = viewMode === "grid" ? 6 : 3;
-  const showSkeleton = (isInitialLoading || isPageLoading) && jobs.length === 0;
-  const showPageLoadingOverlay = isPageLoading && jobs.length > 0;
+  const showSkeleton = (isInitialLoading || isPageLoading) && listingPipeline.length === 0 && visibleJobs.length === 0;
+  const showPageLoadingOverlay = isPageLoading && visibleJobs.length > 0;
   const shouldVirtualize = false;
 
   useEffect(() => {
@@ -1375,6 +1291,20 @@ export default function RecommendedJobsSection({
     (visaSponsorshipOnly ? 1 : 0) +
     (easyApplyOnly ? 1 : 0);
 
+  const advancedFilterCount =
+    (sources.size > 0 ? 1 : 0) +
+    (skillsPick.size > 0 ? 1 : 0) +
+    (matchScore !== "any" ? 1 : 0) +
+    (experienceLevel !== "any" ? 1 : 0) +
+    (salaryFilterActive ? 1 : 0) +
+    (companySize !== "any" ? 1 : 0) +
+    (industries.size > 0 ? 1 : 0) +
+    (normalizedRequiredSkills.length > 0 ? 1 : 0) +
+    (companyQuery.trim() ? 1 : 0) +
+    (benefits.size > 0 ? 1 : 0) +
+    (visaSponsorshipOnly ? 1 : 0) +
+    (easyApplyOnly ? 1 : 0);
+
   const activeFilterChips = [
     query.trim() ? { key: "query", label: `Search: ${query.trim()}` } : null,
     matchScore !== "any" ? { key: "match", label: `Match ${matchScore}%+` } : null,
@@ -1417,6 +1347,7 @@ export default function RecommendedJobsSection({
     else if (key === "benefits") setBenefits(new Set());
     else if (key === "visa") setVisaSponsorshipOnly(false);
     else if (key === "easyApply") setEasyApplyOnly(false);
+    setCurrentPage(1);
   }
 
   const matchBreakdown = [
@@ -1552,7 +1483,7 @@ export default function RecommendedJobsSection({
         </p>
       ) : null}
 
-      {(jobs.length > 0 || liveListings > 0 || feedKind === "live") ? (
+      {(initialJobs.length > 0 || liveListings > 0 || feedKind === "live") ? (
         <>
           <div className="md:hidden">
             <Button
@@ -1596,36 +1527,9 @@ export default function RecommendedJobsSection({
                 ) : null}
                 {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[#8E8E93]" /> : null}
               </div>
-              {query.trim() && !isSearching && !isPageLoading && filtered.length === 0 ? (
+              {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
                 <p className="ml-2 text-xs text-[#8E8E93]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
-
-              <details data-filter-dropdown="true" className="group relative shrink-0">
-                <summary className={`${matchScore !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS} font-medium`}>
-                  Match Score <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-44 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
-                  {[
-                    { id: "any", label: "Any match" },
-                    { id: "90", label: "90%+ (Excellent)" },
-                    { id: "75", label: "75%+ (Good)" },
-                    { id: "60", label: "60%+ (Fair)" },
-                  ].map((o) => (
-                    <button
-                      key={o.id}
-                      type="button"
-                      onClick={() => {
-                        setMatchScore(o.id as "any" | "90" | "75" | "60");
-                        setCurrentPage(1);
-                      }}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
-                    >
-                      {o.label}
-                      {matchScore === o.id ? <Check className="h-4 w-4 text-[#1A73E8]" /> : null}
-                    </button>
-                  ))}
-                </div>
-              </details>
 
               <details data-filter-dropdown="true" className="relative shrink-0">
                 <summary className={jobTypes.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
@@ -1658,7 +1562,15 @@ export default function RecommendedJobsSection({
                   <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  <input value={locationQuery} onChange={(e) => setLocationQuery(e.target.value)} placeholder="Country or city" className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
+                  <input
+                    value={locationQuery}
+                    onChange={(e) => {
+                      setLocationQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    placeholder="Country or city"
+                    className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm"
+                  />
                   <div className="flex flex-wrap gap-2">
                     {["any", "remote", "hybrid", "onsite"].map((loc) => (
                       <button
@@ -1678,100 +1590,36 @@ export default function RecommendedJobsSection({
                 </div>
               </details>
 
-              {[
-                { label: "Experience", value: experienceLevel, set: setExperienceLevel, opts: ["Any", ...EXPERIENCE_OPTIONS] as const },
-                { label: "Date Posted", value: dateWindow, set: setDateWindow, opts: ["Any time", "Past 24h", "Past week", "Past month"] as const },
-                { label: "Company Size", value: companySize, set: setCompanySize, opts: ["Any", ...COMPANY_SIZE_OPTIONS] as const },
-              ].map((item) => (
-                <details data-filter-dropdown="true" key={item.label} className="relative shrink-0">
-                  <summary className={item.value !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                    {item.label} <ChevronDown className="h-4 w-4" />
-                  </summary>
-                  <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-56 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
-                    {item.opts.map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() =>
-                          item.set(
-                            (item.label === "Date Posted"
-                              ? (opt === "Any time" ? "any" : opt === "Past 24h" ? "1" : opt === "Past week" ? "7" : "30")
-                              : opt === "Any"
-                                ? "any"
-                                : opt) as never
-                          )
-                        }
-                        className="block w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </details>
-              ))}
-
               <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={salaryFilterActive ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  Salary <ChevronDown className="h-4 w-4" />
+                <summary className={dateWindow !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
+                  Date posted <ChevronDown className="h-4 w-4" />
                 </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-72 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  <div className="mb-2 flex gap-2">
-                    <input type="number" value={salaryMin} onChange={(e) => setSalaryMin(Number(e.target.value || 0))} className="h-9 w-full rounded-lg border border-[#DADCE0] px-2 text-sm" />
-                    <input type="number" value={salaryMax} onChange={(e) => setSalaryMax(Number(e.target.value || 500))} className="h-9 w-full rounded-lg border border-[#DADCE0] px-2 text-sm" />
-                  </div>
-                  <input type="range" min={0} max={500} value={salaryMin} onChange={(e) => setSalaryMin(Number(e.target.value))} className="w-full" />
-                  <input type="range" min={0} max={500} value={salaryMax} onChange={(e) => setSalaryMax(Number(e.target.value))} className="w-full" />
-                  <div className="mt-2 flex items-center gap-2">
-                    <select value={currency} onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])} className="h-8 rounded-lg border border-[#DADCE0] px-2 text-xs">
-                      <option>USD</option><option>EUR</option><option>GBP</option><option>INR</option>
-                    </select>
-                    <button type="button" onClick={() => setSalaryPeriod("year")} className={`rounded-md px-2 py-1 text-xs ${salaryPeriod === "year" ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA]"}`}>Per year</button>
-                    <button type="button" onClick={() => setSalaryPeriod("hour")} className={`rounded-md px-2 py-1 text-xs ${salaryPeriod === "hour" ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA]"}`}>Per hour</button>
-                  </div>
-                </div>
-              </details>
-
-              <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={industries.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  Industry {industries.size > 0 ? `· ${industries.size}` : ""} <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  <input value={industrySearch} onChange={(e) => setIndustrySearch(e.target.value)} placeholder="Search industry..." className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm" />
-                  {visibleIndustryOptions.map((ind) => (
-                    <label key={ind} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
-                      <input
-                        type="checkbox"
-                        checked={industries.has(ind)}
-                        onChange={() => setIndustries((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(ind)) next.delete(ind);
-                          else next.add(ind);
-                          return next;
-                        })}
-                      />
-                      {ind}
-                    </label>
-                  ))}
-                  {visibleIndustryOptions.length === 0 ? <p className="px-2 py-1 text-xs text-[#8E8E93]">No industry matches.</p> : null}
-                </div>
-              </details>
-
-              <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={sources.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  Source {sources.size > 0 ? `· ${sources.size}` : ""} <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-60 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  {sourceFilterOptions.map((src) => (
-                    <label key={src} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
-                      <input type="checkbox" checked={sources.has(src)} onChange={() => togglePlatform(src)} />
-                      {SOURCE_STYLES[src].label}
-                    </label>
+                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-48 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
+                  {DATE_OPTIONS.map((d) => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => {
+                        setDateWindow(d.id);
+                        setCurrentPage(1);
+                      }}
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
+                    >
+                      {d.label}
+                      {dateWindow === d.id ? <Check className="h-4 w-4 text-[#1A73E8]" /> : null}
+                    </button>
                   ))}
                 </div>
               </details>
 
-              <button type="button" onClick={() => setIsMoreFiltersOpen(true)} className={`${FILTER_TRIGGER_INACTIVE_CLASS} shrink-0`}>
-                <SlidersHorizontal className="h-4 w-4" /> More Filters
+              <button
+                type="button"
+                onClick={() => setIsMoreFiltersOpen(true)}
+                className={`${advancedFilterCount > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS} shrink-0`}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Advanced
+                {advancedFilterCount > 0 ? ` · ${advancedFilterCount}` : ""}
               </button>
             </div>
           </section>
@@ -1914,13 +1762,6 @@ export default function RecommendedJobsSection({
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsMoreFiltersOpen(true)}
-            >
-              More filters
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
               onClick={() => {
                 clearFilters();
                 setIsMobileFiltersOpen(false);
@@ -1942,20 +1783,58 @@ export default function RecommendedJobsSection({
       </Sheet>
 
       <Sheet open={isMoreFiltersOpen} onOpenChange={setIsMoreFiltersOpen}>
-        <SheetContent side={isMobile ? "bottom" : "right"} className="w-full sm:max-w-md">
+        <SheetContent side={isMobile ? "bottom" : "right"} className="w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Advanced Filters</SheetTitle>
+            <SheetTitle>Advanced filters</SheetTitle>
           </SheetHeader>
-          <div className="grid gap-4 px-1 pb-4">
+          <div className="grid gap-5 px-1 pb-6">
             <div className="grid gap-2">
-              <Label htmlFor="req-skills">Skills required</Label>
-              <Input
-                id="req-skills"
-                placeholder="React, Python, SQL"
-                value={requiredSkillsInput}
-                onChange={(e) => setRequiredSkillsInput(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">Separate multiple skills with commas.</p>
+              <Label>Match score</Label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { id: "any", label: "Any" },
+                  { id: "90", label: "90%+" },
+                  { id: "75", label: "75%+" },
+                  { id: "60", label: "60%+" },
+                ].map((o) => (
+                  <Button
+                    key={o.id}
+                    type="button"
+                    size="sm"
+                    variant={matchScore === o.id ? "default" : "outline"}
+                    className="rounded-2xl"
+                    onClick={() => setMatchScore(o.id as typeof matchScore)}
+                  >
+                    {o.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Experience</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={experienceLevel === "any" ? "default" : "outline"}
+                  className="rounded-2xl"
+                  onClick={() => setExperienceLevel("any")}
+                >
+                  Any
+                </Button>
+                {EXPERIENCE_OPTIONS.map((exp) => (
+                  <Button
+                    key={exp}
+                    type="button"
+                    size="sm"
+                    variant={experienceLevel === exp ? "default" : "outline"}
+                    className="rounded-2xl"
+                    onClick={() => setExperienceLevel(exp)}
+                  >
+                    {exp}
+                  </Button>
+                ))}
+              </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="company-filter">Company</Label>
@@ -1964,6 +1843,99 @@ export default function RecommendedJobsSection({
                 placeholder="Search company..."
                 value={companyQuery}
                 onChange={(e) => setCompanyQuery(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Source</Label>
+              <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto">
+                {sourceFilterOptions.map((src) => (
+                  <Badge
+                    key={src}
+                    variant={sources.has(src) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => togglePlatform(src)}
+                  >
+                    {SOURCE_STYLES[src].label}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Salary range (K)</Label>
+              <div className="flex gap-2">
+                <Input type="number" value={salaryMin} onChange={(e) => setSalaryMin(Number(e.target.value || 0))} />
+                <Input type="number" value={salaryMax} onChange={(e) => setSalaryMax(Number(e.target.value || 500))} />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])}
+                  className="h-9 rounded-lg border border-[#DADCE0] px-2 text-sm"
+                >
+                  {CURRENCY_OPTIONS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <Button type="button" size="sm" variant={salaryPeriod === "year" ? "default" : "outline"} onClick={() => setSalaryPeriod("year")}>
+                  Per year
+                </Button>
+                <Button type="button" size="sm" variant={salaryPeriod === "hour" ? "default" : "outline"} onClick={() => setSalaryPeriod("hour")}>
+                  Per hour
+                </Button>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Company size</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" variant={companySize === "any" ? "default" : "outline"} onClick={() => setCompanySize("any")}>
+                  Any
+                </Button>
+                {COMPANY_SIZE_OPTIONS.map((size) => (
+                  <Button
+                    key={size}
+                    type="button"
+                    size="sm"
+                    variant={companySize === size ? "default" : "outline"}
+                    className="rounded-2xl"
+                    onClick={() => setCompanySize(size)}
+                  >
+                    {size}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label>Industry</Label>
+              <Input value={industrySearch} onChange={(e) => setIndustrySearch(e.target.value)} placeholder="Search industry..." />
+              <div className="flex flex-wrap gap-2">
+                {visibleIndustryOptions.map((ind) => (
+                  <Badge
+                    key={ind}
+                    variant={industries.has(ind) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      setIndustries((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(ind)) next.delete(ind);
+                        else next.add(ind);
+                        return next;
+                      })
+                    }
+                  >
+                    {ind}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="req-skills">Skills required in posting</Label>
+              <Input
+                id="req-skills"
+                placeholder="React, Python, SQL"
+                value={requiredSkillsInput}
+                onChange={(e) => setRequiredSkillsInput(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -1994,15 +1966,30 @@ export default function RecommendedJobsSection({
             </label>
             <label className="flex cursor-pointer items-center gap-2 text-sm">
               <Checkbox checked={easyApplyOnly} onCheckedChange={(c) => setEasyApplyOnly(c === true)} />
-              Easy Apply
+              Easy apply only
             </label>
+            <div className="flex gap-2 pt-2">
+              <Button type="button" variant="outline" className="flex-1" onClick={clearFilters}>
+                Clear all
+              </Button>
+              <Button
+                type="button"
+                className="flex-1"
+                onClick={() => {
+                  setCurrentPage(1);
+                  setIsMoreFiltersOpen(false);
+                }}
+              >
+                Apply filters
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
       <div className="min-w-0">
-      {(jobs.length > 0 || isPageLoading) ? (
+      {(listingPipeline.length > 0 || isPageLoading || userFiltersActive) ? (
         <div className="flex items-center justify-between gap-2">
           <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
             <Button
@@ -2146,7 +2133,7 @@ export default function RecommendedJobsSection({
                     <p className="mt-1 text-sm font-medium text-[#3A3A3C]">{job.company}</p>
                     <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#8E8E93]">
                       <MapPin className="h-3 w-3" /> {job.location}
-                      {meta.primaryJobType ? ` · ${meta.primaryJobType}` : ""}
+                      {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                     </p>
                   </div>
                 </div>
@@ -2346,7 +2333,7 @@ export default function RecommendedJobsSection({
         </nav>
       ) : null}
 
-      {!showSkeleton && filtered.length === 0 && jobs.length > 0 && skillHints.length > 0 ? (
+      {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 ? (
         <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
           <SearchX className="mx-auto h-20 w-20 text-[#DADCE0]" />
           <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No jobs found</h3>
@@ -2373,7 +2360,7 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      {!showSkeleton && filtered.length === 0 && jobs.length > 0 && skillHints.length === 0 ? (
+      {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length === 0 ? (
         <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
           <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Complete your profile to see matches</h3>
@@ -2452,7 +2439,7 @@ export default function RecommendedJobsSection({
             </button>
           </div>
           {(() => {
-            const jobEntry = enrichedJobs.find(({ job }) => job.id === mobileDetailJobId);
+            const jobEntry = listingPipeline.find(({ job }) => job.id === mobileDetailJobId);
             if (!jobEntry) return <p className="text-sm text-[#8E8E93]">Job not available.</p>;
             const { job, meta } = jobEntry;
             return (
@@ -2461,7 +2448,7 @@ export default function RecommendedJobsSection({
                 <p className="text-sm text-[#3A3A3C]">{job.company}</p>
                 <p className="text-sm text-[#8E8E93]">
                   {job.location}
-                  {meta.primaryJobType ? ` · ${meta.primaryJobType}` : ""}
+                  {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                 </p>
                 <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-[#3A3A3C]">
                   {job.description?.trim() ? job.description : job.matchLabel}

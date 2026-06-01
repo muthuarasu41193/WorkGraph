@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { JobsCatalogFilters } from "../../../lib/jobs-catalog";
-import { loadLiveJobCardsPage } from "../../../lib/jobs-catalog";
+import { LIVE_JOBS_CLIENT_FILTER_CAP, LIVE_JOBS_MAX_API_PAGE_SIZE, loadLiveJobCardsPage } from "../../../lib/jobs-catalog";
 import { createServerSupabaseClient } from "../../../lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,13 @@ export async function GET(request: Request) {
   const profileHeadline = searchParams.get("profile_headline")?.trim() || null;
   const profileSummary = searchParams.get("profile_summary")?.trim()?.slice(0, 2000) || null;
   const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
-  const pageSize = Math.min(200, Math.max(1, Number(searchParams.get("page_size") || "100") || 100));
+  const rankProfileParam = searchParams.get("rank_profile");
+  const rankByProfile = rankProfileParam !== "0" && rankProfileParam !== "false";
+  const pageSizeCap = rankByProfile ? LIVE_JOBS_MAX_API_PAGE_SIZE : LIVE_JOBS_CLIENT_FILTER_CAP;
+  const pageSize = Math.min(
+    pageSizeCap,
+    Math.max(1, Number(searchParams.get("page_size") || "100") || 100)
+  );
   const filters = parseCatalogFilters(searchParams);
 
   const supabase = createServerSupabaseClient(await cookies());
@@ -50,6 +56,7 @@ export async function GET(request: Request) {
     page,
     pageSize,
     filters,
+    rankByProfile,
     profile: {
       skills: profileSkills,
       headline: profileHeadline,

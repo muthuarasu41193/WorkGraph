@@ -26,6 +26,12 @@ const JOB_SELECT_COLUMNS =
 /** PostgREST page size — fetch live listings in batches for the jobs board. */
 export const LIVE_JOBS_FETCH_PAGE_SIZE = 1000;
 
+/** Max rows returned per normal API page (ranked browse). */
+export const LIVE_JOBS_MAX_API_PAGE_SIZE = 200;
+
+/** Max rows loaded when the Jobs tab filters client-side over a catalog pool. */
+export const LIVE_JOBS_CLIENT_FILTER_CAP = 4000;
+
 function formatPostedAgo(iso: string | null): string {
   if (!iso) return "Listed recently";
   const then = new Date(iso).getTime();
@@ -186,6 +192,18 @@ function sanitizeIlike(value: string): string {
   return value.replace(/[%_,]/g, " ").trim();
 }
 
+/** PostgREST `.or()` values with `%` must be quoted when passed in the filter string. */
+function ilikePattern(value: string): string {
+  const sanitized = sanitizeIlike(value);
+  const pattern = `%${sanitized}%`;
+  return `"${pattern.replace(/"/g, "")}"`;
+}
+
+function orIlike(columns: string[], rawValue: string): string {
+  const pattern = ilikePattern(rawValue);
+  return columns.map((col) => `${col}.ilike.${pattern}`).join(",");
+}
+
 function postedAtCutoff(dateWindow: JobsCatalogFilters["dateWindow"]): string | null {
   if (!dateWindow || dateWindow === "any") return null;
   const days = Number(dateWindow);
@@ -208,17 +226,16 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
 
   const locationQuery = filters.locationQuery?.trim();
   if (locationQuery) {
-    const loc = `%${sanitizeIlike(locationQuery)}%`;
-    builder = builder.or(`location.ilike.${loc},description.ilike.${loc}`);
+    builder = builder.or(orIlike(["location", "description"], locationQuery));
   }
 
   if (filters.locationMode && filters.locationMode !== "any") {
     if (filters.locationMode === "remote") {
       builder = builder.or(
-        "location.ilike.%remote%,description.ilike.%remote%,description.ilike.%wfh%,description.ilike.%distributed%"
+        'location.ilike."%remote%",description.ilike."%remote%",description.ilike."%wfh%",description.ilike."%distributed%"'
       );
     } else if (filters.locationMode === "hybrid") {
-      builder = builder.or("location.ilike.%hybrid%,description.ilike.%hybrid%");
+      builder = builder.or('location.ilike."%hybrid%",description.ilike."%hybrid%"');
     } else if (filters.locationMode === "onsite") {
       builder = builder
         .not("location", "ilike", "%remote%")
@@ -235,7 +252,7 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
     for (const jobType of filters.jobTypes) {
       const keywords = JOB_TYPE_DB_KEYWORDS[jobType] ?? [jobType.toLowerCase()];
       for (const keyword of keywords) {
-        const pattern = `%${sanitizeIlike(keyword)}%`;
+        const pattern = ilikePattern(keyword);
         orParts.push(`title.ilike.${pattern}`, `description.ilike.${pattern}`);
       }
     }
@@ -253,9 +270,8 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
   if (q) {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     for (const term of terms) {
-      const pattern = `%${sanitizeIlike(term)}%`;
       builder = builder.or(
-        `title.ilike.${pattern},company.ilike.${pattern},description.ilike.${pattern},location.ilike.${pattern}`
+        orIlike(["title", "company", "description", "location"], term)
       );
     }
   }
@@ -279,10 +295,17 @@ export function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
 /** Single page of live listings — used by the Jobs tab API (fast, no bulk download). */
 export async function fetchLiveJobsPage(
   supabase: SupabaseClient,
-  options: { page?: number; pageSize?: number; filters?: JobsCatalogFilters }
+  options: {
+    page?: number;
+    pageSize?: number;
+    filters?: JobsCatalogFilters;
+    /** Upper bound for pageSize (default 200; use LIVE_JOBS_CLIENT_FILTER_CAP for bulk). */
+    pageSizeCap?: number;
+  }
 ): Promise<LiveJobsPageResult> {
   const page = Math.max(1, options.page ?? 1);
-  const pageSize = Math.min(200, Math.max(1, options.pageSize ?? 100));
+  const cap = options.pageSizeCap ?? LIVE_JOBS_MAX_API_PAGE_SIZE;
+  const pageSize = Math.min(cap, Math.max(1, options.pageSize ?? 100));
   const offset = (page - 1) * pageSize;
   const filters = options.filters;
   const filtered = hasActiveCatalogFilters(filters);
@@ -334,6 +357,8 @@ export async function loadLiveJobCardsPage(
     pageSize?: number;
     filters?: JobsCatalogFilters;
     profile?: ProfileMatchInput;
+    /** When false, return rows ordered by posted_at (used before client-side filtering). */
+    rankByProfile?: boolean;
   }
 ): Promise<{
   jobs: RecommendedJobCard[] | null;
@@ -345,21 +370,56 @@ export async function loadLiveJobCardsPage(
   ranked?: boolean;
 }> {
   const page = Math.max(1, options.page ?? 1);
-  const pageSize = Math.min(200, Math.max(1, options.pageSize ?? 100));
+  const filters = options.filters;
+  const filtered = hasActiveCatalogFilters(filters);
   const profile =
     options.profile ??
     profileFromSkills(profileSkills, {});
   const hasSkills = profile.skills.some((s) => s.trim().length > 0);
+  const rankByProfile =
+    options.rankByProfile !== false && hasSkills && !filtered;
 
-  if (hasSkills) {
-    const filters = options.filters;
-    const filtered = hasActiveCatalogFilters(filters);
+  if (options.rankByProfile === false) {
+    const maxRows = Math.min(
+      options.pageSize ?? LIVE_JOBS_CLIENT_FILTER_CAP,
+      LIVE_JOBS_CLIENT_FILTER_CAP
+    );
+    const bulk = filtered
+      ? await fetchFilteredLiveJobsCatalog(supabase, { filters, maxRows })
+      : await fetchLiveJobsCatalog(supabase, { maxRows });
+    if (bulk.rows === null) {
+      return {
+        jobs: null,
+        total: bulk.total,
+        page: 1,
+        pageSize: 0,
+        hasMore: false,
+        filtered,
+        ranked: false,
+      };
+    }
+    const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
+    return {
+      jobs: cards,
+      total: bulk.total,
+      page: 1,
+      pageSize: cards.length,
+      hasMore: bulk.total > cards.length,
+      filtered,
+      ranked: false,
+    };
+  }
+
+  const pageSize = Math.min(LIVE_JOBS_MAX_API_PAGE_SIZE, Math.max(1, options.pageSize ?? 100));
+
+  if (rankByProfile) {
     let candidates: JobRow[] | null = null;
 
     if (filtered) {
       const batch = await fetchLiveJobsPage(supabase, {
         page: 1,
-        pageSize: Math.min(PROFILE_RANK_FILTERED_CAP, 2000),
+        pageSize: PROFILE_RANK_FILTERED_CAP,
+        pageSizeCap: PROFILE_RANK_FILTERED_CAP,
         filters,
       });
       candidates = batch.rows;
@@ -458,6 +518,53 @@ export async function fetchLiveJobsCatalog(
   }
 
   return { rows: all, total };
+}
+
+/** Fetch up to maxRows live jobs with server-side catalog filters (for client-side filter UI). */
+export async function fetchFilteredLiveJobsCatalog(
+  supabase: SupabaseClient,
+  options?: { filters?: JobsCatalogFilters; maxRows?: number }
+): Promise<{ rows: JobRow[] | null; total: number; filtered: boolean }> {
+  const maxRows = Math.min(
+    options?.maxRows ?? LIVE_JOBS_CLIENT_FILTER_CAP,
+    LIVE_JOBS_CLIENT_FILTER_CAP
+  );
+  const filters = options?.filters;
+  const filtered = hasActiveCatalogFilters(filters);
+
+  let countQuery = supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
+  countQuery = applyJobsCatalogFilters(countQuery, filters);
+  const totalRes = await countQuery;
+  if (totalRes.error) {
+    console.warn("[jobs-catalog] filtered jobs count error:", totalRes.error.message, totalRes.error.code);
+    return { rows: null, total: 0, filtered };
+  }
+
+  const total = totalRes.count ?? 0;
+  if (total === 0) return { rows: [], total: 0, filtered };
+
+  const all: JobRow[] = [];
+  let offset = 0;
+  const target = Math.min(total, maxRows);
+
+  while (offset < target && all.length < maxRows) {
+    const batchSize = Math.min(LIVE_JOBS_FETCH_PAGE_SIZE, maxRows - all.length, target - offset);
+    const end = offset + batchSize - 1;
+    let dataQuery = supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false);
+    dataQuery = applyJobsCatalogFilters(dataQuery, filters);
+    const { data, error } = await dataQuery.order("posted_at", { ascending: false }).range(offset, end);
+
+    if (error) {
+      console.warn("[jobs-catalog] filtered jobs select error:", error.message, error.code);
+      return { rows: null, total, filtered };
+    }
+    if (!data?.length) break;
+    all.push(...(data as JobRow[]));
+    offset += data.length;
+    if (data.length < batchSize) break;
+  }
+
+  return { rows: all, total, filtered };
 }
 
 export async function loadLiveJobCards(
