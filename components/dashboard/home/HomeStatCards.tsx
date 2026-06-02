@@ -54,7 +54,7 @@ export default function HomeStatCards({ stats }: { stats: HomeStatCardsData }) {
       delayClass: "[animation-delay:120ms]",
     },
     {
-      label: "Interview Vault Earnings",
+      label: "Vault Earnings",
       value: formatInr(stats.vaultEarningsInr),
       icon: IndianRupee,
       delayClass: "[animation-delay:180ms]",

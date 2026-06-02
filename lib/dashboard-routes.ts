@@ -67,10 +67,10 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
   },
   {
     id: "vault",
-    label: "Interview Vault",
-    shortLabel: "Vault",
+    label: "Prep Vault",
+    shortLabel: "Prep",
     icon: FileText,
-    description: "Notes, questions, and prep for upcoming interviews",
+    description: "Local interview prep notes stored on this device",
   },
   {
     id: "profile",

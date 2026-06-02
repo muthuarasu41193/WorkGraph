@@ -19,7 +19,7 @@ export default async function HomeVaultStatsSection() {
           <p className="text-sm text-muted-foreground">Prep content performance and marketplace earnings.</p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link href={dashboardHref("vault")}>Open vault</Link>
+          <Link href="/interview-vault">Open marketplace</Link>
         </Button>
       </div>
 

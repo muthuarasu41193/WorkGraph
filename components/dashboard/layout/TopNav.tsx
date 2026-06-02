@@ -137,7 +137,10 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                 <Link href="/profile?view=profile">Edit profile</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/profile?view=vault">Interview Vault</Link>
+                <Link href="/interview-vault">Interview Vault</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/profile?view=vault">Prep Vault (local)</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
