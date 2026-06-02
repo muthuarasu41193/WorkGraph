@@ -14,6 +14,7 @@ import ProfileHero from "./ProfileHero";
 import ProfileSkills from "./ProfileSkills";
 import ProfileExperience from "./ProfileExperience";
 import ProfileEducation from "./ProfileEducation";
+import ResumeAnalyzer from "@/app/(dashboard)/profile/components/ResumeAnalyzer";
 import type { JobMatchPreviewExt } from "./job-match-utils";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import type { Profile } from "../../../lib/types";
@@ -143,6 +144,7 @@ function ProfileShellInner({
             education={profile.education}
             certifications={profile.certifications}
           />
+          <ResumeAnalyzer />
         </div>
       ),
       "job-news": <JobNewsSection />,
