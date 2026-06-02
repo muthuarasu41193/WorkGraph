@@ -1,13 +1,27 @@
-import { Eye, IndianRupee, Star } from "lucide-react";
+import { Eye, Star, Wallet } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatInr, loadWalletSnapshot, buildVaultStats } from "@/lib/home-dashboard";
-import { dashboardHref } from "@/lib/dashboard-routes";
+import { formatCurrencyAmount, resolvePreferredCurrency } from "@/lib/currency";
+import { getSessionUser } from "@/lib/auth/session-server";
+import { loadWalletSnapshot } from "@/lib/home-dashboard";
+import { loadUserProfile } from "@/lib/load-profile";
+import { supabaseConfigured } from "@/lib/supabase-enabled";
+import { getVaultHomeStats } from "@/lib/vault-server";
 
 export default async function HomeVaultStatsSection() {
-  const wallet = await loadWalletSnapshot();
-  const vault = buildVaultStats(wallet);
+  const user = await getSessionUser();
+  const [wallet, profile, vault] = await Promise.all([
+    loadWalletSnapshot(),
+    user ? loadUserProfile(user.id) : Promise.resolve(null),
+    user && supabaseConfigured()
+      ? getVaultHomeStats(user.id)
+      : Promise.resolve({ views: 0, earningsInr: 0, rating: 0, ratingCount: 0 }),
+  ]);
+  const displayCurrency = resolvePreferredCurrency({
+    walletCurrency: wallet?.currency,
+    location: profile?.location,
+  });
 
   return (
     <section className="space-y-3" aria-labelledby="home-vault-heading">
@@ -39,11 +53,11 @@ export default async function HomeVaultStatsSection() {
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <IndianRupee className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Wallet className="h-4 w-4 text-[var(--dash-accent)]" />
                 Earnings
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums text-[var(--dash-accent)]">
-                {formatInr(vault.earningsInr)}
+                {formatCurrencyAmount(vault.earningsInr, displayCurrency)}
               </dd>
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
@@ -52,7 +66,7 @@ export default async function HomeVaultStatsSection() {
                 Ratings
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums">
-                {vault.rating.toFixed(1)}
+                {vault.rating > 0 ? vault.rating.toFixed(1) : "--"}
                 <span className="text-sm font-normal text-muted-foreground"> / 5</span>
               </dd>
               <p className="mt-1 text-xs text-muted-foreground">{vault.ratingCount} reviews</p>

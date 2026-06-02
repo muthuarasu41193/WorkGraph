@@ -403,6 +403,42 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
   };
 }
 
+export async function getVaultHomeStats(userId: string): Promise<{
+  views: number;
+  earningsInr: number;
+  rating: number;
+  ratingCount: number;
+}> {
+  const dashboard = await getSellerDashboard(userId);
+  const supabase = await requireSupabase();
+
+  const experienceIds = dashboard.experiences.map((exp) => exp.id);
+  if (experienceIds.length === 0) {
+    return { views: 0, earningsInr: 0, rating: 0, ratingCount: 0 };
+  }
+
+  const { data, error } = await supabase
+    .from("vault_reviews")
+    .select("rating")
+    .in("experience_id", experienceIds);
+
+  if (error) throw new VaultApiError(error.message, 500);
+
+  const ratings = (data ?? [])
+    .map((row) => Number((row as { rating: number }).rating))
+    .filter((value) => Number.isFinite(value) && value >= 1 && value <= 5);
+
+  const ratingCount = ratings.length;
+  const rating = ratingCount > 0 ? ratings.reduce((sum, value) => sum + value, 0) / ratingCount : 0;
+
+  return {
+    views: dashboard.total_views,
+    earningsInr: dashboard.total_earnings_inr,
+    rating,
+    ratingCount,
+  };
+}
+
 export async function requestVaultWithdrawal(userId: string): Promise<{ ok: true; message: string }> {
   const dashboard = await getSellerDashboard(userId);
   if (dashboard.total_earnings_inr < 500) {

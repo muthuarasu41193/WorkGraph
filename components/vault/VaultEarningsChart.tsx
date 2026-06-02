@@ -9,13 +9,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { convertInrToCurrency, formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
 import type { VaultDashboardStats } from "@/lib/vault";
 
 type Props = {
   salesByDay: VaultDashboardStats["sales_by_day"];
+  currency: SupportedCurrency;
 };
 
-export default function VaultEarningsChart({ salesByDay }: Props) {
+export default function VaultEarningsChart({ salesByDay, currency }: Props) {
   if (salesByDay.length === 0) {
     return (
       <div className="flex h-48 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
@@ -26,6 +28,7 @@ export default function VaultEarningsChart({ salesByDay }: Props) {
 
   const data = salesByDay.map((d) => ({
     ...d,
+    earnings_display: convertInrToCurrency(d.earnings_inr, currency),
     label: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
   }));
 
@@ -39,12 +42,14 @@ export default function VaultEarningsChart({ salesByDay }: Props) {
           <YAxis yAxisId="earnings" orientation="right" tick={{ fontSize: 11 }} />
           <Tooltip
             formatter={(value, name) => [
-              name === "earnings_inr" ? `₹${Number(value).toLocaleString("en-IN")}` : value,
-              name === "earnings_inr" ? "Earnings" : "Sales",
+              name === "earnings_display"
+                ? formatCurrencyAmount(Number(value), currency)
+                : value,
+              name === "earnings_display" ? "Earnings" : "Sales",
             ]}
           />
           <Line yAxisId="sales" type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-          <Line yAxisId="earnings" type="monotone" dataKey="earnings_inr" stroke="#22c55e" strokeWidth={2} dot={false} />
+          <Line yAxisId="earnings" type="monotone" dataKey="earnings_display" stroke="#22c55e" strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

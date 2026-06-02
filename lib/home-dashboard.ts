@@ -1,4 +1,5 @@
 import { fetchAllHiddenOpportunities } from "@/lib/hidden-opportunities/aggregate";
+import { formatCurrencyAmount } from "@/lib/currency";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import type { JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
 import { MOCK_JOB_MATCHES, MOCK_SIDEBAR, type JobMatchPreview } from "@/lib/profile-mock-data";
@@ -12,6 +13,7 @@ export type HomeStatCards = {
   hiddenJobsFound: number;
   pendingApplications: number;
   vaultEarningsInr: number;
+  vaultEarningsCurrency: string;
 };
 
 export type HomeVaultStats = {
@@ -121,11 +123,7 @@ export function countJobsMatchedToday(
 }
 
 export function formatInr(amount: number): string {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(Math.max(0, amount));
+  return formatCurrencyAmount(amount, "INR");
 }
 
 export function centsToInr(cents: number, currency = "INR"): number {
@@ -214,26 +212,28 @@ export function buildHomeStats(
   pipeline: JobPipelineCounts,
   hiddenTotal: number,
   wallet: WalletSummary | null,
+  vaultEarningsInrOverride?: number | null,
 ): HomeStatCards {
-  const vaultEarningsInr = wallet
-    ? centsToInr(wallet.lifetime_earned_cents, wallet.currency)
-    : 12_450;
+  const vaultEarningsInr =
+    vaultEarningsInrOverride ??
+    (wallet ? centsToInr(wallet.lifetime_earned_cents, wallet.currency) : 0);
 
   return {
     matchedToday: countJobsMatchedToday(jobs, topMatches),
     hiddenJobsFound: hiddenTotal,
     pendingApplications: pipeline.applied,
     vaultEarningsInr,
+    vaultEarningsCurrency: "INR",
   };
 }
 
 export function buildVaultStats(wallet: WalletSummary | null): HomeVaultStats {
-  const earningsInr = wallet ? centsToInr(wallet.lifetime_earned_cents, wallet.currency) : 12_450;
+  const earningsInr = wallet ? centsToInr(wallet.lifetime_earned_cents, wallet.currency) : 0;
   return {
-    views: MOCK_SIDEBAR.analytics.profileViews,
+    views: 0,
     earningsInr,
-    rating: 4.8,
-    ratingCount: 36,
+    rating: 0,
+    ratingCount: 0,
   };
 }
 
@@ -246,6 +246,7 @@ export type BuildHomeDashboardInput = {
   hiddenFeed: HiddenOpportunity[];
   hiddenTotal: number;
   wallet: WalletSummary | null;
+  vaultEarningsInr?: number | null;
 };
 
 export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDashboardData {
@@ -261,6 +262,7 @@ export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDash
     input.jobPipeline,
     input.hiddenTotal,
     input.wallet,
+    input.vaultEarningsInr,
   );
 
   return {

@@ -2,20 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, IndianRupee, ShoppingBag, Wallet } from "lucide-react";
+import { Eye, ShoppingBag, Wallet } from "lucide-react";
 import VaultEarningsChart from "@/components/vault/VaultEarningsChart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { convertInrToCurrency, formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
 import { VAULT_RESULT_LABELS, type VaultDashboardStats } from "@/lib/vault";
 
 type Props = {
   dashboard: VaultDashboardStats;
+  currency: SupportedCurrency;
 };
 
-export default function VaultDashboard({ dashboard }: Props) {
+export default function VaultDashboard({ dashboard, currency }: Props) {
   const [withdrawing, setWithdrawing] = useState(false);
+  const totalEarningsDisplay = convertInrToCurrency(dashboard.total_earnings_inr, currency);
 
   async function requestWithdrawal() {
     setWithdrawing(true);
@@ -42,8 +45,8 @@ export default function VaultDashboard({ dashboard }: Props) {
   const stats = [
     {
       label: "Total earnings",
-      value: `₹${dashboard.total_earnings_inr.toLocaleString("en-IN")}`,
-      icon: IndianRupee,
+      value: formatCurrencyAmount(totalEarningsDisplay, currency),
+      icon: Wallet,
     },
     { label: "Total views", value: dashboard.total_views.toLocaleString("en-IN"), icon: Eye },
     { label: "Total sales", value: dashboard.total_sales.toLocaleString("en-IN"), icon: ShoppingBag },
@@ -82,7 +85,7 @@ export default function VaultDashboard({ dashboard }: Props) {
           <CardTitle className="text-lg">Sales over time</CardTitle>
         </CardHeader>
         <CardContent>
-          <VaultEarningsChart salesByDay={dashboard.sales_by_day} />
+          <VaultEarningsChart salesByDay={dashboard.sales_by_day} currency={currency} />
         </CardContent>
       </Card>
 
@@ -106,7 +109,7 @@ export default function VaultDashboard({ dashboard }: Props) {
                     <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
                       <span>{exp.view_count} views</span>
                       <span>{exp.sales_count} sales</span>
-                      <span>₹{exp.earnings_inr.toLocaleString("en-IN")} earned</span>
+                      <span>{formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned</span>
                       {exp.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[exp.result]}</Badge> : null}
                     </div>
                   </div>
@@ -125,7 +128,9 @@ export default function VaultDashboard({ dashboard }: Props) {
             </p>
           )}
           {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
-            <p className="mt-3 text-xs text-muted-foreground">Minimum withdrawal amount is ₹500.</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).
+            </p>
           ) : null}
         </CardContent>
       </Card>

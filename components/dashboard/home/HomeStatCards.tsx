@@ -1,9 +1,9 @@
 import type { LucideIcon } from "lucide-react";
-import { Briefcase, EyeOff, FileText, IndianRupee } from "lucide-react";
+import { Briefcase, EyeOff, FileText, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 import type { HomeStatCards as HomeStatCardsData } from "@/lib/home-dashboard";
-import { formatInr } from "@/lib/home-dashboard";
 
 type StatDef = {
   label: string;
@@ -34,6 +34,7 @@ function StatCard({ label, value, icon: Icon, delayClass }: StatDef) {
 }
 
 export default function HomeStatCards({ stats }: { stats: HomeStatCardsData }) {
+  const vaultCurrency = (stats.vaultEarningsCurrency ?? "INR") as SupportedCurrency;
   const cards: StatDef[] = [
     {
       label: "New Jobs Matched Today",
@@ -55,8 +56,8 @@ export default function HomeStatCards({ stats }: { stats: HomeStatCardsData }) {
     },
     {
       label: "Vault Earnings",
-      value: formatInr(stats.vaultEarningsInr),
-      icon: IndianRupee,
+      value: formatCurrencyAmount(stats.vaultEarningsInr, vaultCurrency),
+      icon: Wallet,
       delayClass: "[animation-delay:180ms]",
     },
   ];

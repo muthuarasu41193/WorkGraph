@@ -7,6 +7,8 @@ import HomeJobMatchesSection from "@/components/dashboard/home/HomeJobMatchesSec
 import HomeStatCards from "@/components/dashboard/home/HomeStatCards";
 import HomeVaultStatsSection from "@/components/dashboard/home/HomeVaultStatsSection";
 import HomeWelcomeHeader from "@/components/dashboard/home/HomeWelcomeHeader";
+import { getVaultHomeStats } from "@/lib/vault-server";
+import { supabaseConfigured } from "@/lib/supabase-enabled";
 import {
   buildHomeDashboardData,
   buildJobMarketPulse,
@@ -37,7 +39,14 @@ function StatCardsSkeleton() {
 }
 
 async function HomeStatsAndMatches(props: HomeDashboardProps) {
-  const [hidden, wallet] = await Promise.all([loadHiddenJobsFeed(5), loadWalletSnapshot()]);
+  const vaultHomePromise = supabaseConfigured()
+    ? getVaultHomeStats(props.profile.id)
+    : Promise.resolve({ views: 0, earningsInr: 0, rating: 0, ratingCount: 0 });
+  const [hidden, wallet, vaultHome] = await Promise.all([
+    loadHiddenJobsFeed(5),
+    loadWalletSnapshot(),
+    vaultHomePromise,
+  ]);
   const data = buildHomeDashboardData({
     profile: props.profile,
     recommendedJobs: props.recommendedJobs,
@@ -47,6 +56,7 @@ async function HomeStatsAndMatches(props: HomeDashboardProps) {
     hiddenFeed: hidden.items,
     hiddenTotal: hidden.total,
     wallet,
+    vaultEarningsInr: vaultHome.earningsInr,
   });
 
   return (
