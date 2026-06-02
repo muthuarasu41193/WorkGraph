@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import HomeDashboard from "@/components/dashboard/home/HomeDashboard";
 import ProfileShell from "../../components/profile/premium/ProfileShell";
 import WorkGraphProviders from "../../components/providers/WorkGraphProviders";
 import { getSessionUser } from "../../lib/auth/session-server";
@@ -40,6 +41,16 @@ export default async function ProfileLayout({ children }: { children: React.Reac
 
   const semanticJobMatches = await loadSemanticJobMatches(profile, 12);
 
+  const homeDashboard = (
+    <HomeDashboard
+      profile={profile}
+      recommendedJobs={jobDashboard.recommended}
+      semanticJobMatches={semanticJobMatches}
+      jobPipeline={jobDashboard.pipeline}
+      feedKind={jobDashboard.feedKind}
+    />
+  );
+
   return (
     <WorkGraphProviders>
       <div className="wg-profile-root">
@@ -54,6 +65,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           feedKind={jobDashboard.feedKind}
           feedDemoHint={jobDashboard.feedDemoHint}
           communityPosts={jobDashboard.communityPosts}
+          homeDashboard={homeDashboard}
         />
         {children}
       </div>

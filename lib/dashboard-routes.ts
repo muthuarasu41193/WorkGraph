@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Briefcase,
+  ClipboardList,
   EyeOff,
   FileText,
   Home,
@@ -13,6 +14,7 @@ import {
 export type DashboardRouteId =
   | "home"
   | "jobs"
+  | "applications"
   | "hidden-jobs"
   | "job-discovery"
   | "vault"
@@ -41,6 +43,13 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     shortLabel: "Jobs",
     icon: Briefcase,
     description: "Browse live job listings matched to your profile",
+  },
+  {
+    id: "applications",
+    label: "Applications",
+    shortLabel: "Tracker",
+    icon: ClipboardList,
+    description: "Kanban pipeline for every role you have applied to",
   },
   {
     id: "job-discovery",

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "../../../lib/job-dashboard";
 import DashboardHydrator from "../../dashboard/DashboardHydrator";
 import DashboardLayout from "../../dashboard/layout/DashboardLayout";
@@ -11,16 +11,10 @@ import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
 import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
 import ProfileHero from "./ProfileHero";
-import ProfileCompleteness from "./ProfileCompleteness";
 import ProfileSkills from "./ProfileSkills";
 import ProfileExperience from "./ProfileExperience";
 import ProfileEducation from "./ProfileEducation";
-import ProfileAiInsights from "./ProfileAiInsights";
-import ProfileJobMatches from "./ProfileJobMatches";
-import ProfileActivity from "./ProfileActivity";
-import ProfileSidebar from "./ProfileSidebar";
-import HiddenDiscoveryPromoCard from "../../hidden-discovery/HiddenDiscoveryPromoCard";
-import { resolveProfileJobMatches, type JobMatchPreviewExt } from "./job-match-utils";
+import type { JobMatchPreviewExt } from "./job-match-utils";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import type { Profile } from "../../../lib/types";
 
@@ -49,9 +43,15 @@ const JobNewsSection = dynamic(() => import("../../dashboard/sections/JobNewsSec
   ssr: false,
 });
 
+const ApplicationsTracker = dynamic(() => import("../../applications/ApplicationsTracker"), {
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
+
 export type ProfileShellProps = {
   profile: Profile;
   userId: string;
+  homeDashboard: ReactNode;
   recommendedJobs?: RecommendedJobCard[];
   communityPosts?: RecommendedJobCard[];
   semanticJobMatches?: JobMatchPreviewExt[] | null;
@@ -62,35 +62,10 @@ export type ProfileShellProps = {
   feedDemoHint?: FeedDemoHint | null;
 };
 
-function ProfileKpiStrip({ profile }: { profile: Profile }) {
-  const completeness = Math.max(0, Math.min(100, profile.profile_completeness ?? 0));
-  const ats = profile.ats_score ?? profile.ats_feedback?.score ?? 0;
-
-  return (
-    <dl className="wg-profile-kpi" aria-label="Profile metrics">
-      <div>
-        <dt>Profile complete</dt>
-        <dd>{completeness}%</dd>
-      </div>
-      <div>
-        <dt>ATS score</dt>
-        <dd>{ats ? `${ats}` : "—"}</dd>
-      </div>
-      <div>
-        <dt>Skills listed</dt>
-        <dd>{profile.skills.length}</dd>
-      </div>
-      <div>
-        <dt>Experience</dt>
-        <dd>{profile.work_experience.length}</dd>
-      </div>
-    </dl>
-  );
-}
-
 function ProfileShellInner({
   profile,
   userId,
+  homeDashboard,
   recommendedJobs = [],
   communityPosts = [],
   semanticJobMatches,
@@ -101,10 +76,6 @@ function ProfileShellInner({
   feedDemoHint,
 }: ProfileShellProps) {
   const { theme, toggle } = useProfileTheme();
-  const jobMatches = useMemo(
-    () => resolveProfileJobMatches(semanticJobMatches, recommendedJobs, feedKind),
-    [semanticJobMatches, recommendedJobs, feedKind],
-  );
   const wgEnabled = workgraphApiEnabled();
   const atsJobs = useMemo(
     () => recommendedJobs.filter((j) => !j.isCommunity),
@@ -140,26 +111,8 @@ function ProfileShellInner({
 
   const sections = useMemo(
     () => ({
-      home: (
-        <div className="space-y-5">
-          <ProfileHero profile={profile} userId={userId} />
-          <ProfileKpiStrip profile={profile} />
-          <HiddenDiscoveryPromoCard />
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-            <div className="min-w-0 space-y-5">
-              <ProfileJobMatches jobs={jobMatches} liveListings={liveListings} feedKind={feedKind} />
-              <ProfileCompleteness
-                profile={profile}
-                atsScore={profile.ats_score}
-                atsFeedback={profile.ats_feedback}
-              />
-              <ProfileAiInsights />
-              <ProfileActivity />
-            </div>
-            <ProfileSidebar />
-          </div>
-        </div>
-      ),
+      home: homeDashboard,
+      applications: <ApplicationsTracker userId={userId} />,
       jobs: (
         <ProfileJobsView
           jobs={atsJobs.length ? atsJobs : recommendedJobs}
@@ -195,15 +148,15 @@ function ProfileShellInner({
       "job-news": <JobNewsSection />,
     }),
     [
+      homeDashboard,
       profile,
       userId,
-      jobMatches,
-      liveListings,
-      feedKind,
       atsJobs,
       recommendedJobs,
       feedDemoHint,
       jobPipeline,
+      feedKind,
+      liveListings,
     ],
   );
 
