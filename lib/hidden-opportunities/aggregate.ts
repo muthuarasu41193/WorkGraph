@@ -1,5 +1,6 @@
 import { readHiddenJobsCache, writeHiddenJobsCache } from "./cache";
 import { dedupeOpportunities } from "./dedupe";
+import { filterEmployerHiringOpportunities } from "./hiring-filter";
 import { fetchGitHubOpportunities } from "./providers/github";
 import { fetchHackerNewsOpportunities } from "./providers/hacker-news";
 import { fetchRedditOpportunities } from "./providers/reddit";
@@ -96,7 +97,7 @@ export async function fetchAllHiddenOpportunities(
   let expiresAt: string | null = null;
 
   if (cached) {
-    base = onlyDiscoverySources(cached.opportunities);
+    base = filterEmployerHiringOpportunities(onlyDiscoverySources(cached.opportunities));
     providerErrors = cached.providerErrors as Partial<Record<HiddenOpportunitySource, string>>;
     fromCache = true;
     cachedAt = cached.cachedAt;
@@ -116,7 +117,7 @@ export async function fetchAllHiddenOpportunities(
       merged.push(...result.items);
     }
 
-    base = onlyDiscoverySources(dedupeOpportunities(merged));
+    base = filterEmployerHiringOpportunities(onlyDiscoverySources(dedupeOpportunities(merged)));
     writeHiddenJobsCache(base, providerErrors);
     const fresh = readHiddenJobsCache();
     cachedAt = fresh?.cachedAt ?? new Date().toISOString();

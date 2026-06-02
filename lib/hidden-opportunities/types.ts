@@ -30,6 +30,8 @@ export type RedditRawOpportunity = {
   author: string;
   postedAt: string;
   category: string;
+  selftext?: string;
+  linkFlair?: string;
 };
 
 export type HiddenJobsQuery = {

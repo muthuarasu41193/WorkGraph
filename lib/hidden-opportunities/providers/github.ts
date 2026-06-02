@@ -1,12 +1,14 @@
+import { isEmployerHiringPost } from "../hiring-filter";
 import { fetchJson } from "../http";
 import { scoreOpportunity } from "../ranking";
 import type { HiddenOpportunity } from "../types";
 
 const SEARCH_QUERIES = [
-  "hiring in:title,body",
-  '"job opening" in:title,body',
-  '"looking for engineer" in:title,body',
-  '"remote role" in:title,body',
+  "hiring in:title,body -\"for hire\" -\"available for hire\" -\"looking for work\"",
+  "\"job opening\" in:title,body -\"for hire\"",
+  "\"we are hiring\" in:title,body",
+  "\"looking for engineer\" in:title,body -\"looking for work\"",
+  "\"remote role\" in:title,body -\"open to work\"",
 ] as const;
 
 type GitHubSearchItem = {
@@ -94,6 +96,15 @@ export async function fetchGitHubOpportunities(): Promise<HiddenOpportunity[]> {
 
         const repo = repoNameFromUrl(item.repository_url);
 
+        if (
+          !isEmployerHiringPost({
+            title,
+            source: "github",
+          })
+        ) {
+          continue;
+        }
+
         results.push(
           scoreOpportunity({
             id: key,
@@ -105,7 +116,7 @@ export async function fetchGitHubOpportunities(): Promise<HiddenOpportunity[]> {
             author: item.user?.login ? `@${item.user.login}` : undefined,
             postedAt: item.created_at || new Date().toISOString(),
             category: kind,
-            tags: ["github", kind],
+            tags: ["github", kind, "hiring"],
           }),
         );
       }

@@ -1,3 +1,4 @@
+import { isEmployerHiringPost } from "../hiring-filter";
 import { fetchJson } from "../http";
 import { scoreOpportunity } from "../ranking";
 import type { HiddenOpportunity } from "../types";
@@ -26,10 +27,7 @@ type AlgoliaResponse = {
   hits?: AlgoliaHit[];
 };
 
-const THREAD_QUERIES = [
-  { query: "Ask HN: Who is hiring", category: "employer" as const },
-  { query: "Ask HN: Who wants to be hired", category: "candidate" as const },
-];
+const THREAD_QUERIES = [{ query: "Ask HN: Who is hiring", category: "employer" as const }];
 
 function isHiringMegathreadTitle(title: string, category: "employer" | "candidate"): boolean {
   const t = title.trim();
@@ -146,17 +144,28 @@ function commentToOpportunity(
   const body = String(comment.text || "").trim();
   if (body.length < 20) return null;
 
+  const title = commentTitle(body);
+  if (
+    !isEmployerHiringPost({
+      title,
+      body,
+      source: "hackernews",
+    })
+  ) {
+    return null;
+  }
+
   return scoreOpportunity({
     id: `hackernews:${threadId}:${comment.id}`,
     source: "hackernews",
-    title: commentTitle(body),
+    title,
     url: `https://news.ycombinator.com/item?id=${comment.id}`,
     company: "Hacker News",
     location: category === "employer" ? "Who is hiring thread" : "Who wants to be hired thread",
     author: comment.by ? `@${comment.by}` : undefined,
     postedAt: toIso(comment.time),
     category,
-    tags: ["hackernews", "comment", category === "candidate" ? "for-hire" : "hiring"],
+    tags: ["hackernews", "comment", "hiring"],
   });
 }
 

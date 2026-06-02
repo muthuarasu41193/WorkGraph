@@ -1,4 +1,5 @@
-import { scoreOpportunity } from "../ranking";
+import { isEmployerHiringOpportunity } from "../hiring-filter";
+import { normalizeRedditPost } from "./reddit-normalize";
 import type { HiddenOpportunity, RedditRawOpportunity } from "../types";
 
 export function redditUserAgent(): string {
@@ -55,6 +56,8 @@ export function parseRedditAtomFeed(xml: string, subreddit: string): RedditRawOp
           : `/u/${authorRaw.replace(/^\/?u\//i, "")}`
       : "unknown";
 
+    const selftext = atomTag(block, "content") || atomTag(block, "summary");
+
     results.push({
       id: `reddit:${subreddit}:${postId}`,
       source: "reddit",
@@ -63,6 +66,7 @@ export function parseRedditAtomFeed(xml: string, subreddit: string): RedditRawOp
       author,
       postedAt,
       category: subreddit,
+      selftext: selftext || undefined,
     });
   }
 
@@ -70,19 +74,12 @@ export function parseRedditAtomFeed(xml: string, subreddit: string): RedditRawOp
 }
 
 export function redditRssToOpportunities(raw: RedditRawOpportunity[]): HiddenOpportunity[] {
-  return raw.map((item) =>
-    scoreOpportunity({
-      id: item.id,
-      source: "reddit",
-      title: item.title,
-      url: item.url,
-      author: item.author,
-      company: `r/${item.category}`,
-      postedAt: item.postedAt,
-      category: item.category,
-      tags: ["reddit", item.category],
-    }),
-  );
+  const results: HiddenOpportunity[] = [];
+  for (const item of raw) {
+    const normalized = normalizeRedditPost(item);
+    if (isEmployerHiringOpportunity(normalized)) results.push(normalized);
+  }
+  return results;
 }
 
 export async function fetchSubredditRss(subreddit: string): Promise<HiddenOpportunity[]> {

@@ -1,23 +1,18 @@
+import { isEmployerHiringOpportunity, REDDIT_HIRING_SUBREDDITS } from "../hiring-filter";
 import { fetchJson } from "../http";
 import { fetchSubredditRss, redditUserAgent } from "./reddit-rss";
 import type { HiddenOpportunity, RedditRawOpportunity } from "../types";
 import { normalizeRedditPost } from "./reddit-normalize";
 
 export { normalizeRedditPost } from "./reddit-normalize";
-
-export const REDDIT_SUBREDDITS = [
-  "forhire",
-  "jobs",
-  "remotejobs",
-  "remotework",
-  "freelance",
-  "cscareerquestions",
-] as const;
+export { REDDIT_HIRING_SUBREDDITS as REDDIT_SUBREDDITS };
 
 type RedditListing = {
   data?: {
     id?: string;
     title?: string;
+    selftext?: string;
+    link_flair_text?: string;
     url?: string;
     author?: string;
     created_utc?: number;
@@ -63,9 +58,13 @@ async function fetchSubredditJson(subreddit: string, limit: number): Promise<Hid
       author: post.author ? `u/${post.author}` : "unknown",
       postedAt: toIso(post.created_utc),
       category: post.subreddit || subreddit,
+      selftext: post.selftext?.trim() || undefined,
+      linkFlair: post.link_flair_text?.trim() || undefined,
     };
 
-    results.push(normalizeRedditPost(raw));
+    const normalized = normalizeRedditPost(raw);
+    if (!isEmployerHiringOpportunity(normalized)) continue;
+    results.push(normalized);
   }
 
   return results;
@@ -86,7 +85,7 @@ export async function fetchRedditOpportunities(): Promise<HiddenOpportunity[]> {
   );
   const subreddits =
     process.env.HIDDEN_REDDIT_SUBREDDITS?.split(",").map((s) => s.trim().replace(/^r\//i, "")).filter(Boolean) ??
-    [...REDDIT_SUBREDDITS];
+    [...REDDIT_HIRING_SUBREDDITS];
 
   const results: HiddenOpportunity[] = [];
   const seenUrls = new Set<string>();
