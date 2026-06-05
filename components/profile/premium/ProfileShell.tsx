@@ -49,6 +49,14 @@ const ApplicationsTracker = dynamic(() => import("../../applications/Application
   ssr: false,
 });
 
+const WorkgraphDirectSection = dynamic(
+  () => import("../../employer/seeker/WorkgraphDirectSection"),
+  {
+    loading: () => <DashboardSectionSkeleton />,
+    ssr: false,
+  },
+);
+
 export type ProfileShellProps = {
   profile: Profile;
   userId: string;
@@ -148,6 +156,14 @@ function ProfileShellInner({
         </div>
       ),
       "job-news": <JobNewsSection />,
+      "workgraph-direct": (
+        <WorkgraphDirectSection
+          skills={profile.skills}
+          headline={profile.headline}
+          summary={profile.summary}
+          profileCompleteness={profile.profile_completeness ?? 0}
+        />
+      ),
     }),
     [
       homeDashboard,

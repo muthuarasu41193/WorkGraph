@@ -223,6 +223,16 @@ export default function LoginPage() {
           </Link>
         </p>
 
+        <p className="text-center text-[14px] text-muted-foreground">
+          Hiring?{" "}
+          <Link
+            href="/employer/signup"
+            className="font-semibold text-primary underline decoration-primary/30 underline-offset-4"
+          >
+            Post hiring signals
+          </Link>
+        </p>
+
         <p className="text-center text-xs leading-relaxed text-muted-foreground/70">
           Keep your password secure and do not share it with anyone.
         </p>

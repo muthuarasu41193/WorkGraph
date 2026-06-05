@@ -207,6 +207,13 @@ export default function SignupPage() {
             Sign in
           </Link>
         </p>
+
+        <p className="text-center text-[14px] text-muted-foreground">
+          Hiring talent?{" "}
+          <Link href="/employer/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
+            Employer signup
+          </Link>
+        </p>
       </div>
     </AuthSplitShell>
   );

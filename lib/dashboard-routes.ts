@@ -7,6 +7,7 @@ import {
   Home,
   Newspaper,
   Radar,
+  Radio,
   User,
 } from "lucide-react";
 
@@ -19,7 +20,8 @@ export type DashboardRouteId =
   | "job-discovery"
   | "vault"
   | "profile"
-  | "job-news";
+  | "job-news"
+  | "workgraph-direct";
 
 export type DashboardRoute = {
   id: DashboardRouteId;
@@ -43,6 +45,13 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     shortLabel: "Jobs",
     icon: Briefcase,
     description: "Browse live job listings matched to your profile",
+  },
+  {
+    id: "workgraph-direct",
+    label: "WorkGraph Direct",
+    shortLabel: "Direct",
+    icon: Radio,
+    description: "Connect to employer hiring signals with your profile graph",
   },
   {
     id: "applications",
