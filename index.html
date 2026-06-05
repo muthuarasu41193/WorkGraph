@@ -223,15 +223,7 @@ a, button, input, textarea {
 }
 
 .nav-right {
-  display: flex; align-items: center; gap: 16px;
-  flex-shrink: 0;
-}
-
-.nav-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--border);
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
 }
 
 .nav-badge {
@@ -284,15 +276,6 @@ a, button, input, textarea {
   border-color: rgba(185, 28, 28, 0.35);
   color: var(--red);
   background: rgba(185, 28, 28, 0.04);
-}
-
-.nav-sign-in-employer {
-  color: var(--red);
-  font-weight: 600;
-}
-
-.nav-sign-in-employer:hover {
-  color: var(--red-hover);
 }
 
 /* ============================================
@@ -380,33 +363,7 @@ a, button, input, textarea {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
-  margin: 0 auto 1.25rem;
-}
-
-.hero-employer-line {
-  text-align: center;
-  font-size: 15px;
-  color: var(--muted);
   margin: 0 auto 3.5rem;
-  max-width: 520px;
-  line-height: 1.6;
-}
-
-.hero-employer-line a {
-  color: var(--red);
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(185, 28, 28, 0.25);
-}
-
-.hero-employer-line a:hover {
-  color: var(--red-hover);
-  border-bottom-color: var(--red-hover);
-}
-
-.hero-employer-line .sep {
-  margin: 0 0.35rem;
-  color: var(--border);
 }
 
 /* ============================================
@@ -1725,7 +1682,7 @@ a, button, input, textarea {
 .social-link:hover { color: var(--text); border-color: rgba(15,23,42,.3); }
 
 .footer-links-grid {
-  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: grid; grid-template-columns: repeat(4,1fr);
   gap: 20px;
 }
 
@@ -2174,7 +2131,6 @@ body {
    ============================================ */
 @media (max-width: 900px) {
   .nav-links { display: none; }
-  .nav-divider { display: none; }
   .employers-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
   .community-jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2206,9 +2162,6 @@ body {
   .hero { padding: 160px 0 60px; }
   .navbar { top: 52px; }
   .announcement-bar { font-size: 11px; padding: 8px 12px; }
-  .nav-right { gap: 10px; }
-  .nav-cta { padding: 8px 14px; font-size: 13px; }
-  .nav-sign-in { font-size: 13px; }
   .nav-badge span:last-child { display: none; }
   .footer-links-grid { grid-template-columns: 1fr 1fr; }
   .footer-bottom { text-align: center; }
@@ -2816,13 +2769,12 @@ p, li,
     </a>
     <div class="nav-links">
       <a href="#features">Hidden jobs</a>
-      <a href="#for-employers">For employers</a>
       <a href="#profile">Prep marketplace</a>
+      <a href="#roadmap">Resume tools</a>
       <a href="#pricing">Pricing</a>
     </div>
     <div class="nav-right">
       <a href="/login" class="nav-sign-in">Sign in</a>
-      <span class="nav-divider" aria-hidden="true"></span>
       <a href="#waitlist" class="nav-cta">Get early access</a>
     </div>
   </div>
@@ -2847,15 +2799,6 @@ p, li,
 
     <p class="hero-trust-line" data-aos="fade-up" data-aos-delay="140">
       Free for the first 500 users · No credit card required
-    </p>
-
-    <p class="hero-employer-line" data-aos="fade-up" data-aos-delay="150">
-      Hiring talent?
-      <a href="/employer/signup">Create employer account</a>
-      <span class="sep">·</span>
-      <a href="/login?next=/employer/dashboard">Employer sign in</a>
-      <span class="sep">·</span>
-      <a href="#for-employers">See WorkGraph Direct</a>
     </p>
 
     <!-- WAITLIST FORM -->
@@ -3811,7 +3754,7 @@ p, li,
           </div>
           <span class="logo-wordmark"><span class="logo-work">work</span><span class="logo-graph">graph</span></span>
         </div>
-        <p>Find hidden jobs. Build your profile.<br/>Get hired faster — or <a href="/employer/signup" style="color:var(--red);font-weight:600;text-decoration:none">hire via WorkGraph Direct</a>.</p>
+        <p>Find hidden jobs. Build your profile.<br/>Get hired faster.</p>
         <div class="footer-social">
           <a href="#" class="social-link">Pro Network</a>
           <a href="#" class="social-link">Twitter/X</a>
@@ -3826,13 +3769,6 @@ p, li,
           <a href="#pricing">Pricing</a>
           <a href="#roadmap">Roadmap</a>
           <a href="#waitlist">Early Access</a>
-        </div>
-        <div class="footer-col">
-          <h4>Employers</h4>
-          <a href="/employer/signup">Post hiring signals</a>
-          <a href="/login?next=/employer/dashboard">Employer sign in</a>
-          <a href="/employer/onboarding">Company setup</a>
-          <a href="#for-employers">WorkGraph Direct</a>
         </div>
         <div class="footer-col">
           <h4>Profile</h4>
