@@ -50,6 +50,16 @@ def _supabase_rest_base_and_key() -> tuple[str, str]:
     return url, key
 
 
+def _dedupe_by_apply_url(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Last row per apply_url wins — matches SQLAlchemy ingest sequential upsert order."""
+    by_url: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        url = str(row.get("apply_url") or "").strip()
+        if url:
+            by_url[url] = row
+    return list(by_url.values())
+
+
 def _row_to_json(row: dict[str, Any]) -> dict[str, Any]:
     posted = row.get("posted_at")
     posted_out: str | None
@@ -94,7 +104,8 @@ def persist_normalized_jobs_via_rest(normalized_jobs: list[dict[str, Any]]) -> d
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates,return=minimal",
     }
-    params = {"on_conflict": "external_id"}
+    # public.jobs dedupes on apply_url (see runner.persist_normalized_jobs); external_id is secondary.
+    params = {"on_conflict": "apply_url"}
 
     try:
         chunk_size = int(os.getenv("JOB_INGEST_REST_CHUNK", str(_DEFAULT_CHUNK)).strip())
@@ -102,12 +113,20 @@ def persist_normalized_jobs_via_rest(normalized_jobs: list[dict[str, Any]]) -> d
         chunk_size = _DEFAULT_CHUNK
     chunk_size = max(1, min(chunk_size, 100))
 
-    examined = len(normalized_jobs)
+    deduped = _dedupe_by_apply_url(normalized_jobs)
+    if len(deduped) < len(normalized_jobs):
+        LOG.info(
+            "REST ingest deduped by apply_url: %s -> %s rows",
+            len(normalized_jobs),
+            len(deduped),
+        )
+
+    examined = len(deduped)
     batches_ok = 0
     rows_upserted = 0
 
     for i in range(0, examined, chunk_size):
-        chunk = normalized_jobs[i : i + chunk_size]
+        chunk = deduped[i : i + chunk_size]
         payload = [_row_to_json(r) for r in chunk]
         resp = requests.post(
             endpoint,
