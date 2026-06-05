@@ -260,6 +260,33 @@ a, button, input, textarea {
   box-shadow: var(--shadow-md);
 }
 
+.nav-cta-outline {
+  padding: 8px 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-cta-outline:hover {
+  border-color: rgba(185, 28, 28, 0.35);
+  color: var(--red);
+  background: rgba(185, 28, 28, 0.04);
+}
+
+.nav-sign-in-employer {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.nav-sign-in-employer:hover {
+  color: var(--red-hover);
+}
+
 /* ============================================
    HERO
    ============================================ */
@@ -345,7 +372,91 @@ a, button, input, textarea {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
+  margin: 0 auto 1.25rem;
+}
+
+.hero-employer-line {
+  text-align: center;
+  font-size: 15px;
+  color: var(--muted);
   margin: 0 auto 3.5rem;
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+.hero-employer-line a {
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+.hero-employer-line a:hover {
+  color: var(--red-hover);
+  border-bottom-color: var(--red-hover);
+}
+
+.hero-employer-line .sep {
+  margin: 0 0.35rem;
+  color: var(--border);
+}
+
+/* ============================================
+   EMPLOYERS SECTION
+   ============================================ */
+.employers-section {
+  background: linear-gradient(180deg, rgba(185, 28, 28, 0.04) 0%, transparent 100%);
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.employers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.employer-card {
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.employer-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.employer-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.employers-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.employers-cta-note {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.employers-cta-note a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ============================================
@@ -1606,7 +1717,7 @@ a, button, input, textarea {
 .social-link:hover { color: var(--text); border-color: rgba(15,23,42,.3); }
 
 .footer-links-grid {
-  display: grid; grid-template-columns: repeat(4,1fr);
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 20px;
 }
 
@@ -2055,6 +2166,7 @@ body {
    ============================================ */
 @media (max-width: 900px) {
   .nav-links { display: none; }
+  .employers-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
   .community-jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .profile-grid { grid-template-columns: 1fr; }
@@ -2085,6 +2197,9 @@ body {
   .hero { padding: 160px 0 60px; }
   .navbar { top: 52px; }
   .announcement-bar { font-size: 11px; padding: 8px 12px; }
+  .nav-right { gap: 8px; }
+  .nav-cta-outline { padding: 8px 12px; font-size: 13px; }
+  .nav-sign-in { font-size: 13px; }
   .nav-badge span:last-child { display: none; }
   .footer-links-grid { grid-template-columns: 1fr 1fr; }
   .footer-bottom { text-align: center; }
@@ -2692,12 +2807,15 @@ p, li,
     </a>
     <div class="nav-links">
       <a href="#features">Hidden jobs</a>
+      <a href="#for-employers">For employers</a>
       <a href="#profile">Prep marketplace</a>
       <a href="#roadmap">Resume tools</a>
       <a href="#pricing">Pricing</a>
     </div>
     <div class="nav-right">
-      <a href="/login" class="nav-sign-in">Sign in</a>
+      <a href="/login" class="nav-sign-in">Jobseeker sign in</a>
+      <a href="/login?next=/employer/dashboard" class="nav-sign-in nav-sign-in-employer">Employer sign in</a>
+      <a href="/employer/signup" class="nav-cta-outline">Post signals</a>
       <a href="#waitlist" class="nav-cta">Get early access</a>
     </div>
   </div>
@@ -2722,6 +2840,15 @@ p, li,
 
     <p class="hero-trust-line" data-aos="fade-up" data-aos-delay="140">
       Free for the first 500 users · No credit card required
+    </p>
+
+    <p class="hero-employer-line" data-aos="fade-up" data-aos-delay="150">
+      Hiring talent?
+      <a href="/employer/signup">Create employer account</a>
+      <span class="sep">·</span>
+      <a href="/login?next=/employer/dashboard">Employer sign in</a>
+      <span class="sep">·</span>
+      <a href="#for-employers">See WorkGraph Direct</a>
     </p>
 
     <!-- WAITLIST FORM -->
@@ -3594,6 +3721,42 @@ p, li,
   </div>
 </section>
 
+<!-- FOR EMPLOYERS -->
+<section class="section employers-section" id="for-employers">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <span class="section-tag">WorkGraph Direct</span>
+      <h2>Hire with hiring signals —<br/><span class="gradient-text">not another ATS clone</span></h2>
+      <p>Employers post intent with fit criteria. Jobseekers connect with their WorkGraph profile — you review alignment in a Pulse inbox, not a resume spam folder.</p>
+    </div>
+
+    <div class="employers-grid" data-aos="fade-up" data-aos-delay="80">
+      <div class="employer-card">
+        <h3>Why now?</h3>
+        <p>Every signal explains what changed that made the role real — replacing copy-pasted job descriptions.</p>
+      </div>
+      <div class="employer-card">
+        <h3>Fit signals</h3>
+        <p>Define weighted skills, traits, and context. We score seekers against your criteria automatically.</p>
+      </div>
+      <div class="employer-card">
+        <h3>Pulse inbox</h3>
+        <p>Move connections through dialogue stages — Incoming, Reviewing, Aligned — not generic ATS funnel jargon.</p>
+      </div>
+    </div>
+
+    <div class="employers-cta-row" data-aos="fade-up" data-aos-delay="120">
+      <a href="/employer/signup" class="hero-cta-primary">Create employer account</a>
+      <a href="/login?next=/employer/dashboard" class="nav-cta-outline">Employer sign in</a>
+      <a href="/employer/dashboard" class="hero-cta-secondary">Employer dashboard →</a>
+    </div>
+    <p class="employers-cta-note" data-aos="fade-up" data-aos-delay="140">
+      Already verified? Your public company page lives at <code>/company/your-slug</code>.
+      New here? <a href="/employer/onboarding">Complete company setup</a> after signup.
+    </p>
+  </div>
+</section>
+
 <!-- FINAL CTA -->
 <section class="final-cta-section">
   <div class="container">
@@ -3641,7 +3804,7 @@ p, li,
           </div>
           <span class="logo-wordmark"><span class="logo-work">work</span><span class="logo-graph">graph</span></span>
         </div>
-        <p>Find hidden jobs. Build your profile.<br/>Get hired faster.</p>
+        <p>Find hidden jobs. Build your profile.<br/>Get hired faster — or <a href="/employer/signup" style="color:var(--red);font-weight:600;text-decoration:none">hire via WorkGraph Direct</a>.</p>
         <div class="footer-social">
           <a href="#" class="social-link">Pro Network</a>
           <a href="#" class="social-link">Twitter/X</a>
@@ -3656,6 +3819,13 @@ p, li,
           <a href="#pricing">Pricing</a>
           <a href="#roadmap">Roadmap</a>
           <a href="#waitlist">Early Access</a>
+        </div>
+        <div class="footer-col">
+          <h4>Employers</h4>
+          <a href="/employer/signup">Post hiring signals</a>
+          <a href="/login?next=/employer/dashboard">Employer sign in</a>
+          <a href="/employer/onboarding">Company setup</a>
+          <a href="#for-employers">WorkGraph Direct</a>
         </div>
         <div class="footer-col">
           <h4>Profile</h4>
