@@ -1,6 +1,7 @@
 "use client";
 
 import { Bookmark, ExternalLink } from "lucide-react";
+import { RedditLogo } from "@/components/icons/RedditLogo";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,25 @@ const SOURCE_LABELS: Record<string, string> = {
   hackernews: "Hacker News",
   github: "GitHub",
 };
+
+function SourceBadge({ source }: { source: string }) {
+  const label = SOURCE_LABELS[source] ?? source;
+
+  if (source === "reddit") {
+    return (
+      <Badge variant="secondary" className="gap-1.5 py-0.5 pl-1 pr-2 text-[10px] font-medium normal-case tracking-normal">
+        <RedditLogo className="h-3.5 w-3.5 shrink-0" />
+        {label}
+      </Badge>
+    );
+  }
+
+  return (
+    <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+      {label}
+    </Badge>
+  );
+}
 
 function formatPostedDate(iso: string): string {
   const ms = Date.parse(iso);
@@ -47,9 +67,7 @@ export default function HiddenOpportunityCard({
       <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-              {SOURCE_LABELS[opportunity.source] ?? opportunity.source}
-            </Badge>
+            <SourceBadge source={opportunity.source} />
             {opportunity.score > 0 ? (
               <Badge variant="outline" className="text-[10px]">
                 Score {opportunity.score}
