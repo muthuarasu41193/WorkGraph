@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import type { FitSignal, HiringIntent, HiringSignal, WorkMode } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
+import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,18 +49,30 @@ export default function HiringSignalForm({ initial }: Props) {
     setFitSignals((prev) => prev.map((f, i) => (i === index ? { ...f, ...patch } : f)));
   }
 
+  function validate(): string | null {
+    if (!title.trim()) return "Signal title is required.";
+    if (!whyNow.trim()) return "Why now is required — explain what made this role real.";
+    return null;
+  }
+
   async function submit(status: "draft" | "live") {
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setError("");
     setSaving(true);
     try {
       const payload = {
-        title,
-        location,
+        title: title.trim(),
+        location: location.trim(),
         work_mode: workMode,
         hiring_intent: hiringIntent,
-        why_now: whyNow,
-        description,
-        comp_hint: compHint,
+        why_now: whyNow.trim(),
+        description: description.trim(),
+        comp_hint: compHint.trim(),
         fit_signals: fitSignals.filter((f) => f.label.trim()),
         status,
       };
@@ -67,18 +80,28 @@ export default function HiringSignalForm({ initial }: Props) {
       const method = initial ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
+        credentials: "include",
         body: JSON.stringify(payload),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string; signal?: { id: string } };
+      const data = (await readApiJson(res)) as {
+        ok?: boolean;
+        error?: string;
+        signal?: { id: string };
+      };
       if (!res.ok || !data.ok) {
-        setError(data.error ?? "Could not save signal");
+        setError(apiErrorMessage(data) ?? data.error ?? "Could not save signal");
         return;
       }
-      router.push(`/employer/signals/${data.signal?.id ?? initial?.id}`);
+      const signalId = data.signal?.id ?? initial?.id;
+      if (!signalId) {
+        setError("Signal saved but no id was returned — refresh and try again.");
+        return;
+      }
+      router.push(`/employer/signals/${signalId}`);
       router.refresh();
-    } catch {
-      setError("Network error — try again");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Network error — try again");
     } finally {
       setSaving(false);
     }
@@ -177,6 +200,7 @@ export default function HiringSignalForm({ initial }: Props) {
           What changed that made this role real? This replaces generic &quot;About the role&quot; boilerplate.
         </p>
         <Textarea
+          id="why-now"
           value={whyNow}
           onChange={(e) => setWhyNow(e.target.value)}
           rows={3}

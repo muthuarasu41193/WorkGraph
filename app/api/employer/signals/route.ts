@@ -8,9 +8,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const signals = await listEmployerSignals();
+    const signals = await listEmployerSignals(request);
     return NextResponse.json({ ok: true, signals });
   } catch (err) {
     if (err instanceof EmployerApiError) {
@@ -24,7 +24,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as HiringSignalInput;
-    const signal = await createEmployerSignal(body);
+    const signal = await createEmployerSignal(body, request);
     return NextResponse.json({ ok: true, signal }, { status: 201 });
   } catch (err) {
     if (err instanceof EmployerApiError) {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   BadgeCheck,
   Building2,
@@ -14,6 +15,7 @@ import {
 import type { HiringSignal, SignalConnection } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { scoreFitSignals } from "@/lib/employer/fit-signals";
+import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +42,8 @@ export default function WorkgraphDirectSection({
   summary,
   profileCompleteness,
 }: Props) {
+  const searchParams = useSearchParams();
+  const deepLinkSignalId = searchParams.get("signal");
   const [signals, setSignals] = useState<HiringSignal[]>([]);
   const [connections, setConnections] = useState<SignalConnection[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,11 +68,14 @@ export default function WorkgraphDirectSection({
     setError("");
     try {
       const [sigRes, connRes] = await Promise.all([
-        fetch("/api/hiring-signals"),
-        fetch("/api/hiring-signals/connect"),
+        fetch("/api/hiring-signals", { credentials: "include" }),
+        fetch("/api/hiring-signals/connect", {
+          credentials: "include",
+          headers: await withSupabaseAuthHeaders(),
+        }),
       ]);
-      const sigData = (await sigRes.json()) as { ok?: boolean; signals?: HiringSignal[] };
-      const connData = (await connRes.json()) as { ok?: boolean; connections?: SignalConnection[] };
+      const sigData = (await readApiJson(sigRes)) as { ok?: boolean; signals?: HiringSignal[] };
+      const connData = (await readApiJson(connRes)) as { ok?: boolean; connections?: SignalConnection[] };
       if (sigData.ok) setSignals(sigData.signals ?? []);
       if (connData.ok) setConnections(connData.connections ?? []);
       if (!sigRes.ok) setError("Could not load hiring signals");
@@ -83,6 +90,12 @@ export default function WorkgraphDirectSection({
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!deepLinkSignalId || loading || signals.length === 0) return;
+    const target = signals.find((s) => s.id === deepLinkSignalId);
+    if (target) setConnectTarget(target);
+  }, [deepLinkSignalId, loading, signals]);
+
   async function submitConnection() {
     if (!connectTarget) return;
     setConnecting(true);
@@ -90,12 +103,13 @@ export default function WorkgraphDirectSection({
     try {
       const res = await fetch("/api/hiring-signals/connect", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
+        credentials: "include",
         body: JSON.stringify({ signalId: connectTarget.id, connectionNote: note }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await readApiJson(res)) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        setConnectError(data.error ?? "Could not connect");
+        setConnectError(apiErrorMessage(data) ?? data.error ?? "Could not connect");
         return;
       }
       setConnectTarget(null);

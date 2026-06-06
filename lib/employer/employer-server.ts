@@ -31,8 +31,8 @@ export class EmployerApiError extends Error {
   }
 }
 
-async function requireEmployerSession() {
-  const user = await getSessionUser();
+async function requireEmployerSession(request?: Request) {
+  const user = await getSessionUser(request);
   if (!user) throw new EmployerApiError("Unauthorized", 401);
   if (!supabaseConfigured()) throw new EmployerApiError("Supabase is not configured", 503);
   const supabase = createServerSupabaseClient(await cookies());
@@ -137,8 +137,8 @@ function mapConnectionRow(row: Record<string, unknown>): SignalConnection {
   };
 }
 
-export async function getEmployerProfileForUser(): Promise<EmployerProfile | null> {
-  const { user, supabase } = await requireEmployerSession();
+export async function getEmployerProfileForUser(request?: Request): Promise<EmployerProfile | null> {
+  const { user, supabase } = await requireEmployerSession(request);
   const { data, error } = await supabase
     .from("employer_profiles")
     .select("*")
@@ -149,15 +149,18 @@ export async function getEmployerProfileForUser(): Promise<EmployerProfile | nul
   return mapEmployerRow(data as Record<string, unknown>);
 }
 
-export async function upsertEmployerProfile(input: {
-  company_name: string;
-  company_slug?: string;
-  tagline?: string;
-  website_url?: string;
-  hiring_philosophy?: string;
-  team_size?: string;
-}): Promise<EmployerProfile> {
-  const { user, supabase } = await requireEmployerSession();
+export async function upsertEmployerProfile(
+  input: {
+    company_name: string;
+    company_slug?: string;
+    tagline?: string;
+    website_url?: string;
+    hiring_philosophy?: string;
+    team_size?: string;
+  },
+  request?: Request,
+): Promise<EmployerProfile> {
+  const { user, supabase } = await requireEmployerSession(request);
   const company_name = input.company_name?.trim();
   if (!company_name) throw new EmployerApiError("Company name is required", 400);
 
@@ -187,8 +190,8 @@ export async function upsertEmployerProfile(input: {
   return mapEmployerRow(data as Record<string, unknown>);
 }
 
-export async function listEmployerSignals(): Promise<HiringSignal[]> {
-  const { user, supabase } = await requireEmployerSession();
+export async function listEmployerSignals(request?: Request): Promise<HiringSignal[]> {
+  const { user, supabase } = await requireEmployerSession(request);
   const { data, error } = await supabase
     .from("hiring_signals")
     .select("*")
@@ -198,8 +201,8 @@ export async function listEmployerSignals(): Promise<HiringSignal[]> {
   return (data ?? []).map((row) => mapSignalRow(row as Record<string, unknown>));
 }
 
-export async function getEmployerSignal(signalId: string): Promise<HiringSignal | null> {
-  const { user, supabase } = await requireEmployerSession();
+export async function getEmployerSignal(signalId: string, request?: Request): Promise<HiringSignal | null> {
+  const { user, supabase } = await requireEmployerSession(request);
   const { data, error } = await supabase
     .from("hiring_signals")
     .select("*")
@@ -223,9 +226,9 @@ export type HiringSignalInput = {
   status?: HiringSignalStatus;
 };
 
-export async function createEmployerSignal(input: HiringSignalInput): Promise<HiringSignal> {
-  const { user, supabase } = await requireEmployerSession();
-  const profile = await getEmployerProfileForUser();
+export async function createEmployerSignal(input: HiringSignalInput, request?: Request): Promise<HiringSignal> {
+  const { user, supabase } = await requireEmployerSession(request);
+  const profile = await getEmployerProfileForUser(request);
   if (!profile) throw new EmployerApiError("Complete employer onboarding first", 400);
 
   const title = input.title?.trim();
@@ -262,9 +265,10 @@ export async function createEmployerSignal(input: HiringSignalInput): Promise<Hi
 export async function updateEmployerSignal(
   signalId: string,
   input: HiringSignalInput,
+  request?: Request,
 ): Promise<HiringSignal> {
-  const { user, supabase } = await requireEmployerSession();
-  const existing = await getEmployerSignal(signalId);
+  const { user, supabase } = await requireEmployerSession(request);
+  const existing = await getEmployerSignal(signalId, request);
   if (!existing) throw new EmployerApiError("Signal not found", 404);
 
   const patch: Record<string, unknown> = {};

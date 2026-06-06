@@ -7,9 +7,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const profile = await getEmployerProfileForUser();
+    const profile = await getEmployerProfileForUser(request);
     return NextResponse.json({ ok: true, profile });
   } catch (err) {
     if (err instanceof EmployerApiError) {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       website_url: body.website_url,
       hiring_philosophy: body.hiring_philosophy,
       team_size: body.team_size,
-    });
+    }, request);
     return NextResponse.json({ ok: true, profile });
   } catch (err) {
     if (err instanceof EmployerApiError) {

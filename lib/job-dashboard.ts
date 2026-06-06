@@ -10,6 +10,10 @@ import { unstable_noStore as noStore } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchLiveJobsCatalog, mapJobRowToCard } from "./jobs-catalog";
 import { rankJobRows, type ProfileMatchInput } from "./job-match";
+import {
+  fetchLiveHiringSignalJobCards,
+  mergeHiringSignalJobCards,
+} from "./employer/hiring-signal-jobs";
 
 export { fetchLiveJobsCatalog, LIVE_JOBS_FETCH_PAGE_SIZE, mapJobRowToCard } from "./jobs-catalog";
 
@@ -47,6 +51,7 @@ export type JobFeedSource =
   | "glassdoor"
   | "levels"
   | "facebook"
+  | "workgraph"
   | "other";
 
 export type JobCardKind = "listing" | "post";
@@ -395,10 +400,30 @@ function countBySourceFromJobRows(rows: JobRow[]): Partial<Record<JobFeedSource,
   return bySource;
 }
 
+async function withHiringSignalsInFeed(
+  supabase: SupabaseClient,
+  profile: ProfileMatchInput,
+  payload: ProfileJobsPayload,
+): Promise<ProfileJobsPayload> {
+  const signals = await fetchLiveHiringSignalJobCards(supabase, profile);
+  if (signals.length === 0) return payload;
+  const recommended = mergeHiringSignalJobCards(payload.recommended, signals, profile);
+  const hasOnlyDemo =
+    payload.feedKind === "demo" &&
+    payload.recommended.every((job) => job.id.startsWith("demo-"));
+  return {
+    ...payload,
+    recommended,
+    liveListings: payload.liveListings + signals.length,
+    feedKind: hasOnlyDemo || payload.feedKind === "live" ? "live" : payload.feedKind,
+    feedDemoHint: hasOnlyDemo ? null : payload.feedDemoHint,
+  };
+}
+
 /**
  * Loads pipeline totals, global listing counts, and ranked recommendations for the signed-in profile.
  */
-export async function loadProfileJobDashboard(
+async function loadProfileJobDashboardCore(
   supabase: SupabaseClient,
   userId: string,
   profile: { skills: string[]; headline: string | null; summary?: string | null }
@@ -508,5 +533,19 @@ export async function loadProfileJobDashboard(
     feedKind: ranked.length > 0 ? "live" : "demo",
     feedDemoHint: ranked.length > 0 ? null : "select_returned_empty",
   };
+}
+
+export async function loadProfileJobDashboard(
+  supabase: SupabaseClient,
+  userId: string,
+  profile: { skills: string[]; headline: string | null; summary?: string | null },
+): Promise<ProfileJobsPayload> {
+  const matchProfile: ProfileMatchInput = {
+    skills: profile.skills,
+    headline: profile.headline,
+    summary: profile.summary ?? null,
+  };
+  const payload = await loadProfileJobDashboardCore(supabase, userId, profile);
+  return withHiringSignalsInFeed(supabase, matchProfile, payload);
 }
 

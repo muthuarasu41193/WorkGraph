@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { HiringSignal } from "@/lib/employer/types";
+import { readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import HiringSignalForm from "@/components/employer/HiringSignalForm";
 import PulseInbox from "@/components/employer/PulseInbox";
 
@@ -16,8 +17,11 @@ export default function EditHiringSignalPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/employer/signals/${id}`);
-      const data = (await res.json()) as { ok?: boolean; signal?: HiringSignal };
+      const res = await fetch(`/api/employer/signals/${id}`, {
+        credentials: "include",
+        headers: await withSupabaseAuthHeaders(),
+      });
+      const data = (await readApiJson(res)) as { ok?: boolean; signal?: HiringSignal };
       if (data.ok && data.signal) setSignal(data.signal);
     } finally {
       setLoading(false);

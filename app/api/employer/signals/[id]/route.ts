@@ -10,10 +10,10 @@ export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ id: string }> };
 
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(request: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const signal = await getEmployerSignal(id);
+    const signal = await getEmployerSignal(id, request);
     if (!signal) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
@@ -31,7 +31,7 @@ export async function PATCH(request: Request, { params }: Params) {
   try {
     const { id } = await params;
     const body = (await request.json()) as HiringSignalInput;
-    const signal = await updateEmployerSignal(id, body);
+    const signal = await updateEmployerSignal(id, body, request);
     return NextResponse.json({ ok: true, signal });
   } catch (err) {
     if (err instanceof EmployerApiError) {

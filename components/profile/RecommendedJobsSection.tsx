@@ -95,6 +95,7 @@ const SOURCE_LABELS: Record<RecommendedJobCard["source"], string> = {
   levels: "Levels.fyi",
   facebook: "Facebook",
   rss: "RSS",
+  workgraph: "WorkGraph Direct",
   other: "Other ATS",
 };
 
@@ -167,6 +168,7 @@ const JOB_FEED_SOURCE_OPTIONS = [
   "indeed",
   "glassdoor",
   "levels",
+  "workgraph",
   "other",
 ] as const satisfies readonly JobFeedSource[];
 const MATCH_SCORE_OPTIONS = ["any", "90", "75", "60"] as const;
