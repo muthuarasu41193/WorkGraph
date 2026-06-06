@@ -6,6 +6,7 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import type { FitSignal, HiringIntent, HiringSignal, WorkMode } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +44,7 @@ export default function HiringSignalForm({ initial }: Props) {
     initial?.fit_signals?.length ? initial.fit_signals : DEFAULT_FIT,
   );
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [saving, setSaving] = useState(false);
 
   function updateFit(index: number, patch: Partial<FitSignal>) {
@@ -63,6 +65,7 @@ export default function HiringSignalForm({ initial }: Props) {
     }
 
     setError("");
+    setSuccessMessage("");
     setSaving(true);
     try {
       const payload = {
@@ -98,7 +101,28 @@ export default function HiringSignalForm({ initial }: Props) {
         setError("Signal saved but no id was returned — refresh and try again.");
         return;
       }
-      router.push(`/employer/signals/${signalId}`);
+
+      const roleTitle = title.trim();
+      if (status === "live") {
+        const message = `"${roleTitle}" is live on WorkGraph Direct and the jobseeker Jobs tab.`;
+        setSuccessMessage(message);
+        toast({
+          title: "Signal published",
+          description: message,
+          variant: "success",
+        });
+      } else {
+        const message = `"${roleTitle}" was saved as a draft. Publish when you're ready to go live.`;
+        setSuccessMessage(message);
+        toast({
+          title: "Draft saved",
+          description: message,
+          variant: "success",
+        });
+      }
+
+      const query = status === "live" ? "published=1" : "saved=draft";
+      router.push(`/employer/signals/${signalId}?${query}`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error — try again");
@@ -123,6 +147,12 @@ export default function HiringSignalForm({ initial }: Props) {
           not a cover letter factory.
         </p>
       </div>
+
+      {successMessage ? (
+        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+          <AlertDescription>{successMessage}</AlertDescription>
+        </Alert>
+      ) : null}
 
       {error ? (
         <Alert variant="destructive">

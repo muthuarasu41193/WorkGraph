@@ -1,18 +1,21 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import type { HiringSignal } from "@/lib/employer/types";
 import { readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import HiringSignalForm from "@/components/employer/HiringSignalForm";
 import PulseInbox from "@/components/employer/PulseInbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function EditHiringSignalPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = String(params.id ?? "");
   const [signal, setSignal] = useState<HiringSignal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -32,6 +35,18 @@ export default function EditHiringSignalPage() {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (searchParams.get("published") === "1") {
+      setSaveNotice("This hiring signal is published and visible to jobseekers on WorkGraph Direct and the Jobs tab.");
+      window.history.replaceState(null, "", `/employer/signals/${id}`);
+      return;
+    }
+    if (searchParams.get("saved") === "draft") {
+      setSaveNotice("Draft saved. Publish when you're ready to go live.");
+      window.history.replaceState(null, "", `/employer/signals/${id}`);
+    }
+  }, [searchParams, id]);
+
   if (loading) {
     return (
       <div className="flex justify-center py-16">
@@ -46,6 +61,12 @@ export default function EditHiringSignalPage() {
 
   return (
     <div className="space-y-10">
+      {saveNotice ? (
+        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden />
+          <AlertDescription>{saveNotice}</AlertDescription>
+        </Alert>
+      ) : null}
       <HiringSignalForm initial={signal} />
       <PulseInbox signalId={id} />
     </div>
