@@ -15,6 +15,7 @@ export interface Profile {
   linkedin_url: string | null;
   github_url: string | null;
   website_url: string | null;
+  stackoverflow_url: string | null;
   resume_url: string | null;
   resume_raw_text: string | null;
   ats_score: number | null;

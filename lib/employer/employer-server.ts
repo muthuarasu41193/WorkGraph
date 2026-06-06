@@ -21,6 +21,7 @@ import {
 import { evaluateEmployerVerification } from "./verification";
 import { notifySeekerOfStageUpdate } from "./notify";
 import { createSupabaseAdminClient } from "@/lib/supabase-admin";
+import { parseApplicationSnapshot } from "./application-snapshot";
 
 export class EmployerApiError extends Error {
   constructor(
@@ -128,6 +129,7 @@ function mapConnectionRow(row: Record<string, unknown>): SignalConnection {
       matchedSignals: [],
       profileCompleteness: 0,
     },
+    application_snapshot: parseApplicationSnapshot(row.application_snapshot),
     stage: isConnectionStage(String(row.stage))
       ? (String(row.stage) as ConnectionStage)
       : "incoming",

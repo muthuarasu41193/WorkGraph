@@ -10,6 +10,11 @@ import { notifyEmployerOfConnection } from "./notify";
 import type { EmployerVerificationStatus } from "./types";
 import type { HiringSignal, SignalConnection } from "./types";
 import { isConnectionStage, type FitSignal } from "./types";
+import {
+  buildApplicationSnapshot,
+  parseApplicationSnapshot,
+  type ApplicationInput,
+} from "./application-snapshot";
 
 function parseFitSignals(raw: unknown): FitSignal[] {
   if (!Array.isArray(raw)) return [];
@@ -83,8 +88,9 @@ export async function listLiveHiringSignals(limit = 50): Promise<HiringSignal[]>
 
 export async function connectToHiringSignal(
   signalId: string,
-  connectionNote: string,
+  input: ApplicationInput = {},
 ): Promise<SignalConnection> {
+  const connectionNote = input.connectionNote ?? "";
   const user = await getSessionUser();
   if (!user) throw new EmployerApiError("Sign in to connect", 401);
   if (!supabaseConfigured()) throw new EmployerApiError("Supabase is not configured", 503);
@@ -113,6 +119,15 @@ export async function connectToHiringSignal(
     profileCompleteness: profile.profile_completeness,
   });
 
+  const application_snapshot = buildApplicationSnapshot(profile, {
+    ...input,
+    connectionNote,
+  });
+
+  if (!application_snapshot.resume_url) {
+    throw new EmployerApiError("Upload a resume on your profile or attach one to apply", 400);
+  }
+
   const { data: conn, error: connErr } = await supabase
     .from("signal_connections")
     .insert({
@@ -120,6 +135,7 @@ export async function connectToHiringSignal(
       seeker_id: user.id,
       connection_note: connectionNote.trim().slice(0, 2000),
       fit_snapshot,
+      application_snapshot,
     })
     .select("*")
     .single();
@@ -164,6 +180,7 @@ export async function connectToHiringSignal(
     seeker_id: user.id,
     connection_note: connectionNote.trim(),
     fit_snapshot,
+    application_snapshot,
     stage: "incoming",
     employer_reply: null,
     created_at: String((conn as Record<string, unknown>).created_at),
@@ -195,6 +212,7 @@ export async function listSeekerConnections(): Promise<SignalConnection[]> {
       seeker_id: String(row.seeker_id),
       connection_note: String(row.connection_note ?? ""),
       fit_snapshot: row.fit_snapshot as SignalConnection["fit_snapshot"],
+      application_snapshot: parseApplicationSnapshot(row.application_snapshot),
       stage: isConnectionStage(String(row.stage))
         ? (String(row.stage) as import("./types").ConnectionStage)
         : "incoming",

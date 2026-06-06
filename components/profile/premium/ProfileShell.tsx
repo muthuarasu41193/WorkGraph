@@ -162,6 +162,11 @@ function ProfileShellInner({
           headline={profile.headline}
           summary={profile.summary}
           profileCompleteness={profile.profile_completeness ?? 0}
+          resumeUrl={profile.resume_url}
+          linkedinUrl={profile.linkedin_url}
+          githubUrl={profile.github_url}
+          websiteUrl={profile.website_url}
+          stackoverflowUrl={profile.stackoverflow_url}
         />
       ),
     }),

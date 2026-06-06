@@ -16,13 +16,22 @@ type Props = {
   userId: string;
 };
 
-type FieldKey = "linkedin_url" | "github_url" | "website_url";
+type FieldKey = "linkedin_url" | "github_url" | "website_url" | "stackoverflow_url";
+
+function StackOverflowIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.13v6.404h15.012zM6.111 15.573l11.39-2.462 0.455 2.11-11.39 2.462-0.455-2.11zm1.359-5.362L18.76 6.32l0.911 1.984L8.381 12.195l-0.911-1.984zm2.683-4.918l10.044 4.605 0.911-1.984L10.064 3.31l-0.911 1.983z" />
+    </svg>
+  );
+}
 
 export default function LinksSection({ profile, userId }: Props) {
   const [values, setValues] = useState<Record<FieldKey, string>>({
     linkedin_url: profile.linkedin_url || "",
     github_url: profile.github_url || "",
     website_url: profile.website_url || "",
+    stackoverflow_url: profile.stackoverflow_url || "",
   });
   const [editing, setEditing] = useState<FieldKey | null>(null);
   const [toast, setToast] = useState("");
@@ -88,13 +97,21 @@ export default function LinksSection({ profile, userId }: Props) {
       icon: <Globe className="h-4 w-4 text-[#8E8E93]" />,
       placeholder: "https://yourwebsite.com",
     },
+    {
+      key: "stackoverflow_url",
+      label: "Stack Overflow",
+      icon: <StackOverflowIcon className="h-4 w-4 text-[#8E8E93]" />,
+      placeholder: "https://stackoverflow.com/users/…",
+    },
   ];
 
   return (
     <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
       {toast ? <p className="mb-3 text-sm text-[#1A73E8]">{toast}</p> : null}
       <h2 className="mb-1 text-[18px] font-semibold text-[#2C2C2E]">Links</h2>
-      <p className="mb-4 text-xs font-normal text-[#8E8E93]">Keep your public profiles up-to-date for recruiters.</p>
+      <p className="mb-4 text-xs font-normal text-[#8E8E93]">
+        Keep your public profiles up-to-date — they are included when you apply to jobs.
+      </p>
 
       <div className="space-y-3">
         {rows.map((row) => {

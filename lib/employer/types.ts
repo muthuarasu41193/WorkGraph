@@ -1,5 +1,7 @@
 /** WorkGraph Employer — Hiring Signals & graph connections (not ATS clones). */
 
+import type { Education, WorkExperience } from "@/lib/types";
+
 export type HiringIntent = "exploring" | "actively_hiring" | "backfill" | "stealth";
 export type WorkMode = "remote" | "hybrid" | "onsite" | "flexible";
 export type HiringSignalStatus = "draft" | "live" | "paused" | "closed";
@@ -18,6 +20,26 @@ export type FitSnapshot = {
   matchedSignals: string[];
   profileCompleteness: number;
   headline?: string | null;
+};
+
+/** Applicant package shared with employer at apply time (phone excluded as confidential). */
+export type ApplicationSnapshot = {
+  full_name: string | null;
+  headline: string | null;
+  email: string | null;
+  location: string | null;
+  summary: string | null;
+  years_of_experience: number | null;
+  skills: string[];
+  education: Education[];
+  work_experience: WorkExperience[];
+  certifications: string[];
+  resume_url: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
+  website_url: string | null;
+  stackoverflow_url: string | null;
+  message: string;
 };
 
 export type EmployerVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
@@ -74,6 +96,7 @@ export type SignalConnection = {
   seeker_id: string;
   connection_note: string;
   fit_snapshot: FitSnapshot;
+  application_snapshot: ApplicationSnapshot | null;
   stage: ConnectionStage;
   employer_reply: string | null;
   created_at: string;

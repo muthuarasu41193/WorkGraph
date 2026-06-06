@@ -19,21 +19,21 @@ import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import ApplicationConnectDialog, {
+  type ApplicationFormValues,
+} from "./ApplicationConnectDialog";
 
 type Props = {
   skills: string[];
   headline?: string | null;
   summary?: string | null;
   profileCompleteness: number;
+  resumeUrl?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  websiteUrl?: string | null;
+  stackoverflowUrl?: string | null;
 };
 
 export default function WorkgraphDirectSection({
@@ -41,6 +41,11 @@ export default function WorkgraphDirectSection({
   headline,
   summary,
   profileCompleteness,
+  resumeUrl,
+  linkedinUrl,
+  githubUrl,
+  websiteUrl,
+  stackoverflowUrl,
 }: Props) {
   const searchParams = useSearchParams();
   const deepLinkSignalId = searchParams.get("signal");
@@ -49,9 +54,20 @@ export default function WorkgraphDirectSection({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [connectTarget, setConnectTarget] = useState<HiringSignal | null>(null);
-  const [note, setNote] = useState("");
   const [connecting, setConnecting] = useState(false);
   const [connectError, setConnectError] = useState("");
+
+  const defaultFormValues = useMemo<ApplicationFormValues>(
+    () => ({
+      message: "",
+      resumeUrl: resumeUrl ?? "",
+      linkedinUrl: linkedinUrl ?? "",
+      githubUrl: githubUrl ?? "",
+      websiteUrl: websiteUrl ?? "",
+      stackoverflowUrl: stackoverflowUrl ?? "",
+    }),
+    [resumeUrl, linkedinUrl, githubUrl, websiteUrl, stackoverflowUrl],
+  );
 
   const profileInput = useMemo(
     () => ({ skills, headline, summary, profileCompleteness }),
@@ -96,7 +112,7 @@ export default function WorkgraphDirectSection({
     if (target) setConnectTarget(target);
   }, [deepLinkSignalId, loading, signals]);
 
-  async function submitConnection() {
+  async function submitApplication(values: ApplicationFormValues) {
     if (!connectTarget) return;
     setConnecting(true);
     setConnectError("");
@@ -105,15 +121,23 @@ export default function WorkgraphDirectSection({
         method: "POST",
         headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
         credentials: "include",
-        body: JSON.stringify({ signalId: connectTarget.id, connectionNote: note }),
+        body: JSON.stringify({
+          signalId: connectTarget.id,
+          connectionNote: values.message,
+          message: values.message,
+          resumeUrl: values.resumeUrl || null,
+          linkedinUrl: values.linkedinUrl || null,
+          githubUrl: values.githubUrl || null,
+          websiteUrl: values.websiteUrl || null,
+          stackoverflowUrl: values.stackoverflowUrl || null,
+        }),
       });
       const data = (await readApiJson(res)) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        setConnectError(apiErrorMessage(data) ?? data.error ?? "Could not connect");
+        setConnectError(apiErrorMessage(data) ?? data.error ?? "Could not submit application");
         return;
       }
       setConnectTarget(null);
-      setNote("");
       void load();
     } catch {
       setConnectError("Network error");
@@ -130,14 +154,14 @@ export default function WorkgraphDirectSection({
           <h1 className="text-2xl font-bold tracking-tight">WorkGraph Direct</h1>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          Employers post hiring signals with fit criteria — you connect with your profile graph, not a
-          generic apply button to an external ATS.
+          Apply to employer hiring signals with your resume, profile links, and a tailored message —
+          employers review your full application in their Pulse inbox.
         </p>
       </header>
 
       {connections.length > 0 ? (
         <section className="rounded-xl border bg-muted/30 p-4">
-          <h2 className="text-sm font-semibold">Your connections</h2>
+          <h2 className="text-sm font-semibold">Your applications</h2>
           <ul className="mt-2 space-y-2">
             {connections.slice(0, 5).map((c) => (
               <li key={c.id} className="flex items-center justify-between gap-2 text-sm">
@@ -240,7 +264,7 @@ export default function WorkgraphDirectSection({
                       disabled={already}
                       onClick={() => setConnectTarget(signal)}
                     >
-                      {already ? "Connected" : "Send connection"}
+                      {already ? "Applied" : "Apply"}
                       {!already ? <Send className="ml-2 h-4 w-4" /> : null}
                     </Button>
                   </CardContent>
@@ -251,38 +275,15 @@ export default function WorkgraphDirectSection({
         </ul>
       )}
 
-      <Dialog open={!!connectTarget} onOpenChange={(o) => !o && setConnectTarget(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Connect to {connectTarget?.title}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Your WorkGraph profile and fit score go to the employer — add a short connection note (not a
-            cover letter).
-          </p>
-          <Textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={4}
-            placeholder="What drew you to this signal and what you'd explore in a first conversation…"
-            maxLength={2000}
-          />
-          {connectError ? (
-            <Alert variant="destructive">
-              <AlertDescription>{connectError}</AlertDescription>
-            </Alert>
-          ) : null}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConnectTarget(null)}>
-              Cancel
-            </Button>
-            <Button onClick={() => void submitConnection()} disabled={connecting}>
-              {connecting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Connect
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ApplicationConnectDialog
+        signal={connectTarget}
+        open={!!connectTarget}
+        onOpenChange={(open) => !open && setConnectTarget(null)}
+        initialValues={defaultFormValues}
+        onSubmit={submitApplication}
+        submitting={connecting}
+        error={connectError}
+      />
     </div>
   );
 }

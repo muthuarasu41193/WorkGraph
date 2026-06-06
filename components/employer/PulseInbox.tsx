@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { ExternalLink, FileText, Loader2, Sparkles } from "lucide-react";
 import type { ConnectionStage, SignalConnection } from "@/lib/employer/types";
 import {
   CONNECTION_STAGE_LABELS,
   CONNECTION_STAGE_ORDER,
 } from "@/lib/employer/types";
+import ApplicantApplicationPanel from "@/components/employer/ApplicantApplicationPanel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ export default function PulseInbox({ signalId }: Props) {
   const [connections, setConnections] = useState<SignalConnection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [detailConnection, setDetailConnection] = useState<SignalConnection | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -74,15 +76,15 @@ export default function PulseInbox({ signalId }: Props) {
       <div>
         <h2 className="text-lg font-semibold">Pulse inbox</h2>
         <p className="text-sm text-muted-foreground">
-          Connections ranked by fit snapshot — stages are dialogue, not ATS funnel copy.
+          Review applicant resumes, links, and profile details — click a card for the full application.
         </p>
       </div>
 
       {connections.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            No connections yet. When seekers connect to your live signals, they appear here with fit
-            scores from their WorkGraph profile.
+            No applications yet. When seekers apply to your live signals, their resume and profile
+            package appears here.
           </CardContent>
         </Card>
       ) : (
@@ -93,57 +95,86 @@ export default function PulseInbox({ signalId }: Props) {
                 {CONNECTION_STAGE_LABELS[stage]} ({byStage[stage].length})
               </h3>
               <ul className="space-y-2">
-                {byStage[stage].map((c) => (
-                  <Card key={c.id} className="overflow-hidden">
-                    <CardHeader className="p-3 pb-1">
-                      <CardTitle className="text-sm font-medium leading-snug">
-                        {c.seeker?.full_name ?? "Seeker"}
-                      </CardTitle>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {c.seeker?.headline ?? c.signal?.title}
-                      </p>
-                    </CardHeader>
-                    <CardContent className="space-y-2 p-3 pt-0">
-                      <div className="flex items-center gap-1.5">
-                        <Sparkles className="h-3.5 w-3.5 text-[var(--wg-red)]" aria-hidden />
-                        <span className="text-sm font-semibold tabular-nums">
-                          {c.fit_snapshot?.matchPercent ?? "—"}% fit
-                        </span>
-                      </div>
-                      {c.fit_snapshot?.matchedSignals?.length ? (
-                        <div className="flex flex-wrap gap-1">
-                          {c.fit_snapshot.matchedSignals.slice(0, 4).map((s) => (
-                            <Badge key={s} variant="secondary" className="text-[10px]">
-                              {s}
-                            </Badge>
+                {byStage[stage].map((c) => {
+                  const app = c.application_snapshot;
+                  const resumeUrl = app?.resume_url;
+                  return (
+                    <Card
+                      key={c.id}
+                      className="cursor-pointer overflow-hidden transition hover:border-[var(--wg-red)]/30"
+                      onClick={() => setDetailConnection(c)}
+                    >
+                      <CardHeader className="p-3 pb-1">
+                        <CardTitle className="text-sm font-medium leading-snug">
+                          {app?.full_name ?? c.seeker?.full_name ?? "Applicant"}
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {app?.headline ?? c.seeker?.headline ?? c.signal?.title}
+                        </p>
+                      </CardHeader>
+                      <CardContent className="space-y-2 p-3 pt-0">
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="h-3.5 w-3.5 text-[var(--wg-red)]" aria-hidden />
+                          <span className="text-sm font-semibold tabular-nums">
+                            {c.fit_snapshot?.matchPercent ?? "—"}% fit
+                          </span>
+                        </div>
+                        {c.fit_snapshot?.matchedSignals?.length ? (
+                          <div className="flex flex-wrap gap-1">
+                            {c.fit_snapshot.matchedSignals.slice(0, 4).map((s) => (
+                              <Badge key={s} variant="secondary" className="text-[10px]">
+                                {s}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : null}
+                        {app?.message || c.connection_note ? (
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {app?.message || c.connection_note}
+                          </p>
+                        ) : null}
+                        {resumeUrl ? (
+                          <a
+                            href={resumeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--wg-red)] hover:underline"
+                          >
+                            <FileText className="h-3 w-3" />
+                            Resume
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        ) : null}
+                        <div className="flex flex-wrap gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
+                          {CONNECTION_STAGE_ORDER.filter((s) => s !== stage).map((s) => (
+                            <Button
+                              key={s}
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className={cn("h-7 px-2 text-[10px]")}
+                              onClick={() => void moveStage(c.id, s)}
+                            >
+                              → {CONNECTION_STAGE_LABELS[s]}
+                            </Button>
                           ))}
                         </div>
-                      ) : null}
-                      {c.connection_note ? (
-                        <p className="text-xs text-muted-foreground line-clamp-3">{c.connection_note}</p>
-                      ) : null}
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {CONNECTION_STAGE_ORDER.filter((s) => s !== stage).map((s) => (
-                          <Button
-                            key={s}
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className={cn("h-7 px-2 text-[10px]")}
-                            onClick={() => void moveStage(c.id, s)}
-                          >
-                            → {CONNECTION_STAGE_LABELS[s]}
-                          </Button>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </ul>
             </div>
           ))}
         </div>
       )}
+
+      <ApplicantApplicationPanel
+        connection={detailConnection}
+        open={!!detailConnection}
+        onOpenChange={(open) => !open && setDetailConnection(null)}
+      />
     </div>
   );
 }

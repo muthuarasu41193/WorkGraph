@@ -31,6 +31,7 @@ function mapRow(data: Record<string, unknown>): Profile {
     linkedin_url: typeof data.linkedin_url === "string" ? data.linkedin_url : null,
     github_url: typeof data.github_url === "string" ? data.github_url : null,
     website_url: typeof data.website_url === "string" ? data.website_url : null,
+    stackoverflow_url: typeof data.stackoverflow_url === "string" ? data.stackoverflow_url : null,
     resume_url: typeof data.resume_url === "string" ? data.resume_url : null,
     resume_raw_text: typeof data.resume_raw_text === "string" ? data.resume_raw_text : null,
     ats_score: typeof data.ats_score === "number" ? data.ats_score : null,
