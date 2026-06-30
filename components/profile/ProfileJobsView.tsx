@@ -14,6 +14,7 @@ type Props = {
   liveListings: number;
   jobPipeline: JobPipelineCounts;
   profileCompleteness: number;
+  hasResume?: boolean;
 };
 
 /** Jobs tab content — loaded on demand so Home and other routes stay fast. */
@@ -27,6 +28,7 @@ export default function ProfileJobsView({
   liveListings,
   jobPipeline,
   profileCompleteness,
+  hasResume = false,
 }: Props) {
   return (
     <div className="space-y-5">
@@ -49,6 +51,7 @@ export default function ProfileJobsView({
         feedKind={feedKind}
         feedDemoHint={feedDemoHint}
         liveListings={liveListings}
+        hasResume={hasResume}
       />
     </div>
   );

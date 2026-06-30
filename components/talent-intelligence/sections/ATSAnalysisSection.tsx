@@ -1,0 +1,55 @@
+"use client";
+
+import type { ATSAnalysis } from "@/lib/talent-intelligence/types";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import ExpandableCard from "../shared/ExpandableCard";
+import { ScanSearch } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type Props = { data: ATSAnalysis };
+
+const STATUS_STYLES = {
+  good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+  warning: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+  critical: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
+};
+
+export default function ATSAnalysisSection({ data }: Props) {
+  return (
+    <ExpandableCard
+      title="ATS Analysis"
+      description="Formatting, readability, and parser compatibility."
+      icon={<ScanSearch className="h-5 w-5 text-primary" />}
+      defaultOpen={false}
+    >
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-medium">ATS Score</span>
+          <Progress value={data.overallScore} className="h-2 flex-1" />
+          <span className="tabular-nums text-sm font-semibold">{data.overallScore}%</span>
+        </div>
+        <div className="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+          <p><span className="font-medium text-foreground">Section order: </span>{data.sectionOrder}</p>
+          <p><span className="font-medium text-foreground">Length: </span>{data.lengthAssessment}</p>
+          <p><span className="font-medium text-foreground">Formatting: </span>{data.formattingNotes}</p>
+          <p><span className="font-medium text-foreground">Readability: </span>{data.readabilityNotes}</p>
+        </div>
+        <ul className="space-y-2">
+          {data.indicators.map((ind, i) => (
+            <li key={i} className="flex flex-col gap-1 rounded-lg border p-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <span className="font-medium">{ind.category}</span>
+                <p className="text-sm text-muted-foreground">{ind.observation}</p>
+                <p className="mt-1 text-xs">{ind.recommendation}</p>
+              </div>
+              <Badge className={cn("shrink-0 capitalize", STATUS_STYLES[ind.status])}>
+                {ind.status}
+              </Badge>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </ExpandableCard>
+  );
+}

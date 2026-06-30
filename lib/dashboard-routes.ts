@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Brain,
   Briefcase,
   ClipboardList,
   EyeOff,
@@ -21,7 +22,8 @@ export type DashboardRouteId =
   | "vault"
   | "profile"
   | "job-news"
-  | "workgraph-direct";
+  | "workgraph-direct"
+  | "resume-intelligence";
 
 export type DashboardRoute = {
   id: DashboardRouteId;
@@ -45,6 +47,13 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     shortLabel: "Jobs",
     icon: Briefcase,
     description: "Browse live job listings matched to your profile",
+  },
+  {
+    id: "resume-intelligence",
+    label: "Resume Intelligence",
+    shortLabel: "Intelligence",
+    icon: Brain,
+    description: "Compare your resume to any job with honest, evidence-based analysis",
   },
   {
     id: "workgraph-direct",

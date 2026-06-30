@@ -57,6 +57,14 @@ const WorkgraphDirectSection = dynamic(
   },
 );
 
+const ResumeIntelligenceSection = dynamic(
+  () => import("../../talent-intelligence/ResumeIntelligenceSection"),
+  {
+    loading: () => <DashboardSectionSkeleton />,
+    ssr: false,
+  },
+);
+
 export type ProfileShellProps = {
   profile: Profile;
   userId: string;
@@ -133,6 +141,7 @@ function ProfileShellInner({
           liveListings={liveListings}
           jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
           profileCompleteness={profile.profile_completeness ?? 0}
+          hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
         />
       ),
       "hidden-jobs": <HiddenJobsSection />,
@@ -167,6 +176,11 @@ function ProfileShellInner({
           githubUrl={profile.github_url}
           websiteUrl={profile.website_url}
           stackoverflowUrl={profile.stackoverflow_url}
+        />
+      ),
+      "resume-intelligence": (
+        <ResumeIntelligenceSection
+          hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
         />
       ),
     }),

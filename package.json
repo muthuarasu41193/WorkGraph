@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "verify:vercel-config": "node scripts/verify-vercel-config.mjs",
     "verify:deploy": "npm run verify:vercel-config && npm run build",
-    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts"
+    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts lib/talent-intelligence/__tests__/*.test.ts"
   },
   "repository": {
     "type": "git",

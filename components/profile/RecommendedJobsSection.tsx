@@ -67,6 +67,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
 
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 
@@ -547,6 +548,7 @@ type Props = {
   feedDemoHint?: FeedDemoHint | null;
   /** Total indexed live rows — used while the full catalog loads client-side. */
   liveListings?: number;
+  hasResume?: boolean;
 };
 
 function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
@@ -605,6 +607,7 @@ export default function RecommendedJobsSection({
   feedKind,
   feedDemoHint,
   liveListings = 0,
+  hasResume = false,
 }: Props) {
   const profileMatch = useMemo<ProfileMatchInput>(
     () => ({
@@ -2161,6 +2164,13 @@ export default function RecommendedJobsSection({
                   <span className="rounded-xl bg-[#FEF7E0] px-2.5 py-0.5 text-xs text-[#F9AB00]">Missing: AWS, Docker</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <ResumeIntelligenceDialog
+                    jobId={job.id}
+                    jobTitle={job.title}
+                    company={job.company}
+                    jobDescription={job.description?.trim() || job.matchLabel || job.title}
+                    hasResume={hasResume}
+                  />
                   {canApply ? (
                     <a
                       href={applyHref}
@@ -2225,6 +2235,14 @@ export default function RecommendedJobsSection({
                       Apply Now
                     </a>
                   ) : null}
+                  <ResumeIntelligenceDialog
+                    jobId={job.id}
+                    jobTitle={job.title}
+                    company={job.company}
+                    jobDescription={job.description?.trim() || job.matchLabel || job.title}
+                    hasResume={hasResume}
+                    triggerClassName="w-full"
+                  />
                 </div>
               ) : null}
 
@@ -2434,6 +2452,14 @@ export default function RecommendedJobsSection({
                     Apply Now
                   </a>
                 ) : null}
+                <ResumeIntelligenceDialog
+                  jobId={job.id}
+                  jobTitle={job.title}
+                  company={job.company}
+                  jobDescription={job.description?.trim() || job.matchLabel || job.title}
+                  hasResume={hasResume}
+                  triggerClassName="w-full"
+                />
               </div>
             );
           })()}
