@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseSessionUser } from "@/lib/route-auth";
 import { analyzeResumeIntelligence } from "@/lib/talent-intelligence";
+import { formatTalentIntelligenceError } from "@/lib/talent-intelligence/errors";
 import { truncateText } from "@/lib/talent-intelligence/utils";
 
 export const runtime = "nodejs";
@@ -104,7 +105,14 @@ export async function POST(request: Request) {
       report: result.report,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Resume Intelligence analysis failed.";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    const formatted = formatTalentIntelligenceError(error);
+    const headers: Record<string, string> = {};
+    if (formatted.retryAfterSec) {
+      headers["Retry-After"] = String(formatted.retryAfterSec);
+    }
+    return NextResponse.json(
+      { ok: false, error: formatted.message, code: formatted.code },
+      { status: formatted.status, headers },
+    );
   }
 }

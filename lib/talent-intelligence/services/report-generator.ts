@@ -12,7 +12,7 @@ import {
   buildCoachingUserPrompt,
   buildAtsKeywordsUserPrompt,
 } from "../prompts";
-import { runTalentIntelligencePrompt, type LlmRunMeta } from "./llm-runner";
+import { runTalentIntelligencePrompt, PROMPT_CHAIN_DELAY_MS, type LlmRunMeta } from "./llm-runner";
 import { parseJobDescription } from "./job-description-parser";
 import { analyzeKeywords } from "./keyword-analyzer";
 import {
@@ -44,14 +44,14 @@ export type ReportGeneratorResult = {
 };
 
 /**
- * ReportGenerator — chains four independent LLM analyses in parallel,
- * merges with deterministic keyword pre-analysis.
+ * ReportGenerator — chains four dedicated LLM analyses sequentially
+ * (with pacing) to avoid Groq TPM bursts, merges deterministic keyword pre-analysis.
  */
 export async function generateResumeIntelligenceReport(
   input: ReportGeneratorInput,
 ): Promise<ReportGeneratorResult> {
-  const resumeText = truncateText(input.resumeText);
-  const jobDescription = truncateText(input.jobDescription, 16000);
+  const resumeText = truncateText(input.resumeText, 12_000);
+  const jobDescription = truncateText(input.jobDescription, 8_000);
   const parsedJd = parseJobDescription(jobDescription, {
     title: input.jobTitle ?? undefined,
     company: input.company ?? undefined,
@@ -59,46 +59,53 @@ export async function generateResumeIntelligenceReport(
 
   const deterministicKeywords = analyzeKeywords(resumeText, jobDescription);
 
-  const [matchGaps, resumeRecruiter, coaching, atsKeywords] = await Promise.all([
-    runTalentIntelligencePrompt<Record<string, unknown>>({
-      promptId: MATCH_AND_GAPS_PROMPT_ID,
-      system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
-      user: buildMatchAndGapsUserPrompt({
-        resumeText,
-        jobDescription,
-        jobTitle: input.jobTitle ?? parsedJd.title,
-        company: input.company ?? parsedJd.company,
-        profileSkills: input.profileSkills,
-      }),
+  const matchGaps = await runTalentIntelligencePrompt<Record<string, unknown>>({
+    promptId: MATCH_AND_GAPS_PROMPT_ID,
+    system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
+    user: buildMatchAndGapsUserPrompt({
+      resumeText,
+      jobDescription,
+      jobTitle: input.jobTitle ?? parsedJd.title,
+      company: input.company ?? parsedJd.company,
+      profileSkills: input.profileSkills,
     }),
-    runTalentIntelligencePrompt<Record<string, unknown>>({
-      promptId: RESUME_RECRUITER_PROMPT_ID,
-      system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
-      user: buildResumeRecruiterUserPrompt({
-        resumeText,
-        jobDescription,
-        jobTitle: input.jobTitle ?? parsedJd.title,
-      }),
+  });
+
+  await sleep(PROMPT_CHAIN_DELAY_MS);
+
+  const resumeRecruiter = await runTalentIntelligencePrompt<Record<string, unknown>>({
+    promptId: RESUME_RECRUITER_PROMPT_ID,
+    system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
+    user: buildResumeRecruiterUserPrompt({
+      resumeText,
+      jobDescription,
+      jobTitle: input.jobTitle ?? parsedJd.title,
     }),
-    runTalentIntelligencePrompt<Record<string, unknown>>({
-      promptId: COACHING_PROMPT_ID,
-      system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
-      user: buildCoachingUserPrompt({
-        resumeText,
-        jobDescription,
-        jobTitle: input.jobTitle ?? parsedJd.title,
-      }),
+  });
+
+  await sleep(PROMPT_CHAIN_DELAY_MS);
+
+  const coaching = await runTalentIntelligencePrompt<Record<string, unknown>>({
+    promptId: COACHING_PROMPT_ID,
+    system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
+    user: buildCoachingUserPrompt({
+      resumeText,
+      jobDescription,
+      jobTitle: input.jobTitle ?? parsedJd.title,
     }),
-    runTalentIntelligencePrompt<Record<string, unknown>>({
-      promptId: ATS_KEYWORDS_PROMPT_ID,
-      system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
-      user: buildAtsKeywordsUserPrompt({
-        resumeText,
-        jobDescription,
-        deterministicKeywords: deterministicKeywords.extractedFromJd,
-      }),
+  });
+
+  await sleep(PROMPT_CHAIN_DELAY_MS);
+
+  const atsKeywords = await runTalentIntelligencePrompt<Record<string, unknown>>({
+    promptId: ATS_KEYWORDS_PROMPT_ID,
+    system: TALENT_INTELLIGENCE_SYSTEM_PROMPT,
+    user: buildAtsKeywordsUserPrompt({
+      resumeText,
+      jobDescription,
+      deterministicKeywords: deterministicKeywords.extractedFromJd,
     }),
-  ]);
+  });
 
   const overallMatch = normalizeOverallMatch(matchGaps.data.overallMatch ?? matchGaps.data);
 
@@ -134,4 +141,8 @@ export async function generateResumeIntelligenceReport(
       atsKeywords: atsKeywords.meta,
     },
   };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

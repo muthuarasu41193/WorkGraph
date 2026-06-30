@@ -130,7 +130,7 @@ export default function ResumeIntelligenceDialog({
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm">Analyzing your resume against this role…</p>
-              <p className="text-xs">This may take up to a minute.</p>
+              <p className="text-xs">This usually takes 1–2 minutes. Please keep this tab open.</p>
             </div>
           ) : error ? (
             <Alert variant="destructive">
