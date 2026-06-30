@@ -20,14 +20,14 @@ import type {
   KeywordIntelligence,
   KeywordItem,
   KeywordStatus,
-} from "../types";
+} from "./types";
 import {
   MATCH_DIMENSION_LABELS,
   MATCH_DIMENSION_WEIGHTS,
   PHILOSOPHY_REMINDER,
   TALENT_INTELLIGENCE_PROMPT_VERSION,
-} from "../types";
-import { asBoolean, asString, asStringArray, clampScore, scoreToGrade } from "../utils";
+} from "./types";
+import { asBoolean, asString, asStringArray, clampScore, scoreToGrade } from "./utils";
 
 function normalizeMissingSkillItems(value: unknown): MissingSkillItem[] {
   if (!Array.isArray(value)) return [];

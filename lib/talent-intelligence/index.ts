@@ -4,4 +4,4 @@ export {
   getResumeIntelligenceReport,
   deleteResumeIntelligenceReport,
   deleteAllTalentIntelligenceData,
-} from "./resume-analysis-service";
+} from "./services/resume-analysis-service";
