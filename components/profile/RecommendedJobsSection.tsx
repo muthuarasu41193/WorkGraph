@@ -42,8 +42,10 @@ import {
 } from "@/lib/dashboard-routes";
 import type { FeedDemoHint, JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 import {
+  applyClientOnlyJobListingFilters,
   applyJobListingFilters,
   hasAnyUserJobFilters,
+  hasClientOnlyJobFilters,
   type JobListingFilterState,
 } from "../../lib/job-listing-filters";
 import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
@@ -181,6 +183,8 @@ const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_as
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 50;
+/** Rows loaded when advanced (client-only) filters need a local pool to paginate. */
+const FILTER_POOL_CAP = 2500;
 const MAX_PAGINATION_TOKENS = 7;
 
 type PaginationToken = number | "ellipsis";
@@ -687,6 +691,7 @@ export default function RecommendedJobsSection({
   const [isInitialLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [pageJobs, setPageJobs] = useState<RecommendedJobCard[]>(() => initialJobs.slice(0, PAGE_SIZE));
+  const [filterPoolJobs, setFilterPoolJobs] = useState<RecommendedJobCard[]>([]);
   const [apiTotal, setApiTotal] = useState(
     feedKind === "live" ? liveListings || initialJobs.length : initialJobs.length
   );
@@ -778,20 +783,35 @@ export default function RecommendedJobsSection({
   );
 
   const useServerJobs = feedKind === "live" || liveListings > 0;
+  const needsClientFilterPool = useServerJobs && hasClientOnlyJobFilters(clientFilterState);
+
+  const profileOverlapOptions = useMemo(
+    () => ({
+      profile: profileMatch,
+      requireProfileOverlap:
+        showProfileMatchesOnly && profileMatchActive && feedKind === "live" && !userFiltersActive,
+      minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
+    }),
+    [profileMatch, showProfileMatchesOnly, profileMatchActive, feedKind, userFiltersActive]
+  );
 
   const listingPipeline = useMemo(() => {
-    const sourceJobs = useServerJobs ? pageJobs : initialJobs;
+    const sourceJobs = useServerJobs
+      ? needsClientFilterPool
+        ? filterPoolJobs
+        : pageJobs
+      : initialJobs;
     const enriched = sourceJobs.map((job) => ({
       job,
       meta: deriveJobMeta(job),
       score: getMatchScore(job, profileMatch),
     }));
-    const filtered = applyJobListingFilters(enriched, clientFilterState, {
-      profile: profileMatch,
-      requireProfileOverlap:
-        showProfileMatchesOnly && profileMatchActive && feedKind === "live" && !userFiltersActive,
-      minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
-    });
+
+    const filtered =
+      useServerJobs && !needsClientFilterPool
+        ? applyClientOnlyJobListingFilters(enriched, clientFilterState, profileOverlapOptions)
+        : applyJobListingFilters(enriched, clientFilterState, profileOverlapOptions);
+
     const rows = [...filtered];
     rows.sort((a, b) => {
       if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
@@ -805,24 +825,28 @@ export default function RecommendedJobsSection({
     return rows;
   }, [
     useServerJobs,
+    needsClientFilterPool,
+    filterPoolJobs,
     feedKind,
     initialJobs,
     pageJobs,
     profileMatch,
     clientFilterState,
-    profileMatchActive,
-    userFiltersActive,
-    showProfileMatchesOnly,
+    profileOverlapOptions,
     sortBy,
   ]);
 
   const visibleJobs = useMemo(() => {
-    if (useServerJobs) return listingPipeline;
+    if (useServerJobs && !needsClientFilterPool) return listingPipeline;
     const start = (currentPage - 1) * PAGE_SIZE;
     return listingPipeline.slice(start, start + PAGE_SIZE);
-  }, [useServerJobs, listingPipeline, currentPage]);
+  }, [useServerJobs, needsClientFilterPool, listingPipeline, currentPage]);
 
-  const totalMatched = useServerJobs ? apiTotal : listingPipeline.length;
+  const totalMatched = useServerJobs
+    ? needsClientFilterPool
+      ? listingPipeline.length
+      : apiTotal
+    : listingPipeline.length;
 
   const platformsInFeed = useMemo(() => {
     const u = new Set<JobFeedSource>();
@@ -859,12 +883,13 @@ export default function RecommendedJobsSection({
   }, [totalPages]);
 
   const buildJobsFetchQuery = useCallback(
-    (page: number) => {
+    (page: number, batchSize = PAGE_SIZE) => {
       const params = new URLSearchParams();
       params.set("page", String(page));
-      params.set("page_size", String(PAGE_SIZE));
+      params.set("page_size", String(batchSize));
 
-      const rankByProfile = sortBy === "best" && skillHints.length > 0;
+      const rankByProfile =
+        batchSize === PAGE_SIZE && sortBy === "best" && skillHints.length > 0 && !needsClientFilterPool;
       if (!rankByProfile) params.set("rank_profile", "0");
 
       if (skillHints.length > 0) {
@@ -891,18 +916,34 @@ export default function RecommendedJobsSection({
 
       return params.toString();
     },
-    [sortBy, skillHints, profileHeadline, profileSummary, catalogFilters]
+    [sortBy, skillHints, profileHeadline, profileSummary, catalogFilters, needsClientFilterPool]
+  );
+
+  const serverCatalogFilters = useMemo(
+    () => ({
+      q: catalogFilters.q,
+      sources: catalogFilters.sources,
+      dateWindow: catalogFilters.dateWindow,
+      locationMode: catalogFilters.locationMode,
+      locationQuery: catalogFilters.locationQuery,
+      company: catalogFilters.company,
+      jobTypes: catalogFilters.jobTypes,
+    }),
+    [catalogFilters]
   );
 
   useEffect(() => {
     if (!useServerJobs) return;
 
     const controller = new AbortController();
+    const fetchPage = needsClientFilterPool ? 1 : currentPage;
+    const fetchSize = needsClientFilterPool ? FILTER_POOL_CAP : PAGE_SIZE;
+
     void (async () => {
       setIsPageLoading(true);
       setFetchError(null);
       try {
-        const res = await fetch(`/api/jobs?${buildJobsFetchQuery(currentPage)}`, {
+        const res = await fetch(`/api/jobs?${buildJobsFetchQuery(fetchPage, fetchSize)}`, {
           cache: "no-store",
           signal: controller.signal,
         });
@@ -913,8 +954,13 @@ export default function RecommendedJobsSection({
         };
         if (controller.signal.aborted) return;
         if (res.ok && payload.ok && payload.jobs) {
-          setPageJobs(payload.jobs);
-          setApiTotal(payload.total ?? payload.jobs.length);
+          if (needsClientFilterPool) {
+            setFilterPoolJobs(payload.jobs);
+            setApiTotal(payload.total ?? payload.jobs.length);
+          } else {
+            setPageJobs(payload.jobs);
+            setApiTotal(payload.total ?? payload.jobs.length);
+          }
           return;
         }
 
@@ -922,23 +968,20 @@ export default function RecommendedJobsSection({
         const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
         const supabase = createBrowserSupabaseClient();
         const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-          page: currentPage,
-          pageSize: PAGE_SIZE,
-          rankByProfile: sortBy === "best" && skillHints.length > 0,
+          page: fetchPage,
+          pageSize: fetchSize,
+          rankByProfile:
+            fetchSize === PAGE_SIZE && sortBy === "best" && skillHints.length > 0 && !needsClientFilterPool,
           profile: profileMatch,
-          filters: {
-            q: catalogFilters.q,
-            sources: catalogFilters.sources,
-            dateWindow: catalogFilters.dateWindow,
-            locationMode: catalogFilters.locationMode,
-            locationQuery: catalogFilters.locationQuery,
-            company: catalogFilters.company,
-            jobTypes: catalogFilters.jobTypes,
-          },
+          filters: serverCatalogFilters,
         });
         if (controller.signal.aborted) return;
         if (fallback.jobs) {
-          setPageJobs(fallback.jobs);
+          if (needsClientFilterPool) {
+            setFilterPoolJobs(fallback.jobs);
+          } else {
+            setPageJobs(fallback.jobs);
+          }
           setApiTotal(fallback.total);
           return;
         }
@@ -957,12 +1000,13 @@ export default function RecommendedJobsSection({
     };
   }, [
     useServerJobs,
+    needsClientFilterPool,
     currentPage,
     buildJobsFetchQuery,
     skillHints,
     profileMatch,
     sortBy,
-    catalogFilters,
+    serverCatalogFilters,
   ]);
 
   function togglePlatform(src: JobFeedSource) {
@@ -1150,6 +1194,7 @@ export default function RecommendedJobsSection({
         companyQuery: companyQuery.trim(),
         jobTypes: [...jobTypes].sort(),
         matchScore,
+        skillsPick: [...skillsPick].sort(),
         experienceLevel,
         salaryFilterActive,
         companySize,
@@ -1157,6 +1202,7 @@ export default function RecommendedJobsSection({
         benefits: [...benefits].sort(),
         visaSponsorshipOnly,
         easyApplyOnly,
+        showProfileMatchesOnly,
       }),
     [
       query,
@@ -1167,6 +1213,7 @@ export default function RecommendedJobsSection({
       companyQuery,
       jobTypes,
       matchScore,
+      skillsPick,
       experienceLevel,
       salaryFilterActive,
       companySize,
@@ -1174,6 +1221,7 @@ export default function RecommendedJobsSection({
       benefits,
       visaSponsorshipOnly,
       easyApplyOnly,
+      showProfileMatchesOnly,
     ]
   );
 
@@ -1664,7 +1712,11 @@ export default function RecommendedJobsSection({
             · Page <span className="font-semibold text-[#1A73E8]">{safePage}</span> of{" "}
             <span className="text-[#8E8E93]">{totalPages.toLocaleString()}</span>
             {useServerJobs ? (
-              <span className="text-[#8E8E93]"> · {PAGE_SIZE} per page</span>
+              <span className="text-[#8E8E93]">
+                {" "}
+                · {PAGE_SIZE} per page
+                {needsClientFilterPool ? ` · advanced filters on ${FILTER_POOL_CAP.toLocaleString()} loaded jobs` : ""}
+              </span>
             ) : null}
             {isPageLoading ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">

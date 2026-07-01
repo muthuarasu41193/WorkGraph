@@ -315,17 +315,21 @@ export async function fetchLiveJobsPage(
   const filters = options.filters;
   const filtered = hasActiveCatalogFilters(filters);
 
-  let countQuery = supabase.from("jobs").select("*", { count: "exact", head: true }).eq("is_community", false);
+  let countQuery = supabase.from("jobs").select("id", { count: "exact", head: true }).eq("is_community", false);
   countQuery = applyJobsCatalogFilters(countQuery, filters);
   const totalRes = await countQuery;
 
+  let total = totalRes.count ?? 0;
   if (totalRes.error) {
-    console.warn("[jobs-catalog] jobs count error:", totalRes.error.message, totalRes.error.code);
-    return { rows: null, total: 0, page, pageSize, hasMore: false, filtered };
+    console.warn(
+      "[jobs-catalog] jobs count error:",
+      totalRes.error.message ?? String(totalRes.error),
+      totalRes.error.code
+    );
+    total = -1;
   }
 
-  const total = totalRes.count ?? 0;
-  if (total === 0) {
+  if (total === 0 && !totalRes.error) {
     return { rows: [], total: 0, page, pageSize, hasMore: false, filtered };
   }
 
@@ -341,12 +345,13 @@ export async function fetchLiveJobsPage(
   }
 
   const rows = (data ?? []) as JobRow[];
+  const resolvedTotal = total >= 0 ? total : offset + rows.length + (rows.length === pageSize ? pageSize : 0);
   return {
     rows,
-    total,
+    total: resolvedTotal,
     page,
     pageSize,
-    hasMore: offset + rows.length < total,
+    hasMore: total < 0 ? rows.length === pageSize : offset + rows.length < total,
     filtered,
   };
 }
@@ -402,42 +407,99 @@ export async function loadLiveJobCardsPage(
   const rankByProfile =
     options.rankByProfile !== false && hasSkills && !filtered;
 
+  const pageSize = Math.min(
+    options.pageSizeCap ?? LIVE_JOBS_MAX_API_PAGE_SIZE,
+    Math.max(1, options.pageSize ?? 100)
+  );
+
   if (options.rankByProfile === false) {
-    const maxRows = Math.min(
-      options.pageSize ?? LIVE_JOBS_CLIENT_FILTER_CAP,
-      LIVE_JOBS_CLIENT_FILTER_CAP
-    );
-    // Client applies job type / location / etc. — always load an unfiltered catalog slice.
-    const bulk = await fetchLiveJobsCatalog(supabase, { maxRows });
-    if (bulk.rows === null) {
-      const withSignals = await attachHiringSignalCards(supabase, profile, null, bulk.total);
+    const wantsBulkCatalog = pageSize > LIVE_JOBS_MAX_API_PAGE_SIZE;
+
+    if (wantsBulkCatalog && !filtered) {
+      const maxRows = Math.min(pageSize, LIVE_JOBS_CLIENT_FILTER_CAP);
+      const bulk = await fetchLiveJobsCatalog(supabase, { maxRows });
+      if (bulk.rows === null) {
+        const withSignals = await attachHiringSignalCards(supabase, profile, null, bulk.total);
+        return {
+          jobs: withSignals.jobs,
+          total: withSignals.total,
+          page: 1,
+          pageSize: withSignals.jobs?.length ?? 0,
+          hasMore: false,
+          filtered,
+          ranked: false,
+        };
+      }
+      const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
+      const withSignals = await attachHiringSignalCards(supabase, profile, cards, bulk.total);
       return {
         jobs: withSignals.jobs,
         total: withSignals.total,
         page: 1,
         pageSize: withSignals.jobs?.length ?? 0,
-        hasMore: false,
+        hasMore: withSignals.total > (withSignals.jobs?.length ?? 0),
         filtered,
         ranked: false,
       };
     }
-    const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
-    const withSignals = await attachHiringSignalCards(supabase, profile, cards, bulk.total);
+
+    if (wantsBulkCatalog && filtered) {
+      const maxRows = Math.min(pageSize, LIVE_JOBS_CLIENT_FILTER_CAP);
+      const bulk = await fetchFilteredLiveJobsCatalog(supabase, { filters, maxRows });
+      if (bulk.rows === null) {
+        const withSignals = await attachHiringSignalCards(supabase, profile, null, bulk.total);
+        return {
+          jobs: withSignals.jobs,
+          total: withSignals.total,
+          page: 1,
+          pageSize: withSignals.jobs?.length ?? 0,
+          hasMore: false,
+          filtered: bulk.filtered,
+          ranked: false,
+        };
+      }
+      const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
+      const withSignals = await attachHiringSignalCards(supabase, profile, cards, bulk.total);
+      return {
+        jobs: withSignals.jobs,
+        total: withSignals.total,
+        page: 1,
+        pageSize: withSignals.jobs?.length ?? 0,
+        hasMore: withSignals.total > (withSignals.jobs?.length ?? 0),
+        filtered: bulk.filtered,
+        ranked: false,
+      };
+    }
+
+    const result = await fetchLiveJobsPage(supabase, { ...options, pageSize });
+    if (result.rows === null) {
+      const withSignals = await attachHiringSignalCards(supabase, profile, null, result.total);
+      return {
+        jobs: withSignals.jobs,
+        total: withSignals.total,
+        page: result.page,
+        pageSize: result.pageSize,
+        hasMore: false,
+        filtered: result.filtered,
+        ranked: false,
+      };
+    }
+    const pageCards = result.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
+    const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, result.total);
     return {
       jobs: withSignals.jobs,
       total: withSignals.total,
-      page: 1,
-      pageSize: withSignals.jobs?.length ?? 0,
-      hasMore: withSignals.total > (withSignals.jobs?.length ?? 0),
-      filtered,
+      page: result.page,
+      pageSize: result.pageSize,
+      hasMore: result.hasMore,
+      filtered: result.filtered,
       ranked: false,
     };
   }
 
-  const pageSize = Math.min(LIVE_JOBS_MAX_API_PAGE_SIZE, Math.max(1, options.pageSize ?? 100));
-
   if (rankByProfile) {
     let candidates: JobRow[] | null = null;
+    let filteredTotal: number | null = null;
 
     if (filtered) {
       const batch = await fetchLiveJobsPage(supabase, {
@@ -447,6 +509,7 @@ export async function loadLiveJobCardsPage(
         filters,
       });
       candidates = batch.rows;
+      filteredTotal = batch.total;
     } else {
       const catalog = await fetchLiveJobsCatalog(supabase, {
         maxRows: PROFILE_RANK_CANDIDATE_CAP,
@@ -471,7 +534,8 @@ export async function loadLiveJobCardsPage(
     const offset = (page - 1) * pageSize;
     const slice = ranked.slice(offset, offset + pageSize);
     const pageCards = slice.map((row) => mapJobRowToCard(row, profile.skills, profile));
-    const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, ranked.length);
+    const resultTotal = filtered && filteredTotal !== null ? filteredTotal : ranked.length;
+    const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, resultTotal);
     return {
       jobs: withSignals.jobs,
       total: withSignals.total,
