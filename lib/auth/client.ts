@@ -65,6 +65,19 @@ export async function signUpWithPassword(
   return { ok: true };
 }
 
+export async function updatePassword(newPassword: string): Promise<{ ok: boolean; error?: string }> {
+  if (supertokensEnabled()) {
+    return { ok: false, error: "Password reset is managed through SuperTokens." };
+  }
+  const { createBrowserSupabaseClient } = await import("../supabase");
+  const supabase = createBrowserSupabaseClient();
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) return { ok: false, error: error.message };
+  const { syncServerAuthCookies } = await import("../client-auth");
+  await syncServerAuthCookies();
+  return { ok: true };
+}
+
 export async function signOutClient(): Promise<void> {
   if (supertokensEnabled()) {
     const { initSuperTokensFrontend } = await import("../supertokens/frontend");

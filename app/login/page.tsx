@@ -64,7 +64,7 @@ export default function LoginPage() {
         return;
       }
       const supabase = createBrowserSupabaseClient();
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent("/profile")}`;
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent("/reset-password")}`;
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(trimmed, { redirectTo });
       if (resetError) {
         setError(resetError.message);
@@ -203,7 +203,7 @@ export default function LoginPage() {
             {showForgot ? (
               <form className="mt-3 space-y-2" onSubmit={onForgotPassword}>
                 <p className="text-xs leading-relaxed">
-                  Uses the email in the &quot;Email&quot; field. We send a Supabase reset link to that address.
+                  Uses the email in the &quot;Email&quot; field. We send a reset link — you&apos;ll set a new password on the next screen.
                 </p>
                 <Button type="submit" variant="outline" disabled={forgotBusy} className="w-full">
                   {forgotBusy ? "Sending…" : "Send reset link"}
