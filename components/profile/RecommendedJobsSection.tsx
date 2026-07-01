@@ -180,8 +180,7 @@ const VIEW_MODE_OPTIONS = ["list", "grid"] as const;
 const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_asc"] as const;
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
-const PAGE_SIZE = 20;
-const CATALOG_FETCH_SIZE = 4000;
+const PAGE_SIZE = 50;
 const MAX_PAGINATION_TOKENS = 7;
 
 type PaginationToken = number | "ellipsis";
@@ -688,13 +687,15 @@ export default function RecommendedJobsSection({
   const [isInitialLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [pageJobs, setPageJobs] = useState<RecommendedJobCard[]>(() => initialJobs.slice(0, PAGE_SIZE));
-  const [catalogTotal, setCatalogTotal] = useState(
+  const [apiTotal, setApiTotal] = useState(
     feedKind === "live" ? liveListings || initialJobs.length : initialJobs.length
   );
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
   const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
+  /** When true (e.g. "Matched to your profile" dashboard card), hide jobs with no profile overlap. */
+  const [showProfileMatchesOnly, setShowProfileMatchesOnly] = useState(false);
   const deferredSearchInput = useDeferredValue(searchInput);
   const query = searchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
@@ -776,23 +777,10 @@ export default function RecommendedJobsSection({
     [catalogFilters, clientFilterState]
   );
 
-  // Always use catalog mode for the live feed so all filters
-  // (top row + Advanced) run against the same pooled job set.
-  const useCatalogMode = feedKind === "live";
-
-  const [catalogPool, setCatalogPool] = useState<RecommendedJobCard[]>(() =>
-    feedKind === "live" ? initialJobs : []
-  );
-  const [catalogLoaded, setCatalogLoaded] = useState(false);
-
-  const jobsForFiltering = useMemo(() => {
-    if (feedKind === "demo") return initialJobs;
-    if (catalogLoaded && catalogPool.length > 0) return catalogPool;
-    return catalogPool.length > 0 ? catalogPool : initialJobs;
-  }, [feedKind, initialJobs, catalogLoaded, catalogPool]);
+  const useServerJobs = feedKind === "live" || liveListings > 0;
 
   const listingPipeline = useMemo(() => {
-    const sourceJobs = feedKind === "demo" ? initialJobs : useCatalogMode ? jobsForFiltering : pageJobs;
+    const sourceJobs = useServerJobs ? pageJobs : initialJobs;
     const enriched = sourceJobs.map((job) => ({
       job,
       meta: deriveJobMeta(job),
@@ -800,7 +788,8 @@ export default function RecommendedJobsSection({
     }));
     const filtered = applyJobListingFilters(enriched, clientFilterState, {
       profile: profileMatch,
-      requireProfileOverlap: profileMatchActive && feedKind === "live" && !userFiltersActive,
+      requireProfileOverlap:
+        showProfileMatchesOnly && profileMatchActive && feedKind === "live" && !userFiltersActive,
       minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
     });
     const rows = [...filtered];
@@ -815,24 +804,25 @@ export default function RecommendedJobsSection({
     });
     return rows;
   }, [
+    useServerJobs,
     feedKind,
     initialJobs,
-    useCatalogMode,
-    jobsForFiltering,
     pageJobs,
     profileMatch,
     clientFilterState,
     profileMatchActive,
     userFiltersActive,
+    showProfileMatchesOnly,
     sortBy,
   ]);
 
   const visibleJobs = useMemo(() => {
+    if (useServerJobs) return listingPipeline;
     const start = (currentPage - 1) * PAGE_SIZE;
     return listingPipeline.slice(start, start + PAGE_SIZE);
-  }, [listingPipeline, currentPage]);
+  }, [useServerJobs, listingPipeline, currentPage]);
 
-  const totalMatched = listingPipeline.length;
+  const totalMatched = useServerJobs ? apiTotal : listingPipeline.length;
 
   const platformsInFeed = useMemo(() => {
     const u = new Set<JobFeedSource>();
@@ -868,46 +858,63 @@ export default function RecommendedJobsSection({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [totalPages]);
 
-  const buildCatalogFetchQuery = useCallback(
-    (pageSize: number) => {
+  const buildJobsFetchQuery = useCallback(
+    (page: number) => {
       const params = new URLSearchParams();
-      params.set("page", "1");
-      params.set("page_size", String(pageSize));
-      params.set("catalog", "1");
-      params.set("rank_profile", "0");
+      params.set("page", String(page));
+      params.set("page_size", String(PAGE_SIZE));
+
+      const rankByProfile = sortBy === "best" && skillHints.length > 0;
+      if (!rankByProfile) params.set("rank_profile", "0");
+
       if (skillHints.length > 0) {
         params.set("profile_skills", skillHints.join(","));
       }
       if (profileHeadline?.trim()) params.set("profile_headline", profileHeadline.trim());
       if (profileSummary?.trim()) params.set("profile_summary", profileSummary.trim().slice(0, 2000));
+
+      if (catalogFilters.q) params.set("q", catalogFilters.q);
+      if (catalogFilters.sources && catalogFilters.sources.length > 0) {
+        params.set("src", catalogFilters.sources.join(","));
+      }
+      if (catalogFilters.dateWindow && catalogFilters.dateWindow !== "any") {
+        params.set("date", catalogFilters.dateWindow);
+      }
+      if (catalogFilters.locationMode && catalogFilters.locationMode !== "any") {
+        params.set("locMode", catalogFilters.locationMode);
+      }
+      if (catalogFilters.locationQuery) params.set("loc", catalogFilters.locationQuery);
+      if (catalogFilters.company) params.set("company", catalogFilters.company);
+      if (catalogFilters.jobTypes && catalogFilters.jobTypes.length > 0) {
+        params.set("type", catalogFilters.jobTypes.join(","));
+      }
+
       return params.toString();
     },
-    [skillHints, profileHeadline, profileSummary]
+    [sortBy, skillHints, profileHeadline, profileSummary, catalogFilters]
   );
 
   useEffect(() => {
-    if (!useCatalogMode) {
-      setCatalogLoaded(false);
-      return;
-    }
+    if (!useServerJobs) return;
 
     const controller = new AbortController();
     void (async () => {
       setIsPageLoading(true);
       setFetchError(null);
       try {
-        const res = await fetch(`/api/jobs?${buildCatalogFetchQuery(CATALOG_FETCH_SIZE)}`, {
+        const res = await fetch(`/api/jobs?${buildJobsFetchQuery(currentPage)}`, {
           cache: "no-store",
           signal: controller.signal,
         });
         const payload = (await res.json()) as {
           ok?: boolean;
           jobs?: RecommendedJobCard[];
+          total?: number;
         };
         if (controller.signal.aborted) return;
-        if (res.ok && payload.ok && payload.jobs && payload.jobs.length > 0) {
-          setCatalogPool(payload.jobs);
-          setCatalogLoaded(true);
+        if (res.ok && payload.ok && payload.jobs) {
+          setPageJobs(payload.jobs);
+          setApiTotal(payload.total ?? payload.jobs.length);
           return;
         }
 
@@ -915,18 +922,27 @@ export default function RecommendedJobsSection({
         const { loadLiveJobCardsPage } = await import("@/lib/jobs-catalog");
         const supabase = createBrowserSupabaseClient();
         const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
-          page: 1,
-          pageSize: CATALOG_FETCH_SIZE,
-          rankByProfile: false,
+          page: currentPage,
+          pageSize: PAGE_SIZE,
+          rankByProfile: sortBy === "best" && skillHints.length > 0,
           profile: profileMatch,
+          filters: {
+            q: catalogFilters.q,
+            sources: catalogFilters.sources,
+            dateWindow: catalogFilters.dateWindow,
+            locationMode: catalogFilters.locationMode,
+            locationQuery: catalogFilters.locationQuery,
+            company: catalogFilters.company,
+            jobTypes: catalogFilters.jobTypes,
+          },
         });
         if (controller.signal.aborted) return;
-        if (fallback.jobs && fallback.jobs.length > 0) {
-          setCatalogPool(fallback.jobs);
-          setCatalogLoaded(true);
+        if (fallback.jobs) {
+          setPageJobs(fallback.jobs);
+          setApiTotal(fallback.total);
           return;
         }
-        setFetchError("Could not load the full job catalog for filtering.");
+        setFetchError("Could not load jobs for this page.");
       } catch {
         if (!controller.signal.aborted) {
           setFetchError("Network error while loading jobs.");
@@ -939,7 +955,15 @@ export default function RecommendedJobsSection({
     return () => {
       controller.abort();
     };
-  }, [useCatalogMode, buildCatalogFetchQuery, skillHints, profileMatch]);
+  }, [
+    useServerJobs,
+    currentPage,
+    buildJobsFetchQuery,
+    skillHints,
+    profileMatch,
+    sortBy,
+    catalogFilters,
+  ]);
 
   function togglePlatform(src: JobFeedSource) {
     setSources((prev) => {
@@ -955,6 +979,7 @@ export default function RecommendedJobsSection({
   }
 
   const clearFilters = useCallback(() => {
+    setShowProfileMatchesOnly(false);
     setSearchInput("");
     setDateWindow("any");
     setSources(new Set());
@@ -1180,10 +1205,12 @@ export default function RecommendedJobsSection({
       const filter = ce.detail?.filter;
       if (!filter) return;
       if (filter === "all") {
+        setShowProfileMatchesOnly(false);
         clearFilters();
         return;
       }
       if (filter === "matched") {
+        setShowProfileMatchesOnly(true);
         setSearchInput("");
         setDateWindow("any");
         setSources(new Set());
@@ -1442,10 +1469,22 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      {feedKind === "live" && liveListings > 0 ? (
+      {liveListings > 0 ? (
         <p className="text-sm text-[#5F6368]">
-          <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs match your criteria
-          {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}. Browse by page below.
+          {showProfileMatchesOnly ? (
+            <>
+              <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs match your
+              profile
+              {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}.
+            </>
+          ) : (
+            <>
+              <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs in catalog
+              {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""} — ranked by
+              profile fit when skills are set.
+            </>
+          )}{" "}
+          Browse by page below.
         </p>
       ) : null}
 
@@ -1608,29 +1647,32 @@ export default function RecommendedJobsSection({
           ) : null}
 
           <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
-            Showing <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()} matched jobs</span>
+            {visibleJobs.length > 0 ? (
+              <>
+                Showing{" "}
+                <span className="font-semibold text-[#1A73E8]">
+                  {rangeStart.toLocaleString()}-{rangeEnd.toLocaleString()}
+                </span>{" "}
+                of <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs
+              </>
+            ) : (
+              <>
+                <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs total
+              </>
+            )}
             {" "}
             · Page <span className="font-semibold text-[#1A73E8]">{safePage}</span> of{" "}
             <span className="text-[#8E8E93]">{totalPages.toLocaleString()}</span>
-            {feedKind === "live" ? (
-              <span className="text-[#8E8E93]">
-                {" "}
-                · Filtering {jobsForFiltering.length.toLocaleString()}
-                {liveListings > 0 ? ` of ${liveListings.toLocaleString()} indexed` : ""} loaded jobs
-              </span>
+            {useServerJobs ? (
+              <span className="text-[#8E8E93]"> · {PAGE_SIZE} per page</span>
             ) : null}
             {isPageLoading ? (
               <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                Loading full catalog…
+                Loading page…
               </span>
             ) : null}
           </p>
-          {feedKind === "live" && !catalogLoaded && !isPageLoading && liveListings > jobsForFiltering.length ? (
-            <p className="mt-1 text-xs text-amber-700">
-              Filters are running on a preview set ({jobsForFiltering.length.toLocaleString()} jobs). The full catalog is still loading — counts may change.
-            </p>
-          ) : null}
           <p className="sr-only" aria-live="polite">
             {activeFilterCount === 0 ? "No active filters." : `${activeFilterCount} active filters applied.`}
           </p>
@@ -2324,6 +2366,40 @@ export default function RecommendedJobsSection({
             </div>
           ) : null}
         </nav>
+      ) : null}
+
+      {!showSkeleton &&
+      listingPipeline.length === 0 &&
+      !userFiltersActive &&
+      showProfileMatchesOnly &&
+      (liveListings > 0 || pageJobs.length > 0) ? (
+        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
+          <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
+          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No profile matches on this page</h3>
+          <p className="mt-2 text-sm text-[#8E8E93]">
+            {liveListings.toLocaleString()} jobs are indexed, but none on this page overlap your skills. Browse the full
+            catalog or update your profile skills.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setShowProfileMatchesOnly(false);
+                setSkillsPick(new Set());
+                setCurrentPage(1);
+              }}
+              className="inline-flex h-10 items-center rounded-[20px] bg-[#1A73E8] px-5 text-sm font-medium text-white hover:bg-[#1557B0]"
+            >
+              Browse all {liveListings.toLocaleString()} jobs
+            </button>
+            <Link
+              href="/profile?view=profile"
+              className="inline-flex h-10 items-center rounded-[20px] border border-[#1A73E8] px-5 text-sm font-medium text-[#1A73E8]"
+            >
+              Update profile skills
+            </Link>
+          </div>
+        </div>
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 ? (
