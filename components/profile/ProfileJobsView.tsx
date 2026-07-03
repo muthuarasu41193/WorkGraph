@@ -1,5 +1,6 @@
 "use client";
 
+import PageHero from "@/components/design-system/PageHero";
 import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
 import ProfileJobDashboard from "./ProfileJobDashboard";
 import RecommendedJobsSection from "./RecommendedJobsSection";
@@ -31,13 +32,11 @@ export default function ProfileJobsView({
   hasResume = false,
 }: Props) {
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Jobs</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Live listings ranked for your skills and experience.
-        </p>
-      </header>
+    <div className="space-y-6">
+      <PageHero
+        title="Job Discovery"
+        subtitle="Browse live listings ranked by AI match score for your skills and experience."
+      />
       <ProfileJobDashboard
         stats={jobPipeline}
         profileCompleteness={profileCompleteness}

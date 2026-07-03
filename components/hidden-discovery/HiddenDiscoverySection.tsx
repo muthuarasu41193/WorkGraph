@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, Radar, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
+import PageHero from "@/components/design-system/PageHero";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
 import { useHiddenJobs } from "@/hooks/use-hidden-jobs";
@@ -50,27 +51,12 @@ export default function HiddenDiscoverySection() {
 
   return (
     <section className="space-y-4" aria-labelledby="hidden-discovery-heading">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1
-            id="hidden-discovery-heading"
-            className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground"
-          >
-            <Radar className="h-7 w-7 text-primary" />
-            Hidden Jobs Discovery
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Community hiring signals from Reddit, Hacker News, and GitHub — not duplicated from your
-            Jobs page (ATS listings stay under Jobs).
-          </p>
-          {meta ? (
-            <p className="mt-2 text-xs text-muted-foreground">
-              {meta.filtered} shown · {meta.total} unique ·{" "}
-              {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <PageHero
+          title="Hidden Job Discovery"
+          subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
+        />
+        <div className="flex shrink-0 flex-wrap gap-2 sm:pt-2">
           <Button
             type="button"
             variant={showSavedOnly ? "default" : "outline"}
@@ -84,7 +70,13 @@ export default function HiddenDiscoverySection() {
             Refresh
           </Button>
         </div>
-      </header>
+      </div>
+      {meta ? (
+        <p className="text-xs text-muted-foreground">
+          {meta.filtered} shown · {meta.total} unique ·{" "}
+          {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
+        </p>
+      ) : null}
 
       <Card className="wg-dash-section-card border-border bg-muted/40">
         <CardContent className="space-y-2 p-4 text-sm text-muted-foreground">

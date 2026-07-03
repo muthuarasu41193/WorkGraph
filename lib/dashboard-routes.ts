@@ -9,6 +9,7 @@ import {
   Newspaper,
   Radar,
   Radio,
+  Settings,
   User,
 } from "lucide-react";
 
@@ -23,7 +24,8 @@ export type DashboardRouteId =
   | "profile"
   | "job-news"
   | "workgraph-direct"
-  | "resume-intelligence";
+  | "resume-intelligence"
+  | "settings";
 
 export type DashboardRoute = {
   id: DashboardRouteId;
@@ -103,6 +105,13 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     shortLabel: "News",
     icon: Newspaper,
     description: "Hiring posts from Reddit, X, LinkedIn, and more",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    shortLabel: "Settings",
+    icon: Settings,
+    description: "Account preferences and notifications",
   },
 ];
 

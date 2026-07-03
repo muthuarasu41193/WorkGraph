@@ -10,6 +10,7 @@ import { DashboardProvider } from "../../dashboard/DashboardProvider";
 import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
 import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
+import PageHero from "@/components/design-system/PageHero";
 import ProfileHero from "./ProfileHero";
 import ProfileSkills from "./ProfileSkills";
 import ProfileExperience from "./ProfileExperience";
@@ -64,6 +65,11 @@ const ResumeIntelligenceSection = dynamic(
     ssr: false,
   },
 );
+
+const SettingsSection = dynamic(() => import("../../settings/SettingsSection"), {
+  loading: () => <DashboardSectionSkeleton />,
+  ssr: false,
+});
 
 export type ProfileShellProps = {
   profile: Profile;
@@ -129,7 +135,15 @@ function ProfileShellInner({
   const sections = useMemo(
     () => ({
       home: homeDashboard,
-      applications: <ApplicationsTracker userId={userId} />,
+      applications: (
+        <div className="space-y-6">
+          <PageHero
+            title="Application Intelligence"
+            subtitle="Track every opportunity and maximize your response rate."
+          />
+          <ApplicationsTracker userId={userId} />
+        </div>
+      ),
       jobs: (
         <ProfileJobsView
           jobs={atsJobs.length ? atsJobs : recommendedJobs}
@@ -148,11 +162,11 @@ function ProfileShellInner({
       "job-discovery": <HiddenDiscoverySection />,
       vault: <InterviewVaultSection />,
       profile: (
-        <div className="space-y-5">
-          <header>
-            <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Keep your resume data accurate and ATS-ready.</p>
-          </header>
+        <div className="space-y-6">
+          <PageHero
+            title="Your Profile"
+            subtitle="Keep your skills, experience, and resume data accurate for better AI matching."
+          />
           <ProfileHero profile={profile} userId={userId} />
           <ProfileSkills userId={userId} initialSkills={profile.skills} />
           <ProfileExperience userId={userId} experience={profile.work_experience} />
@@ -179,10 +193,17 @@ function ProfileShellInner({
         />
       ),
       "resume-intelligence": (
-        <ResumeIntelligenceSection
-          hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
-        />
+        <div className="space-y-6">
+          <PageHero
+            title="Your Resume Intelligence"
+            subtitle="Improve your interview chances by fixing the highest-impact resume issues."
+          />
+          <ResumeIntelligenceSection
+            hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
+          />
+        </div>
       ),
+      settings: <SettingsSection />,
     }),
     [
       homeDashboard,
