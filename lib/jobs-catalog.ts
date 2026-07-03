@@ -383,6 +383,7 @@ export async function loadLiveJobCardsPage(
   options: {
     page?: number;
     pageSize?: number;
+    pageSizeCap?: number;
     filters?: JobsCatalogFilters;
     profile?: ProfileMatchInput;
     /** When false, return rows ordered by posted_at (used before client-side filtering). */
