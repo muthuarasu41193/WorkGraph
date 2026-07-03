@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -33,9 +32,7 @@ export default function InsightCard({
   className,
 }: Props) {
   return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2 }}
+    <div
       className={cn(
         "wg-dash-section-card wg-dash-card-lift flex flex-col p-5",
         variantStyles[variant],
@@ -64,6 +61,6 @@ export default function InsightCard({
         <p className="text-xs leading-relaxed text-[var(--dash-text-secondary)]">{description}</p>
       </div>
       {action ? <div className="mt-4">{action}</div> : null}
-    </motion.div>
+    </div>
   );
 }

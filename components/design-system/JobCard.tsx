@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Bookmark,
   Building2,
@@ -9,7 +8,6 @@ import {
   MapPin,
   Zap,
 } from "lucide-react";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -72,13 +70,10 @@ export default function JobCard({
   className,
 }: Props) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.04, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -2 }}
+    <article
+      style={{ animationDelay: `${index * 40}ms` }}
       className={cn(
-        "wg-dash-section-card wg-dash-card-lift group overflow-hidden",
+        "wg-dash-section-card wg-dash-card-lift wg-job-card-enter group overflow-hidden",
         className,
       )}
     >
@@ -191,7 +186,7 @@ export default function JobCard({
           ) : null}
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }
 

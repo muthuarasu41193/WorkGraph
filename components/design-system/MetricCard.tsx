@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -33,12 +32,10 @@ export default function MetricCard({
   const trendDown = trend !== undefined && trend < 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: delay * 0.06, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      style={{ animationDelay: `${delay * 60}ms` }}
       className={cn(
-        "wg-dash-section-card wg-dash-card-lift group relative overflow-hidden p-5",
+        "wg-dash-section-card wg-dash-card-lift wg-dash-stat-enter group relative overflow-hidden p-5",
         className,
       )}
     >
@@ -83,6 +80,6 @@ export default function MetricCard({
           <MiniChart data={chartData} positive={trendUp} />
         </div>
       ) : null}
-    </motion.div>
+    </div>
   );
 }

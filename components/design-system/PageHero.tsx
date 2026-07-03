@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +27,7 @@ export default function PageHero({
   className,
 }: Props) {
   return (
-    <motion.header
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={cn("space-y-5", className)}
-    >
+    <header className={cn("wg-section-fade space-y-5", className)}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           {greeting ? (
@@ -67,6 +61,6 @@ export default function PageHero({
           ))}
         </div>
       ) : null}
-    </motion.header>
+    </header>
   );
 }
