@@ -1,3 +1,5 @@
+"use client";
+
 export { AppShell, default } from "./AppShell";
 export type {
   AppShellProps,
