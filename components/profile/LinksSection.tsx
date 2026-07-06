@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { GitBranch, Globe, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 import {
@@ -120,12 +121,13 @@ export default function LinksSection({ profile, userId }: Props) {
           return (
             <div key={row.key} className="flex items-center gap-3 rounded-xl border border-[var(--border-default)] bg-surface-primary p-3">
               <div>{row.icon}</div>
-              <input
+              <Input
+                variant="ghost"
                 value={values[row.key]}
                 disabled={!isEditing}
                 onChange={(e) => setValues((prev) => ({ ...prev, [row.key]: e.target.value }))}
                 placeholder={row.placeholder}
-                className="flex-1 border-none bg-transparent text-body font-normal text-[var(--text-secondary)] outline-none placeholder:text-[var(--text-tertiary)]"
+                className="flex-1 font-normal text-[var(--text-secondary)]"
               />
               {!isEditing ? (
                 <Button type="button" variant="secondary" size="sm" onClick={() => setEditing(row.key)}>

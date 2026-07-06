@@ -1,10 +1,10 @@
 "use client";
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Briefcase, Building2, Search as SearchIcon, Sparkles } from "lucide-react";
+import { Briefcase, Building2, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Search } from "@/components/ui/search";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
@@ -67,33 +67,22 @@ export default function GlobalSearch({ className, compact = false }: Props) {
 
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
-      <div className="relative">
-        <SearchIcon
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-          aria-hidden
-        />
-        <Input
-          type="search"
-          role="combobox"
-          aria-expanded={open}
-          aria-controls="global-search-listbox"
-          aria-autocomplete="list"
-          placeholder={compact ? "Search…" : "Search jobs, companies, or skills"}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setOpen(true);
-          }}
-          onFocus={() => setOpen(true)}
-          className={cn(
-            "h-11 rounded-lg border-border bg-surface-secondary/80 pl-10 pr-3 shadow-sm transition-shadow focus-visible:bg-background focus-visible:shadow-md",
-            compact && "h-10",
-          )}
-        />
-        {query.length > 1 && deferredQuery !== query ? (
-          <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        ) : null}
-      </div>
+      <Search
+        role="combobox"
+        aria-expanded={open}
+        aria-controls="global-search-listbox"
+        aria-autocomplete="list"
+        placeholder={compact ? "Search…" : "Search jobs, companies, or skills"}
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        size={compact ? "md" : "lg"}
+        loading={query.length > 1 && deferredQuery !== query}
+        className={cn(compact && "h-10")}
+      />
 
       {open && (query.length > 0 || results.length > 0) ? (
         <div

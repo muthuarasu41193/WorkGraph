@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Education } from "../../lib/types";
 import {
@@ -17,9 +18,6 @@ type Props = {
   userId: string;
   education: Education[];
 };
-
-const inputReset =
-  "border-0 bg-transparent shadow-none outline-none ring-0 transition placeholder:text-text-tertiary focus:ring-0 focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-2 rounded-sm";
 
 export default function EducationSection({ userId, education }: Props) {
   const [items, setItems] = useState<Education[]>(education);
@@ -114,11 +112,13 @@ export default function EducationSection({ userId, education }: Props) {
                     <span className="font-mono text-caption font-medium tabular-nums text-text-tertiary">
                       {(idx + 1).toString().padStart(2, "0")}
                     </span>
-                    <input
+                    <Input
+                      variant="ghost"
+                      size="sm"
                       value={item.year}
                       onChange={(e) => void updateField(idx, "year", e.target.value)}
                       placeholder="Year"
-                      className={`${inputReset} w-full max-w-[8rem] rounded border border-dashed border-border-strong bg-surface-primary px-2 py-1 font-mono text-caption text-foreground sm:max-w-none`}
+                      className="w-full max-w-[8rem] rounded border border-dashed border-border-strong bg-surface-primary px-2 py-1 font-mono text-caption sm:max-w-none"
                     />
                   </div>
 
@@ -133,17 +133,19 @@ export default function EducationSection({ userId, education }: Props) {
                       icon={<Trash2 className="h-4 w-4" />}
                     />
 
-                    <input
+                    <Input
+                      variant="ghost"
                       value={item.degree}
                       onChange={(e) => void updateField(idx, "degree", e.target.value)}
                       placeholder="Degree or program"
-                      className={`${inputReset} w-full pr-8 text-body-lg font-semibold text-foreground sm:pr-10`}
+                      className="w-full pr-8 text-body-lg font-semibold sm:pr-10"
                     />
-                    <input
+                    <Input
+                      variant="ghost"
                       value={item.institution}
                       onChange={(e) => void updateField(idx, "institution", e.target.value)}
                       placeholder="Institution"
-                      className={`${inputReset} mt-2 w-full pr-8 text-body text-foreground/85 sm:pr-10`}
+                      className="mt-2 w-full pr-8 text-body text-foreground/85 sm:pr-10"
                     />
                   </div>
                 </div>

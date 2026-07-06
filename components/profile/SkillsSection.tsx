@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PlusCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import {
   emitProfileSaved,
@@ -86,7 +87,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
 
       {showAdd ? (
         <div className="mb-4 flex gap-2">
-          <input
+          <Input
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             onKeyDown={(e) => {
@@ -96,7 +97,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
               }
             }}
             placeholder="Add a skill"
-            className="flex-1 rounded-xl border border-border bg-surface-secondary/80 px-3 py-2 text-body outline-none transition focus:border-success/20 focus:bg-surface-primary focus:ring-4 focus:ring-success/20"
+            className="flex-1"
           />
           <Button type="button" variant="success" size="sm" onClick={() => void addSkill()}>
             Add

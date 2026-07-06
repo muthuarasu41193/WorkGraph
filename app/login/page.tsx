@@ -145,7 +145,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email"
-                className="h-12 pl-12"
+                size="lg"
+                className="pl-12"
               />
             </div>
           </div>
@@ -167,7 +168,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password"
-                className="h-12 pl-12"
+                size="lg"
+                className="pl-12"
               />
             </div>
           </div>

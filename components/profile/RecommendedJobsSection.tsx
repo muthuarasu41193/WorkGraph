@@ -25,7 +25,6 @@ import {
   MapPin,
   Sparkles,
   SearchX,
-  Search,
   SlidersHorizontal,
   Star,
   Target,
@@ -54,6 +53,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Search } from "@/components/ui/search";
 import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@/components/ui/label";
 import {
@@ -1557,30 +1557,18 @@ export default function RecommendedJobsSection({
 
           <section className="sticky top-[var(--sticky-below-header)] z-[100] hidden border-b border-[var(--border-default)] bg-[rgba(255,255,255,0.95)] py-3 backdrop-blur-[8px] md:block">
             <div className="wg-no-scrollbar flex items-center gap-2 overflow-x-auto">
-              <div className="relative w-full min-w-[280px] md:w-[280px] md:min-w-[280px]">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" aria-hidden />
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search job titles, companies..."
-                  className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-12 pr-10 text-body text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
-                />
-                {searchInput ? (
-                  <IconButton
-                    type="button"
-                    variant="ghost"
-                    iconSize="sm"
-                    onClick={() => {
-                      setSearchInput("");
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
-                    label="Clear search"
-                    icon={<X className="h-4 w-4" />}
-                  />
-                ) : null}
-                {isSearching ? <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" /> : null}
-              </div>
+              <Search
+                shape="pill"
+                size="md"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search job titles, companies..."
+                clearable
+                onClear={() => setSearchInput("")}
+                loading={isSearching}
+                className="pl-12"
+                containerClassName="w-full min-w-[280px] md:w-[280px] md:min-w-[280px]"
+              />
               {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
                 <p className="ml-2 text-caption text-[var(--text-tertiary)]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
@@ -1591,11 +1579,10 @@ export default function RecommendedJobsSection({
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-52 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
                   {JOB_TYPE_OPTIONS.map((type) => (
-                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-2 text-body hover:bg-[var(--surface-secondary)]">
-                      <input
-                        type="checkbox"
+                    <label key={type} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-body hover:bg-[var(--surface-secondary)]">
+                      <Checkbox
                         checked={jobTypes.has(type)}
-                        onChange={() => {
+                        onCheckedChange={() => {
                           setJobTypes((prev) => {
                             const next = new Set(prev);
                             if (next.has(type)) next.delete(type);
@@ -1616,14 +1603,15 @@ export default function RecommendedJobsSection({
                   <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-64 rounded-xl border border-[var(--border-default)] bg-surface-primary p-3 shadow-lg">
-                  <input
+                  <Input
+                    size="sm"
                     value={locationQuery}
                     onChange={(e) => {
                       setLocationQuery(e.target.value);
                       setCurrentPage(1);
                     }}
                     placeholder="Country or city"
-                    className="mb-2 h-9 w-full rounded-lg border border-[var(--border-default)] px-3 text-body"
+                    className="mb-2"
                   />
                   <div className="flex flex-wrap gap-2">
                     {["any", "remote", "hybrid", "onsite"].map((loc) => (
@@ -1952,17 +1940,18 @@ export default function RecommendedJobsSection({
                 <Input type="number" value={salaryMax} onChange={(e) => setSalaryMax(Number(e.target.value || 500))} />
               </div>
               <div className="flex flex-wrap gap-2">
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])}
-                  className="h-9 rounded-lg border border-[var(--border-default)] px-2 text-body"
-                >
-                  {CURRENCY_OPTIONS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <Select value={currency} onValueChange={(v) => setCurrency(v as (typeof CURRENCY_OPTIONS)[number])}>
+                  <SelectTrigger size="sm" className="w-auto">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button type="button" size="sm" variant={salaryPeriod === "year" ? "default" : "outline"} onClick={() => setSalaryPeriod("year")}>
                   Per year
                 </Button>

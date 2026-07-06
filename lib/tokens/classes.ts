@@ -47,6 +47,6 @@ export const filterChipClass = {
 export const stickyBarClass =
   "sticky top-[var(--header-height)] z-[100] border-b border-border bg-surface-primary/95 py-3 backdrop-blur-[8px]";
 
-/** Input field default */
+/** Input field default — mirrors @/components/ui/input (md) */
 export const inputFieldClass =
-  "h-[var(--input-height-md)] w-full rounded-[length:var(--radius-md)] border border-border bg-surface-primary px-3 text-body text-foreground placeholder:text-text-tertiary outline-none transition-[var(--transition-colors)] focus:border-primary focus:ring-[length:var(--focus-ring-width)] focus:ring-[var(--accent-muted)]";
+  "h-[var(--input-height-md)] w-full rounded-[length:var(--radius-md)] border border-input bg-[var(--surface-primary)] px-3 text-body text-foreground placeholder:text-muted-foreground outline-none transition-[var(--transition-colors)] focus-visible:border-[var(--border-strong)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring-color)]/20 focus-visible:shadow-[var(--shadow-sm)]";

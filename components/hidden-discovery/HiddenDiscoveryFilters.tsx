@@ -1,8 +1,8 @@
 "use client";
 
-import { Search } from "lucide-react";
 import type { HiddenJobsFilters } from "@/hooks/use-hidden-jobs";
 import { HIDDEN_OPPORTUNITY_SOURCES } from "@/lib/hidden-opportunities/types";
+import { Search as SearchInput } from "@/components/ui/search";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -38,16 +38,12 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
     >
       <div className="space-y-2 sm:col-span-2 lg:col-span-2">
         <Label htmlFor="hidden-jobs-search">Search</Label>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="hidden-jobs-search"
-            placeholder="Title, company, skills…"
-            value={filters.q}
-            onChange={(e) => onChange({ q: e.target.value })}
-            className="pl-10"
-          />
-        </div>
+        <SearchInput
+          id="hidden-jobs-search"
+          placeholder="Title, company, skills…"
+          value={filters.q}
+          onChange={(e) => onChange({ q: e.target.value })}
+        />
       </div>
 
       <div className="space-y-2">

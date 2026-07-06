@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, MapPin, Pencil, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 import {
@@ -175,11 +177,12 @@ export default function ProfileHeader({ profile, userId }: Props) {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               {isEditing ? (
-                <input
+                <Input
                   value={form.full_name}
                   onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
                   placeholder="Your full name"
-                  className="w-full rounded-lg border border-border-strong px-3 py-2 text-heading-s text-text-primary outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+                  size="lg"
+                  className="text-heading-s font-semibold"
                 />
               ) : (
                 <h1 className="text-heading-xl text-[var(--text-primary)]">{form.full_name || "Your Name"}</h1>
@@ -213,22 +216,22 @@ export default function ProfileHeader({ profile, userId }: Props) {
           </div>
 
           {isEditing ? (
-            <input
+            <Input
               value={form.headline}
               onChange={(e) => setForm((prev) => ({ ...prev, headline: e.target.value }))}
               placeholder="Professional headline"
-              className="mt-2 w-full rounded-lg border border-border-strong px-3 py-2 text-body font-medium text-text-primary outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-2 font-medium"
             />
           ) : (
             <p className="mt-1 text-body-lg font-semibold text-[var(--text-primary)]">{form.headline || "Add a professional headline"}</p>
           )}
 
           {isEditing ? (
-            <input
+            <Input
               value={form.location}
               onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
               placeholder="Location"
-              className="mt-2 w-full rounded-lg border border-border-strong px-3 py-2 text-body font-medium text-text-primary outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-2 font-medium"
             />
           ) : (
             <p className="mt-2 inline-flex items-center gap-1 text-body font-normal text-[var(--text-secondary)]">
@@ -238,12 +241,12 @@ export default function ProfileHeader({ profile, userId }: Props) {
           )}
 
           {isEditing ? (
-            <textarea
+            <Textarea
               value={form.summary}
               onChange={(e) => setForm((prev) => ({ ...prev, summary: e.target.value }))}
               placeholder="Write a short professional summary"
               rows={3}
-              className="mt-3 w-full rounded-lg border border-border-strong px-3 py-2 text-body font-medium text-text-primary outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-3 font-medium"
             />
           ) : form.summary ? (
             <p className="mt-3 text-body font-normal leading-6 text-[var(--text-secondary)]">{form.summary}</p>

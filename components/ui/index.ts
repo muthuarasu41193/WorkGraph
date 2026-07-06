@@ -72,7 +72,8 @@ export {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 export { IconButton } from "./icon-button";
-export { Input } from "./input";
+export { Input, inputVariants } from "./input";
+export type { InputProps } from "./input";
 export { Label } from "./label";
 export {
   Modal,
@@ -91,7 +92,7 @@ export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popove
 export { Progress } from "./progress";
 export { RadioGroup, RadioGroupItem } from "./radio-group";
 export { ScrollArea, ScrollBar } from "./scroll-area";
-export { Search } from "./search";
+export { Search, searchVariants } from "./search";
 export {
   Select,
   SelectContent,
@@ -119,7 +120,8 @@ export { Skeleton } from "./skeleton";
 export { Spinner, spinnerVariants } from "./spinner";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Tag, tagVariants } from "./tag";
-export { Textarea } from "./textarea";
+export { Textarea, textareaVariants } from "./textarea";
+export type { TextareaProps } from "./textarea";
 export { toast, Toaster } from "./toast";
 export { Toggle } from "./toggle";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";

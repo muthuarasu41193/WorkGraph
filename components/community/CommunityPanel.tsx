@@ -7,6 +7,7 @@ import { useCommunityPosts, useCreateCommunityPost, useVoteCommunityPost } from 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
@@ -88,8 +89,8 @@ export default function CommunityPanel() {
               required
               minLength={20}
             />
-            <label className="flex items-center gap-2 text-body text-[var(--text-secondary)]">
-              <input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />
+            <label className="flex cursor-pointer items-center gap-2 text-body text-[var(--text-secondary)]">
+              <Checkbox checked={anonymous} onCheckedChange={(c) => setAnonymous(c === true)} />
               Post anonymously
             </label>
             <Button type="submit" disabled={createPost.isPending}>

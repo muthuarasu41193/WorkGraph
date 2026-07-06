@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type Props = {
   stats: JobPipelineCounts;
@@ -332,7 +333,11 @@ export default function ProfileJobDashboard({
             </div>
             <div className="grid gap-2">
               <Label>Frequency</Label>
-              <div className="space-y-2">
+              <RadioGroup
+                value={frequency}
+                onValueChange={(v) => setFrequency(v as "realtime" | "daily" | "weekly")}
+                className="space-y-2"
+              >
                 {(
                   [
                     { value: "realtime", label: "Real-time (instant notification)" },
@@ -341,18 +346,11 @@ export default function ProfileJobDashboard({
                   ] as const
                 ).map((opt) => (
                   <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-body">
-                    <input
-                      type="radio"
-                      name="frequency"
-                      value={opt.value}
-                      checked={frequency === opt.value}
-                      onChange={(e) => setFrequency(e.target.value as "realtime" | "daily" | "weekly")}
-                      className="accent-primary"
-                    />
+                    <RadioGroupItem value={opt.value} id={`frequency-${opt.value}`} />
                     {opt.label}
                   </label>
                 ))}
-              </div>
+              </RadioGroup>
             </div>
             <div className="grid gap-2">
               <Label>Channels</Label>
@@ -378,14 +376,14 @@ export default function ProfileJobDashboard({
               <Label htmlFor="match-threshold">
                 Only notify me for jobs with {matchThreshold}%+ match
               </Label>
-              <input
+              <Input
                 id="match-threshold"
                 type="range"
                 min={40}
                 max={100}
                 value={matchThreshold}
                 onChange={(e) => setMatchThreshold(Number(e.target.value))}
-                className="w-full accent-primary"
+                className="h-2 w-full cursor-pointer appearance-none border-0 bg-transparent p-0 accent-[var(--accent)] focus-visible:ring-0"
               />
               <span className="text-caption text-muted-foreground">{matchThreshold}%</span>
             </div>

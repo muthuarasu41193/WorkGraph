@@ -8,7 +8,7 @@ import {
   ClipboardList,
   LayoutDashboard,
   Radar,
-  Search,
+  Search as SearchIcon,
   Settings,
   Sparkles,
   User,
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Search } from "@/components/ui/search";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
@@ -158,17 +158,17 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
         <DialogHeader className="border-b px-4 py-3">
           <DialogTitle className="sr-only">Command palette</DialogTitle>
           <div className="relative">
-            <Search className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search commands, pages, jobs..."
-              className="border-0 bg-transparent pl-8 shadow-none focus-visible:ring-0"
-              autoFocus
-            />
-            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-2 py-1 text-caption font-medium sm:inline">
-              ESC
-            </kbd>
+          <Search
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search commands, pages, jobs..."
+            className="border-0 bg-transparent pl-8 shadow-none focus-visible:ring-0"
+            containerClassName="[&_svg]:left-0"
+            autoFocus
+          />
+          <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-2 py-1 text-caption font-medium sm:inline">
+            ESC
+          </kbd>
           </div>
         </DialogHeader>
         <div className="max-h-80 overflow-y-auto p-2">

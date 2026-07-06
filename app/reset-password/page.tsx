@@ -155,7 +155,8 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
-                  className="h-12 pl-12"
+                  size="lg"
+                  className="pl-12"
                 />
               </div>
             </div>
@@ -176,7 +177,8 @@ export default function ResetPasswordPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"
-                  className="h-12 pl-12"
+                  size="lg"
+                  className="pl-12"
                 />
               </div>
             </div>

@@ -4,6 +4,7 @@ import * as React from "react"
 import { CircleIcon } from "lucide-react"
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
 
+import { inputFocusRingClass } from "@/components/ui/input-styles"
 import { cn } from "@/lib/utils"
 
 function RadioGroup({
@@ -27,7 +28,13 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "aspect-square size-4 shrink-0 rounded-full border border-input text-primary transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        "aspect-square size-4 shrink-0 rounded-full border-2 border-[var(--border-strong)] bg-[var(--surface-primary)] text-primary",
+        "transition-[color,background-color,border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+        inputFocusRingClass,
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        "aria-invalid:border-destructive aria-invalid:ring-destructive/15",
+        "data-[state=checked]:border-[var(--text-primary)]",
+        "dark:bg-input/30",
         className,
       )}
       {...props}
@@ -36,7 +43,7 @@ function RadioGroupItem({
         data-slot="radio-group-indicator"
         className="relative flex items-center justify-center"
       >
-        <CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary" />
+        <CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-[var(--text-primary)]" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { WorkExperience } from "../../lib/types";
 import {
@@ -17,9 +19,6 @@ type Props = {
   userId: string;
   experience: WorkExperience[];
 };
-
-const inputReset =
-  "border-0 bg-transparent shadow-none outline-none ring-0 transition placeholder:text-text-tertiary focus:ring-0 focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-2 rounded-sm";
 
 export default function ExperienceTimeline({ userId, experience }: Props) {
   const [items, setItems] = useState<WorkExperience[]>(experience);
@@ -128,33 +127,37 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
 
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
                     <div className="min-w-0 flex-1 space-y-2">
-                      <input
+                      <Input
+                        variant="ghost"
                         value={item.title}
                         onChange={(e) => void updateField(idx, "title", e.target.value)}
                         placeholder="Role title"
-                        className={`${inputReset} w-full text-heading-s text-foreground`}
+                        className="w-full text-heading-s font-semibold"
                       />
-                      <input
+                      <Input
+                        variant="ghost"
                         value={item.company}
                         onChange={(e) => void updateField(idx, "company", e.target.value)}
                         placeholder="Organization"
-                        className={`${inputReset} w-full text-caption font-semibold uppercase tracking-[var(--letter-spacing-label)] text-foreground/85`}
+                        className="w-full text-caption font-semibold uppercase tracking-[var(--letter-spacing-label)] text-foreground/85"
                       />
                     </div>
-                    <input
+                    <Input
+                      variant="ghost"
                       value={item.duration}
                       onChange={(e) => void updateField(idx, "duration", e.target.value)}
                       placeholder="Timeline"
-                      className={`${inputReset} w-full shrink-0 rounded border border-border bg-surface-primary px-3 py-2 font-mono text-caption text-foreground lg:max-w-[11rem] lg:text-right`}
+                      className="w-full shrink-0 rounded border border-border bg-surface-primary px-3 py-2 font-mono text-caption lg:max-w-[11rem] lg:text-right"
                     />
                   </div>
 
-                  <textarea
+                  <Textarea
+                    variant="ghost"
                     value={item.description}
                     onChange={(e) => void updateField(idx, "description", e.target.value)}
                     placeholder="Outcomes, scope, tech — tight bullets read best."
                     rows={3}
-                    className={`${inputReset} mt-4 w-full resize-y border-l-2 border-border pl-3 text-body text-text-secondary transition-colors focus-visible:border-text-primary`}
+                    className="mt-4 border-l-2 border-border pl-3 text-text-secondary focus-visible:border-text-primary"
                   />
                 </div>
               </div>
