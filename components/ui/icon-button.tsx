@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 
 type IconButtonSize = "sm" | "md" | "lg"
 
-type IconButtonProps = Omit<ButtonProps, "size" | "children"> & {
+type IconButtonProps = Omit<ButtonProps, "children"> & {
   icon: React.ReactNode
   label: string
   iconSize?: IconButtonSize
