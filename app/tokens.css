@@ -138,6 +138,12 @@
   --transition-transform: transform var(--duration-normal) var(--ease-default);
   --transition-opacity: opacity var(--duration-normal) var(--ease-out);
 
+  /* Motion system — @see app/motion.css */
+  --duration-motion-short: 150ms;
+  --duration-motion: 175ms;
+  --duration-motion-long: 200ms;
+  --ease-motion: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* ─── Layout: shell ─── */
   --header-height: 3.5rem; /* 56px */
   --sidebar-width: 15rem; /* 240px */

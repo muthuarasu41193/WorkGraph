@@ -18,18 +18,7 @@
 
 .wg-dash-content {
   max-width: var(--container-wide);
-  animation: wg-dash-fade-in var(--duration-slow) var(--ease-out);
-}
-
-@keyframes wg-dash-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-2));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  animation: wg-motion-fade-up var(--duration-motion-long) var(--ease-motion) both;
 }
 
 .wg-section-card,
@@ -38,7 +27,7 @@
   background: var(--surface-primary);
   border: 1px solid var(--border-default);
   box-shadow: var(--shadow-sm);
-  transition: var(--transition-shadow), var(--transition-transform);
+  transition: var(--transition-motion-shadow), var(--transition-motion-transform);
 }
 
 .wg-section-card:hover,
@@ -61,7 +50,7 @@
   top: var(--header-height);
   background: var(--surface-primary);
   border-right: 1px solid var(--border-default);
-  transition: width var(--duration-normal) var(--ease-default);
+  transition: var(--transition-motion-sidebar);
 }
 
 @media (min-width: 768px) {
@@ -154,9 +143,7 @@
   text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+  transition: var(--transition-motion-colors);
 }
 
 .wg-dash-nav-item:hover {
@@ -216,7 +203,7 @@
   height: 1.125rem;
   stroke-width: 1.75;
   color: currentColor;
-  transition: color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-motion-short) ease-out;
 }
 
 .wg-dash-nav-label {
@@ -239,7 +226,7 @@
   color: var(--text-tertiary);
   line-height: 1.2;
   opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-out);
+  transition: opacity var(--duration-motion-short) ease-out;
 }
 
 .wg-dash-nav-item:hover .wg-dash-nav-kbd,
@@ -333,9 +320,7 @@
   font-weight: var(--font-weight-medium);
   line-height: 1;
   cursor: pointer;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out);
+  transition: var(--transition-motion-colors);
 }
 
 .wg-dash-mobilenav-item:hover {
@@ -376,17 +361,7 @@
 }
 
 .wg-dash-skeleton-pulse {
-  animation: wg-dash-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes wg-dash-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: var(--opacity-muted);
-  }
+  animation: wg-motion-pulse 1.4s ease-in-out infinite;
 }
 
 .wg-dash-root button,

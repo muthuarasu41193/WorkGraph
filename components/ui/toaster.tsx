@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
+import { motion } from "@/lib/motion";
 import { useToastStore, type ToastVariant } from "@/hooks/use-toast";
 
 const VARIANT_STYLES: Record<ToastVariant, string> = {
@@ -26,7 +27,8 @@ export function Toaster() {
           key={item.id}
           role="status"
           className={cn(
-            "pointer-events-auto animate-in slide-in-from-bottom-4 fade-in rounded-lg border p-4 shadow-lg duration-300",
+            "pointer-events-auto rounded-lg border p-4 shadow-lg",
+            motion.toast,
             VARIANT_STYLES[item.variant ?? "default"],
           )}
         >

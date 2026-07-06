@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./motion.css";
 @import "./typography.css";
 @import "../components/profile/profile-theme.css";
 @import "tw-animate-css";
@@ -99,37 +100,8 @@ body {
   }
 }
 
-@keyframes wg-auth-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
 .wg-auth-enter {
-  animation: wg-auth-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wg-auth-enter {
-    animation: none;
-  }
-}
-
-/* Profile dashboard — playful micro-motion */
-@keyframes wg-dash-stat-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 14px, 0) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
+  animation: wg-motion-fade-up var(--duration-motion-long) var(--ease-motion) both;
 }
 
 @keyframes wg-dash-icon-float {
@@ -142,47 +114,17 @@ body {
   }
 }
 
-@keyframes wg-job-card-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 18px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.wg-dash-stat-enter {
-  animation: wg-dash-stat-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .wg-dash-icon-float {
   animation: wg-dash-icon-float 4.5s ease-in-out infinite;
 }
 
-.wg-job-card-enter {
-  animation: wg-job-card-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+.wg-premium-job-card {
+  transition: var(--transition-motion-shadow), var(--transition-motion-transform);
 }
 
 .wg-premium-job-card:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-3px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wg-dash-stat-enter,
-  .wg-job-card-enter {
-    animation: none;
-  }
-
-  .wg-premium-job-card:hover {
-    transform: none;
-  }
-
-  .wg-dash-icon-float {
-    animation: none;
-  }
+  transform: translateY(-2px);
 }
 
 .wg-no-scrollbar {
@@ -191,63 +133,6 @@ body {
 
 .wg-no-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-@keyframes wg-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.wg-skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--surface-secondary) 25%,
-    var(--border-default) 50%,
-    var(--surface-secondary) 75%
-  );
-  background-size: 200% 100%;
-  animation: wg-shimmer 1.5s infinite;
-}
-
-@keyframes wg-modal-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 8px, 0) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-.wg-modal-enter {
-  animation: wg-modal-enter 0.2s ease-out both;
-}
-
-@keyframes wg-fade-up {
-  from { opacity: 0; transform: translate3d(0, 10px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
-}
-
-@keyframes wg-bookmark-bounce {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes wg-shake {
-  0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
-
-@keyframes wg-chip-slide-in {
-  from { opacity: 0; transform: translate3d(0, 8px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @keyframes wg-matched-pulse-30s {
@@ -260,41 +145,12 @@ body {
   50% { transform: scale(1.03); opacity: 0.9; }
 }
 
-.wg-section-fade {
-  animation: wg-fade-up 0.35s ease both;
-}
-
-.wg-bookmark-bounce {
-  animation: wg-bookmark-bounce 0.25s ease-out;
-}
-
-.wg-shake {
-  animation: wg-shake 0.25s ease-in-out;
-}
-
-.wg-chip-enter {
-  animation: wg-chip-slide-in 0.2s ease both;
-}
-
 .wg-matched-live-pulse {
   animation: wg-matched-pulse-30s 30s infinite;
 }
 
 .wg-new-badge-pulse {
   animation: wg-new-badge-pulse 1.8s ease-in-out infinite;
-}
-
-details[data-filter-dropdown="true"] > [data-filter-menu="true"] {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 @theme inline {

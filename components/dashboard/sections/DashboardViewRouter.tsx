@@ -5,6 +5,7 @@ import type { DashboardRouteId } from "@/lib/dashboard-routes";
 import { DASHBOARD_ROUTES } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useProfileNavStore } from "@/stores/profile-nav-store";
+import { motion } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 type SectionMap = Record<DashboardRouteId, ReactNode>;
@@ -29,7 +30,7 @@ export default function DashboardViewRouter({ sections }: Props) {
             className={cn(
               "wg-dash-view outline-none",
               isActive
-                ? "animate-in fade-in-0 duration-150"
+                ? motion.pageCrossfade
                 : "hidden",
             )}
             hidden={!isActive}

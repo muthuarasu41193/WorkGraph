@@ -9,6 +9,7 @@ export { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, paragraphS
 export { space, spacePx, SPACING_SCALE_PX, snapSpacingPx } from "./spacing";
 export { shell, container, breakpoints, iconSize, shellClasses } from "./layout";
 export { radius, shadow, opacity, duration, transition, focusRing, focusRingClass } from "./effects";
+export { motionDuration, motionEase, motionDistance, motionStagger, motionTransition } from "./motion";
 export { platformBrandColors } from "./brands";
 export {
   platformChipClass,

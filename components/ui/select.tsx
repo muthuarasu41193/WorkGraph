@@ -4,6 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "radix-ui"
 
 import { inputFocusRingClass } from "@/components/ui/input-styles"
+import { motion } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
@@ -46,7 +47,7 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         "flex w-full items-center justify-between gap-2 rounded-[var(--radius-md)] border border-input bg-[var(--surface-primary)] px-3 text-body text-foreground shadow-[var(--shadow-sm)]",
-        "transition-[color,background-color,border-color,box-shadow,ring] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+        "transition-[color,background-color,border-color,box-shadow,ring] duration-[var(--duration-motion-short)] ease-out",
         "select-none whitespace-nowrap outline-none",
         inputFocusRingClass,
         "hover:border-[var(--border-strong)] hover:bg-[var(--surface-secondary)]/40",
@@ -65,7 +66,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground transition-transform duration-[var(--duration-fast)] group-data-[state=open]/select-trigger:rotate-180" />
+        <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground transition-transform duration-[var(--duration-motion-short)] group-data-[state=open]/select-trigger:rotate-180" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -87,12 +88,11 @@ function SelectContent({
         align={align}
         sideOffset={6}
         className={cn(
+          motion.dropdown,
           "relative z-50 max-h-(--radix-select-content-available-height) min-w-[var(--radix-select-trigger-width)] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto",
           "rounded-[var(--radius-lg)] border border-border/80 bg-popover p-1 text-popover-foreground shadow-[var(--shadow-lg)]",
           "ring-1 ring-foreground/5",
-          "duration-150 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1",
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-98",
-          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-98",
+          "data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1",
           position === "popper" &&
             "data-[side=bottom]:translate-y-0.5 data-[side=left]:-translate-x-0.5 data-[side=right]:translate-x-0.5 data-[side=top]:-translate-y-0.5",
           className,

@@ -4,6 +4,7 @@ import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { motion } from "@/lib/motion"
 
 function TooltipProvider({
   delayDuration = 0,
@@ -39,7 +40,8 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 w-fit max-w-xs rounded-md bg-foreground px-3 py-1.5 text-caption text-background shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+          motion.popover,
+          "z-50 w-fit max-w-xs rounded-md bg-foreground px-3 py-1.5 text-caption text-background shadow-md",
           className,
         )}
         {...props}

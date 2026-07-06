@@ -1,0 +1,352 @@
+/**
+ * WorkGraph Motion System
+ * Linear-inspired: 150–200ms, ease-out, minimal, professional.
+ * @see lib/motion.ts — class bundles & stagger helpers
+ */
+
+:root {
+  --duration-motion-short: 150ms;
+  --duration-motion: 175ms;
+  --duration-motion-long: 200ms;
+  --ease-motion: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-distance-sm: 4px;
+  --motion-distance: 6px;
+  --motion-distance-lg: 8px;
+  --motion-scale-enter: 0.98;
+  --motion-stagger-step: 30ms;
+  --motion-stagger-max: 5;
+
+  --transition-motion-colors:
+    color var(--duration-motion-short) ease-out,
+    background-color var(--duration-motion-short) ease-out,
+    border-color var(--duration-motion-short) ease-out;
+  --transition-motion-shadow: box-shadow var(--duration-motion-long) ease-out;
+  --transition-motion-transform: transform var(--duration-motion-long) ease-out;
+  --transition-motion-opacity: opacity var(--duration-motion) ease-out;
+  --transition-motion-sidebar: width var(--duration-motion-long) var(--ease-motion);
+}
+
+/* ─── Keyframes ─── */
+
+@keyframes wg-motion-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wg-motion-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-distance), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wg-motion-scale-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-distance-sm), 0) scale(var(--motion-scale-enter));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes wg-motion-slide-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--motion-distance-sm) * -1), 0) scale(var(--motion-scale-enter));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes wg-motion-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes wg-motion-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: var(--opacity-muted, 0.6);
+  }
+}
+
+@keyframes wg-motion-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Hover ─── */
+
+.wg-motion-hover {
+  transition:
+    var(--transition-motion-colors),
+    var(--transition-motion-shadow),
+    var(--transition-motion-transform);
+}
+
+.wg-motion-hover-lift:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ─── Page transitions ─── */
+
+.wg-motion-page-enter {
+  animation: wg-motion-fade-up var(--duration-motion-long) var(--ease-motion) both;
+}
+
+.wg-motion-page-crossfade {
+  animation: wg-motion-fade-in var(--duration-motion-short) ease-out both;
+}
+
+/* ─── Overlays: dialog, sheet backdrop ─── */
+
+.wg-motion-overlay {
+  animation-duration: var(--duration-motion-short);
+  animation-timing-function: ease-out;
+}
+
+/* ─── Dialog / modal content ─── */
+
+.wg-motion-dialog {
+  animation-duration: var(--duration-motion);
+  animation-timing-function: var(--ease-motion);
+}
+
+/* ─── Dropdowns & popovers ─── */
+
+.wg-motion-dropdown {
+  animation-duration: var(--duration-motion-short);
+  animation-timing-function: var(--ease-motion);
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin, top);
+}
+
+.wg-motion-popover {
+  animation-duration: var(--duration-motion-short);
+  animation-timing-function: var(--ease-motion);
+  transform-origin: var(--radix-popover-content-transform-origin, top);
+}
+
+details[data-filter-dropdown="true"] > [data-filter-menu="true"] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-sm));
+  pointer-events: none;
+  transition:
+    opacity var(--duration-motion-short) ease-out,
+    transform var(--duration-motion-short) ease-out;
+}
+
+details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ─── Cards ─── */
+
+.wg-motion-card {
+  transition: var(--transition-motion-shadow), var(--transition-motion-transform);
+}
+
+.wg-motion-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.wg-motion-card-lift:hover {
+  transform: translateY(-2px);
+}
+
+.wg-motion-card-enter {
+  animation: wg-motion-fade-up var(--duration-motion-long) var(--ease-motion) both;
+}
+
+/* ─── Buttons (composable with Button primitive) ─── */
+
+.wg-motion-button {
+  transition:
+    color var(--duration-motion-short) ease-out,
+    background-color var(--duration-motion-short) ease-out,
+    border-color var(--duration-motion-short) ease-out,
+    box-shadow var(--duration-motion-long) ease-out,
+    transform var(--duration-motion-short) ease-out;
+}
+
+/* ─── Loading ─── */
+
+.wg-motion-loading {
+  animation: wg-motion-spin 0.8s linear infinite;
+}
+
+/* ─── Skeletons ─── */
+
+.wg-motion-skeleton {
+  background: var(--muted);
+  animation: wg-motion-pulse var(--duration-motion-long) ease-in-out infinite;
+}
+
+.wg-motion-skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 25%,
+    var(--border-default) 50%,
+    var(--surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: wg-motion-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─── Sidebar ─── */
+
+.wg-motion-sidebar {
+  transition: var(--transition-motion-sidebar);
+}
+
+.wg-motion-sidebar-item {
+  transition: var(--transition-motion-colors);
+}
+
+/* ─── Stagger (set --motion-delay inline or via wg-motion-stagger-N) ─── */
+
+.wg-motion-stagger {
+  animation-delay: var(--motion-delay, 0ms);
+}
+
+.wg-motion-stagger-0 { animation-delay: 0ms; }
+.wg-motion-stagger-1 { animation-delay: 30ms; }
+.wg-motion-stagger-2 { animation-delay: 60ms; }
+.wg-motion-stagger-3 { animation-delay: 90ms; }
+.wg-motion-stagger-4 { animation-delay: 120ms; }
+.wg-motion-stagger-5 { animation-delay: 150ms; }
+
+/* ─── Legacy aliases (backward compat) ─── */
+
+.wg-section-fade,
+.wg-job-card-enter,
+.wg-dash-stat-enter,
+.wg-modal-enter,
+.wg-chip-enter {
+  animation: wg-motion-fade-up var(--duration-motion-long) var(--ease-motion) both;
+}
+
+.wg-skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 25%,
+    var(--border-default) 50%,
+    var(--surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: wg-motion-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─── Micro-interactions (brief, purposeful) ─── */
+
+@keyframes wg-bookmark-bounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wg-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.wg-bookmark-bounce {
+  animation: wg-bookmark-bounce var(--duration-motion-short) ease-out;
+}
+
+.wg-shake {
+  animation: wg-shake var(--duration-motion-short) ease-in-out;
+}
+
+/* ─── prefers-reduced-motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-motion-short: 0ms;
+    --duration-motion: 0ms;
+    --duration-motion-long: 0ms;
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .wg-motion-page-enter,
+  .wg-motion-page-crossfade,
+  .wg-motion-card-enter,
+  .wg-section-fade,
+  .wg-job-card-enter,
+  .wg-dash-stat-enter,
+  .wg-modal-enter,
+  .wg-chip-enter,
+  .wg-auth-enter,
+  .wg-dash-content,
+  .wg-app-shell-content-inner,
+  .wg-bookmark-bounce,
+  .wg-shake {
+    animation: none !important;
+  }
+
+  .wg-motion-hover-lift:hover,
+  .wg-motion-card-lift:hover,
+  .wg-premium-job-card:hover,
+  .wg-dash-card-lift:hover {
+    transform: none !important;
+  }
+
+  .wg-motion-skeleton,
+  .wg-motion-skeleton-shimmer,
+  .wg-skeleton-shimmer,
+  .wg-dash-skeleton-pulse,
+  .wg-motion-loading,
+  .animate-spin,
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  .wg-auth-blob-a,
+  .wg-auth-blob-b,
+  .wg-auth-blob-c,
+  .wg-dash-icon-float,
+  .wg-matched-live-pulse,
+  .wg-new-badge-pulse {
+    animation: none !important;
+  }
+
+  .animate-in,
+  .animate-out,
+  [class*="animate-in"],
+  [class*="animate-out"] {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

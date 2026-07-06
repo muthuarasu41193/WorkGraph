@@ -2,8 +2,9 @@ import { Loader2 } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { motion } from "@/lib/motion"
 
-const spinnerVariants = cva("animate-spin", {
+const spinnerVariants = cva(motion.loading, {
   variants: {
     size: {
       xs: "size-3",

@@ -2,6 +2,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { motion } from "@/lib/motion"
 import { profileCardClass, sectionCardClass } from "@/lib/tokens"
 
 const cardVariants = cva(
@@ -10,7 +11,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         default:
-          "rounded-xl bg-card py-4 ring-1 ring-foreground/10",
+          cn("rounded-xl bg-card py-4 ring-1 ring-foreground/10", motion.card),
         dashboard:
           cn(sectionCardClass, "wg-dash-section-card gap-0 py-0 ring-0"),
         profile:

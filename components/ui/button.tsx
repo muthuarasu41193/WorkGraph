@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 import { Spinner } from "@/components/ui/spinner"
+import { motion } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -11,7 +12,8 @@ const buttonVariants = cva(
     "rounded-[var(--radius-md)] border border-transparent bg-clip-padding",
     "font-medium whitespace-nowrap select-none outline-none",
     "transition-[color,background-color,border-color,box-shadow,transform]",
-    "duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+    "duration-[var(--duration-motion-short)] ease-out",
+    motion.button,
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring-color)]",
     "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--focus-ring-offset-color)]",
     "disabled:pointer-events-none disabled:opacity-[var(--opacity-disabled)]",

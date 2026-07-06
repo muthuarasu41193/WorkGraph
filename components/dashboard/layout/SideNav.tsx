@@ -43,7 +43,7 @@ function SideNavItem({ item, active, collapsed, onActivate, tabIndex, onFocus }:
   const shortcutLabel = formatShortcut(item.shortcut);
 
   const className = cn(
-    "wg-dash-nav-item group",
+    "wg-dash-nav-item wg-motion-sidebar-item group",
     active && "wg-dash-nav-item--active",
     collapsed && "wg-dash-nav-item--collapsed",
   );
@@ -162,7 +162,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
     <TooltipProvider delayDuration={300}>
       <aside
         className={cn(
-          "wg-dash-sidenav",
+          "wg-dash-sidenav wg-motion-sidebar",
           collapsed && "wg-dash-sidenav--collapsed",
           mobile && "wg-dash-sidenav--mobile",
         )}

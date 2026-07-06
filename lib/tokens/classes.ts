@@ -9,7 +9,7 @@ export const platformChipClass =
 
 /** Dashboard section card */
 export const sectionCardClass =
-  "wg-section-card rounded-[length:var(--radius-lg)] border border-border bg-surface-primary shadow-[var(--shadow-sm)] transition-[var(--transition-shadow)] hover:shadow-[var(--shadow-md)]";
+  "wg-section-card wg-motion-card rounded-[length:var(--radius-lg)] border border-border bg-surface-primary shadow-[var(--shadow-sm)] transition-[var(--transition-motion-shadow)] hover:shadow-[var(--shadow-md)]";
 
 /** Profile card with accent bar */
 export const profileCardClass =
