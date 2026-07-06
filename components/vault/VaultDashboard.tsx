@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, ShoppingBag, Wallet } from "lucide-react";
 import VaultEarningsChart from "@/components/vault/VaultEarningsChart";
 import PageHeader from "@/components/design-system/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { toast } from "@/hooks/use-toast";
 import { convertInrToCurrency, formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
 import { VAULT_RESULT_LABELS, type VaultDashboardStats } from "@/lib/vault";
+
+type ExperienceRow = VaultDashboardStats["experiences"][number];
 
 type Props = {
   dashboard: VaultDashboardStats;
@@ -20,6 +24,62 @@ type Props = {
 export default function VaultDashboard({ dashboard, currency }: Props) {
   const [withdrawing, setWithdrawing] = useState(false);
   const totalEarningsDisplay = convertInrToCurrency(dashboard.total_earnings_inr, currency);
+
+  const columns = useMemo<ColumnDef<ExperienceRow>[]>(
+    () => [
+      {
+        accessorKey: "company",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Experience" />,
+        cell: ({ row }) => (
+          <Link href={`/interview-vault/${row.original.id}`} className="font-medium hover:text-primary">
+            {row.original.company || "Untitled"} — {row.original.role || "Draft"}
+          </Link>
+        ),
+      },
+      {
+        accessorKey: "view_count",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Views" />,
+        cell: ({ row }) => <span className="tabular-nums">{row.original.view_count.toLocaleString("en-IN")}</span>,
+      },
+      {
+        accessorKey: "sales_count",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Sales" />,
+        cell: ({ row }) => <span className="tabular-nums">{row.original.sales_count.toLocaleString("en-IN")}</span>,
+      },
+      {
+        accessorKey: "earnings_inr",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Earned" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {formatCurrencyAmount(convertInrToCurrency(row.original.earnings_inr, currency), currency)}
+          </span>
+        ),
+      },
+      {
+        id: "result",
+        accessorFn: (row) => row.result ?? "",
+        header: "Result",
+        cell: ({ row }) =>
+          row.original.result ? (
+            <Badge variant="outline">{VAULT_RESULT_LABELS[row.original.result]}</Badge>
+          ) : (
+            <span className="text-muted-foreground">—</span>
+          ),
+        enableSorting: false,
+      },
+      {
+        id: "status",
+        accessorFn: (row) => (row.published_at ? "Published" : "Draft"),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => (
+          <Badge variant={row.original.published_at ? "default" : "secondary"}>
+            {row.original.published_at ? "Published" : "Draft"}
+          </Badge>
+        ),
+      },
+    ],
+    [currency],
+  );
 
   async function requestWithdrawal() {
     setWithdrawing(true);
@@ -90,35 +150,40 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
           </Button>
         </CardHeader>
         <CardContent>
-          {dashboard.experiences.length > 0 ? (
-            <ul className="divide-y">
-              {dashboard.experiences.map((exp) => (
-                <li key={exp.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                  <div>
-                    <Link href={`/interview-vault/${exp.id}`} className="font-medium hover:text-primary">
-                      {exp.company || "Untitled"} — {exp.role || "Draft"}
-                    </Link>
-                    <div className="mt-1 flex flex-wrap gap-2 text-caption text-muted-foreground">
-                      <span>{exp.view_count} views</span>
-                      <span>{exp.sales_count} sales</span>
-                      <span>{formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned</span>
-                      {exp.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[exp.result]}</Badge> : null}
-                    </div>
-                  </div>
-                  <Badge variant={exp.published_at ? "default" : "secondary"}>
-                    {exp.published_at ? "Published" : "Draft"}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-body text-muted-foreground">
-              No experiences yet.{" "}
-              <Link href="/interview-vault/sell" className="text-primary hover:underline">
-                Create your first listing
-              </Link>
-            </p>
-          )}
+          <DataTable
+            columns={columns}
+            data={dashboard.experiences}
+            getRowId={(row) => row.id}
+            caption="Seller experiences"
+            filterPlaceholder="Search experiences…"
+            initialSorting={[{ id: "earnings_inr", desc: true }]}
+            emptyState={{
+              title: "No experiences yet",
+              description: "Create your first listing to start selling interview experiences.",
+              action: (
+                <Button asChild>
+                  <Link href="/interview-vault/sell">Create your first listing</Link>
+                </Button>
+              ),
+            }}
+            mobileCardRender={(exp) => (
+              <div className="rounded-xl border p-4">
+                <Link href={`/interview-vault/${exp.id}`} className="font-medium hover:text-primary">
+                  {exp.company || "Untitled"} — {exp.role || "Draft"}
+                </Link>
+                <div className="mt-2 flex flex-wrap gap-2 text-caption text-muted-foreground">
+                  <span>{exp.view_count} views</span>
+                  <span>{exp.sales_count} sales</span>
+                  <span>
+                    {formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned
+                  </span>
+                </div>
+                <Badge className="mt-2" variant={exp.published_at ? "default" : "secondary"}>
+                  {exp.published_at ? "Published" : "Draft"}
+                </Badge>
+              </div>
+            )}
+          />
           {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
             <p className="mt-3 text-caption text-muted-foreground">
               Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).

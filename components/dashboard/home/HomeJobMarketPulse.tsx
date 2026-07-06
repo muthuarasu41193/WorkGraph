@@ -1,9 +1,45 @@
+"use client";
+
+import { useMemo } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import type { JobMarketPulse } from "@/lib/home-dashboard";
 
+type TrendingRole = JobMarketPulse["trendingRoles"][number];
+
 export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse }) {
+  const columns = useMemo<ColumnDef<TrendingRole>[]>(
+    () => [
+      {
+        id: "rank",
+        header: "#",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground tabular-nums">{row.index + 1}</span>
+        ),
+        enableSorting: false,
+        size: 48,
+      },
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+        cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
+      },
+      {
+        accessorKey: "growth",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Growth" />,
+        cell: ({ row }) => (
+          <span className="text-caption font-semibold text-success-foreground dark:text-success">
+            {row.original.growth}
+          </span>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <section className="space-y-3" aria-labelledby="home-pulse-heading">
       <h2 id="home-pulse-heading" className="text-heading-s">
@@ -21,22 +57,18 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
             <CardDescription>Highest momentum titles in your matched catalog.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-2">
-              {pulse.trendingRoles.map((role, index) => (
-                <li
-                  key={role.title}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-border/80 bg-muted/20 px-3 py-2 text-body"
-                >
-                  <span className="min-w-0 truncate font-medium">
-                    <span className="mr-2 text-muted-foreground">{index + 1}.</span>
-                    {role.title}
-                  </span>
-                  <span className="shrink-0 text-caption font-semibold text-success-foreground dark:text-success">
-                    {role.growth}
-                  </span>
-                </li>
-              ))}
-            </ol>
+            <DataTable
+              columns={columns}
+              data={pulse.trendingRoles}
+              getRowId={(row) => row.title}
+              caption="Trending job roles"
+              enableFiltering={false}
+              enableColumnVisibility={false}
+              enableColumnResizing={false}
+              enablePagination={pulse.trendingRoles.length > 8}
+              pageSize={8}
+              stickyHeader={false}
+            />
           </CardContent>
         </Card>
 

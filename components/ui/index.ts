@@ -88,6 +88,18 @@ export {
   ModalTrigger,
 } from "./modal";
 export { Pagination } from "./pagination";
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "./table";
+export { DataTable, DataTableColumnHeader } from "./data-table";
+export type { DataTableProps, DataTableEmptyState } from "./data-table";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover";
 export { Progress } from "./progress";
 export { RadioGroup, RadioGroupItem } from "./radio-group";

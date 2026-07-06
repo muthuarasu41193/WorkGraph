@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import type { ColumnDef } from "@tanstack/react-table";
 import {
   BadgeCheck,
   Building2,
@@ -19,6 +20,7 @@ import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ApplicationConnectDialog, {
   type ApplicationFormValues,
@@ -79,6 +81,23 @@ export default function WorkgraphDirectSection({
   const connectedIds = useMemo(
     () => new Set(connections.map((c) => c.signal_id)),
     [connections],
+  );
+
+  const applicationColumns = useMemo<ColumnDef<SignalConnection>[]>(
+    () => [
+      {
+        accessorFn: (row) => row.signal?.title ?? "Signal",
+        id: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Signal" />,
+        cell: ({ row }) => row.original.signal?.title ?? "Signal",
+      },
+      {
+        accessorKey: "stage",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Stage" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.stage}</Badge>,
+      },
+    ],
+    [],
   );
 
   const load = useCallback(async () => {
@@ -160,14 +179,18 @@ export default function WorkgraphDirectSection({
       {connections.length > 0 ? (
         <section className="rounded-xl border bg-muted/30 p-4">
           <h2 className="text-body font-semibold">Your applications</h2>
-          <ul className="mt-2 space-y-2">
-            {connections.slice(0, 5).map((c) => (
-              <li key={c.id} className="flex items-center justify-between gap-2 text-body">
-                <span>{c.signal?.title ?? "Signal"}</span>
-                <Badge variant="outline">{c.stage}</Badge>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-3">
+            <DataTable
+              columns={applicationColumns}
+              data={connections}
+              getRowId={(row) => row.id}
+              caption="Your hiring signal applications"
+              enableColumnVisibility={false}
+              enableColumnResizing={false}
+              pageSize={5}
+              filterPlaceholder="Search applications…"
+            />
+          </div>
         </section>
       ) : null}
 

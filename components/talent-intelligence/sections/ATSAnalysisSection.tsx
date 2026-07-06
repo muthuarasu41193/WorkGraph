@@ -1,13 +1,18 @@
 "use client";
 
+import { useMemo } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import type { ATSAnalysis } from "@/lib/talent-intelligence/types";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import ExpandableCard from "../shared/ExpandableCard";
 import { ScanSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = { data: ATSAnalysis };
+
+type IndicatorRow = ATSAnalysis["indicators"][number];
 
 const STATUS_STYLES = {
   good: "bg-success-subtle text-success-foreground dark:bg-success-subtle dark:text-success",
@@ -16,6 +21,38 @@ const STATUS_STYLES = {
 };
 
 export default function ATSAnalysisSection({ data }: Props) {
+  const columns = useMemo<ColumnDef<IndicatorRow>[]>(
+    () => [
+      {
+        accessorKey: "category",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+        cell: ({ row }) => <span className="font-medium">{row.original.category}</span>,
+      },
+      {
+        accessorKey: "observation",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Observation" />,
+        cell: ({ row }) => (
+          <span className="text-[var(--text-secondary)]">{row.original.observation}</span>
+        ),
+      },
+      {
+        accessorKey: "recommendation",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Recommendation" />,
+        cell: ({ row }) => <span className="text-caption">{row.original.recommendation}</span>,
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => (
+          <Badge className={cn("capitalize", STATUS_STYLES[row.original.status])}>
+            {row.original.status}
+          </Badge>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <ExpandableCard
       title="ATS Analysis"
@@ -35,20 +72,15 @@ export default function ATSAnalysisSection({ data }: Props) {
           <p><span className="font-medium text-foreground">Formatting: </span>{data.formattingNotes}</p>
           <p><span className="font-medium text-foreground">Readability: </span>{data.readabilityNotes}</p>
         </div>
-        <ul className="space-y-2">
-          {data.indicators.map((ind, i) => (
-            <li key={i} className="flex flex-col gap-1 rounded-lg border p-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <span className="font-medium">{ind.category}</span>
-                <p className="text-body text-muted-foreground">{ind.observation}</p>
-                <p className="mt-1 text-caption">{ind.recommendation}</p>
-              </div>
-              <Badge className={cn("shrink-0 capitalize", STATUS_STYLES[ind.status])}>
-                {ind.status}
-              </Badge>
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          columns={columns}
+          data={data.indicators}
+          getRowId={(row) => `${row.category}-${row.observation}`}
+          caption="ATS analysis indicators"
+          filterPlaceholder="Filter indicators…"
+          enablePagination={data.indicators.length > 5}
+          pageSize={5}
+        />
       </div>
     </ExpandableCard>
   );

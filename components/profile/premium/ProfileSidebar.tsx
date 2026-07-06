@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import {
@@ -12,6 +14,7 @@ import {
 } from "lucide-react";
 import { MOCK_SIDEBAR } from "../../../lib/profile-mock-data";
 import ProfileCard from "../primitives/ProfileCard";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 
 function Widget({
   title,
@@ -35,6 +38,26 @@ function Widget({
 
 export default function ProfileSidebar() {
   const data = MOCK_SIDEBAR;
+
+  const interviewColumns = useMemo<ColumnDef<(typeof data.interviews)[number]>[]>(
+    () => [
+      {
+        accessorKey: "company",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Company" />,
+        cell: ({ row }) => (
+          <span className="font-medium text-[var(--text-primary)]">{row.original.company}</span>
+        ),
+      },
+      {
+        accessorKey: "date",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums text-[var(--text-tertiary)]">{row.original.date}</span>
+        ),
+      },
+    ],
+    [],
+  );
 
   return (
     <aside className="wg-profile-aside space-y-4 lg:sticky lg:top-16 lg:max-h-[calc(100dvh-4.5rem)] lg:overflow-y-auto">
@@ -62,14 +85,18 @@ export default function ProfileSidebar() {
       </Widget>
 
       <Widget title="Interview tracker" icon={Calendar}>
-        <ul className="divide-y divide-[var(--border-default)]">
-          {data.interviews.map((iv) => (
-            <li key={iv.company} className="flex items-center justify-between py-3 text-body first:pt-0 last:pb-0">
-              <span className="font-medium text-[var(--text-primary)]">{iv.company}</span>
-              <span className="text-caption tabular-nums text-[var(--text-tertiary)]">{iv.date}</span>
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          columns={interviewColumns}
+          data={data.interviews}
+          getRowId={(row) => row.company}
+          caption="Upcoming interviews"
+          enableFiltering={false}
+          enableColumnVisibility={false}
+          enableColumnResizing={false}
+          enablePagination={data.interviews.length > 5}
+          pageSize={5}
+          stickyHeader={false}
+        />
       </Widget>
 
       <Widget title="Trending skills" icon={TrendingUp}>

@@ -35,3 +35,10 @@ export function restoreJob(userId: string, jobId: string): Set<string> {
   writeHiddenJobIds(userId, next);
   return next;
 }
+
+export function restoreJobs(userId: string, jobIds: string[]): Set<string> {
+  const next = readHiddenJobIds(userId);
+  for (const id of jobIds) next.delete(id);
+  writeHiddenJobIds(userId, next);
+  return next;
+}

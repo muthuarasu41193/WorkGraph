@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Brain, Sparkles } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
@@ -11,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import ResumeIntelligenceDashboard from "./ResumeIntelligenceDashboard";
 
 type AnalyzeResponse =
@@ -48,6 +50,38 @@ export default function ResumeIntelligenceSection({
   const [report, setReport] = useState<ResumeIntelligenceReport | null>(null);
   const [cached, setCached] = useState(false);
   const [history, setHistory] = useState<ReportSummary[]>([]);
+
+  const historyColumns = useMemo<ColumnDef<ReportSummary>[]>(
+    () => [
+      {
+        accessorKey: "jobTitle",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+        cell: ({ row }) => row.original.jobTitle ?? "Untitled role",
+      },
+      {
+        accessorKey: "company",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Company" />,
+        cell: ({ row }) => row.original.company ?? "—",
+      },
+      {
+        accessorKey: "overallScore",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Score" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{row.original.overallScore ?? "—"}%</span>
+        ),
+      },
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums text-muted-foreground">
+            {new Date(row.original.createdAt).toLocaleDateString()}
+          </span>
+        ),
+      },
+    ],
+    [],
+  );
 
   const loadHistory = useCallback(async () => {
     try {
@@ -217,26 +251,16 @@ export default function ResumeIntelligenceSection({
             <CardTitle className="text-body-lg">Recent analyses</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {history.map((h) => (
-                <li key={h.id}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => loadReport(h.id)}
-                    className="h-auto w-full justify-between px-3 py-2 text-left text-body font-normal"
-                  >
-                    <span>
-                      {h.jobTitle ?? "Untitled role"}
-                      {h.company ? ` · ${h.company}` : ""}
-                    </span>
-                    <span className="tabular-nums text-muted-foreground">
-                      {h.overallScore ?? "—"}% · {new Date(h.createdAt).toLocaleDateString()}
-                    </span>
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <DataTable
+              columns={historyColumns}
+              data={history}
+              getRowId={(row) => row.id}
+              caption="Resume intelligence report history"
+              filterPlaceholder="Search reports…"
+              initialSorting={[{ id: "createdAt", desc: true }]}
+              onRowClick={(row) => void loadReport(row.id)}
+              enableColumnVisibility={false}
+            />
           </CardContent>
         </Card>
       ) : null}

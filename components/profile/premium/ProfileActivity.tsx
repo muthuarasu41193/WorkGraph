@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 import type { LucideIcon } from "lucide-react";
 import {
   Activity,
@@ -12,6 +14,7 @@ import {
 import { MOCK_ACTIVITIES, type ProfileActivity } from "../../../lib/profile-mock-data";
 import ProfileCard from "../primitives/ProfileCard";
 import SectionHeader from "../primitives/SectionHeader";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 
 const ICONS: Record<ProfileActivity["type"], LucideIcon> = {
   applied: Briefcase,
@@ -26,6 +29,44 @@ type Props = {
 };
 
 export default function ProfileActivity({ activities = MOCK_ACTIVITIES }: Props) {
+  const columns = useMemo<ColumnDef<ProfileActivity>[]>(
+    () => [
+      {
+        id: "type",
+        header: "",
+        cell: ({ row }) => {
+          const Icon = ICONS[row.original.type];
+          return (
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]">
+              <Icon className="h-3.5 w-3.5" />
+            </span>
+          );
+        },
+        enableSorting: false,
+        enableHiding: false,
+        size: 48,
+      },
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Activity" />,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium text-[var(--text-primary)]">{row.original.title}</p>
+            <p className="text-caption text-[var(--text-tertiary)]">{row.original.subtitle}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "timeAgo",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="When" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums text-[var(--text-tertiary)]">{row.original.timeAgo}</span>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <ProfileCard id="activity">
       <SectionHeader
@@ -35,23 +76,17 @@ export default function ProfileActivity({ activities = MOCK_ACTIVITIES }: Props)
         description="Applications, saves, recruiter touchpoints, and posts."
       />
 
-      <ul className="divide-y divide-[var(--border-default)]">
-        {activities.map((item) => {
-          const Icon = ICONS[item.type];
-          return (
-            <li key={item.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]">
-                <Icon className="h-3.5 w-3.5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-body font-medium text-[var(--text-primary)]">{item.title}</p>
-                <p className="text-caption text-[var(--text-tertiary)]">{item.subtitle}</p>
-              </div>
-              <span className="shrink-0 text-caption tabular-nums text-[var(--text-tertiary)]">{item.timeAgo}</span>
-            </li>
-          );
-        })}
-      </ul>
+      <DataTable
+        columns={columns}
+        data={activities}
+        getRowId={(row) => row.id}
+        caption="Recent profile activity"
+        filterPlaceholder="Search activity…"
+        enableColumnVisibility={false}
+        enablePagination={activities.length > 8}
+        pageSize={8}
+        stickyHeader={false}
+      />
     </ProfileCard>
   );
 }

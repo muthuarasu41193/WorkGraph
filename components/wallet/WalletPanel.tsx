@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Wallet } from "lucide-react";
 import { useWallet, useRequestPayout } from "../../hooks/use-wallet";
 import { formatUsd } from "../../lib/utils";
 import { useDashboardStore } from "../../stores/dashboard-store";
+import type { WalletTransaction } from "../../packages/shared/types/phase3";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { DataTable, DataTableColumnHeader } from "../ui/data-table";
 import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
 
@@ -18,6 +22,55 @@ export default function WalletPanel() {
   const balance = data?.balance_cents ?? 0;
   const pending = data?.pending_cents ?? 0;
   const lifetime = data?.lifetime_earned_cents ?? 0;
+  const transactions = data?.transactions ?? [];
+
+  const columns = useMemo<ColumnDef<WalletTransaction>[]>(
+    () => [
+      {
+        accessorKey: "description",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.description ?? row.original.kind}</span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => (
+          <span className="capitalize text-[var(--text-secondary)]">{row.original.status}</span>
+        ),
+      },
+      {
+        accessorKey: "created_at",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums text-[var(--text-tertiary)]">
+            {new Date(row.original.created_at).toLocaleString()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "amount_cents",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Amount" />
+        ),
+        cell: ({ row }) => {
+          const cents = row.original.amount_cents;
+          return (
+            <span
+              className={`tabular-nums font-semibold ${
+                cents >= 0 ? "text-success-foreground" : "text-[var(--text-primary)]"
+              }`}
+            >
+              {cents >= 0 ? "+" : ""}
+              {formatUsd(Math.abs(cents))}
+            </span>
+          );
+        },
+      },
+    ],
+    [],
+  );
 
   async function onPayout(e: React.FormEvent) {
     e.preventDefault();
@@ -99,30 +152,41 @@ export default function WalletPanel() {
           <CardTitle>Recent transactions</CardTitle>
         </CardHeader>
         <CardContent>
-          {error ? <p className="text-body text-red-600">Could not load wallet.</p> : null}
-          <ul className="divide-y divide-[var(--border-default)]">
-            {(data?.transactions ?? []).map((tx) => (
-              <li key={tx.id} className="flex items-center justify-between py-3 text-body first:pt-0 last:pb-0">
-                <div>
-                  <p className="font-medium text-[var(--text-primary)]">{tx.description ?? tx.kind}</p>
-                  <p className="text-caption text-[var(--text-tertiary)]">
-                    {tx.status} · {new Date(tx.created_at).toLocaleString()}
-                  </p>
+          {error ? <p className="mb-3 text-body text-red-600">Could not load wallet.</p> : null}
+          <DataTable
+            columns={columns}
+            data={transactions}
+            loading={isLoading}
+            getRowId={(row) => row.id}
+            caption="Wallet transactions"
+            filterPlaceholder="Search transactions…"
+            initialSorting={[{ id: "created_at", desc: true }]}
+            emptyState={{
+              title: "No transactions yet",
+              description: "Publish community posts to earn — activity will appear here.",
+              icon: <Wallet className="size-6" aria-hidden />,
+            }}
+            mobileCardRender={(tx) => (
+              <div className="rounded-xl border border-[var(--border-default)] p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium">{tx.description ?? tx.kind}</p>
+                    <p className="text-caption text-[var(--text-tertiary)]">
+                      {tx.status} · {new Date(tx.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`tabular-nums font-semibold ${
+                      tx.amount_cents >= 0 ? "text-success-foreground" : "text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {tx.amount_cents >= 0 ? "+" : ""}
+                    {formatUsd(Math.abs(tx.amount_cents))}
+                  </span>
                 </div>
-                <span
-                  className={`tabular-nums font-semibold ${
-                    tx.amount_cents >= 0 ? "text-success-foreground" : "text-[var(--text-primary)]"
-                  }`}
-                >
-                  {tx.amount_cents >= 0 ? "+" : ""}
-                  {formatUsd(Math.abs(tx.amount_cents))}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {!isLoading && !data?.transactions?.length ? (
-            <p className="text-body text-[var(--text-tertiary)]">No transactions yet — publish community posts to earn.</p>
-          ) : null}
+              </div>
+            )}
+          />
         </CardContent>
       </Card>
     </div>
