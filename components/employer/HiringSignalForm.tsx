@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { FitSignal, HiringIntent, HiringSignal, WorkMode } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
@@ -327,7 +328,7 @@ export default function HiringSignalForm({ initial }: Props) {
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={saving}>
-          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          {saving ? <Spinner className="mr-2" /> : null}
           Publish signal
         </Button>
         <Button type="button" variant="outline" disabled={saving} onClick={() => void submit("draft")}>

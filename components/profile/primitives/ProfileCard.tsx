@@ -9,7 +9,6 @@ type ProfileCardProps = {
   className?: string;
   padding?: "sm" | "md" | "lg";
   id?: string;
-  /** No colored left accent (default is primary accent) */
   neutral?: boolean;
 };
 
@@ -19,6 +18,7 @@ const paddingMap = {
   lg: "p-6",
 };
 
+/** @deprecated Import { Card } from "@/components/ui/card" with variant="profile" */
 export default function ProfileCard({
   children,
   className = "",
@@ -27,14 +27,7 @@ export default function ProfileCard({
   neutral = false,
 }: ProfileCardProps) {
   return (
-    <Card
-      id={id}
-      className={cn(
-        "wg-profile-card border-border shadow-sm transition-shadow hover:shadow-md",
-        neutral ? "wg-profile-card--neutral border-l-border" : "border-l-primary border-l-[3px]",
-        className
-      )}
-    >
+    <Card id={id} variant="profile" neutral={neutral} className={cn("shadow-sm hover:shadow-md", className)}>
       <CardContent className={cn("p-0", paddingMap[padding])}>{children}</CardContent>
     </Card>
   );

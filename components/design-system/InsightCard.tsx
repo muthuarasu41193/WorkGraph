@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -32,13 +33,11 @@ export default function InsightCard({
   className,
 }: Props) {
   return (
-    <div
-      className={cn(
-        "wg-dash-section-card wg-dash-card-lift flex flex-col p-5",
-        variantStyles[variant],
-        className,
-      )}
+    <Card
+      variant="dashboard"
+      className={cn("wg-dash-card-lift flex flex-col p-5", variantStyles[variant], className)}
     >
+      <CardContent className="flex flex-1 flex-col p-0">
       <div className="flex items-start justify-between gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)]">
           <Icon className="h-[17px] w-[17px]" aria-hidden />
@@ -61,6 +60,7 @@ export default function InsightCard({
         <p className="text-caption leading-relaxed text-[var(--text-secondary)]">{description}</p>
       </div>
       {action ? <div className="mt-4">{action}</div> : null}
-    </div>
+      </CardContent>
+    </Card>
   );
 }

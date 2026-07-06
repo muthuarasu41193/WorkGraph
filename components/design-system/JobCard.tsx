@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { JobCardData } from "@/lib/job-card-data";
 import { cn } from "@/lib/utils";
 
@@ -56,14 +57,15 @@ export default function JobCard({
   className,
 }: Props) {
   return (
-    <article
+    <Card
+      variant="dashboard"
       style={{ animationDelay: `${index * 40}ms` }}
       className={cn(
-        "wg-dash-section-card wg-dash-card-lift wg-job-card-enter group overflow-hidden",
+        "wg-dash-card-lift wg-job-card-enter group overflow-hidden",
         className,
       )}
     >
-      <div className="p-4 sm:p-5">
+      <CardContent className="p-4 sm:p-5">
         <div className="flex gap-4">
           <CompanyAvatar company={job.company} logo={job.companyLogo} />
 
@@ -171,7 +173,7 @@ export default function JobCard({
             </Button>
           ) : null}
         </div>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }

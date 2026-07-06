@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ExternalLink, FileText, Loader2, Sparkles } from "lucide-react";
+import { ExternalLink, FileText, Sparkles } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { ConnectionStage, SignalConnection } from "@/lib/employer/types";
 import {
   CONNECTION_STAGE_LABELS,
@@ -58,7 +59,7 @@ export default function PulseInbox({ signalId }: Props) {
   if (loading) {
     return (
       <div className="flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Spinner size="lg" className="text-muted-foreground" />
       </div>
     );
   }

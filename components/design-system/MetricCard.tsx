@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import MiniChart from "./MiniChart";
 
@@ -32,15 +33,17 @@ export default function MetricCard({
   const trendDown = trend !== undefined && trend < 0;
 
   return (
-    <div
+    <Card
+      variant="dashboard"
       style={{ animationDelay: `${delay * 60}ms` }}
       className={cn(
-        "wg-dash-section-card wg-dash-card-lift wg-dash-stat-enter group relative overflow-hidden p-5",
+        "wg-dash-card-lift wg-dash-stat-enter group relative overflow-hidden p-5",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 space-y-3">
+      <CardContent className="space-y-0 p-0">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1 space-y-3">
           <p className="text-caption font-medium text-[var(--text-secondary)]">{label}</p>
           <div className="flex items-baseline gap-2">
             <p className="text-heading-l tabular-nums text-[var(--text-primary)]">
@@ -70,16 +73,17 @@ export default function MetricCard({
           {trendLabel && !description ? (
             <p className="text-caption text-[var(--text-secondary)]">{trendLabel}</p>
           ) : null}
+          </div>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)] transition-transform group-hover:scale-105">
+            <Icon className="h-[18px] w-[18px]" aria-hidden />
+          </span>
         </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)] transition-transform group-hover:scale-105">
-          <Icon className="h-[18px] w-[18px]" aria-hidden />
-        </span>
-      </div>
       {chartData && chartData.length > 1 ? (
         <div className="mt-4 h-10">
           <MiniChart data={chartData} positive={trendUp} />
         </div>
       ) : null}
-    </div>
+      </CardContent>
+    </Card>
   );
 }

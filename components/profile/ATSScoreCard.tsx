@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle, Lightbulb, Loader2, XCircle } from "lucide-react";
+import { CheckCircle, Lightbulb, XCircle } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { ATSFeedback } from "../../lib/types";
 import { apiErrorMessage, readApiJson } from "../../lib/api-fetch";
 import { atsScorePath } from "../../lib/workgraph-api-routes";
@@ -163,7 +164,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
           </>
         ) : (
           <Button type="button" onClick={() => void analyze()} disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {loading ? <Spinner /> : null}
             {loading ? "Analyzing..." : "Analyze My Resume"}
           </Button>
         )}

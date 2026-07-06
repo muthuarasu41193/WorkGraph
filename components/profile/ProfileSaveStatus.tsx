@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import {
   onProfileSaved,
   onProfileSaveError,
@@ -111,7 +112,7 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <Loader2 className="h-4 w-4 animate-spin text-success-foreground" aria-hidden />
+      <Spinner className="text-success-foreground" aria-hidden />
     ) : state === "error" ? (
       <AlertCircle className="h-4 w-4 text-red-600" aria-hidden />
     ) : (

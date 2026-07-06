@@ -2,7 +2,8 @@
 
 import { useParams, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { HiringSignal } from "@/lib/employer/types";
 import { readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import HiringSignalForm from "@/components/employer/HiringSignalForm";
@@ -50,7 +51,7 @@ export default function EditHiringSignalPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Spinner size="lg" className="text-muted-foreground" />
       </div>
     );
   }

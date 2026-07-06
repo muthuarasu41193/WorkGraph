@@ -8,9 +8,9 @@ import {
   Check,
   CheckCircle,
   FileText,
-  Loader2,
   Upload,
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -183,7 +183,7 @@ export default function ResumeUploader() {
   if (status === "parsing") {
     return (
       <div className="rounded-[14px] border border-border bg-card p-8 text-center shadow-sm">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
+        <Spinner size="xl" className="mx-auto text-primary" />
         <p className="mt-4 text-body-lg font-semibold text-foreground">Analyzing your resume…</p>
         <p className="mt-1 text-body text-muted-foreground">Usually finishes in a few seconds</p>
       </div>

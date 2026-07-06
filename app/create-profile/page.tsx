@@ -7,10 +7,10 @@ import {
   ArrowRight,
   CheckCircle2,
   FileText,
-  Loader2,
   PenLine,
   UploadCloud,
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -283,7 +283,7 @@ export default function CreateProfilePage() {
         highlights={["Secure sign-in required", "Resume import", "Manual entry"]}
       >
         <div className="flex items-center justify-center py-16 text-body text-muted-foreground">
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+          <Spinner className="mr-2" aria-hidden />
           Verifying sign-in…
         </div>
       </AuthSplitShell>
@@ -411,7 +411,7 @@ export default function CreateProfilePage() {
                   <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-body">
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        <Spinner aria-hidden />
                         {loadingPhase === "score" ? "Finalizing…" : "Reading resume…"}
                       </>
                     ) : (
@@ -587,7 +587,7 @@ export default function CreateProfilePage() {
                   <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-body">
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        <Spinner aria-hidden />
                         Saving…
                       </>
                     ) : (

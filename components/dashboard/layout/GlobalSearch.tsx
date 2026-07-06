@@ -1,9 +1,10 @@
 "use client";
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Briefcase, Building2, Loader2, Search, Sparkles } from "lucide-react";
+import { Briefcase, Building2, Search as SearchIcon, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
@@ -66,7 +67,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <div className="relative">
-        <Search
+        <SearchIcon
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
           aria-hidden
         />
@@ -89,7 +90,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
           )}
         />
         {query.length > 1 && deferredQuery !== query ? (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         ) : null}
       </div>
 

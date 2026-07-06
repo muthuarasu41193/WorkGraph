@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import PageHero from "@/components/design-system/PageHero";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
@@ -66,7 +67,7 @@ export default function HiddenDiscoverySection() {
             Saved ({savedIds.size})
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            {loading ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
             Refresh
           </Button>
         </div>
@@ -115,7 +116,7 @@ export default function HiddenDiscoverySection() {
       {loading && visible.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
           <CardContent className="flex items-center justify-center gap-2 py-16 text-body text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <Spinner size="md" />
             Aggregating opportunities from providers…
           </CardContent>
         </Card>

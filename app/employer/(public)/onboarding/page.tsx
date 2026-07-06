@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 import { slugifyCompany } from "@/lib/employer/types";
 import { Button } from "@/components/ui/button";
@@ -134,7 +134,7 @@ export default function EmployerOnboardingPage() {
           />
         </div>
         <Button type="submit" className="w-full" disabled={saving}>
-          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          {saving ? <Spinner className="mr-2" /> : null}
           Continue to dashboard
         </Button>
       </form>

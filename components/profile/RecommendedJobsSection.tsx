@@ -23,7 +23,6 @@ import {
   LayoutList,
   LifeBuoy,
   MapPin,
-  Loader2,
   Sparkles,
   SearchX,
   Search,
@@ -54,6 +53,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -1575,7 +1575,7 @@ export default function RecommendedJobsSection({
                     <X className="h-4 w-4" />
                   </button>
                 ) : null}
-                {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-tertiary)]" /> : null}
+                {isSearching ? <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" /> : null}
               </div>
               {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
                 <p className="ml-2 text-caption text-[var(--text-tertiary)]">No results for &quot;{query.trim()}&quot;.</p>
@@ -1717,7 +1717,7 @@ export default function RecommendedJobsSection({
             ) : null}
             {isPageLoading ? (
               <span className="ml-2 inline-flex items-center gap-1 text-caption text-[var(--text-tertiary)]">
-                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                <Spinner size="xs" aria-hidden />
                 Loading page…
               </span>
             ) : null}
@@ -2134,7 +2134,7 @@ export default function RecommendedJobsSection({
             aria-hidden
           >
             <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-default)] bg-surface-primary px-4 py-2 text-body text-[var(--text-secondary)] shadow-sm">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--info)]" />
+              <Spinner className="text-[var(--info)]" />
               Loading page {safePage}…
             </span>
           </div>

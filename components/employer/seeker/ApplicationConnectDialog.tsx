@@ -8,9 +8,9 @@ import {
   GitBranch,
   Globe,
   Link2,
-  Loader2,
   Upload,
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { HiringSignal } from "@/lib/employer/types";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -208,7 +208,7 @@ export default function ApplicationConnectDialog({
             >
               <input {...getInputProps()} />
               {resumeUploading ? (
-                <Loader2 className="mx-auto h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner size="md" className="mx-auto text-muted-foreground" />
               ) : (
                 <Upload className="mx-auto h-5 w-5 text-muted-foreground" />
               )}
@@ -262,7 +262,7 @@ export default function ApplicationConnectDialog({
             Cancel
           </Button>
           <Button onClick={() => void handleSubmit()} disabled={submitting || resumeUploading || !values.resumeUrl}>
-            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {submitting ? <Spinner className="mr-2" /> : null}
             Submit application
           </Button>
         </DialogFooter>

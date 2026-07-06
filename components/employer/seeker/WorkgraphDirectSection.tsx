@@ -6,12 +6,12 @@ import { useSearchParams } from "next/navigation";
 import {
   BadgeCheck,
   Building2,
-  Loader2,
   MapPin,
   Radio,
   Send,
   Sparkles,
 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { HiringSignal, SignalConnection } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { scoreFitSignals } from "@/lib/employer/fit-signals";
@@ -175,7 +175,7 @@ export default function WorkgraphDirectSection({
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Spinner size="lg" className="text-muted-foreground" />
         </div>
       ) : error ? (
         <Alert variant="destructive">

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronLeft, ChevronRight, Loader2, Save } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import VaultRichEditor from "@/components/vault/VaultRichEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -173,7 +174,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <p className="mt-1 flex items-center gap-2 text-caption text-muted-foreground">
           {saving ? (
             <>
-              <Loader2 className="h-3 w-3 animate-spin" /> Saving…
+              <Spinner size="xs" /> Saving…
             </>
           ) : lastSaved ? (
             <>

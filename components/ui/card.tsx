@@ -1,19 +1,52 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { profileCardClass, sectionCardClass } from "@/lib/tokens"
+
+const cardVariants = cva(
+  "group/card flex flex-col gap-4 overflow-hidden text-body text-card-foreground has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+  {
+    variants: {
+      variant: {
+        default:
+          "rounded-xl bg-card py-4 ring-1 ring-foreground/10",
+        dashboard:
+          cn(sectionCardClass, "wg-dash-section-card gap-0 py-0 ring-0"),
+        profile:
+          cn(profileCardClass, "gap-0 py-0 ring-0"),
+      },
+      size: {
+        default: "",
+        sm: "",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+)
 
 function Card({
   className,
+  variant = "default",
   size = "default",
+  neutral,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> &
+  VariantProps<typeof cardVariants> & {
+    neutral?: boolean
+  }) {
   return (
     <div
       data-slot="card"
+      data-variant={variant}
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-body text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
-        className
+        cardVariants({ variant, size }),
+        variant === "profile" && neutral && "wg-profile-card--neutral border-l-border",
+        className,
       )}
       {...props}
     />
@@ -100,4 +133,5 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  cardVariants,
 }

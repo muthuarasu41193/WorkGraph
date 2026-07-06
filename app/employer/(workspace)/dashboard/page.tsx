@@ -3,7 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Loader2, Radio } from "lucide-react";
+import { LayoutDashboard, Radio } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { EmployerProfile, HiringSignal } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS } from "@/lib/employer/types";
 import PulseInbox from "@/components/employer/PulseInbox";
@@ -68,7 +69,7 @@ export default function EmployerDashboardPage() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Spinner size="lg" className="text-muted-foreground" />
         </div>
       ) : signals.length === 0 ? (
         <Card>

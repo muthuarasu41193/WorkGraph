@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileText, Loader2, UploadCloud } from "lucide-react";
+import { FileText, UploadCloud } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { useDropzone } from "react-dropzone";
 import AIWarningBanner from "@/app/(dashboard)/profile/components/AIWarningBanner";
 import AnalysisResults, { type ResumeAnalysis } from "@/app/(dashboard)/profile/components/AnalysisResults";
@@ -142,7 +143,7 @@ export default function ResumeAnalyzer() {
 
         <div className="flex items-center gap-3">
           <Button type="button" onClick={analyzeResume} disabled={!canAnalyze}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+            {loading ? <Spinner /> : <FileText className="h-4 w-4" />}
             Analyze
           </Button>
           <p className="text-caption text-muted-foreground">Suggestions only — no automatic resume edits.</p>

@@ -19,6 +19,7 @@ const variantMap: Record<Variant, React.ComponentProps<typeof Button>["variant"]
   outline: "outline",
 };
 
+/** Thin wrapper over Button — prefer importing Button from @/components/ui/button */
 export default function ProfileButton({
   variant = "primary",
   children,

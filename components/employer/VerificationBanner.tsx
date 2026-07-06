@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BadgeCheck, Loader2, Shield } from "lucide-react";
+import { BadgeCheck, Shield } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import type { EmployerProfile } from "@/lib/employer/types";
 import { VERIFICATION_STATUS_LABELS } from "@/lib/employer/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -102,7 +103,7 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
         ) : null}
         {error ? <p className="text-body text-destructive">{error}</p> : null}
         <Button type="button" size="sm" disabled={loading} onClick={() => void requestVerify()}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          {loading ? <Spinner className="mr-2" /> : null}
           Request verification
         </Button>
       </AlertDescription>

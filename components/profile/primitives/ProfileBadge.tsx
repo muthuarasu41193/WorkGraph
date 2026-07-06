@@ -8,20 +8,13 @@ type Tone = "default" | "success" | "warning" | "info" | "muted";
 
 const toneVariants: Record<Tone, React.ComponentProps<typeof Badge>["variant"]> = {
   default: "secondary",
-  success: "default",
-  warning: "outline",
-  info: "outline",
-  muted: "outline",
+  success: "success",
+  warning: "warning",
+  info: "info",
+  muted: "muted",
 };
 
-const toneStyles: Record<Tone, string> = {
-  default: "",
-  success: "border-success/20 bg-success-subtle text-success-foreground dark:border-success/20 dark:bg-success-subtle/40 dark:text-success",
-  warning: "border-warning/20 bg-warning-subtle text-warning-foreground dark:border-warning/20 dark:bg-warning-subtle/40 dark:text-warning-foreground",
-  info: "border-border bg-muted text-foreground",
-  muted: "text-muted-foreground",
-};
-
+/** @deprecated Import { Badge } from "@/components/ui/badge" with variant prop */
 export default function ProfileBadge({
   children,
   tone = "default",
@@ -32,7 +25,7 @@ export default function ProfileBadge({
   className?: string;
 }) {
   return (
-    <Badge variant={toneVariants[tone]} className={cn(toneStyles[tone], className)}>
+    <Badge variant={toneVariants[tone]} className={cn(className)}>
       {children}
     </Badge>
   );
