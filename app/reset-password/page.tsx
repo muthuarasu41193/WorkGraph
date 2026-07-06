@@ -120,14 +120,14 @@ export default function ResetPasswordPage() {
     >
       <div className="wg-auth-enter space-y-8">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Reset password</h2>
-          <p className="mt-2 text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
+          <h2 className="text-heading-l text-foreground">Reset password</h2>
+          <p className="mt-2 text-body text-muted-foreground">
             Enter and confirm your new password below.
           </p>
         </div>
 
         {checking ? (
-          <p className="text-sm text-muted-foreground">Verifying your reset link…</p>
+          <p className="text-body text-muted-foreground">Verifying your reset link…</p>
         ) : !ready ? (
           <div className="space-y-4">
             <Alert variant="destructive">
@@ -181,7 +181,7 @@ export default function ResetPasswordPage() {
               </div>
             </div>
 
-            <Button type="submit" disabled={submitting} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
+            <Button type="submit" disabled={submitting} className="h-12 w-full rounded-full text-body">
               {submitting ? "Saving…" : "Save new password"}
             </Button>
           </form>
@@ -198,7 +198,7 @@ export default function ResetPasswordPage() {
           </Alert>
         ) : null}
 
-        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           <Link href="/login" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Back to sign in
           </Link>

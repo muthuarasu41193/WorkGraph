@@ -74,11 +74,11 @@ export default function ActivityTimeline({ events, className }: Props) {
             </span>
             <div className="min-w-0 flex-1 pt-0.5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm font-medium text-[var(--text-primary)]">{event.title}</p>
-                <time className="text-xs text-[var(--text-secondary)]">{event.timestamp}</time>
+                <p className="text-body font-medium text-[var(--text-primary)]">{event.title}</p>
+                <time className="text-caption text-[var(--text-secondary)]">{event.timestamp}</time>
               </div>
               {event.description ? (
-                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{event.description}</p>
+                <p className="mt-0.5 text-caption text-[var(--text-secondary)]">{event.description}</p>
               ) : null}
             </div>
           </div>

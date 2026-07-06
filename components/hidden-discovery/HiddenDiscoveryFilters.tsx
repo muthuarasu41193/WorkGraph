@@ -101,7 +101,7 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
       </div>
 
       <div className="flex flex-col justify-end gap-3 sm:col-span-2 lg:col-span-1">
-        <label className="flex cursor-pointer items-center gap-2 text-sm">
+        <label className="flex cursor-pointer items-center gap-2 text-body">
           <Checkbox
             checked={filters.remote}
             onCheckedChange={(checked) => onChange({ remote: checked === true })}

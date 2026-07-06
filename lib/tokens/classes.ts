@@ -38,7 +38,7 @@ export const matchScoreClass = {
 
 /** Filter chip active/inactive */
 export const filterChipClass = {
-  base: "inline-flex h-10 cursor-pointer items-center gap-1 rounded-[length:var(--radius-full)] border px-4 text-[length:var(--font-size-body)] transition-[var(--transition-colors)] focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-[var(--focus-ring-color)] focus-visible:ring-offset-[length:var(--focus-ring-offset)]",
+  base: "inline-flex h-10 cursor-pointer items-center gap-1 rounded-[length:var(--radius-full)] border px-4 text-body transition-[var(--transition-colors)] focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-[var(--focus-ring-color)] focus-visible:ring-offset-[length:var(--focus-ring-offset)]",
   inactive: "border-border bg-surface-primary text-text-secondary hover:border-primary hover:bg-info-subtle",
   active: "border-primary bg-primary text-primary-foreground",
 } as const;
@@ -49,4 +49,4 @@ export const stickyBarClass =
 
 /** Input field default */
 export const inputFieldClass =
-  "h-[var(--input-height-md)] w-full rounded-[length:var(--radius-md)] border border-border bg-surface-primary px-3 text-[length:var(--font-size-body)] text-foreground placeholder:text-text-tertiary outline-none transition-[var(--transition-colors)] focus:border-primary focus:ring-[length:var(--focus-ring-width)] focus:ring-[var(--accent-muted)]";
+  "h-[var(--input-height-md)] w-full rounded-[length:var(--radius-md)] border border-border bg-surface-primary px-3 text-body text-foreground placeholder:text-text-tertiary outline-none transition-[var(--transition-colors)] focus:border-primary focus:ring-[length:var(--focus-ring-width)] focus:ring-[var(--accent-muted)]";

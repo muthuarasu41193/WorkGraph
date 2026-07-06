@@ -127,11 +127,11 @@ export default function VaultExperienceDetail({
       <header className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{experience.company}</h1>
-            <p className="text-lg text-muted-foreground">{experience.role}</p>
-            {experience.level ? <p className="text-sm text-muted-foreground">{experience.level}</p> : null}
+            <h1 className="text-heading-l">{experience.company}</h1>
+            <p className="text-heading-s text-muted-foreground">{experience.role}</p>
+            {experience.level ? <p className="text-body text-muted-foreground">{experience.level}</p> : null}
           </div>
-          <Badge className="text-base px-3 py-1">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
+          <Badge className="text-body-lg px-3 py-1">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -148,13 +148,13 @@ export default function VaultExperienceDetail({
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-heading-s">
             Preview
             {!unlocked ? <Lock className="h-4 w-4 text-muted-foreground" /> : <Unlock className="h-4 w-4 text-green-600" />}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm leading-relaxed text-muted-foreground">{preview}</p>
+          <p className="text-body text-muted-foreground">{preview}</p>
 
           {unlocked ? (
             <div
@@ -170,13 +170,13 @@ export default function VaultExperienceDetail({
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-background via-background/90 to-transparent">
                 <Lock className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm font-medium">Premium content locked</p>
+                <p className="text-body font-medium">Premium content locked</p>
                 {!isOwner ? (
                   <Button onClick={() => void handleUnlock()} disabled={purchasing}>
                     {purchasing ? "Processing…" : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
                   </Button>
                 ) : (
-                  <p className="text-xs text-muted-foreground">You own this listing</p>
+                  <p className="text-caption text-muted-foreground">You own this listing</p>
                 )}
               </div>
             </div>
@@ -186,11 +186,11 @@ export default function VaultExperienceDetail({
 
       <section aria-labelledby="reviews-heading" className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 id="reviews-heading" className="text-lg font-semibold">
+          <h2 id="reviews-heading" className="text-heading-s">
             Reviews & ratings
           </h2>
           {avgRating != null ? (
-            <span className="flex items-center gap-1 text-sm">
+            <span className="flex items-center gap-1 text-body">
               <Star className="h-4 w-4 fill-warning text-warning" />
               {avgRating.toFixed(1)} ({reviews.length})
             </span>
@@ -222,8 +222,8 @@ export default function VaultExperienceDetail({
                 <Card>
                   <CardContent className="p-4">
                     <StarRating value={review.rating} />
-                    {review.comment ? <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p> : null}
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    {review.comment ? <p className="mt-2 text-body text-muted-foreground">{review.comment}</p> : null}
+                    <p className="mt-1 text-caption text-muted-foreground">
                       {new Date(review.created_at).toLocaleDateString()}
                     </p>
                   </CardContent>
@@ -232,13 +232,13 @@ export default function VaultExperienceDetail({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-muted-foreground">No reviews yet.</p>
+          <p className="text-body text-muted-foreground">No reviews yet.</p>
         )}
       </section>
 
       {related.length > 0 ? (
         <section aria-labelledby="related-heading" className="space-y-4">
-          <h2 id="related-heading" className="text-lg font-semibold">
+          <h2 id="related-heading" className="text-heading-s">
             Related experiences
           </h2>
           <ul className="grid gap-4 sm:grid-cols-2">
@@ -251,7 +251,7 @@ export default function VaultExperienceDetail({
         </section>
       ) : null}
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-body text-muted-foreground">
         <Link href="/interview-vault" className="text-primary hover:underline">
           ← Back to marketplace
         </Link>

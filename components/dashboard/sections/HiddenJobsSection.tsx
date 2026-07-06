@@ -31,10 +31,10 @@ export default function HiddenJobsSection() {
   return (
     <section className="space-y-4" aria-labelledby="hidden-jobs-heading">
       <header>
-        <h1 id="hidden-jobs-heading" className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 id="hidden-jobs-heading" className="text-heading-l text-foreground">
           Hidden Jobs
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-body text-muted-foreground">
           Roles you dismissed from your feed. Restore any job to see it again under Jobs.
         </p>
       </header>
@@ -44,7 +44,7 @@ export default function HiddenJobsSection() {
           <CardContent className="flex flex-col items-center py-12 text-center">
             <Eye className="mb-3 h-10 w-10 text-muted-foreground" />
             <p className="font-medium">No hidden jobs yet</p>
-            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+            <p className="mt-1 max-w-sm text-body text-muted-foreground">
               When browsing listings, use Hide on roles you are not interested in — they will appear here.
             </p>
           </CardContent>
@@ -60,7 +60,7 @@ export default function HiddenJobsSection() {
                       <h2 className="font-semibold">{job.title}</h2>
                       <Badge variant="outline">{job.source}</Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-body text-muted-foreground">
                       {job.company} · {job.location}
                     </p>
                   </div>

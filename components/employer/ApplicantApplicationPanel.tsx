@@ -47,7 +47,7 @@ function LinkRow({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 rounded-md border px-3 py-2 text-sm hover:bg-muted/50"
+      className="flex items-center gap-2 rounded-md border px-3 py-2 text-body hover:bg-muted/50"
     >
       {icon}
       <span className="min-w-0 flex-1 truncate">{label}</span>
@@ -91,14 +91,14 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
         <DialogHeader>
           <DialogTitle>{displayName}</DialogTitle>
           {app?.headline ? (
-            <p className="text-sm text-muted-foreground">{app.headline}</p>
+            <p className="text-body text-muted-foreground">{app.headline}</p>
           ) : null}
         </DialogHeader>
 
         {!app ? (
-          <p className="text-sm text-muted-foreground">No application details available.</p>
+          <p className="text-body text-muted-foreground">No application details available.</p>
         ) : (
-          <div className="space-y-5 text-sm">
+          <div className="space-y-5 text-body">
             <div className="flex flex-wrap gap-2">
               <Badge className="bg-[var(--accent)]/10 text-[var(--accent)]">
                 {connection.fit_snapshot?.matchPercent ?? "—"}% fit
@@ -135,7 +135,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
                 href={app.resume_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--accent)]/90"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-body font-medium text-white hover:bg-[var(--accent)]/90"
               >
                 <FileText className="h-4 w-4" />
                 View resume

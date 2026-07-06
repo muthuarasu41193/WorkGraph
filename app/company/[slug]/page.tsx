@@ -53,7 +53,7 @@ export default async function PublicCompanyPage({ params }: Props) {
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight">{profile.company_name}</h1>
+              <h1 className="text-heading-l">{profile.company_name}</h1>
               {profile.verification_status === "verified" ? (
                 <Badge className="gap-1 bg-success hover:bg-success">
                   <BadgeCheck className="h-3.5 w-3.5" />
@@ -64,7 +64,7 @@ export default async function PublicCompanyPage({ params }: Props) {
             {profile.tagline ? (
               <p className="mt-1 text-muted-foreground">{profile.tagline}</p>
             ) : null}
-            <div className="mt-3 flex flex-wrap gap-3 text-sm text-muted-foreground">
+            <div className="mt-3 flex flex-wrap gap-3 text-body text-muted-foreground">
               {profile.team_size ? <span>{profile.team_size} team</span> : null}
               {profile.website_url ? (
                 <a
@@ -87,28 +87,28 @@ export default async function PublicCompanyPage({ params }: Props) {
 
         {profile.hiring_philosophy ? (
           <section className="mt-8 rounded-xl border bg-muted/30 p-5">
-            <h2 className="text-sm font-semibold">Hiring philosophy</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+            <h2 className="text-body font-semibold">Hiring philosophy</h2>
+            <p className="mt-2 text-body text-muted-foreground whitespace-pre-wrap">
               {profile.hiring_philosophy}
             </p>
           </section>
         ) : null}
 
         <section className="mt-10 space-y-4">
-          <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <h2 className="flex items-center gap-2 text-heading-s">
             <Radio className="h-5 w-5 text-[var(--accent)]" />
             Live hiring signals
           </h2>
           {signals.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No live signals right now.</p>
+            <p className="text-body text-muted-foreground">No live signals right now.</p>
           ) : (
             <ul className="space-y-4">
               {signals.map((signal) => (
                 <li key={signal.id}>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{signal.title}</CardTitle>
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      <CardTitle className="text-body-lg">{signal.title}</CardTitle>
+                      <div className="flex flex-wrap gap-2 text-caption text-muted-foreground">
                         {signal.location ? (
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
@@ -119,7 +119,7 @@ export default async function PublicCompanyPage({ params }: Props) {
                         <span>{HIRING_INTENT_LABELS[signal.hiring_intent]}</span>
                       </div>
                     </CardHeader>
-                    <CardContent className="space-y-3 text-sm">
+                    <CardContent className="space-y-3 text-body">
                       {signal.why_now ? (
                         <p className="border-l-2 border-[var(--accent)] pl-3 italic text-foreground/90">
                           {signal.why_now}
@@ -128,7 +128,7 @@ export default async function PublicCompanyPage({ params }: Props) {
                       {signal.fit_signals.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {signal.fit_signals.map((f) => (
-                            <Badge key={f.label} variant="secondary" className="text-[10px]">
+                            <Badge key={f.label} variant="secondary" className="text-caption">
                               {f.label}
                             </Badge>
                           ))}
@@ -145,7 +145,7 @@ export default async function PublicCompanyPage({ params }: Props) {
           )}
         </section>
 
-        <p className="mt-12 text-center text-xs text-muted-foreground">
+        <p className="mt-12 text-center text-caption text-muted-foreground">
           Employers post signals on WorkGraph Direct — not scraped ATS listings.
         </p>
       </main>

@@ -8,9 +8,9 @@ export default function UploadPage() {
     <main className={`${inter.className} min-h-screen bg-surface-primary px-6 py-14`}>
       <div className="mx-auto w-full max-w-[600px]">
         <div className="mb-8 text-center">
-          <p className="text-sm font-semibold tracking-wide text-text-primary">WorkGraph</p>
-          <h1 className="mt-3 text-3xl font-semibold text-text-primary">Upload Your Resume</h1>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+          <p className="text-body font-semibold tracking-wide text-text-primary">WorkGraph</p>
+          <h1 className="mt-3 text-heading-xl text-text-primary">Upload Your Resume</h1>
+          <p className="mt-3 text-body leading-6 text-[var(--text-secondary)]">
             Our AI will parse your resume, score it for ATS compatibility, and build your
             professional profile automatically.
           </p>

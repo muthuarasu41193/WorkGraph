@@ -31,14 +31,14 @@ export default async function HomeHiddenJobsFeed() {
     <section className="space-y-3" aria-labelledby="home-hidden-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-heading-s">
             Hidden Jobs Feed
-            <span className="inline-flex items-center gap-1 rounded-full bg-success-subtle0/10 px-2 py-0.5 text-xs font-medium text-success-foreground dark:text-success">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-subtle0/10 px-2 py-0.5 text-caption font-medium text-success-foreground dark:text-success">
               <Radio className="h-3 w-3 animate-pulse" aria-hidden />
               Live
             </span>
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Latest from Reddit, Hacker News, and GitHub — {total.toLocaleString("en-IN")} opportunities indexed.
           </p>
         </div>
@@ -49,7 +49,7 @@ export default async function HomeHiddenJobsFeed() {
 
       {items.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">
+          <CardContent className="py-8 text-center text-body text-muted-foreground">
             Hidden job sources are warming up. Check back in a moment or open Hidden Jobs Discovery.
           </CardContent>
         </Card>
@@ -63,15 +63,15 @@ export default async function HomeHiddenJobsFeed() {
                     <Badge variant="outline" className={cn("capitalize", WG_PLATFORM_CHIP_CLASS)}>
                       {sourceLabel(item.source)}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">{formatPostedAt(item.postedAt)}</span>
+                    <span className="text-caption text-muted-foreground">{formatPostedAt(item.postedAt)}</span>
                     {item.tags.includes("remote") ? (
-                      <Badge variant="secondary" className="text-[10px]">
+                      <Badge variant="secondary" className="text-caption">
                         Remote
                       </Badge>
                     ) : null}
                   </div>
                   <h3 className="mt-2 font-semibold leading-snug">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     {[item.company, item.author, item.location].filter(Boolean).join(" · ") || "Community post"}
                   </p>
                   <Button asChild size="sm" variant="outline" className="mt-3">

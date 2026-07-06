@@ -282,7 +282,7 @@ export default function CreateProfilePage() {
         panelDescription="Checking your session…"
         highlights={["Secure sign-in required", "Resume import", "Manual entry"]}
       >
-        <div className="flex items-center justify-center py-16 text-sm text-muted-foreground">
+        <div className="flex items-center justify-center py-16 text-body text-muted-foreground">
           <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
           Verifying sign-in…
         </div>
@@ -305,8 +305,8 @@ export default function CreateProfilePage() {
       <div className="wg-auth-enter space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground">Create your profile</h2>
-            <p className="mt-2 max-w-xl text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
+            <h2 className="text-heading-l text-foreground">Create your profile</h2>
+            <p className="mt-2 max-w-xl text-body text-muted-foreground">
               Signed-in accounts only. Choose import or manual entry — you can edit everything later.
             </p>
           </div>
@@ -355,7 +355,7 @@ export default function CreateProfilePage() {
                     <Label htmlFor="profile-email-fallback">
                       Contact email <span className="font-normal text-muted-foreground">(optional)</span>
                     </Label>
-                    <p className="text-xs text-muted-foreground">If your file doesn&apos;t include a readable email.</p>
+                    <p className="text-caption text-muted-foreground">If your file doesn&apos;t include a readable email.</p>
                     <Input
                       id="profile-email-fallback"
                       type="email"
@@ -370,7 +370,7 @@ export default function CreateProfilePage() {
 
                   <div className="space-y-2">
                     <Label>Resume file</Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-caption text-muted-foreground">
                       PDF or DOCX · up to {MAX_RESUME_UPLOAD_LABEL} ({formatBytes(MAX_RESUME_UPLOAD_BYTES)})
                     </p>
 
@@ -389,17 +389,17 @@ export default function CreateProfilePage() {
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-200 group-hover:scale-105">
                           <FileText className="h-6 w-6 text-primary" aria-hidden />
                         </div>
-                        <p className="mt-5 text-[length:var(--font-size-body)] font-semibold text-foreground">
+                        <p className="mt-5 text-body font-semibold text-foreground">
                           {isDragActive ? "Drop your file here" : "Drag & drop your resume"}
                         </p>
-                        <p className="mt-1 text-sm text-muted-foreground">or click to browse — PDF or DOCX</p>
+                        <p className="mt-1 text-body text-muted-foreground">or click to browse — PDF or DOCX</p>
                       </div>
                     ) : (
                       <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3.5">
                         <CheckCircle2 className="h-5 w-5 shrink-0 text-success" aria-hidden />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
-                          <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
+                          <p className="truncate text-body font-medium text-foreground">{file.name}</p>
+                          <p className="text-caption text-muted-foreground">{formatBytes(file.size)}</p>
                         </div>
                         <Button type="button" variant="ghost" size="sm" disabled={isLoading} onClick={() => setFile(null)}>
                           Remove
@@ -408,7 +408,7 @@ export default function CreateProfilePage() {
                     )}
                   </div>
 
-                  <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
+                  <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-body">
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -547,7 +547,7 @@ export default function CreateProfilePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="manual-skills">Skills</Label>
-                    <p className="text-xs text-muted-foreground">One per line.</p>
+                    <p className="text-caption text-muted-foreground">One per line.</p>
                     <Textarea
                       id="manual-skills"
                       rows={4}
@@ -560,7 +560,7 @@ export default function CreateProfilePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="manual-exp">Experience</Label>
-                    <p className="text-xs text-muted-foreground">Bullets or roles, one per line.</p>
+                    <p className="text-caption text-muted-foreground">Bullets or roles, one per line.</p>
                     <Textarea
                       id="manual-exp"
                       rows={4}
@@ -573,7 +573,7 @@ export default function CreateProfilePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="manual-edu">Education</Label>
-                    <p className="text-xs text-muted-foreground">One entry per line.</p>
+                    <p className="text-caption text-muted-foreground">One entry per line.</p>
                     <Textarea
                       id="manual-edu"
                       rows={3}
@@ -584,7 +584,7 @@ export default function CreateProfilePage() {
                     />
                   </div>
 
-                  <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
+                  <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-body">
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -603,11 +603,11 @@ export default function CreateProfilePage() {
           </TabsContent>
         </Tabs>
 
-        <p className="text-center text-xs leading-relaxed text-muted-foreground/70">
+        <p className="text-center text-caption leading-relaxed text-muted-foreground/70">
           Trouble importing? Confirm you&apos;re signed in, then try manual entry or a different file format.
         </p>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login?next=/create-profile" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign in

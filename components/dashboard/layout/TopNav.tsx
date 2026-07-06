@@ -95,7 +95,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
             {liveListings > 0 ? (
               <Badge
                 variant="secondary"
-                className="hidden rounded-md border-0 bg-success-subtle px-2 py-0.5 text-[length:var(--font-size-label)] font-semibold text-success-foreground lg:inline-flex"
+                className="hidden rounded-md border-0 bg-success-subtle px-2 py-0.5 text-caption font-semibold text-success-foreground lg:inline-flex"
               >
                 <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-success-subtle0" />
                 {liveListings.toLocaleString()} live
@@ -106,11 +106,11 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               type="button"
               variant="ghost"
               size="sm"
-              className="hidden h-8 gap-1.5 px-2 text-xs text-[var(--text-secondary)] lg:inline-flex"
+              className="hidden h-8 gap-1.5 px-2 text-caption text-[var(--text-secondary)] lg:inline-flex"
               onClick={() => setCmdOpen(true)}
             >
               <Command className="h-3.5 w-3.5" />
-              <kbd className="rounded border bg-muted px-1 py-0.5 text-[10px] font-medium">⌘K</kbd>
+              <kbd className="rounded border bg-muted px-1 py-0.5 text-caption font-medium">⌘K</kbd>
             </Button>
 
             <Button
@@ -156,7 +156,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                   aria-label="Account menu"
                 >
                   <Avatar size="default">
-                    <AvatarFallback className="bg-[var(--accent-subtle)] text-xs font-semibold text-[var(--accent)]">
+                    <AvatarFallback className="bg-[var(--accent-subtle)] text-caption font-semibold text-[var(--accent)]">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -165,7 +165,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <p className="font-medium">{profile.full_name || "Your account"}</p>
-                  <p className="text-xs font-normal text-muted-foreground">
+                  <p className="text-caption font-normal text-muted-foreground">
                     {profile.headline || "AI Career Intelligence"}
                   </p>
                 </DropdownMenuLabel>

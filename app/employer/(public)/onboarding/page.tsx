@@ -66,8 +66,8 @@ export default function EmployerOnboardingPage() {
     >
       <form onSubmit={onSubmit} className="mx-auto w-full max-w-md space-y-5">
         <div>
-          <h2 className="text-xl font-semibold">Company setup</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h2 className="text-heading-m">Company setup</h2>
+          <p className="mt-1 text-body text-muted-foreground">
             Already a jobseeker? Same account —{" "}
             <Link href="/profile" className="text-[var(--accent)] underline-offset-2 hover:underline">
               switch to seeker view
@@ -119,7 +119,7 @@ export default function EmployerOnboardingPage() {
             onChange={(e) => setWebsiteUrl(e.target.value)}
             placeholder="https://yourcompany.com"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Used for domain verification (work email must match this domain when possible).
           </p>
         </div>

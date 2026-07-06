@@ -23,9 +23,9 @@ type AnalysisResultsProps = {
 };
 
 function renderList(items: string[]) {
-  if (!items.length) return <p className="text-sm text-muted-foreground">No suggestions yet.</p>;
+  if (!items.length) return <p className="text-body text-muted-foreground">No suggestions yet.</p>;
   return (
-    <ul className="space-y-2 text-sm">
+    <ul className="space-y-2 text-body">
       {items.map((item, index) => (
         <li key={`${item}-${index}`} className="rounded-md border bg-muted/30 px-3 py-2">
           {item}
@@ -79,14 +79,14 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
-          <CardTitle className="text-base">Overall Summary</CardTitle>
+          <CardTitle className="text-body-lg">Overall Summary</CardTitle>
           <Button type="button" variant="outline" size="sm" onClick={copySuggestions}>
             <Copy className="h-4 w-4" />
             Copy Suggestions
           </Button>
         </CardHeader>
         <CardContent>
-          <p className="text-sm leading-6 text-muted-foreground">{analysis.summary}</p>
+          <p className="text-body leading-6 text-muted-foreground">{analysis.summary}</p>
         </CardContent>
       </Card>
 

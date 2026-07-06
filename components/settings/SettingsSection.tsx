@@ -25,8 +25,8 @@ export default function SettingsSection() {
               <User className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Appearance</h2>
-              <p className="text-xs text-[var(--text-secondary)]">Customize how WorkGraph looks</p>
+              <h2 className="text-body font-semibold text-[var(--text-primary)]">Appearance</h2>
+              <p className="text-caption text-[var(--text-secondary)]">Customize how WorkGraph looks</p>
             </div>
           </div>
           <Separator className="my-4" />
@@ -34,10 +34,10 @@ export default function SettingsSection() {
             <div className="flex items-center gap-3">
               <Moon className="h-4 w-4 text-[var(--text-secondary)]" />
               <div>
-                <Label htmlFor="dark-mode" className="text-sm font-medium">
+                <Label htmlFor="dark-mode" className="text-body font-medium">
                   Dark mode
                 </Label>
-                <p className="text-xs text-[var(--text-secondary)]">
+                <p className="text-caption text-[var(--text-secondary)]">
                   Switch between light and dark themes
                 </p>
               </div>
@@ -56,8 +56,8 @@ export default function SettingsSection() {
               <Bell className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Notifications</h2>
-              <p className="text-xs text-[var(--text-secondary)]">
+              <h2 className="text-body font-semibold text-[var(--text-primary)]">Notifications</h2>
+              <p className="text-caption text-[var(--text-secondary)]">
                 Control how you receive career updates
               </p>
             </div>
@@ -71,10 +71,10 @@ export default function SettingsSection() {
             ].map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-4">
                 <div>
-                  <Label htmlFor={item.id} className="text-sm font-medium">
+                  <Label htmlFor={item.id} className="text-body font-medium">
                     {item.label}
                   </Label>
-                  <p className="text-xs text-[var(--text-secondary)]">{item.desc}</p>
+                  <p className="text-caption text-[var(--text-secondary)]">{item.desc}</p>
                 </div>
                 <Checkbox id={item.id} defaultChecked />
               </div>
@@ -88,8 +88,8 @@ export default function SettingsSection() {
               <Shield className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Privacy & Data</h2>
-              <p className="text-xs text-[var(--text-secondary)]">
+              <h2 className="text-body font-semibold text-[var(--text-primary)]">Privacy & Data</h2>
+              <p className="text-caption text-[var(--text-secondary)]">
                 Control your data and profile visibility
               </p>
             </div>
@@ -98,10 +98,10 @@ export default function SettingsSection() {
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <Label htmlFor="recruiter-visibility" className="text-sm font-medium">
+                <Label htmlFor="recruiter-visibility" className="text-body font-medium">
                   Recruiter visibility
                 </Label>
-                <p className="text-xs text-[var(--text-secondary)]">
+                <p className="text-caption text-[var(--text-secondary)]">
                   Allow recruiters to discover your profile
                 </p>
               </div>

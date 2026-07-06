@@ -47,8 +47,8 @@ export default function HomeChartsSection() {
       />
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="wg-dash-section-card p-5 lg:col-span-1">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Application Funnel</h3>
-          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Conversion by stage</p>
+          <h3 className="text-body font-semibold text-[var(--text-primary)]">Application Funnel</h3>
+          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Conversion by stage</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={FUNNEL_DATA} layout="vertical" margin={{ left: 0, right: 8 }}>
@@ -58,7 +58,7 @@ export default function HomeChartsSection() {
                   type="category"
                   dataKey="stage"
                   width={72}
-                  tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
+                  tick={{ fontSize: 12, fill: "var(--text-secondary)" }}
                   axisLine={false}
                   tickLine={false}
                 />
@@ -80,20 +80,20 @@ export default function HomeChartsSection() {
         </div>
 
         <div className="wg-dash-section-card p-5 lg:col-span-1">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Weekly Applications</h3>
-          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Last 7 days</p>
+          <h3 className="text-body font-semibold text-[var(--text-primary)]">Weekly Applications</h3>
+          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Last 7 days</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={WEEKLY_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-default)" />
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
+                  tick={{ fontSize: 12, fill: "var(--text-secondary)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "var(--text-secondary)" }}
+                  tick={{ fontSize: 12, fill: "var(--text-secondary)" }}
                   axisLine={false}
                   tickLine={false}
                 />
@@ -111,8 +111,8 @@ export default function HomeChartsSection() {
         </div>
 
         <div className="wg-dash-section-card p-5 lg:col-span-1">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Skills Growth</h3>
-          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Proficiency vs target</p>
+          <h3 className="text-body font-semibold text-[var(--text-primary)]">Skills Growth</h3>
+          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Proficiency vs target</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -145,7 +145,7 @@ export default function HomeChartsSection() {
           </div>
           <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1">
             {SKILLS_DATA.map((s, i) => (
-              <span key={s.name} className="inline-flex items-center gap-1 text-[10px] text-[var(--text-secondary)]">
+              <span key={s.name} className="inline-flex items-center gap-1 text-caption text-[var(--text-secondary)]">
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{ background: ["var(--accent)", "var(--danger)", "var(--accent)", "var(--danger-subtle)"][i % 4] }}

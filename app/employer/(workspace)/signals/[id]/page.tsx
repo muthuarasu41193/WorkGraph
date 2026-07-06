@@ -56,7 +56,7 @@ export default function EditHiringSignalPage() {
   }
 
   if (!signal) {
-    return <p className="text-sm text-muted-foreground">Signal not found.</p>;
+    return <p className="text-body text-muted-foreground">Signal not found.</p>;
   }
 
   return (

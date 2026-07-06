@@ -44,10 +44,10 @@ export default function ProfileActivity({ activities = MOCK_ACTIVITIES }: Props)
                 <Icon className="h-3.5 w-3.5" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
-                <p className="text-xs text-[var(--text-tertiary)]">{item.subtitle}</p>
+                <p className="text-body font-medium text-[var(--text-primary)]">{item.title}</p>
+                <p className="text-caption text-[var(--text-tertiary)]">{item.subtitle}</p>
               </div>
-              <span className="shrink-0 text-xs tabular-nums text-[var(--text-tertiary)]">{item.timeAgo}</span>
+              <span className="shrink-0 text-caption tabular-nums text-[var(--text-tertiary)]">{item.timeAgo}</span>
             </li>
           );
         })}

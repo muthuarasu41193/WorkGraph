@@ -10,9 +10,9 @@ type Props = {
 };
 
 const SIZES = {
-  sm: { radius: 28, stroke: 5, font: "text-lg" },
-  md: { radius: 40, stroke: 6, font: "text-2xl" },
-  lg: { radius: 52, stroke: 8, font: "text-3xl" },
+  sm: { radius: 28, stroke: 5, font: "text-heading-s" },
+  md: { radius: 40, stroke: 6, font: "text-heading-l" },
+  lg: { radius: 52, stroke: 8, font: "text-heading-xl" },
 };
 
 function scoreColor(score: number): string {
@@ -61,7 +61,7 @@ export default function ScoreRing({ score, size = "md", label, className }: Prop
       >
         {score}%
       </span>
-      {label ? <span className="text-xs text-muted-foreground">{label}</span> : null}
+      {label ? <span className="text-caption text-muted-foreground">{label}</span> : null}
     </div>
   );
 }

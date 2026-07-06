@@ -19,7 +19,7 @@ export default function ApplicationsTracker({ userId }: Props) {
       <Alert>
         <AlertTitle>Supabase required</AlertTitle>
         <AlertDescription>
-          Configure <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code> and run the applications
+          Configure <code className="text-caption">NEXT_PUBLIC_SUPABASE_URL</code> and run the applications
           migration to use the tracker.
         </AlertDescription>
       </Alert>

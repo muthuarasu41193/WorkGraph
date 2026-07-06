@@ -29,9 +29,9 @@ export default function VaultExperienceCard({ experience, className }: Props) {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h2 className="truncate font-semibold group-hover:text-primary">{experience.company}</h2>
-              <p className="truncate text-sm text-muted-foreground">{experience.role}</p>
+              <p className="truncate text-body text-muted-foreground">{experience.role}</p>
               {experience.level ? (
-                <p className="mt-0.5 text-xs text-muted-foreground">{experience.level}</p>
+                <p className="mt-0.5 text-caption text-muted-foreground">{experience.level}</p>
               ) : null}
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
@@ -53,12 +53,12 @@ export default function VaultExperienceCard({ experience, className }: Props) {
           </div>
 
           {preview ? (
-            <p className="mt-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{preview}</p>
+            <p className="mt-3 line-clamp-3 flex-1 text-body text-muted-foreground">{preview}</p>
           ) : (
-            <p className="mt-3 flex-1 text-sm italic text-muted-foreground">Preview available after opening</p>
+            <p className="mt-3 flex-1 text-body italic text-muted-foreground">Preview available after opening</p>
           )}
 
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="mt-3 flex items-center justify-between text-caption text-muted-foreground">
             <span className="flex items-center gap-1">
               {rating != null ? (
                 <>

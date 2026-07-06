@@ -20,14 +20,14 @@ export default function InterviewReadinessSection({ items }: Props) {
         {items.map((item, i) => (
           <li key={i} className="rounded-lg border p-4">
             <p className="font-medium">{item.question}</p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-body text-muted-foreground">
               <span className="font-medium text-foreground">Why they might ask: </span>
               {item.whyTheyMightAsk}
             </p>
             {item.relatedGap ? (
-              <p className="mt-1 text-xs text-muted-foreground">Gap: {item.relatedGap}</p>
+              <p className="mt-1 text-caption text-muted-foreground">Gap: {item.relatedGap}</p>
             ) : null}
-            <p className="mt-2 rounded-md bg-primary/5 p-2 text-sm">
+            <p className="mt-2 rounded-md bg-primary/5 p-2 text-body">
               <span className="font-medium">Prep tip: </span>
               {item.preparationTip}
             </p>

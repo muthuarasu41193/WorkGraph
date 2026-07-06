@@ -139,10 +139,10 @@ export default function HiringSignalForm({ initial }: Props) {
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-heading-l">
           {initial ? "Edit hiring signal" : "Post a hiring signal"}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Share why the role exists and what actually fits — seekers connect with their WorkGraph profile,
           not a cover letter factory.
         </p>
@@ -161,7 +161,7 @@ export default function HiringSignalForm({ initial }: Props) {
       ) : null}
 
       <section className="space-y-4 rounded-xl border p-5">
-        <h2 className="text-sm font-semibold">Role</h2>
+        <h2 className="text-body font-semibold">Role</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="title">Title</Label>
@@ -225,8 +225,8 @@ export default function HiringSignalForm({ initial }: Props) {
       </section>
 
       <section className="space-y-4 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/[0.03] p-5">
-        <h2 className="text-sm font-semibold">Why now?</h2>
-        <p className="text-xs text-muted-foreground">
+        <h2 className="text-body font-semibold">Why now?</h2>
+        <p className="text-caption text-muted-foreground">
           What changed that made this role real? This replaces generic &quot;About the role&quot; boilerplate.
         </p>
         <Textarea
@@ -240,7 +240,7 @@ export default function HiringSignalForm({ initial }: Props) {
       </section>
 
       <section className="space-y-4 rounded-xl border p-5">
-        <h2 className="text-sm font-semibold">Context</h2>
+        <h2 className="text-body font-semibold">Context</h2>
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -252,8 +252,8 @@ export default function HiringSignalForm({ initial }: Props) {
       <section className="space-y-4 rounded-xl border p-5">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold">Fit signals</h2>
-            <p className="text-xs text-muted-foreground">
+            <h2 className="text-body font-semibold">Fit signals</h2>
+            <p className="text-caption text-muted-foreground">
               Weighted criteria we score against a seeker&apos;s profile — not keyword stuffing.
             </p>
           </div>
@@ -271,7 +271,7 @@ export default function HiringSignalForm({ initial }: Props) {
           {fitSignals.map((f, i) => (
             <li key={i} className="flex flex-wrap items-end gap-2">
               <div className="min-w-[140px] flex-1 space-y-1">
-                <Label className="text-xs">Label</Label>
+                <Label className="text-caption">Label</Label>
                 <Input
                   value={f.label}
                   onChange={(e) => updateFit(i, { label: e.target.value })}
@@ -279,7 +279,7 @@ export default function HiringSignalForm({ initial }: Props) {
                 />
               </div>
               <div className="w-28 space-y-1">
-                <Label className="text-xs">Kind</Label>
+                <Label className="text-caption">Kind</Label>
                 <Select
                   value={f.kind}
                   onValueChange={(v) => updateFit(i, { kind: v as FitSignal["kind"] })}
@@ -295,7 +295,7 @@ export default function HiringSignalForm({ initial }: Props) {
                 </Select>
               </div>
               <div className="w-20 space-y-1">
-                <Label className="text-xs">Weight</Label>
+                <Label className="text-caption">Weight</Label>
                 <Select
                   value={String(f.weight)}
                   onValueChange={(v) => updateFit(i, { weight: Number(v) })}

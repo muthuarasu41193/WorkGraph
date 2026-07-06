@@ -19,7 +19,7 @@ function SourceBadge({ source }: { source: string }) {
 
   if (source === "reddit") {
     return (
-      <Badge variant="secondary" className="gap-1.5 py-0.5 pl-1 pr-2 text-[10px] font-medium normal-case tracking-normal">
+      <Badge variant="secondary" className="gap-1.5 py-0.5 pl-1 pr-2 text-caption font-medium normal-case tracking-normal">
         <RedditLogo className="h-3.5 w-3.5 shrink-0" />
         {label}
       </Badge>
@@ -27,7 +27,7 @@ function SourceBadge({ source }: { source: string }) {
   }
 
   return (
-    <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+    <Badge variant="secondary" className="text-caption uppercase tracking-wide">
       {label}
     </Badge>
   );
@@ -69,22 +69,22 @@ export default function HiddenOpportunityCard({
           <div className="flex flex-wrap items-center gap-2">
             <SourceBadge source={opportunity.source} />
             {opportunity.score > 0 ? (
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-caption">
                 Score {opportunity.score}
               </Badge>
             ) : null}
           </div>
-          <h2 className="text-base font-semibold leading-snug text-foreground">
+          <h2 className="text-body-lg font-semibold leading-snug text-foreground">
             {opportunity.title}
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             {[opportunity.company, opportunity.location, opportunity.author].filter(Boolean).join(" · ")}
           </p>
-          <p className="text-xs text-muted-foreground">{formatPostedDate(opportunity.postedAt)}</p>
+          <p className="text-caption text-muted-foreground">{formatPostedDate(opportunity.postedAt)}</p>
           {opportunity.tags.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
               {opportunity.tags.slice(0, 6).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-[10px] font-normal">
+                <Badge key={tag} variant="outline" className="text-caption font-normal">
                   {tag}
                 </Badge>
               ))}

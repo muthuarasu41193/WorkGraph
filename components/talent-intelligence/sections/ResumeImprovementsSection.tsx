@@ -23,19 +23,19 @@ export default function ResumeImprovementsSection({ items }: Props) {
             <Badge variant="outline" className="capitalize">
               {item.section}
             </Badge>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-body">
               <span className="font-medium">Current: </span>
               {item.currentObservation}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-body text-muted-foreground">
               <span className="font-medium">Why it matters: </span>
               {item.whyItMatters}
             </p>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-body">
               <span className="font-medium">Recommendation: </span>
               {item.recommendation}
             </p>
-            <p className="mt-2 rounded-md bg-muted/50 p-2 text-xs italic text-muted-foreground">
+            <p className="mt-2 rounded-md bg-muted/50 p-2 text-caption italic text-muted-foreground">
               {item.exampleGuidance}
             </p>
           </li>

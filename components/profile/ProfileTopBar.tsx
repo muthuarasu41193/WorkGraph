@@ -22,7 +22,7 @@ export default function ProfileTopBar({ profileName }: Props) {
             <WorkGraphLogo iconClassName="h-7 w-7" className="gap-2" />
           </Link>
           <Separator orientation="vertical" className="hidden h-4 md:block" />
-          <p className="hidden truncate text-sm font-medium text-muted-foreground md:block">
+          <p className="hidden truncate text-body font-medium text-muted-foreground md:block">
             {profileName || "Your profile"}
           </p>
         </div>

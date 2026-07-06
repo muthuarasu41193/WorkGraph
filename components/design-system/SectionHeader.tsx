@@ -12,9 +12,9 @@ export default function SectionHeader({ title, description, action, className }:
   return (
     <div className={cn("flex flex-wrap items-end justify-between gap-3", className)}>
       <div className="space-y-1">
-        <h2 className="text-base font-semibold tracking-tight text-[var(--text-primary)]">{title}</h2>
+        <h2 className="text-body-lg font-semibold tracking-tight text-[var(--text-primary)]">{title}</h2>
         {description ? (
-          <p className="text-sm text-[var(--text-secondary)]">{description}</p>
+          <p className="text-body text-[var(--text-secondary)]">{description}</p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

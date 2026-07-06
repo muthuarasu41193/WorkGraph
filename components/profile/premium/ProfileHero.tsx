@@ -130,7 +130,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           >
             <Avatar className="h-[88px] w-[88px] border-2 border-border">
               {photoUrl ? <AvatarImage src={photoUrl} alt="" /> : null}
-              <AvatarFallback className="bg-primary text-lg font-bold text-primary-foreground">
+              <AvatarFallback className="bg-primary text-heading-s text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -148,7 +148,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-[length:var(--font-size-label)] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
+            <p className="text-caption font-semibold uppercase tracking-[var(--letter-spacing-label)] text-[var(--text-tertiary)]">
               Professional profile
             </p>
 
@@ -161,10 +161,10 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               <Input
                 value={form.full_name}
                 onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
-                className={`${inputClass} mt-3 text-xl font-semibold`}
+                className={`${inputClass} mt-3 text-heading-m`}
               />
             ) : (
-              <h1 className="mt-2 text-[1.625rem] font-bold leading-tight tracking-tight text-foreground">
+              <h1 className="mt-2 text-heading-l leading-tight text-foreground">
                 {form.full_name || "Your name"}
               </h1>
             )}
@@ -174,10 +174,10 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 value={form.headline}
                 onChange={(e) => setForm((f) => ({ ...f, headline: e.target.value }))}
                 placeholder="Role / title"
-                className={`${inputClass} mt-2 text-sm`}
+                className={`${inputClass} mt-2 text-body`}
               />
             ) : (
-              <p className="mt-1 flex items-center justify-center gap-2 text-[length:var(--font-size-body)] text-muted-foreground sm:justify-start">
+              <p className="mt-1 flex items-center justify-center gap-2 text-body text-muted-foreground sm:justify-start">
                 <Briefcase className="h-4 w-4 shrink-0 opacity-60" />
                 {form.headline || "Add your current role"}
               </p>
@@ -187,10 +187,10 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               <Input
                 value={form.location}
                 onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-                className={`${inputClass} mt-2 text-sm`}
+                className={`${inputClass} mt-2 text-body`}
               />
             ) : (
-              <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-muted-foreground sm:justify-start">
+              <p className="mt-1 flex items-center justify-center gap-1.5 text-body text-muted-foreground sm:justify-start">
                 <MapPin className="h-3.5 w-3.5 opacity-70" />
                 {form.location || "Add location"}
               </p>
@@ -232,7 +232,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
       </div>
 
       <div className="mt-6 border-t border-[var(--border-default)] pt-5">
-        <p className="text-[length:var(--font-size-label)] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
+        <p className="text-caption font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
           Summary
         </p>
         {isEditing ? (
@@ -241,12 +241,12 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
             onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
             rows={3}
             placeholder="Professional summary"
-            className={`${inputClass} mt-2 text-sm leading-relaxed`}
+            className={`${inputClass} mt-2 text-body`}
           />
         ) : form.summary ? (
-          <p className="mt-2 max-w-3xl text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">{form.summary}</p>
+          <p className="mt-2 max-w-3xl text-body text-muted-foreground">{form.summary}</p>
         ) : (
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-body text-muted-foreground">
             Add a concise summary for recruiters and hiring managers.
           </p>
         )}
@@ -259,7 +259,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 href={href!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1.5 text-caption font-semibold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {label}

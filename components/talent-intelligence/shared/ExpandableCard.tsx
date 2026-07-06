@@ -34,7 +34,7 @@ export default function ExpandableCard({
           aria-expanded={open}
         >
           <div className="min-w-0 flex-1">
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-heading-s">
               {icon}
               {title}
             </CardTitle>

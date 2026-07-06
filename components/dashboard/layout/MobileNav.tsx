@@ -33,7 +33,7 @@ export default function MobileNav() {
                 type="button"
                 onClick={() => navigate(routeId)}
                 className={cn(
-                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 px-0.5 py-1.5 text-[10px] font-medium transition-colors",
+                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 px-0.5 py-1.5 text-caption font-medium transition-colors",
                   active ? "text-[var(--accent)]" : "text-[var(--text-secondary)]",
                 )}
                 aria-current={active ? "page" : undefined}

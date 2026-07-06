@@ -19,36 +19,36 @@ export default function RecruiterViewSection({ data }: Props) {
           {data.wouldShortlist ? "Likely shortlist" : "Unlikely shortlist"}
         </Badge>
       </div>
-      <p className="mb-4 text-sm">{data.shortlistReasoning}</p>
+      <p className="mb-4 text-body">{data.shortlistReasoning}</p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <h4 className="text-sm font-semibold text-success-foreground dark:text-success">Stands out</h4>
-          <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
+          <h4 className="text-body font-semibold text-success-foreground dark:text-success">Stands out</h4>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-body">
             {data.standsOut.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-semibold text-warning-foreground dark:text-warning">Concerns</h4>
-          <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
+          <h4 className="text-body font-semibold text-warning-foreground dark:text-warning">Concerns</h4>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-body">
             {data.concerns.map((c, i) => (
               <li key={i}>{c}</li>
             ))}
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-semibold">Missing evidence</h4>
-          <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+          <h4 className="text-body font-semibold">Missing evidence</h4>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-body text-muted-foreground">
             {data.missingEvidence.map((m, i) => (
               <li key={i}>{m}</li>
             ))}
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-semibold">Proof requested</h4>
-          <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+          <h4 className="text-body font-semibold">Proof requested</h4>
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-body text-muted-foreground">
             {data.proofRequested.map((p, i) => (
               <li key={i}>{p}</li>
             ))}

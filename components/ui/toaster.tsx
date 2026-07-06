@@ -31,9 +31,9 @@ export function Toaster() {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-sm font-semibold">{item.title}</p>
+              <p className="text-body font-semibold">{item.title}</p>
               {item.description ? (
-                <p className="mt-0.5 text-sm opacity-90">{item.description}</p>
+                <p className="mt-0.5 text-body opacity-90">{item.description}</p>
               ) : null}
             </div>
             <button

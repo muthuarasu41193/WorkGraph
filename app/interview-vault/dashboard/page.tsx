@@ -17,7 +17,7 @@ export default async function VaultDashboardPage() {
 
   if (!supabaseConfigured()) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body text-muted-foreground">
         Interview Vault requires Supabase. Configure your environment to use the seller dashboard.
       </p>
     );

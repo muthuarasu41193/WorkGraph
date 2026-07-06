@@ -5,7 +5,7 @@
  */
 
 export { colors, colorVars } from "./colors";
-export { fontFamily, fontSize, fontWeight, lineHeight, typography } from "./typography";
+export { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, paragraphSpacing, typography } from "./typography";
 export { space, spacePx } from "./spacing";
 export { shell, container, breakpoints, iconSize, shellClasses } from "./layout";
 export { radius, shadow, opacity, duration, transition, focusRing, focusRingClass } from "./effects";

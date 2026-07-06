@@ -19,16 +19,16 @@ function SkillTier({
   if (!items.length) return null;
   return (
     <div className="space-y-3">
-      <h4 className="flex items-center gap-2 text-sm font-semibold">
+      <h4 className="flex items-center gap-2 text-body font-semibold">
         <Badge variant={variant}>{title}</Badge>
         <span className="text-muted-foreground">({items.length})</span>
       </h4>
       <ul className="space-y-3">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border bg-muted/20 p-3 text-sm">
+          <li key={i} className="rounded-lg border bg-muted/20 p-3 text-body">
             <p className="font-medium">{item.skill}</p>
             <p className="mt-1 text-muted-foreground">{item.explanation}</p>
-            <p className="mt-2 rounded-md bg-primary/5 p-2 text-xs">
+            <p className="mt-2 rounded-md bg-primary/5 p-2 text-caption">
               {item.howToDemonstrateIfYouHaveIt}
             </p>
           </li>

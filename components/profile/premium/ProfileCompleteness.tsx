@@ -54,7 +54,7 @@ export default function ProfileCompleteness({
           </div>
 
           <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs">
+            <div className="mb-1.5 flex items-center justify-between text-caption">
               <span className="font-medium text-[var(--text-primary)]/85">Overall completeness</span>
               <span className="tabular-nums font-semibold text-[var(--text-primary)]">{completeness}%</span>
             </div>
@@ -62,10 +62,10 @@ export default function ProfileCompleteness({
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-semibold text-[var(--text-primary)]">Suggested improvements</p>
+            <p className="mb-2 text-caption font-semibold text-[var(--text-primary)]">Suggested improvements</p>
             <ul className="space-y-2">
               {suggestions.map((tip) => (
-                <li key={tip} className="flex gap-2.5 text-sm text-[var(--text-primary)]/85">
+                <li key={tip} className="flex gap-2.5 text-body text-[var(--text-primary)]/85">
                   <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
                   {tip}
                 </li>

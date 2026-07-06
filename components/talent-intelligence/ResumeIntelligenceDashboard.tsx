@@ -26,7 +26,7 @@ export default function ResumeIntelligenceDashboard({ report, cached }: Props) {
     <div className="space-y-4">
       <Alert className="border-primary/20 bg-primary/5">
         <Shield className="h-4 w-4" />
-        <AlertDescription className="text-sm">
+        <AlertDescription className="text-body">
           {report.philosophyReminder}
           {cached ? " (Loaded from your saved analysis.)" : null}
         </AlertDescription>
@@ -34,11 +34,11 @@ export default function ResumeIntelligenceDashboard({ report, cached }: Props) {
 
       {(report.jobTitle || report.company) && (
         <header className="rounded-xl border bg-muted/30 px-4 py-3">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-heading-s">
             {report.jobTitle ?? "Role"}
             {report.company ? ` at ${report.company}` : ""}
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Generated {new Date(report.generatedAt).toLocaleString()}
           </p>
         </header>

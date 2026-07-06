@@ -60,8 +60,8 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-heading-l">Interview Vault</h1>
+        <p className="mt-1 text-body text-muted-foreground">
           Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
         </p>
       </header>
@@ -148,7 +148,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed p-8 text-center text-body text-muted-foreground">
           No experiences match your filters yet. Be the first to{" "}
           <a href="/interview-vault/sell" className="text-primary underline-offset-4 hover:underline">
             sell an experience

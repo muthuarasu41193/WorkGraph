@@ -121,17 +121,17 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
       <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>
-            <p className="mb-2 text-xs font-semibold text-[var(--text-tertiary)]">{cat.label}</p>
+            <p className="mb-2 text-caption font-semibold text-[var(--text-tertiary)]">{cat.label}</p>
             <div className="flex flex-wrap gap-2">
               {cat.skills.map((skill) => (
                 <Badge
                   key={skill.name}
                   variant={skill.top ? "default" : "outline"}
-                  className="group gap-2 px-2.5 py-1 text-sm font-medium transition-colors hover:shadow-sm"
+                  className="group gap-2 px-2.5 py-1 text-body font-medium transition-colors hover:shadow-sm"
                 >
                   {skill.name}
                   {skill.endorsements > 0 ? (
-                    <span className="text-[10px] tabular-nums text-muted-foreground">
+                    <span className="text-caption tabular-nums text-muted-foreground">
                       {skill.endorsements}
                     </span>
                   ) : null}
@@ -146,7 +146,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                     </button>
                   ) : null}
                   {skill.top ? (
-                    <span className="rounded px-1 text-[10px] font-semibold">Top</span>
+                    <span className="rounded px-1 text-caption font-semibold">Top</span>
                   ) : null}
                 </Badge>
               ))}

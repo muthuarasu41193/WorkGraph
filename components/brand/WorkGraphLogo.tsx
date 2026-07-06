@@ -36,7 +36,7 @@ export function WorkGraphLogo({
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <WorkGraphMark className={iconClassName} />
       {showWordmark ? (
-        <span className={cn("text-[length:var(--font-size-title)] leading-none tracking-tight", wordmarkClassName)}>
+        <span className={cn("text-title leading-none tracking-tight", wordmarkClassName)}>
           <span className="font-normal text-muted-foreground">work</span>
           <span className="font-semibold text-foreground">graph</span>
         </span>

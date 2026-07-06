@@ -122,11 +122,11 @@ export default function ProfileJobDashboard({
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
           <div>
-            <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[var(--text-primary)]">
+            <h2 id="job-dashboard-heading" className="text-heading-l leading-8 text-[var(--text-primary)]">
               Job Dashboard
             </h2>
-            <p className="mt-1 text-sm font-normal text-[var(--text-tertiary)]">Live ATS jobs matched to your profile (excludes community posts)</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--success-subtle)] px-3 py-1 text-xs font-medium text-[var(--success)]">
+            <p className="mt-1 text-body font-normal text-[var(--text-tertiary)]">Live ATS jobs matched to your profile (excludes community posts)</p>
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--success-subtle)] px-3 py-1 text-caption font-medium text-[var(--success)]">
               <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" aria-hidden />
               Live • Last synced {lastSyncedLabel}
             </span>
@@ -137,7 +137,7 @@ export default function ProfileJobDashboard({
             type="button"
             onClick={refreshListings}
             disabled={isRefreshing}
-            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--border-default)] px-5 text-sm font-medium text-[var(--text-secondary)] transition hover:shadow-sm disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--border-default)] px-5 text-body font-medium text-[var(--text-secondary)] transition hover:shadow-sm disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
           >
             {syncStatus === "success" ? (
               <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
@@ -156,7 +156,7 @@ export default function ProfileJobDashboard({
             <Bell className="h-4 w-4" aria-hidden />
             <span className="hidden sm:inline">Set Job Alerts</span>
           </Button>
-          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[var(--warning-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--warning)]">
+          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[var(--warning-subtle)] px-3 py-1.5 text-caption font-medium text-[var(--warning)]">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
             Profile {profileCompleteness}% complete
           </span>
@@ -188,9 +188,9 @@ export default function ProfileJobDashboard({
               <Briefcase className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={liveListings} /></p>
-              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Live Jobs Available</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-xs font-medium text-[var(--success)]">
+              <p className="text-display leading-none text-[var(--text-primary)]"><AnimatedCount value={liveListings} /></p>
+              <p className="mt-2 text-body text-[var(--text-tertiary)]">Live Jobs Available</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-caption font-medium text-[var(--success)]">
                 <TrendingUp className="h-3.5 w-3.5" />
                 +284 new today
               </span>
@@ -207,9 +207,9 @@ export default function ProfileJobDashboard({
               <Sparkles className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={matchedCount} /></p>
-              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Matched to Your Profile</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-xs font-medium text-[var(--success)]">
+              <p className="text-display leading-none text-[var(--text-primary)]"><AnimatedCount value={matchedCount} /></p>
+              <p className="mt-2 text-body text-[var(--text-tertiary)]">Matched to Your Profile</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-caption font-medium text-[var(--success)]">
                 <TrendingUp className="h-3.5 w-3.5" />
                 +47 new matches
               </span>
@@ -226,9 +226,9 @@ export default function ProfileJobDashboard({
               <CheckCircle2 className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.applied} /></p>
-              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Applications Sent</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--warning-subtle)] px-2 py-1 text-xs font-medium text-[var(--warning)]">
+              <p className="text-display leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.applied} /></p>
+              <p className="mt-2 text-body text-[var(--text-tertiary)]">Applications Sent</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--warning-subtle)] px-2 py-1 text-caption font-medium text-[var(--warning)]">
                 <LoaderCircle className="h-3.5 w-3.5" />
                 3 awaiting response
               </span>
@@ -245,9 +245,9 @@ export default function ProfileJobDashboard({
               <Bookmark className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.saved} /></p>
-              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Jobs Saved</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--danger-subtle)] px-2 py-1 text-xs font-medium text-[var(--danger)]">
+              <p className="text-display leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.saved} /></p>
+              <p className="mt-2 text-body text-[var(--text-tertiary)]">Jobs Saved</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--danger-subtle)] px-2 py-1 text-caption font-medium text-[var(--danger)]">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 12 expiring soon
               </span>
@@ -259,11 +259,11 @@ export default function ProfileJobDashboard({
       </div>
 
       {totalTracked === 0 ? (
-        <p className="mt-4 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-3 text-center text-xs leading-relaxed text-[var(--text-secondary)]">
+        <p className="mt-4 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-3 text-center text-caption leading-relaxed text-[var(--text-secondary)]">
           {liveListings > 0 ? (
             <>
               No personal tracker rows yet — listing totals above come from shared ATS ingest. Insert rows into{" "}
-              <code className="rounded bg-surface-secondary px-1 py-0.5 text-[length:var(--font-size-label)]">job_tracker_entries</code> when your CRM
+              <code className="rounded bg-surface-secondary px-1 py-0.5 text-caption">job_tracker_entries</code> when your CRM
               ships.
             </>
           ) : (
@@ -336,7 +336,7 @@ export default function ProfileJobDashboard({
                     { value: "weekly", label: "Weekly digest (Mondays)" },
                   ] as const
                 ).map((opt) => (
-                  <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-sm">
+                  <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-body">
                     <input
                       type="radio"
                       name="frequency"
@@ -353,15 +353,15 @@ export default function ProfileJobDashboard({
             <div className="grid gap-2">
               <Label>Channels</Label>
               <div className="space-y-2">
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <label className="flex cursor-pointer items-center gap-2 text-body">
                   <Checkbox checked={emailEnabled} onCheckedChange={(c) => setEmailEnabled(c === true)} />
                   Email notifications
                 </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <label className="flex cursor-pointer items-center gap-2 text-body">
                   <Checkbox checked={inAppEnabled} onCheckedChange={(c) => setInAppEnabled(c === true)} />
                   In-app notifications
                 </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <label className="flex cursor-pointer items-center gap-2 text-body">
                   <Checkbox checked={smsEnabled} onCheckedChange={(c) => setSmsEnabled(c === true)} />
                   SMS (add phone number)
                 </label>
@@ -383,7 +383,7 @@ export default function ProfileJobDashboard({
                 onChange={(e) => setMatchThreshold(Number(e.target.value))}
                 className="w-full accent-primary"
               />
-              <span className="text-xs text-muted-foreground">{matchThreshold}%</span>
+              <span className="text-caption text-muted-foreground">{matchThreshold}%</span>
             </div>
           </div>
           <DialogFooter>

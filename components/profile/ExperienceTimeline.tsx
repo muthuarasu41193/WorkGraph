@@ -75,7 +75,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
   return (
     <section className="overflow-hidden rounded-2xl border border-border/90 bg-surface-page shadow-sm">
       {toast ? (
-        <p className="border-b border-warning/20/80 bg-warning-subtle px-6 py-2.5 text-sm text-warning-foreground">{toast}</p>
+        <p className="border-b border-warning/20/80 bg-warning-subtle px-6 py-2.5 text-body text-warning-foreground">{toast}</p>
       ) : null}
 
       <header className="flex flex-col gap-4 border-b border-border/80 bg-surface-primary px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
@@ -84,9 +84,9 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
             <Briefcase className="h-4 w-4" strokeWidth={1.75} />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Career arc</p>
-            <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground">Roles & impact</h2>
-            <p className="mt-1 max-w-md text-xs leading-relaxed text-foreground/85">
+            <p className="text-caption font-semibold uppercase tracking-[0.22em] text-muted-foreground">Career arc</p>
+            <h2 className="mt-0.5 text-heading-m text-foreground">Roles & impact</h2>
+            <p className="mt-1 max-w-md text-caption leading-relaxed text-foreground/85">
               One block per position — title and company read like a résumé line; details stay in the margin note.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
         <button
           type="button"
           onClick={() => void addItem()}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-3.5 py-2 text-caption font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
           Add role
@@ -107,7 +107,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
             <li key={`exp-${idx}`} className="group relative">
               <div className="flex gap-0 sm:gap-1">
                 <div className="flex w-11 shrink-0 flex-col items-center pt-6 sm:w-14 sm:pt-7">
-                  <span className="font-mono text-[length:var(--font-size-label)] font-medium tabular-nums text-text-tertiary">
+                  <span className="font-mono text-caption font-medium tabular-nums text-text-tertiary">
                     {(idx + 1).toString().padStart(2, "0")}
                   </span>
                 </div>
@@ -128,20 +128,20 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                         value={item.title}
                         onChange={(e) => void updateField(idx, "title", e.target.value)}
                         placeholder="Role title"
-                        className={`${inputReset} w-full text-lg font-semibold tracking-tight text-foreground`}
+                        className={`${inputReset} w-full text-heading-s text-foreground`}
                       />
                       <input
                         value={item.company}
                         onChange={(e) => void updateField(idx, "company", e.target.value)}
                         placeholder="Organization"
-                        className={`${inputReset} w-full text-xs font-semibold uppercase tracking-[0.14em] text-foreground/85`}
+                        className={`${inputReset} w-full text-caption font-semibold uppercase tracking-[var(--letter-spacing-label)] text-foreground/85`}
                       />
                     </div>
                     <input
                       value={item.duration}
                       onChange={(e) => void updateField(idx, "duration", e.target.value)}
                       placeholder="Timeline"
-                      className={`${inputReset} w-full shrink-0 rounded border border-border bg-surface-primary px-2.5 py-1.5 font-mono text-[length:var(--font-size-label)] text-foreground lg:max-w-[11rem] lg:text-right`}
+                      className={`${inputReset} w-full shrink-0 rounded border border-border bg-surface-primary px-2.5 py-1.5 font-mono text-caption text-foreground lg:max-w-[11rem] lg:text-right`}
                     />
                   </div>
 
@@ -150,7 +150,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                     onChange={(e) => void updateField(idx, "description", e.target.value)}
                     placeholder="Outcomes, scope, tech — tight bullets read best."
                     rows={3}
-                    className={`${inputReset} mt-4 w-full resize-y border-l-2 border-border pl-3 text-sm leading-relaxed text-text-secondary transition-colors focus-visible:border-text-primary`}
+                    className={`${inputReset} mt-4 w-full resize-y border-l-2 border-border pl-3 text-body text-text-secondary transition-colors focus-visible:border-text-primary`}
                   />
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
         </ol>
 
         {!items.length ? (
-          <p className="px-6 py-10 text-center text-sm text-muted-foreground">
+          <p className="px-6 py-10 text-center text-body text-muted-foreground">
             No roles yet. Use <span className="font-semibold text-text-secondary">Add role</span> to start your timeline.
           </p>
         ) : null}

@@ -178,7 +178,7 @@ export default function ApplicationConnectDialog({
         <DialogHeader>
           <DialogTitle>Apply to {signal?.title}</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Share your resume, profile links, and a message highlighting skills relevant to this role.
           Your phone number stays private.
         </p>
@@ -187,7 +187,7 @@ export default function ApplicationConnectDialog({
           <div className="space-y-2">
             <Label>Resume</Label>
             {values.resumeUrl ? (
-              <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-sm">
+              <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-body">
                 <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="min-w-0 flex-1 truncate">{resumeFileName || "Resume attached"}</span>
                 <a
@@ -202,7 +202,7 @@ export default function ApplicationConnectDialog({
             ) : null}
             <div
               {...getRootProps()}
-              className={`cursor-pointer rounded-lg border-2 border-dashed px-4 py-5 text-center text-sm transition ${
+              className={`cursor-pointer rounded-lg border-2 border-dashed px-4 py-5 text-center text-body transition ${
                 isDragActive ? "border-[var(--accent)] bg-[var(--accent)]/5" : "border-muted"
               } ${resumeUploading ? "pointer-events-none opacity-60" : ""}`}
             >
@@ -215,11 +215,11 @@ export default function ApplicationConnectDialog({
               <p className="mt-2 font-medium">
                 {values.resumeUrl ? "Replace resume" : "Upload resume (required)"}
               </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-caption text-muted-foreground">
                 PDF or DOCX · max {MAX_RESUME_UPLOAD_LABEL}
               </p>
             </div>
-            {resumeError ? <p className="text-xs text-destructive">{resumeError}</p> : null}
+            {resumeError ? <p className="text-caption text-destructive">{resumeError}</p> : null}
           </div>
 
           <div className="space-y-3">
@@ -231,7 +231,7 @@ export default function ApplicationConnectDialog({
                   value={values[field.key]}
                   onChange={(e) => setValues((prev) => ({ ...prev, [field.key]: e.target.value }))}
                   placeholder={field.placeholder}
-                  className="text-sm"
+                  className="text-body"
                 />
               </div>
             ))}
@@ -247,7 +247,7 @@ export default function ApplicationConnectDialog({
               placeholder="Highlight your relevant skills, experience, and why you're a strong fit for this role…"
               maxLength={2000}
             />
-            <p className="text-right text-xs text-muted-foreground">{values.message.length}/2000</p>
+            <p className="text-right text-caption text-muted-foreground">{values.message.length}/2000</p>
           </div>
         </div>
 

@@ -20,9 +20,9 @@ export default function AchievementDiscoverySection({ items }: Props) {
         {items.map((item, i) => (
           <li key={i} className="rounded-lg border border-violet-200/50 bg-violet-50/30 p-4 dark:border-violet-900/30 dark:bg-violet-950/20">
             <p className="font-medium">{item.question}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{item.context}</p>
+            <p className="mt-2 text-body text-muted-foreground">{item.context}</p>
             {item.relatedGap ? (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-caption text-muted-foreground">
                 Related gap: {item.relatedGap}
               </p>
             ) : null}

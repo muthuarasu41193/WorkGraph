@@ -44,21 +44,21 @@ export default function InsightCard({
           <Icon className="h-[17px] w-[17px]" aria-hidden />
         </span>
         {badge ? (
-          <span className="rounded-md bg-surface-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+          <span className="rounded-md bg-surface-secondary px-2 py-0.5 text-caption font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
             {badge}
           </span>
         ) : null}
       </div>
       <div className="mt-4 flex-1 space-y-1.5">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>
+          <h3 className="text-body font-semibold text-[var(--text-primary)]">{title}</h3>
           {score !== undefined ? (
-            <span className="text-lg font-semibold tabular-nums text-[var(--accent)]">
+            <span className="text-heading-s tabular-nums text-[var(--accent)]">
               {score}
             </span>
           ) : null}
         </div>
-        <p className="text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
+        <p className="text-caption leading-relaxed text-[var(--text-secondary)]">{description}</p>
       </div>
       {action ? <div className="mt-4">{action}</div> : null}
     </div>

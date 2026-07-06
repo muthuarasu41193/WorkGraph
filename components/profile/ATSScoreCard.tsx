@@ -95,7 +95,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
   return (
     <Card id="ats-score" className="scroll-mt-28 border-border shadow-sm transition-shadow hover:shadow-md">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">ATS Score</CardTitle>
+        <CardTitle className="text-heading-s">ATS Score</CardTitle>
         <CardDescription>Your parsed resume quality and action points.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -119,8 +119,8 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-3xl font-bold text-foreground">{currentScore}</p>
-                  <p className="text-sm font-medium text-muted-foreground">{grade}</p>
+                  <p className="text-heading-xl text-foreground">{currentScore}</p>
+                  <p className="text-body font-medium text-muted-foreground">{grade}</p>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                   <ul className="space-y-2" aria-live="polite">
                     {(tab === activeTab ? tabItems : []).length ? (
                       tabItems.map((item, idx) => (
-                        <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <li key={`${item}-${idx}`} className="flex items-start gap-2 text-body text-muted-foreground">
                           {tab === "strengths" ? (
                             <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                           ) : tab === "weaknesses" ? (
@@ -154,7 +154,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                         </li>
                       ))
                     ) : (
-                      <li className="text-sm text-muted-foreground">No analysis points available.</li>
+                      <li className="text-body text-muted-foreground">No analysis points available.</li>
                     )}
                   </ul>
                 </TabsContent>

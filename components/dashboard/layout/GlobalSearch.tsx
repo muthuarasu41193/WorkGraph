@@ -106,7 +106,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                 type="button"
                 onClick={() => setFilter(f.id)}
                 className={cn(
-                  "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+                  "rounded-md px-2.5 py-1 text-caption font-medium transition-colors",
                   filter === f.id
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted",
@@ -118,9 +118,9 @@ export default function GlobalSearch({ className, compact = false }: Props) {
           </div>
 
           {deferredQuery.length < 2 ? (
-            <p className="px-3 py-4 text-sm text-muted-foreground">Type at least 2 characters to search.</p>
+            <p className="px-3 py-4 text-body text-muted-foreground">Type at least 2 characters to search.</p>
           ) : results.length === 0 ? (
-            <p className="px-3 py-4 text-sm text-muted-foreground">
+            <p className="px-3 py-4 text-body text-muted-foreground">
               No matches for “{query}”. Try a skill from your profile: {profile.skills.slice(0, 3).join(", ") || "add skills first"}.
             </p>
           ) : (
@@ -136,11 +136,11 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                       <Briefcase className="h-4 w-4" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-medium">{job.title}</span>
-                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                      <span className="block truncate text-body font-medium">{job.title}</span>
+                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-caption text-muted-foreground">
                         <Building2 className="h-3 w-3" />
                         {job.company}
-                        <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                        <Badge variant="outline" className="h-5 px-1.5 text-caption">
                           {job.source}
                         </Badge>
                       </span>

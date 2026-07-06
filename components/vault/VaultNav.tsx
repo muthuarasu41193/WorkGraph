@@ -21,7 +21,7 @@ export default function VaultNav() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
         <Link href="/interview-vault" className="flex items-center gap-2 shrink-0">
           <WorkGraphLogo className="h-7 w-auto" />
-          <span className="hidden text-sm font-semibold sm:inline">Interview Vault</span>
+          <span className="hidden text-body font-semibold sm:inline">Interview Vault</span>
         </Link>
 
         <nav className="flex items-center gap-1" aria-label="Interview Vault">

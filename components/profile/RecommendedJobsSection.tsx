@@ -217,7 +217,7 @@ function useMediaQuery(query: string): boolean {
 }
 
 const FILTER_TRIGGER_BASE_CLASS =
-  "inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2";
+  "inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-full border px-4 text-body transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2";
 const FILTER_TRIGGER_INACTIVE_CLASS =
   `${FILTER_TRIGGER_BASE_CLASS} border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] hover:border-[var(--info)] hover:bg-[var(--info-subtle)]`;
 const FILTER_TRIGGER_ACTIVE_CLASS = `${FILTER_TRIGGER_BASE_CLASS} border-[var(--info)] bg-[var(--info)] text-white`;
@@ -1404,18 +1404,18 @@ export default function RecommendedJobsSection({
     <section id="recommended-jobs" className="scroll-mt-28 space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--text-tertiary)]">Job board</p>
-          <h2 className="mt-1 text-[length:var(--font-size-title)] font-semibold text-[var(--text-primary)] sm:text-[length:var(--font-size-title)]">
+          <p className="text-caption font-medium uppercase tracking-[var(--letter-spacing-label)] text-[var(--text-tertiary)]">Job board</p>
+          <h2 className="mt-1 text-title font-semibold text-[var(--text-primary)] sm:text-title">
             {isLiveFeed
               ? profileMatchActive
                 ? "Jobs matching your profile"
                 : "Browse live job listings"
               : "Sample roles (run ingest or community sync for live data)"}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-[var(--text-secondary)]">{hint}</p>
+          <p className="mt-2 max-w-2xl text-body font-normal text-[var(--text-secondary)]">{hint}</p>
         </div>
         <span
-          className={`rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wide ring-1 ${
+          className={`rounded-full px-3 py-1 text-caption font-medium uppercase tracking-wide ring-1 ${
             isLiveFeed
               ? "border-0 bg-[var(--info-subtle)] text-[var(--info-foreground)] ring-[var(--border-default)]"
               : "border-[var(--border-default)] bg-[var(--warning-subtle)] text-[var(--text-secondary)] ring-[var(--border-default)]"
@@ -1426,14 +1426,14 @@ export default function RecommendedJobsSection({
       </div>
 
       {!isLiveFeed && feedDemoHint ? (
-        <div className="flex gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--warning-subtle)] p-4 text-sm text-[var(--text-secondary)] ring-1 ring-[var(--border-default)] wg-section-fade" style={{ animationDelay: "100ms" }}>
+        <div className="flex gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--warning-subtle)] p-4 text-body text-[var(--text-secondary)] ring-1 ring-[var(--border-default)] wg-section-fade" style={{ animationDelay: "100ms" }}>
           <span className="mt-0.5 shrink-0 text-warning-foreground">
             <LifeBuoy className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0 space-y-2">
             <p className="font-semibold leading-snug text-warning-foreground">{demoBannerCopy(feedDemoHint).title}</p>
             <p className="leading-relaxed text-warning-foreground/95">{demoBannerCopy(feedDemoHint).body}</p>
-            <p className="text-xs text-warning-foreground/90">
+            <p className="text-caption text-warning-foreground/90">
               <Link
                 href="/api/jobs-health"
                 className="font-medium underline decoration-[var(--warning)] underline-offset-2 hover:text-[var(--text-primary)]"
@@ -1451,8 +1451,8 @@ export default function RecommendedJobsSection({
       <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-6 py-5 lg:hidden">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
-            <p className="mt-1 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Based on your profile, we match jobs by:</p>
+            <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
+            <p className="mt-1 text-body text-[var(--text-tertiary)]">Based on your profile, we match jobs by:</p>
           </div>
           <button
             type="button"
@@ -1472,10 +1472,10 @@ export default function RecommendedJobsSection({
                   <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-[var(--info-subtle)]">
                     <div className="h-full rounded-full" style={{ width: `${item.score}%`, backgroundColor: item.color }} />
                   </div>
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">
+                  <p className="text-body font-semibold text-[var(--text-primary)]">
                     {item.label} <span className="text-[var(--text-secondary)]">{item.score}%</span>
                   </p>
-                  <p className="mt-1 text-xs text-[var(--text-tertiary)]">{item.detail}</p>
+                  <p className="mt-1 text-caption text-[var(--text-tertiary)]">{item.detail}</p>
                 </article>
               ))}
             </div>
@@ -1496,10 +1496,10 @@ export default function RecommendedJobsSection({
                     strokeLinecap="round"
                   />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-[length:var(--font-size-heading)] font-bold text-[var(--info)]">{overallMatch}%</div>
+                <div className="absolute inset-0 flex items-center justify-center text-heading-m text-[var(--info)]">{overallMatch}%</div>
               </div>
-              <p className="mt-1 text-[length:var(--font-size-label)] text-[var(--text-tertiary)]">Match Score</p>
-              <Link href="/create-profile" className="mt-2 text-[length:var(--font-size-body)] font-medium text-[var(--info)] hover:underline">
+              <p className="mt-1 text-caption text-[var(--text-tertiary)]">Match Score</p>
+              <Link href="/create-profile" className="mt-2 text-body font-medium text-[var(--info)] hover:underline">
                 Update profile to improve matches
               </Link>
             </div>
@@ -1508,14 +1508,14 @@ export default function RecommendedJobsSection({
       </section>
 
       {fetchError ? (
-        <div className="rounded-xl border border-[var(--danger-subtle)] bg-[var(--danger-subtle)] p-4 text-sm text-[var(--text-secondary)]">
+        <div className="rounded-xl border border-[var(--danger-subtle)] bg-[var(--danger-subtle)] p-4 text-body text-[var(--text-secondary)]">
           <p className="font-semibold text-[var(--danger)]">Could not load more jobs</p>
           <p className="mt-1 text-[var(--text-secondary)]">{fetchError}</p>
         </div>
       ) : null}
 
       {liveListings > 0 ? (
-        <p className="text-sm text-[var(--text-secondary)]">
+        <p className="text-body text-[var(--text-secondary)]">
           {showProfileMatchesOnly ? (
             <>
               <span className="font-semibold text-[var(--info)]">{totalMatched.toLocaleString()}</span> jobs match your
@@ -1562,7 +1562,7 @@ export default function RecommendedJobsSection({
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search job titles, companies..."
-                  className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-11 pr-9 text-sm text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
+                  className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-11 pr-9 text-body text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
                 />
                 {searchInput ? (
                   <button
@@ -1578,7 +1578,7 @@ export default function RecommendedJobsSection({
                 {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--text-tertiary)]" /> : null}
               </div>
               {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
-                <p className="ml-2 text-xs text-[var(--text-tertiary)]">No results for &quot;{query.trim()}&quot;.</p>
+                <p className="ml-2 text-caption text-[var(--text-tertiary)]">No results for &quot;{query.trim()}&quot;.</p>
               ) : null}
 
               <details data-filter-dropdown="true" className="relative shrink-0">
@@ -1587,7 +1587,7 @@ export default function RecommendedJobsSection({
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-52 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
                   {JOB_TYPE_OPTIONS.map((type) => (
-                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--surface-secondary)]">
+                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-body hover:bg-[var(--surface-secondary)]">
                       <input
                         type="checkbox"
                         checked={jobTypes.has(type)}
@@ -1619,7 +1619,7 @@ export default function RecommendedJobsSection({
                       setCurrentPage(1);
                     }}
                     placeholder="Country or city"
-                    className="mb-2 h-9 w-full rounded-lg border border-[var(--border-default)] px-3 text-sm"
+                    className="mb-2 h-9 w-full rounded-lg border border-[var(--border-default)] px-3 text-body"
                   />
                   <div className="flex flex-wrap gap-2">
                     {["any", "remote", "hybrid", "onsite"].map((loc) => (
@@ -1630,13 +1630,13 @@ export default function RecommendedJobsSection({
                           setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
                           setCurrentPage(1);
                         }}
-                        className={`rounded-lg px-3 py-1 text-xs ${locationMode === loc ? "bg-[var(--info)] text-white" : "bg-[var(--surface-secondary)] text-[var(--text-secondary)]"}`}
+                        className={`rounded-lg px-3 py-1 text-caption ${locationMode === loc ? "bg-[var(--info)] text-white" : "bg-[var(--surface-secondary)] text-[var(--text-secondary)]"}`}
                       >
                         {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
                       </button>
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-[var(--text-tertiary)]">Popular: Remote, New York, London, San Francisco</p>
+                  <p className="mt-2 text-caption text-[var(--text-tertiary)]">Popular: Remote, New York, London, San Francisco</p>
                 </div>
               </details>
 
@@ -1653,7 +1653,7 @@ export default function RecommendedJobsSection({
                         setDateWindow(d.id);
                         setCurrentPage(1);
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[var(--surface-secondary)]"
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-body hover:bg-[var(--surface-secondary)]"
                     >
                       {d.label}
                       {dateWindow === d.id ? <Check className="h-4 w-4 text-[var(--info)]" /> : null}
@@ -1676,22 +1676,22 @@ export default function RecommendedJobsSection({
 
           {hasActiveFilters ? (
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-[var(--text-tertiary)]">Active filters:</span>
+              <span className="text-caption text-[var(--text-tertiary)]">Active filters:</span>
               {activeFilterChips.map((chip) => (
-                <span key={chip.key} className="inline-flex items-center gap-1 rounded-2xl bg-[var(--info-subtle)] px-2 py-1 pl-3 text-xs text-[var(--info)] transition-all duration-200 wg-chip-enter">
+                <span key={chip.key} className="inline-flex items-center gap-1 rounded-2xl bg-[var(--info-subtle)] px-2 py-1 pl-3 text-caption text-[var(--info)] transition-all duration-200 wg-chip-enter">
                   {chip.label}
                   <button type="button" onClick={() => removeChip(chip.key)} className="text-[var(--info)] hover:text-[var(--info-foreground)]">
                     <X className="h-4 w-4" />
                   </button>
                 </span>
               ))}
-              <button type="button" onClick={clearFilters} className="ml-1 text-sm font-medium text-[var(--danger)]">
+              <button type="button" onClick={clearFilters} className="ml-1 text-body font-medium text-[var(--danger)]">
                 Clear all filters
               </button>
             </div>
           ) : null}
 
-          <p className="mt-3 text-sm text-[var(--text-secondary)]" aria-live="polite">
+          <p className="mt-3 text-body text-[var(--text-secondary)]" aria-live="polite">
             {visibleJobs.length > 0 ? (
               <>
                 Showing{" "}
@@ -1716,7 +1716,7 @@ export default function RecommendedJobsSection({
               </span>
             ) : null}
             {isPageLoading ? (
-              <span className="ml-2 inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)]">
+              <span className="ml-2 inline-flex items-center gap-1 text-caption text-[var(--text-tertiary)]">
                 <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
                 Loading page…
               </span>
@@ -1939,7 +1939,7 @@ export default function RecommendedJobsSection({
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])}
-                  className="h-9 rounded-lg border border-[var(--border-default)] px-2 text-sm"
+                  className="h-9 rounded-lg border border-[var(--border-default)] px-2 text-body"
                 >
                   {CURRENCY_OPTIONS.map((c) => (
                     <option key={c} value={c}>
@@ -2029,11 +2029,11 @@ export default function RecommendedJobsSection({
                 ))}
               </div>
             </div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-body">
               <Checkbox checked={visaSponsorshipOnly} onCheckedChange={(c) => setVisaSponsorshipOnly(c === true)} />
               Visa sponsorship
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-body">
               <Checkbox checked={easyApplyOnly} onCheckedChange={(c) => setEasyApplyOnly(c === true)} />
               Easy apply only
             </label>
@@ -2133,7 +2133,7 @@ export default function RecommendedJobsSection({
             className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-surface-primary/60 pt-8 backdrop-blur-[1px]"
             aria-hidden
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-default)] bg-surface-primary px-4 py-2 text-sm text-[var(--text-secondary)] shadow-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-default)] bg-surface-primary px-4 py-2 text-body text-[var(--text-secondary)] shadow-sm">
               <Loader2 className="h-4 w-4 animate-spin text-[var(--info)]" />
               Loading page {safePage}…
             </span>
@@ -2193,24 +2193,24 @@ export default function RecommendedJobsSection({
                     aria-label={`${job.company} logo placeholder`}
                   >
                     <Building2 className="absolute left-1.5 top-1.5 h-3.5 w-3.5 text-[var(--text-secondary)]" aria-hidden />
-                    <span className="absolute bottom-1 right-1 text-[10px] font-semibold tracking-wide text-[var(--text-secondary)]">
+                    <span className="absolute bottom-1 right-1 text-caption font-semibold tracking-wide text-[var(--text-secondary)]">
                       {companyInitials(job.company)}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <h3 className="line-clamp-2 text-base font-semibold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[var(--info)]">{job.title}</h3>
-                    <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">{job.company}</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">
+                    <h3 className="line-clamp-2 text-body-lg font-semibold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[var(--info)]">{job.title}</h3>
+                    <p className="mt-1 text-body font-medium text-[var(--text-secondary)]">{job.company}</p>
+                    <p className="mt-1 inline-flex items-center gap-1 text-body text-[var(--text-tertiary)]">
                       <MapPin className="h-3 w-3" /> {job.location}
                       {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="group/score relative inline-flex items-center rounded-2xl px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
+                  <span className="group/score relative inline-flex items-center rounded-2xl px-2.5 py-1 text-caption font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
                     <MatchIcon className="mr-1 inline h-3.5 w-3.5" />
                     {matchBadge.label}
-                    <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden w-48 rounded-lg border border-[var(--border-default)] bg-surface-primary px-2 py-1 text-[length:var(--font-size-label)] font-normal text-[var(--text-secondary)] shadow-lg group-hover/score:block">
+                    <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden w-48 rounded-lg border border-[var(--border-default)] bg-surface-primary px-2 py-1 text-caption font-normal text-[var(--text-secondary)] shadow-lg group-hover/score:block">
                       Skills 60% · Experience 20% · Location 20%
                     </span>
                   </span>
@@ -2236,23 +2236,23 @@ export default function RecommendedJobsSection({
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-xs text-[var(--text-secondary)]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
+                <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-caption text-[var(--text-secondary)]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
                 {meta.experienceLevel ? (
-                  <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-xs text-[var(--text-secondary)]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
+                  <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-caption text-[var(--text-secondary)]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
                 ) : null}
-                <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-xs ${isFresh ? "border-[var(--success-subtle)] bg-[var(--success-subtle)] text-[var(--success)]" : "border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-tertiary)]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
-                <span className="rounded-xl bg-info-subtle px-2.5 py-1 text-xs text-[var(--info)]">via {src.label}</span>
-                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--success-subtle)] px-2.5 py-1 text-xs text-[var(--success)]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
-                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--danger-subtle)] px-2.5 py-1 text-xs text-[var(--danger)] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
+                <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-caption ${isFresh ? "border-[var(--success-subtle)] bg-[var(--success-subtle)] text-[var(--success)]" : "border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-tertiary)]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
+                <span className="rounded-xl bg-info-subtle px-2.5 py-1 text-caption text-[var(--info)]">via {src.label}</span>
+                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--success-subtle)] px-2.5 py-1 text-caption text-[var(--success)]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
+                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--danger-subtle)] px-2.5 py-1 text-caption text-[var(--danger)] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
               </div>
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap gap-1.5">
                   {job.matchedSkills.slice(0, 3).map((s) => (
-                    <span key={s} className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-xs text-[var(--info)]">{s}</span>
+                    <span key={s} className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-caption text-[var(--info)]">{s}</span>
                   ))}
-                  {job.matchedSkills.length > 3 ? <span className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-xs text-[var(--info)]">+{job.matchedSkills.length - 3} more</span> : null}
-                  <span className="rounded-xl bg-[var(--warning-subtle)] px-2.5 py-0.5 text-xs text-[var(--warning)]">Missing: AWS, Docker</span>
+                  {job.matchedSkills.length > 3 ? <span className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-caption text-[var(--info)]">+{job.matchedSkills.length - 3} more</span> : null}
+                  <span className="rounded-xl bg-[var(--warning-subtle)] px-2.5 py-0.5 text-caption text-[var(--warning)]">Missing: AWS, Docker</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ResumeIntelligenceDialog
@@ -2268,7 +2268,7 @@ export default function RecommendedJobsSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-5 text-sm font-medium text-white transition hover:scale-[1.02] hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-5 text-body font-medium text-white transition hover:scale-[1.02] hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                     >
                       <Zap className="h-4 w-4" />
                       Quick Apply
@@ -2280,7 +2280,7 @@ export default function RecommendedJobsSection({
                       e.stopPropagation();
                       setExpandedJobId((prev) => (prev === job.id ? null : job.id));
                     }}
-                    className="text-sm font-medium text-[var(--info)] opacity-0 transition group-hover:opacity-100"
+                    className="text-body font-medium text-[var(--info)] opacity-0 transition group-hover:opacity-100"
                   >
                     View Details
                   </button>
@@ -2289,10 +2289,10 @@ export default function RecommendedJobsSection({
 
               {isExpanded ? (
                 <div className="mt-4 space-y-3 border-t border-[var(--border-default)] pt-4">
-                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-[var(--text-secondary)]">
+                  <div className="max-h-[200px] overflow-auto text-body leading-6 text-[var(--text-secondary)]">
                     {job.description?.trim() ? job.description : job.matchLabel}
                   </div>
-                  <ul className="space-y-1 text-sm">
+                  <ul className="space-y-1 text-body">
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
                         {r.status === "ok" ? (
@@ -2306,7 +2306,7 @@ export default function RecommendedJobsSection({
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-tertiary)]">
+                  <div className="flex flex-wrap items-center gap-3 text-caption text-[var(--text-tertiary)]">
                     {meta.companySize ? <span>Company size: {meta.companySize}</span> : null}
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
@@ -2320,7 +2320,7 @@ export default function RecommendedJobsSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                     >
                       <ExternalLink className="h-4 w-4" />
                       Apply Now
@@ -2341,9 +2341,9 @@ export default function RecommendedJobsSection({
                 <div className="mt-auto pt-4">
                   <div className="mb-3 border-t border-[var(--border-default)]" />
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[var(--text-tertiary)]">Posted {job.postedAgo}</span>
+                    <span className="text-caption text-[var(--text-tertiary)]">Posted {job.postedAgo}</span>
                     {canApply ? (
-                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
+                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-3 py-1.5 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
                         <ExternalLink className="h-3.5 w-3.5" />
                         Apply
                       </a>
@@ -2365,7 +2365,7 @@ export default function RecommendedJobsSection({
           className="mt-6 flex flex-col items-center gap-3 border-t border-[var(--border-default)] pt-5"
           aria-label="Job results pagination"
         >
-          <p className="text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">
+          <p className="text-body text-[var(--text-tertiary)]">
             Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} jobs
           </p>
           {totalPages > 1 ? (
@@ -2381,7 +2381,7 @@ export default function RecommendedJobsSection({
               </button>
               {paginationTokens.map((token, index) =>
                 token === "ellipsis" ? (
-                  <span key={`ellipsis-${index}`} className="px-1 text-sm text-[var(--text-tertiary)]">
+                  <span key={`ellipsis-${index}`} className="px-1 text-body text-[var(--text-tertiary)]">
                     …
                   </span>
                 ) : (
@@ -2393,7 +2393,7 @@ export default function RecommendedJobsSection({
                     aria-label={`Page ${token}`}
                     aria-current={token === safePage ? "page" : undefined}
                     className={cn(
-                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-medium transition",
+                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-body font-medium transition",
                       token === safePage
                         ? "bg-[var(--info)] text-white shadow-sm"
                         : "border border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] hover:border-[var(--info)] hover:bg-[var(--info-subtle)]"
@@ -2424,8 +2424,8 @@ export default function RecommendedJobsSection({
       (liveListings > 0 || pageJobs.length > 0) ? (
         <div className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-[var(--info)]" />
-          <h3 className="mt-4 text-[length:var(--font-size-heading)] font-semibold text-[var(--text-primary)]">No profile matches on this page</h3>
-          <p className="mt-2 text-sm text-[var(--text-tertiary)]">
+          <h3 className="mt-4 text-heading-m text-[var(--text-primary)]">No profile matches on this page</h3>
+          <p className="mt-2 text-body text-[var(--text-tertiary)]">
             {liveListings.toLocaleString()} jobs are indexed, but none on this page overlap your skills. Browse the full
             catalog or update your profile skills.
           </p>
@@ -2437,13 +2437,13 @@ export default function RecommendedJobsSection({
                 setSkillsPick(new Set());
                 setCurrentPage(1);
               }}
-              className="inline-flex h-10 items-center rounded-full bg-[var(--info)] px-5 text-sm font-medium text-white hover:bg-[var(--info-foreground)]"
+              className="inline-flex h-10 items-center rounded-full bg-[var(--info)] px-5 text-body font-medium text-white hover:bg-[var(--info-foreground)]"
             >
               Browse all {liveListings.toLocaleString()} jobs
             </button>
             <Link
               href="/profile?view=profile"
-              className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-sm font-medium text-[var(--info)]"
+              className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-body font-medium text-[var(--info)]"
             >
               Update profile skills
             </Link>
@@ -2454,13 +2454,13 @@ export default function RecommendedJobsSection({
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 ? (
         <div className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-6 py-10 text-center">
           <SearchX className="mx-auto h-20 w-20 text-[var(--border-default)]" />
-          <h3 className="mt-4 text-[length:var(--font-size-heading)] font-semibold text-[var(--text-primary)]">No jobs found</h3>
-          <p className="mt-2 text-sm text-[var(--text-tertiary)]">Try adjusting your filters or search terms</p>
+          <h3 className="mt-4 text-heading-m text-[var(--text-primary)]">No jobs found</h3>
+          <p className="mt-2 text-body text-[var(--text-tertiary)]">Try adjusting your filters or search terms</p>
           <div className="mt-4 flex items-center justify-center gap-4">
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-sm font-medium text-[var(--info)]"
+              className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-body font-medium text-[var(--info)]"
             >
               Clear all filters
             </button>
@@ -2470,7 +2470,7 @@ export default function RecommendedJobsSection({
                 clearFilters();
                 setCurrentPage(1);
               }}
-              className="text-sm font-medium text-[var(--info)] underline underline-offset-2"
+              className="text-body font-medium text-[var(--info)] underline underline-offset-2"
             >
               Browse all jobs
             </button>
@@ -2481,9 +2481,9 @@ export default function RecommendedJobsSection({
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length === 0 ? (
         <div className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-[var(--info)]" />
-          <h3 className="mt-4 text-[length:var(--font-size-heading)] font-semibold text-[var(--text-primary)]">Complete your profile to see matches</h3>
+          <h3 className="mt-4 text-heading-m text-[var(--text-primary)]">Complete your profile to see matches</h3>
           <div className="mx-auto mt-3 max-w-xs">
-            <div className="mb-1 flex items-center justify-between text-xs text-[var(--text-tertiary)]">
+            <div className="mb-1 flex items-center justify-between text-caption text-[var(--text-tertiary)]">
               <span>Profile progress</span>
               <span>78% complete</span>
             </div>
@@ -2491,14 +2491,14 @@ export default function RecommendedJobsSection({
               <div className="h-full w-[78%] bg-[var(--info)]" />
             </div>
           </div>
-          <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
+          <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-body">
             <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[var(--info)]">Add your skills <ArrowRight className="h-3.5 w-3.5" /></Link>
             <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[var(--info)]">Add expected salary <ArrowRight className="h-3.5 w-3.5" /></Link>
             <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-[var(--info)]">Add location preference <ArrowRight className="h-3.5 w-3.5" /></Link>
           </div>
           <Link
             href="/create-profile"
-            className="mt-5 inline-flex h-10 items-center rounded-full bg-[var(--info)] px-5 text-sm font-medium text-white hover:bg-[var(--info-foreground)]"
+            className="mt-5 inline-flex h-10 items-center rounded-full bg-[var(--info)] px-5 text-body font-medium text-white hover:bg-[var(--info-foreground)]"
           >
             Complete Profile
           </Link>
@@ -2508,12 +2508,12 @@ export default function RecommendedJobsSection({
 
       <aside className="hidden space-y-4 lg:sticky lg:top-[132px] lg:block">
         <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-4 py-4">
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">Based on your profile and preferences</p>
+          <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
+          <p className="mt-1 text-caption text-[var(--text-tertiary)]">Based on your profile and preferences</p>
           <div className="mt-3 space-y-2">
             {matchBreakdown.map((item) => (
               <div key={`side-${item.label}`}>
-                <div className="mb-1 flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                <div className="mb-1 flex items-center justify-between text-caption text-[var(--text-secondary)]">
                   <span>{item.label}</span>
                   <span>{item.score}%</span>
                 </div>
@@ -2525,9 +2525,9 @@ export default function RecommendedJobsSection({
           </div>
         </section>
         <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-4 py-4">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Job Alerts</h3>
-          <p className="mt-1 text-xs text-[var(--text-tertiary)]">Active Alerts</p>
-          <div className="mt-3 space-y-2 text-xs">
+          <h3 className="text-body font-semibold text-[var(--text-primary)]">Job Alerts</h3>
+          <p className="mt-1 text-caption text-[var(--text-tertiary)]">Active Alerts</p>
+          <div className="mt-3 space-y-2 text-caption">
             <div className="rounded-lg bg-[var(--surface-secondary)] px-3 py-2 text-[var(--text-secondary)]">Senior React Engineer - Daily digest</div>
             <div className="rounded-lg bg-[var(--surface-secondary)] px-3 py-2 text-[var(--text-secondary)]">Remote TypeScript Roles - Weekly</div>
           </div>
@@ -2535,10 +2535,10 @@ export default function RecommendedJobsSection({
       </aside>
       </div>
 
-      <p className="rounded-2xl border border-border bg-surface-secondary/80 px-4 py-3 text-center text-xs leading-relaxed text-foreground/80">
+      <p className="rounded-2xl border border-border bg-surface-secondary/80 px-4 py-3 text-center text-caption leading-relaxed text-foreground/80">
         Ingest jobs with{" "}
-        <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-[length:var(--font-size-label)] text-foreground">job_aggregator</code> using the
-        same <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-[length:var(--font-size-label)]">DATABASE_URL</code> as Supabase.{" "}
+        <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-caption text-foreground">job_aggregator</code> using the
+        same <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-caption">DATABASE_URL</code> as Supabase.{" "}
         <Link
           href="/create-profile"
           className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -2551,28 +2551,28 @@ export default function RecommendedJobsSection({
       {mobileDetailJobId ? (
         <div className="fixed inset-0 z-[125] bg-surface-primary p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[var(--text-primary)]">Job Details</h3>
+            <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Job Details</h3>
             <button type="button" onClick={() => setMobileDetailJobId(null)}>
               <X className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
           </div>
           {(() => {
             const jobEntry = listingPipeline.find(({ job }) => job.id === mobileDetailJobId);
-            if (!jobEntry) return <p className="text-sm text-[var(--text-tertiary)]">Job not available.</p>;
+            if (!jobEntry) return <p className="text-body text-[var(--text-tertiary)]">Job not available.</p>;
             const { job, meta } = jobEntry;
             return (
               <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-[var(--text-primary)]">{job.title}</h4>
-                <p className="text-sm text-[var(--text-secondary)]">{job.company}</p>
-                <p className="text-sm text-[var(--text-tertiary)]">
+                <h4 className="text-heading-s text-[var(--text-primary)]">{job.title}</h4>
+                <p className="text-body text-[var(--text-secondary)]">{job.company}</p>
+                <p className="text-body text-[var(--text-tertiary)]">
                   {job.location}
                   {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                 </p>
-                <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-[var(--text-secondary)]">
+                <p className="max-h-[45vh] overflow-auto text-body leading-6 text-[var(--text-secondary)]">
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
-                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
+                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
                     <ExternalLink className="h-4 w-4" />
                     Apply Now
                   </a>

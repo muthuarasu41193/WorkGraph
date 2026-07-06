@@ -35,7 +35,7 @@ function CompanyAvatar({ company, logo }: { company: string; logo?: string }) {
     );
   }
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-secondary text-sm font-semibold text-[var(--text-secondary)] ring-1 ring-[var(--border-default)]">
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-secondary text-body font-semibold text-[var(--text-secondary)] ring-1 ring-[var(--border-default)]">
       {company.charAt(0).toUpperCase()}
     </span>
   );
@@ -70,15 +70,15 @@ export default function JobCard({
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs font-medium text-[var(--text-secondary)]">{job.company}</p>
-                <h3 className="mt-0.5 text-sm font-semibold leading-snug text-[var(--text-primary)] sm:text-base">
+                <p className="text-caption font-medium text-[var(--text-secondary)]">{job.company}</p>
+                <h3 className="mt-0.5 text-body font-semibold leading-snug text-[var(--text-primary)] sm:text-body-lg">
                   {job.title}
                 </h3>
               </div>
               {job.matchPercent !== undefined ? (
                 <span
                   className={cn(
-                    "shrink-0 rounded-lg px-2 py-1 text-xs font-semibold tabular-nums",
+                    "shrink-0 rounded-lg px-2 py-1 text-caption font-semibold tabular-nums",
                     matchColor(job.matchPercent),
                   )}
                 >
@@ -87,14 +87,14 @@ export default function JobCard({
               ) : null}
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-secondary)]">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-[var(--text-secondary)]">
               {job.salaryRange ? <span className="font-medium text-[var(--text-primary)]">{job.salaryRange}</span> : null}
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" aria-hidden />
                 {job.location}
               </span>
               {job.workMode ? (
-                <Badge variant="secondary" className="h-5 rounded-md px-1.5 text-[10px] font-medium">
+                <Badge variant="secondary" className="h-5 rounded-md px-1.5 text-caption font-medium">
                   {job.workMode}
                 </Badge>
               ) : null}
@@ -113,7 +113,7 @@ export default function JobCard({
                 {job.matchedSkills.slice(0, 4).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-success-subtle px-1.5 py-0.5 text-[10px] font-medium text-success-foreground"
+                    className="rounded-md bg-success-subtle px-1.5 py-0.5 text-caption font-medium text-success-foreground"
                   >
                     {skill}
                   </span>
@@ -121,7 +121,7 @@ export default function JobCard({
                 {job.missingSkills?.slice(0, 2).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-surface-secondary px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]"
+                    className="rounded-md bg-surface-secondary px-1.5 py-0.5 text-caption font-medium text-[var(--text-secondary)]"
                   >
                     +{skill}
                   </span>

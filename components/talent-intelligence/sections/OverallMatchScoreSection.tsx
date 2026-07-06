@@ -24,17 +24,17 @@ export default function OverallMatchScoreSection({ data }: Props) {
           </Badge>
         </div>
         <div className="min-w-0 flex-1 space-y-4">
-          <p className="text-sm leading-relaxed text-muted-foreground">{data.summary}</p>
-          <p className="text-xs text-muted-foreground italic">{data.methodology}</p>
+          <p className="text-body text-muted-foreground">{data.summary}</p>
+          <p className="text-caption text-muted-foreground italic">{data.methodology}</p>
           <div className="grid gap-3 sm:grid-cols-2">
             {data.dimensions.map((dim) => (
               <div key={dim.dimension} className="space-y-1.5 rounded-lg border bg-muted/30 p-3">
-                <div className="flex items-center justify-between gap-2 text-sm">
+                <div className="flex items-center justify-between gap-2 text-body">
                   <span className="font-medium">{dim.label}</span>
                   <span className="tabular-nums text-muted-foreground">{dim.score}%</span>
                 </div>
                 <Progress value={dim.score} className="h-2" />
-                <p className="text-xs text-muted-foreground">{dim.explanation}</p>
+                <p className="text-caption text-muted-foreground">{dim.explanation}</p>
               </div>
             ))}
           </div>

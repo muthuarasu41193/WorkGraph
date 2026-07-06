@@ -25,11 +25,11 @@ export default function ATSAnalysisSection({ data }: Props) {
     >
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm font-medium">ATS Score</span>
+          <span className="text-body font-medium">ATS Score</span>
           <Progress value={data.overallScore} className="h-2 flex-1" />
-          <span className="tabular-nums text-sm font-semibold">{data.overallScore}%</span>
+          <span className="tabular-nums text-body font-semibold">{data.overallScore}%</span>
         </div>
-        <div className="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+        <div className="grid gap-2 text-body text-muted-foreground sm:grid-cols-2">
           <p><span className="font-medium text-foreground">Section order: </span>{data.sectionOrder}</p>
           <p><span className="font-medium text-foreground">Length: </span>{data.lengthAssessment}</p>
           <p><span className="font-medium text-foreground">Formatting: </span>{data.formattingNotes}</p>
@@ -40,8 +40,8 @@ export default function ATSAnalysisSection({ data }: Props) {
             <li key={i} className="flex flex-col gap-1 rounded-lg border p-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <span className="font-medium">{ind.category}</span>
-                <p className="text-sm text-muted-foreground">{ind.observation}</p>
-                <p className="mt-1 text-xs">{ind.recommendation}</p>
+                <p className="text-body text-muted-foreground">{ind.observation}</p>
+                <p className="mt-1 text-caption">{ind.recommendation}</p>
               </div>
               <Badge className={cn("shrink-0 capitalize", STATUS_STYLES[ind.status])}>
                 {ind.status}

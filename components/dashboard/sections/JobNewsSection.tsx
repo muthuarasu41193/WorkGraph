@@ -34,12 +34,12 @@ export default function JobNewsSection() {
   return (
     <section className="space-y-4" aria-labelledby="job-news-heading">
       <header>
-        <h1 id="job-news-heading" className="text-2xl font-bold tracking-tight">Job News</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 id="job-news-heading" className="text-heading-l">Job News</h1>
+        <p className="mt-1 text-body text-muted-foreground">
           Hiring posts and community listings from social platforms — filtered by source.
         </p>
         {feedKind === "live" ? (
-          <p className="mt-1 text-xs font-medium text-success-foreground dark:text-success">
+          <p className="mt-1 text-caption font-medium text-success-foreground dark:text-success">
             {allPosts.length} posts synced from your jobs database
           </p>
         ) : null}
@@ -54,14 +54,14 @@ export default function JobNewsSection() {
             aria-selected={platform === tab.id}
             onClick={() => setPlatform(tab.id)}
             className={cn(
-              "inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+              "inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-3 py-2 text-body font-medium transition-colors",
               platform === tab.id
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border bg-background text-muted-foreground hover:bg-muted",
             )}
           >
             {tab.label}
-            <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+            <Badge variant="secondary" className="h-5 px-1.5 text-caption">
               {counts[tab.id]}
             </Badge>
           </button>
@@ -70,7 +70,7 @@ export default function JobNewsSection() {
 
       {filtered.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          <CardContent className="py-10 text-center text-body text-muted-foreground">
             No posts for this platform yet. Community sync adds Reddit, Hacker News, RemoteOK, and more daily.
           </CardContent>
         </Card>
@@ -87,14 +87,14 @@ export default function JobNewsSection() {
                     {post.kind === "post" ? (
                       <Badge variant="secondary">Post</Badge>
                     ) : null}
-                    <span className="text-xs text-muted-foreground">{post.postedAgo}</span>
+                    <span className="text-caption text-muted-foreground">{post.postedAgo}</span>
                   </div>
                   <h2 className="mt-2 font-semibold leading-snug">{post.title}</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     {post.company} · {post.location}
                   </p>
                   {post.description ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{post.description}</p>
+                    <p className="mt-2 line-clamp-3 text-body text-muted-foreground">{post.description}</p>
                   ) : null}
                   {post.applyUrl ? (
                     <Button asChild size="sm" className="mt-3" variant="outline">

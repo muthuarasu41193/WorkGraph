@@ -11,13 +11,13 @@ function Tier({ title, items }: { title: string; items: CareerInsights["immediat
   if (!items.length) return null;
   return (
     <div>
-      <h4 className="text-sm font-semibold">{title}</h4>
+      <h4 className="text-body font-semibold">{title}</h4>
       <ul className="mt-2 space-y-2">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border p-3 text-sm">
+          <li key={i} className="rounded-lg border p-3 text-body">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-medium">{item.item}</span>
-              <Badge variant="outline" className="text-xs capitalize">
+              <Badge variant="outline" className="text-caption capitalize">
                 {item.type}
               </Badge>
             </div>

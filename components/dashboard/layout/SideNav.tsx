@@ -64,7 +64,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                         title={collapsed ? item.label : undefined}
                         onClick={() => onNavigate?.()}
                         className={cn(
-                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[length:var(--font-size-body)] font-medium transition-all duration-200",
+                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-body font-medium transition-all duration-200",
                           "text-text-secondary hover:bg-surface-secondary hover:text-text-primary",
                           collapsed && "justify-center px-2",
                         )}
@@ -90,7 +90,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                           }
                         }}
                         className={cn(
-                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[length:var(--font-size-body)] font-medium transition-all duration-200",
+                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-body font-medium transition-all duration-200",
                           active
                             ? "wg-dash-nav-active font-semibold"
                             : "text-[var(--text-secondary)] hover:bg-surface-secondary hover:text-[var(--text-primary)]",

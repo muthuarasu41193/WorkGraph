@@ -106,13 +106,13 @@ export default function ProfileEducation({ userId, education, certifications }: 
                 value={item.institution}
                 onChange={(e) => void updateField(i, "institution", e.target.value)}
                 placeholder="Institution"
-                className="border-transparent bg-transparent text-sm text-muted-foreground shadow-none focus-visible:border-input"
+                className="border-transparent bg-transparent text-body text-muted-foreground shadow-none focus-visible:border-input"
               />
               <Input
                 value={item.year}
                 onChange={(e) => void updateField(i, "year", e.target.value)}
                 placeholder="Year"
-                className="border-transparent bg-transparent text-sm tabular-nums text-muted-foreground shadow-none focus-visible:border-input"
+                className="border-transparent bg-transparent text-body tabular-nums text-muted-foreground shadow-none focus-visible:border-input"
               />
             </div>
             <Button type="button" variant="ghost" size="icon-sm" onClick={() => void removeItem(i)} aria-label="Remove">
@@ -124,7 +124,7 @@ export default function ProfileEducation({ userId, education, certifications }: 
 
       {certifications.length > 0 ? (
         <div className="mt-8 border-t border-border pt-6">
-          <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="mb-3 flex items-center gap-2 text-caption font-semibold uppercase tracking-wider text-muted-foreground">
             <Award className="h-4 w-4" />
             Certifications
           </p>

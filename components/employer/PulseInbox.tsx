@@ -64,7 +64,7 @@ export default function PulseInbox({ signalId }: Props) {
   }
 
   if (error) {
-    return <p className="text-sm text-destructive">{error}</p>;
+    return <p className="text-body text-destructive">{error}</p>;
   }
 
   const byStage = Object.fromEntries(
@@ -74,15 +74,15 @@ export default function PulseInbox({ signalId }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold">Pulse inbox</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-heading-s">Pulse inbox</h2>
+        <p className="text-body text-muted-foreground">
           Review applicant resumes, links, and profile details — click a card for the full application.
         </p>
       </div>
 
       {connections.length === 0 ? (
         <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          <CardContent className="py-10 text-center text-body text-muted-foreground">
             No applications yet. When seekers apply to your live signals, their resume and profile
             package appears here.
           </CardContent>
@@ -91,7 +91,7 @@ export default function PulseInbox({ signalId }: Props) {
         <div className="grid gap-4 lg:grid-cols-5">
           {CONNECTION_STAGE_ORDER.map((stage) => (
             <div key={stage} className="min-w-0 space-y-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h3 className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
                 {CONNECTION_STAGE_LABELS[stage]} ({byStage[stage].length})
               </h3>
               <ul className="space-y-2">
@@ -105,31 +105,31 @@ export default function PulseInbox({ signalId }: Props) {
                       onClick={() => setDetailConnection(c)}
                     >
                       <CardHeader className="p-3 pb-1">
-                        <CardTitle className="text-sm font-medium leading-snug">
+                        <CardTitle className="text-body font-medium leading-snug">
                           {app?.full_name ?? c.seeker?.full_name ?? "Applicant"}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground line-clamp-1">
+                        <p className="text-caption text-muted-foreground line-clamp-1">
                           {app?.headline ?? c.seeker?.headline ?? c.signal?.title}
                         </p>
                       </CardHeader>
                       <CardContent className="space-y-2 p-3 pt-0">
                         <div className="flex items-center gap-1.5">
                           <Sparkles className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />
-                          <span className="text-sm font-semibold tabular-nums">
+                          <span className="text-body font-semibold tabular-nums">
                             {c.fit_snapshot?.matchPercent ?? "—"}% fit
                           </span>
                         </div>
                         {c.fit_snapshot?.matchedSignals?.length ? (
                           <div className="flex flex-wrap gap-1">
                             {c.fit_snapshot.matchedSignals.slice(0, 4).map((s) => (
-                              <Badge key={s} variant="secondary" className="text-[10px]">
+                              <Badge key={s} variant="secondary" className="text-caption">
                                 {s}
                               </Badge>
                             ))}
                           </div>
                         ) : null}
                         {app?.message || c.connection_note ? (
-                          <p className="text-xs text-muted-foreground line-clamp-2">
+                          <p className="text-caption text-muted-foreground line-clamp-2">
                             {app?.message || c.connection_note}
                           </p>
                         ) : null}
@@ -139,7 +139,7 @@ export default function PulseInbox({ signalId }: Props) {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)] hover:underline"
+                            className="inline-flex items-center gap-1 text-caption font-medium text-[var(--accent)] hover:underline"
                           >
                             <FileText className="h-3 w-3" />
                             Resume
@@ -153,7 +153,7 @@ export default function PulseInbox({ signalId }: Props) {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className={cn("h-7 px-2 text-[10px]")}
+                              className={cn("h-7 px-2 text-caption")}
                               onClick={() => void moveStage(c.id, s)}
                             >
                               → {CONNECTION_STAGE_LABELS[s]}

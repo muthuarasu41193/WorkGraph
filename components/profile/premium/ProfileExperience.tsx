@@ -46,7 +46,7 @@ function ExperienceItem({
 
   return (
     <article className="relative pl-8 before:absolute before:left-[11px] before:top-8 before:h-[calc(100%-8px)] before:w-px before:bg-border last:before:hidden">
-      <span className="absolute left-0 top-1 flex h-6 w-6 items-center justify-center rounded-lg bg-muted text-xs font-bold text-primary ring-1 ring-border">
+      <span className="absolute left-0 top-1 flex h-6 w-6 items-center justify-center rounded-lg bg-muted text-caption font-bold text-primary ring-1 ring-border">
         {initial}
       </span>
 
@@ -59,7 +59,7 @@ function ExperienceItem({
         >
           <div>
             <h3 className="font-semibold text-foreground">{item.title || "Role title"}</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               {item.company || "Company"} · {item.duration || "Duration"}
             </p>
           </div>
@@ -77,13 +77,13 @@ function ExperienceItem({
           <div className="overflow-hidden">
             <div className="space-y-3 border-t border-border pt-4">
               {bullets.length > 0 ? (
-                <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+                <ul className="list-disc space-y-1.5 pl-5 text-body text-muted-foreground">
                   {bullets.map((b) => (
                     <li key={b}>{b}</li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   {item.description || "Add impact bullets in the description field."}
                 </p>
               )}
@@ -92,13 +92,13 @@ function ExperienceItem({
                   value={item.title}
                   onChange={(e) => onUpdate(index, "title", e.target.value)}
                   placeholder="Title"
-                  className="h-8 text-xs"
+                  className="h-8 text-caption"
                 />
                 <Input
                   value={item.company}
                   onChange={(e) => onUpdate(index, "company", e.target.value)}
                   placeholder="Company"
-                  className="h-8 text-xs"
+                  className="h-8 text-caption"
                 />
               </div>
               <Textarea
@@ -106,7 +106,7 @@ function ExperienceItem({
                 onChange={(e) => onUpdate(index, "description", e.target.value)}
                 rows={3}
                 placeholder="Achievements (one per line)"
-                className="text-xs"
+                className="text-caption"
               />
               <Button
                 type="button"
@@ -191,7 +191,7 @@ export default function ProfileExperience({ userId, experience }: Props) {
       />
 
       {items.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed border-border p-8 text-center text-body text-muted-foreground">
           No experience yet. Add your first role to build credibility.
         </p>
       ) : (

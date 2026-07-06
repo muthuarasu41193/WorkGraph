@@ -17,7 +17,7 @@ export default async function EmployerWorkspaceLayout({
 
   if (!supabaseConfigured()) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center p-8 text-center text-sm text-muted-foreground">
+      <div className="flex min-h-[50vh] items-center justify-center p-8 text-center text-body text-muted-foreground">
         Employer features require Supabase. Configure your environment to continue.
       </div>
     );

@@ -119,8 +119,8 @@ export default function LoginPage() {
     >
       <div className="wg-auth-enter space-y-8">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign in</h2>
-          <p className="mt-2 text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
+          <h2 className="text-heading-l text-foreground">Sign in</h2>
+          <p className="mt-2 text-body text-muted-foreground">
             Enter your email and password to continue.
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-body">
             {isSubmitting ? "Signing in…" : "Continue"}
           </Button>
         </form>
@@ -189,7 +189,7 @@ export default function LoginPage() {
         ) : null}
 
         <Card className="border-border bg-muted/30 shadow-none">
-          <CardContent className="p-4 text-sm text-muted-foreground">
+          <CardContent className="p-4 text-body text-muted-foreground">
             <button
               type="button"
               onClick={() => {
@@ -202,28 +202,28 @@ export default function LoginPage() {
             </button>
             {showForgot ? (
               <form className="mt-3 space-y-2" onSubmit={onForgotPassword}>
-                <p className="text-xs leading-relaxed">
+                <p className="text-caption leading-relaxed">
                   Uses the email in the &quot;Email&quot; field. We send a reset link — you&apos;ll set a new password on the next screen.
                 </p>
                 <Button type="submit" variant="outline" disabled={forgotBusy} className="w-full">
                   {forgotBusy ? "Sending…" : "Send reset link"}
                 </Button>
                 {forgotSent ? (
-                  <p className="text-xs text-success-foreground">If an account exists, check your inbox for the reset link.</p>
+                  <p className="text-caption text-success-foreground">If an account exists, check your inbox for the reset link.</p>
                 ) : null}
               </form>
             ) : null}
           </CardContent>
         </Card>
 
-        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           New to WorkGraph?{" "}
           <Link href="/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign up
           </Link>
         </p>
 
-        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Hiring?{" "}
           <Link
             href="/employer/signup"
@@ -233,7 +233,7 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="text-center text-xs leading-relaxed text-muted-foreground/70">
+        <p className="text-center text-caption leading-relaxed text-muted-foreground/70">
           Keep your password secure and do not share it with anyone.
         </p>
       </div>

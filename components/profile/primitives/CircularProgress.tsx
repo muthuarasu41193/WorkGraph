@@ -46,16 +46,16 @@ export default function CircularProgress({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="text-xl font-bold tabular-nums tracking-tight text-foreground">
+          <span className="text-heading-m tabular-nums text-foreground">
             {Math.round(clamped)}%
           </span>
           {label ? (
-            <span className="mt-0.5 text-[length:var(--font-size-label)] font-medium text-muted-foreground">{label}</span>
+            <span className="mt-0.5 text-caption font-medium text-muted-foreground">{label}</span>
           ) : null}
         </div>
       </div>
       {sublabel ? (
-        <p className="mt-2 max-w-[8rem] text-center text-xs text-muted-foreground">{sublabel}</p>
+        <p className="mt-2 max-w-[8rem] text-center text-caption text-muted-foreground">{sublabel}</p>
       ) : null}
     </div>
   );

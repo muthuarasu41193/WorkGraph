@@ -16,10 +16,10 @@ export default function HiddenDiscoveryPromoCard() {
             <Radar className="h-6 w-6" aria-hidden />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-foreground">
+            <h2 className="text-body-lg font-semibold text-foreground">
               Hidden Jobs Discovery
             </h2>
-            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+            <p className="mt-1 max-w-xl text-body text-muted-foreground">
               Hiring posts from Reddit, Hacker News, and GitHub — separate from your main Jobs
               feed. Updated every 30 minutes; every link opens the original source.
             </p>

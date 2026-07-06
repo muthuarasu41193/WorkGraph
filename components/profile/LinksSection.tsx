@@ -107,9 +107,9 @@ export default function LinksSection({ profile, userId }: Props) {
 
   return (
     <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary p-6">
-      {toast ? <p className="mb-3 text-sm text-[var(--info)]">{toast}</p> : null}
-      <h2 className="mb-1 text-[length:var(--font-size-title)] font-semibold text-[var(--text-primary)]">Links</h2>
-      <p className="mb-4 text-xs font-normal text-[var(--text-tertiary)]">
+      {toast ? <p className="mb-3 text-body text-[var(--info)]">{toast}</p> : null}
+      <h2 className="mb-1 text-title font-semibold text-[var(--text-primary)]">Links</h2>
+      <p className="mb-4 text-caption font-normal text-[var(--text-tertiary)]">
         Keep your public profiles up-to-date — they are included when you apply to jobs.
       </p>
 
@@ -124,13 +124,13 @@ export default function LinksSection({ profile, userId }: Props) {
                 disabled={!isEditing}
                 onChange={(e) => setValues((prev) => ({ ...prev, [row.key]: e.target.value }))}
                 placeholder={row.placeholder}
-                className="flex-1 border-none bg-transparent text-sm font-normal text-[var(--text-secondary)] outline-none placeholder:text-[var(--text-tertiary)]"
+                className="flex-1 border-none bg-transparent text-body font-normal text-[var(--text-secondary)] outline-none placeholder:text-[var(--text-tertiary)]"
               />
               {!isEditing ? (
                 <button
                   type="button"
                   onClick={() => setEditing(row.key)}
-                  className="rounded-lg border border-[var(--border-default)] bg-surface-primary px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:shadow-sm"
+                  className="rounded-lg border border-[var(--border-default)] bg-surface-primary px-3 py-1.5 text-caption font-medium text-[var(--text-secondary)] transition hover:shadow-sm"
                 >
                   Edit
                 </button>
@@ -138,7 +138,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => saveField(row.key)}
-                  className="rounded-lg bg-[var(--info)] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[var(--info-foreground)]"
+                  className="rounded-lg bg-[var(--info)] px-3 py-1.5 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)]"
                 >
                   Save
                 </button>

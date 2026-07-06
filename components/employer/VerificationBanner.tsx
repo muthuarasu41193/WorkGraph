@@ -92,15 +92,15 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
       <AlertDescription className="space-y-3">
         <p>
           Verified employers get a public page at{" "}
-          <code className="text-xs">/company/{local.company_slug}</code> and stronger trust on WorkGraph
+          <code className="text-caption">/company/{local.company_slug}</code> and stronger trust on WorkGraph
           Direct. We match your work email domain to your website when possible.
         </p>
         {!local.website_url ? (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Tip: add <strong>website_url</strong> in onboarding or profile settings first.
           </p>
         ) : null}
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        {error ? <p className="text-body text-destructive">{error}</p> : null}
         <Button type="button" size="sm" disabled={loading} onClick={() => void requestVerify()}>
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Request verification

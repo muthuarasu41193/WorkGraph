@@ -20,7 +20,7 @@ type Props = {
 export default function VaultEarningsChart({ salesByDay, currency }: Props) {
   if (salesByDay.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
+      <div className="flex h-48 items-center justify-center rounded-lg border border-dashed text-body text-muted-foreground">
         Sales data will appear here once you make your first sale.
       </div>
     );
@@ -37,9 +37,9 @@ export default function VaultEarningsChart({ salesByDay, currency }: Props) {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-          <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-          <YAxis yAxisId="sales" tick={{ fontSize: 11 }} allowDecimals={false} />
-          <YAxis yAxisId="earnings" orientation="right" tick={{ fontSize: 11 }} />
+          <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+          <YAxis yAxisId="sales" tick={{ fontSize: 12 }} allowDecimals={false} />
+          <YAxis yAxisId="earnings" orientation="right" tick={{ fontSize: 12 }} />
           <Tooltip
             formatter={(value, name) => [
               name === "earnings_display"

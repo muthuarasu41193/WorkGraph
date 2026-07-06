@@ -23,10 +23,10 @@ export default function KeywordIntelligenceSection({ data }: Props) {
       icon={<Tags className="h-5 w-5 text-primary" />}
       defaultOpen={false}
     >
-      <p className="mb-4 text-sm text-muted-foreground">{data.summary}</p>
+      <p className="mb-4 text-body text-muted-foreground">{data.summary}</p>
       <div className="flex flex-wrap gap-1.5 mb-4">
         {data.extractedFromJd.slice(0, 15).map((kw) => (
-          <Badge key={kw} variant="outline" className="text-xs">
+          <Badge key={kw} variant="outline" className="text-caption">
             {kw}
           </Badge>
         ))}
@@ -35,14 +35,14 @@ export default function KeywordIntelligenceSection({ data }: Props) {
         {data.comparison.map((item, i) => {
           const style = STATUS_LABELS[item.status];
           return (
-            <li key={i} className="rounded-lg border p-3 text-sm">
+            <li key={i} className="rounded-lg border p-3 text-body">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{item.keyword}</span>
-                <Badge className={cn("text-xs", style.className)}>{style.label}</Badge>
+                <Badge className={cn("text-caption", style.className)}>{style.label}</Badge>
               </div>
               <p className="mt-1 text-muted-foreground">{item.explanation}</p>
               {item.resumeEvidence ? (
-                <p className="mt-1 text-xs italic">Evidence: {item.resumeEvidence}</p>
+                <p className="mt-1 text-caption italic">Evidence: {item.resumeEvidence}</p>
               ) : null}
             </li>
           );

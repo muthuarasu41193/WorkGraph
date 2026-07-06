@@ -19,11 +19,11 @@ export default function RecruiterExpectationsSection({ items }: Props) {
         {items.map((item, i) => (
           <li key={i} className="rounded-lg border p-4">
             <h4 className="font-semibold">{item.expectation}</h4>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-body">
               <span className="font-medium text-muted-foreground">Why recruiters care: </span>
               {item.whyRecruitersCare}
             </p>
-            <p className="mt-1 text-sm">
+            <p className="mt-1 text-body">
               <span className="font-medium text-muted-foreground">How to demonstrate: </span>
               {item.howCandidatesDemonstrate}
             </p>

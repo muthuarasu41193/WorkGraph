@@ -35,26 +35,26 @@ export default function ProfileAiInsights() {
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] p-4">
-          <p className="text-xs font-medium text-[var(--text-tertiary)]">Industry demand</p>
-          <p className="mt-1 text-base font-semibold text-[var(--text-primary)]">
+          <p className="text-caption font-medium text-[var(--text-tertiary)]">Industry demand</p>
+          <p className="mt-1 text-body-lg font-semibold text-[var(--text-primary)]">
             {data.industryDemand.trend}{" "}
-            <span className="text-sm font-normal text-[var(--text-secondary)]">
+            <span className="text-body font-normal text-[var(--text-secondary)]">
               {data.industryDemand.label}
             </span>
           </p>
-          <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">Last {data.industryDemand.period}</p>
+          <p className="mt-0.5 text-caption text-[var(--text-tertiary)]">Last {data.industryDemand.period}</p>
         </div>
         <div className="rounded-lg border border-[var(--border-default)] p-4">
-          <p className="text-xs font-medium text-[var(--text-tertiary)]">Salary insight</p>
-          <p className="mt-1 text-base font-semibold text-[var(--text-primary)]">{data.salaryInsight.range}</p>
-          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+          <p className="text-caption font-medium text-[var(--text-tertiary)]">Salary insight</p>
+          <p className="mt-1 text-body-lg font-semibold text-[var(--text-primary)]">{data.salaryInsight.range}</p>
+          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">
             {data.salaryInsight.location} · {data.salaryInsight.percentile} percentile
           </p>
         </div>
       </div>
 
       <div className="mt-4 flex items-center justify-between rounded-lg border border-[var(--border-default)] px-4 py-3">
-        <span className="text-sm font-medium text-[var(--text-primary)]">Profile strength score</span>
+        <span className="text-body font-medium text-[var(--text-primary)]">Profile strength score</span>
         <ProfileBadge tone="success">{data.strengthScore}%</ProfileBadge>
       </div>
     </ProfileCard>
@@ -72,13 +72,13 @@ function InsightBlock({
 }) {
   return (
     <div className="rounded-lg border border-[var(--border-default)] p-4">
-      <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+      <p className="mb-2 flex items-center gap-2 text-body font-semibold text-[var(--text-primary)]">
         <Icon className="h-4 w-4 text-[var(--text-tertiary)]" strokeWidth={1.75} />
         {title}
       </p>
       <ul className="space-y-1.5">
         {items.map((item) => (
-          <li key={item} className="flex items-start gap-2 text-sm font-medium text-[var(--text-primary)]">
+          <li key={item} className="flex items-start gap-2 text-body font-medium text-[var(--text-primary)]">
             <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" />
             {item}
           </li>

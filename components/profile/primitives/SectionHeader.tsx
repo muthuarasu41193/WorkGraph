@@ -30,14 +30,14 @@ export default function SectionHeader({
               <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
             </span>
           ) : null}
-          <h2 className="text-base font-semibold tracking-tight text-[var(--text-primary)] sm:text-[1.0625rem]">
+          <h2 className="text-body-lg font-semibold tracking-tight text-[var(--text-primary)] sm:text-heading-s">
             {title}
           </h2>
         </div>
         {description ? (
           <p
             className={[
-              "mt-1.5 max-w-prose text-sm leading-relaxed text-[var(--text-primary)]/80",
+              "mt-1.5 max-w-prose text-body text-[var(--text-primary)]/80",
               Icon ? "sm:pl-[2.625rem]" : "",
             ].join(" ")}
           >

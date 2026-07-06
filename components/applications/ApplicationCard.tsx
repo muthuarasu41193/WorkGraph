@@ -56,14 +56,14 @@ export default function ApplicationCard({ application, onOpen }: Props) {
           </button>
           <Avatar className="h-9 w-9 shrink-0 rounded-md">
             {logo ? <AvatarImage src={logo} alt="" /> : null}
-            <AvatarFallback className="rounded-md bg-[var(--accent-subtle)] text-xs font-semibold text-[var(--accent)]">
+            <AvatarFallback className="rounded-md bg-[var(--accent-subtle)] text-caption font-semibold text-[var(--accent)]">
               {application.company.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-snug">{application.role}</p>
-            <p className="truncate text-xs text-muted-foreground">{application.company}</p>
-            <dl className="mt-2 space-y-0.5 text-[length:var(--font-size-label)] text-muted-foreground">
+            <p className="truncate text-body font-semibold leading-snug">{application.role}</p>
+            <p className="truncate text-caption text-muted-foreground">{application.company}</p>
+            <dl className="mt-2 space-y-0.5 text-caption text-muted-foreground">
               <div className="flex justify-between gap-2">
                 <dt>Applied</dt>
                 <dd className="tabular-nums text-foreground/80">

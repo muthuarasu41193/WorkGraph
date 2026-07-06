@@ -60,17 +60,17 @@ function KanbanColumn({
     >
       <header className="border-b border-border px-3 py-3">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold">{label}</h3>
-          <span className="rounded-full bg-[var(--accent-subtle)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--accent)]">
+          <h3 className="text-body font-semibold">{label}</h3>
+          <span className="rounded-full bg-[var(--accent-subtle)] px-2 py-0.5 text-caption font-semibold tabular-nums text-[var(--accent)]">
             {applications.length}
           </span>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+        <p className="mt-0.5 text-caption text-muted-foreground">{description}</p>
       </header>
 
       <ul className="flex min-h-[120px] flex-1 flex-col gap-2 p-2">
         {applications.length === 0 ? (
-          <li className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
+          <li className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-caption text-muted-foreground">
             Drop applications here
           </li>
         ) : (
@@ -163,8 +163,8 @@ export default function KanbanBoard({
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Application Tracker</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="text-heading-l">Application Tracker</h1>
+          <p className="mt-1 text-body text-muted-foreground">
             Drag cards across stages · {applications.length} total applications
           </p>
         </div>

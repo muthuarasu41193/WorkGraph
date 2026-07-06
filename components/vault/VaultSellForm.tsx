@@ -166,11 +166,11 @@ export default function VaultSellForm({ initialDraft }: Props) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Sell Your Experience</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-heading-l">Sell Your Experience</h1>
+        <p className="mt-1 text-body text-muted-foreground">
           Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-1 flex items-center gap-1.5 text-caption text-muted-foreground">
           {saving ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin" /> Saving…
@@ -192,7 +192,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
               type="button"
               onClick={() => setStep(s.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-caption font-medium transition-colors",
                 step === s.id ? "border-primary bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted",
                 step > s.id && "border-green-500/50 text-green-700 dark:text-green-400",
               )}
@@ -339,7 +339,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
                   value={priceInr}
                   onChange={(e) => setPriceInr(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">You keep 70% of each sale. Recommended: ₹299–₹999.</p>
+                <p className="text-caption text-muted-foreground">You keep 70% of each sale. Recommended: ₹299–₹999.</p>
               </div>
               <Button type="button" onClick={() => void publish()} disabled={saving}>
                 Publish to marketplace

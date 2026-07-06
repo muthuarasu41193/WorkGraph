@@ -101,8 +101,8 @@ export default function SignupPage() {
     >
       <div className="wg-auth-enter space-y-8">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign up</h2>
-          <p className="mt-2 text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
+          <h2 className="text-heading-l text-foreground">Sign up</h2>
+          <p className="mt-2 text-body text-muted-foreground">
             Enter your email and password to create your WorkGraph account.
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-body">
             {isSubmitting ? "Creating account…" : "Create account"}
             {!isSubmitting ? <Sparkles className="h-4 w-4" aria-hidden /> : null}
           </Button>
@@ -186,7 +186,7 @@ export default function SignupPage() {
           <Alert className="border-success/20 bg-success-subtle text-success-foreground">
             <AlertDescription className="space-y-3 text-center">
               <p>{message}</p>
-              <p className="text-xs leading-relaxed text-success-foreground/90">
+              <p className="text-caption leading-relaxed text-success-foreground/90">
                 After you confirm your email, sign in with the same password to upload your resume.
               </p>
               <Button asChild variant="outline" className="w-full rounded-full border-success/20 bg-surface-primary text-success-foreground hover:bg-success-subtle">
@@ -201,14 +201,14 @@ export default function SignupPage() {
           </Alert>
         ) : null}
 
-        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login?next=/create-profile" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign in
           </Link>
         </p>
 
-        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Hiring talent?{" "}
           <Link href="/employer/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Employer signup

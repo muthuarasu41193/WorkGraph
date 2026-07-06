@@ -78,7 +78,7 @@ export default function ResumeAnalyzer() {
   return (
     <Card className="wg-dash-section-card">
       <CardHeader>
-        <CardTitle className="text-lg">AI Resume Analyzer</CardTitle>
+        <CardTitle className="text-heading-s">AI Resume Analyzer</CardTitle>
         <CardDescription>
           Advisory-only feedback for ATS readiness. Your resume is never auto-modified.
         </CardDescription>
@@ -100,10 +100,10 @@ export default function ResumeAnalyzer() {
             >
               <input {...getInputProps()} />
               <UploadCloud className="mx-auto h-7 w-7 text-muted-foreground" />
-              <p className="mt-2 text-sm font-medium">
+              <p className="mt-2 text-body font-medium">
                 {file ? `Selected: ${file.name}` : "Drag and drop your PDF resume"}
               </p>
-              <p className="text-xs text-muted-foreground">or click to select a file</p>
+              <p className="text-caption text-muted-foreground">or click to select a file</p>
             </div>
           </TabsContent>
           <TabsContent value="paste" className="space-y-2">
@@ -145,11 +145,11 @@ export default function ResumeAnalyzer() {
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
             Analyze
           </Button>
-          <p className="text-xs text-muted-foreground">Suggestions only — no automatic resume edits.</p>
+          <p className="text-caption text-muted-foreground">Suggestions only — no automatic resume edits.</p>
         </div>
 
         {error ? (
-          <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-body text-destructive">
             {error}
           </div>
         ) : null}

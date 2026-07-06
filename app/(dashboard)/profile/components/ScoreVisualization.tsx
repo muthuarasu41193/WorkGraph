@@ -36,11 +36,11 @@ export default function ScoreVisualization({ value, label, accentClassName }: Sc
           strokeDashoffset={strokeOffset}
           transform="rotate(-90 60 60)"
         />
-        <text x="60" y="65" textAnchor="middle" className="fill-foreground text-2xl font-semibold">
+        <text x="60" y="65" textAnchor="middle" className="fill-foreground text-heading-l">
           {score}
         </text>
       </svg>
-      <p className="text-sm font-medium text-muted-foreground">{label}</p>
+      <p className="text-body font-medium text-muted-foreground">{label}</p>
     </div>
   );
 }

@@ -31,13 +31,13 @@ export default function EmployerShell({ companyName, children }: Props) {
             <Link href="/employer/dashboard" className="shrink-0">
               <WorkGraphLogo />
             </Link>
-            <span className="hidden text-xs font-medium uppercase tracking-wider text-muted-foreground sm:inline">
+            <span className="hidden text-caption font-medium uppercase tracking-wider text-muted-foreground sm:inline">
               Employer
             </span>
           </div>
           <div className="flex items-center gap-2">
             {companyName ? (
-              <span className="hidden items-center gap-1.5 text-sm text-muted-foreground sm:flex">
+              <span className="hidden items-center gap-1.5 text-body text-muted-foreground sm:flex">
                 <Building2 className="h-4 w-4" aria-hidden />
                 {companyName}
               </span>
@@ -63,7 +63,7 @@ export default function EmployerShell({ companyName, children }: Props) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex min-h-[40px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex min-h-[40px] items-center gap-2 rounded-lg px-3 py-2 text-body font-medium transition-colors",
                     active
                       ? "bg-brand-subtle text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -75,7 +75,7 @@ export default function EmployerShell({ companyName, children }: Props) {
               );
             })}
           </nav>
-          <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-8 text-caption leading-relaxed text-muted-foreground">
             Hiring Signals are intent posts with fit criteria — not cloned job boards. Seekers connect with
             their WorkGraph profile, not a PDF portal.
           </p>

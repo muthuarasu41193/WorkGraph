@@ -1,0 +1,122 @@
+/**
+ * WorkGraph typography utilities — consume tokens from tokens.css.
+ * Use semantic classes (text-display, text-body, …) instead of arbitrary sizes.
+ */
+
+@utility text-display {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-display);
+  line-height: var(--line-height-display);
+  letter-spacing: var(--letter-spacing-display);
+}
+
+@utility text-heading-xl {
+  font-size: var(--font-size-heading-xl);
+  font-weight: var(--font-weight-heading-xl);
+  line-height: var(--line-height-heading-xl);
+  letter-spacing: var(--letter-spacing-heading-xl);
+}
+
+@utility text-heading-l {
+  font-size: var(--font-size-heading-l);
+  font-weight: var(--font-weight-heading-l);
+  line-height: var(--line-height-heading-l);
+  letter-spacing: var(--letter-spacing-heading-l);
+}
+
+@utility text-heading-m {
+  font-size: var(--font-size-heading-m);
+  font-weight: var(--font-weight-heading-m);
+  line-height: var(--line-height-heading-m);
+  letter-spacing: var(--letter-spacing-heading-m);
+}
+
+@utility text-heading-s {
+  font-size: var(--font-size-heading-s);
+  font-weight: var(--font-weight-heading-s);
+  line-height: var(--line-height-heading-s);
+  letter-spacing: var(--letter-spacing-heading-s);
+}
+
+@utility text-title {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-title);
+  line-height: var(--line-height-title);
+  letter-spacing: var(--letter-spacing-title);
+}
+
+@utility text-body-lg {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-body-lg);
+  line-height: var(--line-height-body-lg);
+  letter-spacing: var(--letter-spacing-body-lg);
+}
+
+@utility text-body {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+@utility text-small {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-small);
+  line-height: var(--line-height-small);
+  letter-spacing: var(--letter-spacing-small);
+}
+
+@utility text-caption {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-caption);
+  line-height: var(--line-height-caption);
+  letter-spacing: var(--letter-spacing-caption);
+}
+
+@utility text-code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-code);
+  font-weight: var(--font-weight-code);
+  line-height: var(--line-height-code);
+  letter-spacing: var(--letter-spacing-code);
+}
+
+@utility text-body-medium {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+@utility text-body-lg-medium {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-body-lg);
+  letter-spacing: var(--letter-spacing-body-lg);
+}
+
+@utility text-title-semibold {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-title);
+  letter-spacing: var(--letter-spacing-title);
+}
+
+@layer utilities {
+  /* Paragraph spacing */
+  .wg-prose > p + p,
+  .wg-prose > ul + p,
+  .wg-prose > ol + p,
+  .wg-prose > p + ul,
+  .wg-prose > p + ol {
+    margin-top: var(--paragraph-spacing-body);
+  }
+
+  .wg-prose-lg > p + p {
+    margin-top: var(--paragraph-spacing-body-lg);
+  }
+
+  .wg-prose-sm > p + p {
+    margin-top: var(--paragraph-spacing-small);
+  }
+}

@@ -56,8 +56,8 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Seller Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
+          <h1 className="text-heading-l">Seller Dashboard</h1>
+          <p className="mt-1 text-body text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/interview-vault/sell">+ New experience</Link>
@@ -72,8 +72,8 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
                 <Icon className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{label}</p>
-                <p className="text-xl font-bold">{value}</p>
+                <p className="text-caption text-muted-foreground">{label}</p>
+                <p className="text-heading-m">{value}</p>
               </div>
             </CardContent>
           </Card>
@@ -82,7 +82,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Sales over time</CardTitle>
+          <CardTitle className="text-heading-s">Sales over time</CardTitle>
         </CardHeader>
         <CardContent>
           <VaultEarningsChart salesByDay={dashboard.sales_by_day} currency={currency} />
@@ -91,7 +91,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Your experiences</CardTitle>
+          <CardTitle className="text-heading-s">Your experiences</CardTitle>
           <Button onClick={() => void requestWithdrawal()} disabled={withdrawing || dashboard.total_earnings_inr < 500}>
             <Wallet className="h-4 w-4" />
             {withdrawing ? "Submitting…" : "Request withdrawal"}
@@ -106,7 +106,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
                     <Link href={`/interview-vault/${exp.id}`} className="font-medium hover:text-primary">
                       {exp.company || "Untitled"} — {exp.role || "Draft"}
                     </Link>
-                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <div className="mt-1 flex flex-wrap gap-2 text-caption text-muted-foreground">
                       <span>{exp.view_count} views</span>
                       <span>{exp.sales_count} sales</span>
                       <span>{formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned</span>
@@ -120,7 +120,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               No experiences yet.{" "}
               <Link href="/interview-vault/sell" className="text-primary hover:underline">
                 Create your first listing
@@ -128,7 +128,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
             </p>
           )}
           {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-3 text-caption text-muted-foreground">
               Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).
             </p>
           ) : null}

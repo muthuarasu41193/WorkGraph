@@ -72,14 +72,14 @@ export default function HiddenDiscoverySection() {
         </div>
       </div>
       {meta ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-caption text-muted-foreground">
           {meta.filtered} shown · {meta.total} unique ·{" "}
           {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
         </p>
       ) : null}
 
       <Card className="wg-dash-section-card border-border bg-muted/40">
-        <CardContent className="space-y-2 p-4 text-sm text-muted-foreground">
+        <CardContent className="space-y-2 p-4 text-body text-muted-foreground">
           <p className="font-medium text-foreground">Quick start</p>
           <ol className="list-decimal space-y-1 pl-5">
             <li>Wait a few seconds while we load posts from Reddit, Hacker News, and GitHub.</li>
@@ -87,7 +87,7 @@ export default function HiddenDiscoverySection() {
             <li>Click <strong>View Original Source</strong> to open the listing on Reddit, HN, GitHub, or the company site.</li>
             <li>Click <strong>Save</strong> to bookmark roles you want to revisit (stored in your browser).</li>
           </ol>
-          <p className="text-xs">
+          <p className="text-caption">
             Bookmark this page:{" "}
             <code className="rounded bg-muted px-1 py-0.5">/discovery</code> or{" "}
             <code className="rounded bg-muted px-1 py-0.5">/profile?view=job-discovery</code>
@@ -105,7 +105,7 @@ export default function HiddenDiscoverySection() {
 
       {meta?.providerErrors && Object.keys(meta.providerErrors).length > 0 ? (
         <Alert>
-          <AlertDescription className="text-sm">
+          <AlertDescription className="text-body">
             Some sources could not be reached ({Object.keys(meta.providerErrors).join(", ")}). Other
             sources still loaded. If Reddit is missing, restart the app or click Refresh after deploy.
           </AlertDescription>
@@ -114,7 +114,7 @@ export default function HiddenDiscoverySection() {
 
       {loading && visible.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
+          <CardContent className="flex items-center justify-center gap-2 py-16 text-body text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
             Aggregating opportunities from providers…
           </CardContent>
@@ -123,7 +123,7 @@ export default function HiddenDiscoverySection() {
 
       {!loading && visible.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
+          <CardContent className="py-12 text-center text-body text-muted-foreground">
             No opportunities match your filters. Try broadening search or date range.
           </CardContent>
         </Card>

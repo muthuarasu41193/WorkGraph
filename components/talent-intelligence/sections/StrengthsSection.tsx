@@ -25,11 +25,11 @@ export default function StrengthsSection({ items }: Props) {
                 Match
               </Badge>
             </div>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 text-body">
               <span className="font-medium text-muted-foreground">Evidence: </span>
               {item.evidence}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-body text-muted-foreground">
               <span className="font-medium">Why it matters: </span>
               {item.whyItMatters}
             </p>

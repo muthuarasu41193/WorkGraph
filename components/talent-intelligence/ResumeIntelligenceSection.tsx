@@ -129,11 +129,11 @@ export default function ResumeIntelligenceSection({
       <header>
         <div className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />
-          <h1 id="resume-intelligence-heading" className="text-2xl font-bold tracking-tight">
+          <h1 id="resume-intelligence-heading" className="text-heading-l">
             Resume Intelligence
           </h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-body text-muted-foreground">
           Compare your genuine experience against any job. WorkGraph explains fit, gaps, and improvements — never fabricates content.
         </p>
       </header>
@@ -148,7 +148,7 @@ export default function ResumeIntelligenceSection({
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-heading-s">
             <Sparkles className="h-5 w-5 text-primary" />
             Analyze against a job
           </CardTitle>
@@ -213,7 +213,7 @@ export default function ResumeIntelligenceSection({
       {history.length > 0 && !report ? (
         <Card className="wg-dash-section-card">
           <CardHeader>
-            <CardTitle className="text-base">Recent analyses</CardTitle>
+            <CardTitle className="text-body-lg">Recent analyses</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
@@ -222,7 +222,7 @@ export default function ResumeIntelligenceSection({
                   <button
                     type="button"
                     onClick={() => loadReport(h.id)}
-                    className="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition hover:bg-muted/50"
+                    className="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-body transition hover:bg-muted/50"
                   >
                     <span>
                       {h.jobTitle ?? "Untitled role"}

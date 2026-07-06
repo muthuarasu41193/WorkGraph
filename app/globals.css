@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./typography.css";
 @import "../components/profile/profile-theme.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -23,7 +24,7 @@ body {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-wider);
+  letter-spacing: var(--letter-spacing-label);
   text-transform: uppercase;
   color: var(--text-secondary);
 }
@@ -293,6 +294,50 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --font-sans: var(--font-family-sans);
   --font-mono: var(--font-family-mono);
 
+  /* Typography scale — align Tailwind defaults with design tokens */
+  --text-xs: var(--font-size-caption);
+  --text-xs--line-height: var(--line-height-caption);
+  --text-sm: var(--font-size-body);
+  --text-sm--line-height: var(--line-height-body);
+  --text-base: var(--font-size-body-lg);
+  --text-base--line-height: var(--line-height-body-lg);
+  --text-lg: var(--font-size-heading-s);
+  --text-lg--line-height: var(--line-height-heading-s);
+  --text-xl: var(--font-size-heading-m);
+  --text-xl--line-height: var(--line-height-heading-m);
+  --text-2xl: var(--font-size-heading-l);
+  --text-2xl--line-height: var(--line-height-heading-l);
+  --text-3xl: var(--font-size-heading-xl);
+  --text-3xl--line-height: var(--line-height-heading-xl);
+  --text-4xl: var(--font-size-display);
+  --text-4xl--line-height: var(--line-height-display);
+  --text-5xl: var(--font-size-display);
+  --text-5xl--line-height: var(--line-height-display);
+
+  /* Semantic typography utilities */
+  --text-display: var(--font-size-display);
+  --text-display--line-height: var(--line-height-display);
+  --text-heading-xl: var(--font-size-heading-xl);
+  --text-heading-xl--line-height: var(--line-height-heading-xl);
+  --text-heading-l: var(--font-size-heading-l);
+  --text-heading-l--line-height: var(--line-height-heading-l);
+  --text-heading-m: var(--font-size-heading-m);
+  --text-heading-m--line-height: var(--line-height-heading-m);
+  --text-heading-s: var(--font-size-heading-s);
+  --text-heading-s--line-height: var(--line-height-heading-s);
+  --text-title: var(--font-size-title);
+  --text-title--line-height: var(--line-height-title);
+  --text-body-lg: var(--font-size-body-lg);
+  --text-body-lg--line-height: var(--line-height-body-lg);
+  --text-body: var(--font-size-body);
+  --text-body--line-height: var(--line-height-body);
+  --text-small: var(--font-size-small);
+  --text-small--line-height: var(--line-height-small);
+  --text-caption: var(--font-size-caption);
+  --text-caption--line-height: var(--line-height-caption);
+  --text-code: var(--font-size-code);
+  --text-code--line-height: var(--line-height-code);
+
   /* Semantic surfaces */
   --color-surface-page: var(--surface-page);
   --color-surface-primary: var(--surface-primary);
@@ -399,30 +444,48 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased text-body;
   }
   html {
     @apply font-sans;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
+  h1 {
+    @apply text-heading-xl text-foreground;
+  }
+  h2 {
+    @apply text-heading-l text-foreground;
+  }
+  h3 {
+    @apply text-heading-m text-foreground;
+  }
+  h4 {
+    @apply text-heading-s text-foreground;
+  }
+  h5 {
+    @apply text-title-semibold text-foreground;
+  }
   h6 {
-    @apply font-semibold tracking-tight text-foreground;
+    @apply text-title-semibold text-foreground;
   }
   p {
-    @apply text-foreground;
+    @apply text-body text-foreground;
+  }
+  p + p {
+    margin-top: var(--paragraph-spacing-body);
+  }
+  code,
+  kbd,
+  samp {
+    @apply text-code;
   }
   [data-slot="card-title"] {
-    @apply font-semibold text-foreground;
+    @apply text-title-semibold text-foreground;
   }
   [data-slot="card-description"] {
-    color: var(--text-secondary);
+    @apply text-body text-muted-foreground;
   }
   label {
-    @apply text-foreground;
+    @apply text-body-medium text-foreground;
   }
   strong {
     @apply font-semibold text-foreground;

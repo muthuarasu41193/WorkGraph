@@ -151,9 +151,9 @@ export default function WorkgraphDirectSection({
       <header>
         <div className="flex items-center gap-2">
           <Radio className="h-6 w-6 text-[var(--accent)]" aria-hidden />
-          <h1 className="text-2xl font-bold tracking-tight">WorkGraph Direct</h1>
+          <h1 className="text-heading-l">WorkGraph Direct</h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-body text-muted-foreground">
           Apply to employer hiring signals with your resume, profile links, and a tailored message —
           employers review your full application in their Pulse inbox.
         </p>
@@ -161,10 +161,10 @@ export default function WorkgraphDirectSection({
 
       {connections.length > 0 ? (
         <section className="rounded-xl border bg-muted/30 p-4">
-          <h2 className="text-sm font-semibold">Your applications</h2>
+          <h2 className="text-body font-semibold">Your applications</h2>
           <ul className="mt-2 space-y-2">
             {connections.slice(0, 5).map((c) => (
-              <li key={c.id} className="flex items-center justify-between gap-2 text-sm">
+              <li key={c.id} className="flex items-center justify-between gap-2 text-body">
                 <span>{c.signal?.title ?? "Signal"}</span>
                 <Badge variant="outline">{c.stage}</Badge>
               </li>
@@ -183,7 +183,7 @@ export default function WorkgraphDirectSection({
         </Alert>
       ) : signals.length === 0 ? (
         <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+          <CardContent className="py-10 text-center text-body text-muted-foreground">
             No live hiring signals yet. Employers on WorkGraph publish intent posts here — check back
             soon, or{" "}
             <a href="/employer/signup" className="font-medium text-[var(--accent)] underline-offset-2 hover:underline">
@@ -203,7 +203,7 @@ export default function WorkgraphDirectSection({
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground flex flex-wrap items-center gap-1.5">
+                        <p className="text-caption font-medium text-muted-foreground flex flex-wrap items-center gap-1.5">
                           <Building2 className="h-3.5 w-3.5 shrink-0" />
                           {signal.employer?.verification_status === "verified" &&
                           signal.employer.company_slug ? (
@@ -219,14 +219,14 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-success/40 px-1.5 text-[10px] text-success-foreground"
+                              className="h-5 gap-0.5 border-success/40 px-1.5 text-caption text-success-foreground"
                             >
                               <BadgeCheck className="h-3 w-3" />
                               Verified
                             </Badge>
                           ) : null}
                         </p>
-                        <CardTitle className="mt-1 text-base">{signal.title}</CardTitle>
+                        <CardTitle className="mt-1 text-body-lg">{signal.title}</CardTitle>
                       </div>
                       <Badge className="shrink-0 bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/15">
                         <Sparkles className="mr-1 h-3 w-3" />
@@ -234,8 +234,8 @@ export default function WorkgraphDirectSection({
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm">
-                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  <CardContent className="space-y-3 text-body">
+                    <div className="flex flex-wrap gap-2 text-caption text-muted-foreground">
                       {signal.location ? (
                         <span className="flex items-center gap-1">
                           <MapPin className="h-3 w-3" />
@@ -246,14 +246,14 @@ export default function WorkgraphDirectSection({
                       <span>{HIRING_INTENT_LABELS[signal.hiring_intent]}</span>
                     </div>
                     {signal.why_now ? (
-                      <p className="text-xs italic text-foreground/80 border-l-2 border-[var(--accent)] pl-2">
+                      <p className="text-caption italic text-foreground/80 border-l-2 border-[var(--accent)] pl-2">
                         {signal.why_now}
                       </p>
                     ) : null}
                     {preview.matchedSignals.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {preview.matchedSignals.map((s) => (
-                          <Badge key={s} variant="secondary" className="text-[10px]">
+                          <Badge key={s} variant="secondary" className="text-caption">
                             {s}
                           </Badge>
                         ))}

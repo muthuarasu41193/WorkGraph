@@ -125,7 +125,7 @@ export default function ApplicationDetailDrawer({
             <div className="min-w-0">
               <SheetTitle className="text-left leading-snug">{application.role}</SheetTitle>
               <SheetDescription className="text-left">{application.company}</SheetDescription>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-caption text-muted-foreground">
                 {APPLICATION_STATUS_LABELS[application.status]} · Applied{" "}
                 {application.applied_date}
               </p>
@@ -143,7 +143,7 @@ export default function ApplicationDetailDrawer({
 
         <div className="space-y-6 p-4">
           <section className="space-y-3" aria-labelledby="drawer-fields-heading">
-            <h2 id="drawer-fields-heading" className="text-sm font-semibold">
+            <h2 id="drawer-fields-heading" className="text-body font-semibold">
               Details
             </h2>
             <div className="space-y-2">
@@ -189,10 +189,10 @@ export default function ApplicationDetailDrawer({
           </section>
 
           <section className="space-y-3" aria-labelledby="drawer-meta-heading">
-            <h2 id="drawer-meta-heading" className="text-sm font-semibold">
+            <h2 id="drawer-meta-heading" className="text-body font-semibold">
               Application info
             </h2>
-            <dl className="grid gap-2 text-sm">
+            <dl className="grid gap-2 text-body">
               {application.contact_person ? (
                 <div className="flex justify-between gap-2">
                   <dt className="text-muted-foreground">Contact</dt>
@@ -213,18 +213,18 @@ export default function ApplicationDetailDrawer({
           </section>
 
           <section className="space-y-3" aria-labelledby="drawer-timeline-heading">
-            <h2 id="drawer-timeline-heading" className="text-sm font-semibold">
+            <h2 id="drawer-timeline-heading" className="text-body font-semibold">
               Timeline
             </h2>
             {application.timeline.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No timeline events yet.</p>
+              <p className="text-body text-muted-foreground">No timeline events yet.</p>
             ) : (
               <ol className="relative space-y-4 border-l border-border pl-4">
                 {application.timeline.map((event) => (
                   <li key={event.id} className="relative">
                     <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
-                    <p className="text-sm font-medium">{event.label}</p>
-                    <p className="text-xs text-muted-foreground">{formatTimelineAt(event.at)}</p>
+                    <p className="text-body font-medium">{event.label}</p>
+                    <p className="text-caption text-muted-foreground">{formatTimelineAt(event.at)}</p>
                   </li>
                 ))}
               </ol>

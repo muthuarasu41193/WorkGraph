@@ -24,18 +24,18 @@ export default function HonestyCheckSection({ data }: Props) {
       defaultOpen={false}
     >
       <div className="mb-4 flex items-center gap-4">
-        <span className="text-sm font-medium">Authenticity</span>
+        <span className="text-body font-medium">Authenticity</span>
         <Progress value={data.authenticityScore} className="h-2 flex-1" />
-        <span className="tabular-nums text-sm font-semibold">{data.authenticityScore}%</span>
+        <span className="tabular-nums text-body font-semibold">{data.authenticityScore}%</span>
       </div>
-      <p className="mb-4 text-sm text-muted-foreground">{data.overallAssessment}</p>
+      <p className="mb-4 text-body text-muted-foreground">{data.overallAssessment}</p>
       {data.issues.length > 0 ? (
         <ul className="space-y-3">
           {data.issues.map((issue, i) => (
-            <li key={i} className="rounded-lg border p-3 text-sm">
+            <li key={i} className="rounded-lg border p-3 text-body">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{issue.issue}</span>
-                <Badge className={cn("text-xs capitalize", SEVERITY_STYLES[issue.severity])}>
+                <Badge className={cn("text-caption capitalize", SEVERITY_STYLES[issue.severity])}>
                   {issue.severity}
                 </Badge>
               </div>
@@ -45,7 +45,7 @@ export default function HonestyCheckSection({ data }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-success-foreground dark:text-success">
+        <p className="text-body text-success-foreground dark:text-success">
           No significant authenticity concerns detected.
         </p>
       )}

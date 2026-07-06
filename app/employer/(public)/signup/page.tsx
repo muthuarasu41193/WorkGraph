@@ -67,8 +67,8 @@ export default function EmployerSignupPage() {
       ]}
     >
       <form onSubmit={onSubmit} className="mx-auto w-full max-w-md space-y-4">
-        <h2 className="text-xl font-semibold">Create employer account</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-heading-m">Create employer account</h2>
+        <p className="text-body text-muted-foreground">
           Jobseeker?{" "}
           <Link href="/signup" className="text-[var(--accent)] underline-offset-2 hover:underline">
             Sign up as a seeker
@@ -111,7 +111,7 @@ export default function EmployerSignupPage() {
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Creating…" : "Continue"}
         </Button>
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-body text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login?next=/employer/onboarding" className="font-medium text-foreground">
             Sign in
