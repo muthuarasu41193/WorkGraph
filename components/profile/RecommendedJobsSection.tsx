@@ -621,6 +621,7 @@ export default function RecommendedJobsSection({
     [skillHints, profileHeadline, profileSummary]
   );
   const profileMatchActive = skillHints.length > 0;
+  const isLiveFeed = feedKind === "live" || liveListings > 0;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -643,10 +644,10 @@ export default function RecommendedJobsSection({
   const initialBenefits = parseCsvSet(searchParams.get("benefits"), BENEFIT_OPTIONS);
   const hint =
     skillHints.length > 0
-      ? feedKind === "live"
+      ? isLiveFeed
         ? `Sorted by fit to your resume — skills, headline, and summary matched against each role (${skillHints.slice(0, 4).join(", ")}${skillHints.length > 4 ? "…" : ""}).`
         : `Demo cards — once ingest fills Postgres, listings personalize against ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
-      : feedKind === "live"
+      : isLiveFeed
         ? "Add skills, headline, and summary on your profile so we can rank roles that fit your background."
         : "Add skills to your profile to sharpen ranking after ingest runs.";
 
@@ -693,7 +694,7 @@ export default function RecommendedJobsSection({
   const [pageJobs, setPageJobs] = useState<RecommendedJobCard[]>(() => initialJobs.slice(0, PAGE_SIZE));
   const [filterPoolJobs, setFilterPoolJobs] = useState<RecommendedJobCard[]>([]);
   const [apiTotal, setApiTotal] = useState(
-    feedKind === "live" ? liveListings || initialJobs.length : initialJobs.length
+    isLiveFeed ? liveListings || initialJobs.length : initialJobs.length
   );
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -782,17 +783,17 @@ export default function RecommendedJobsSection({
     [catalogFilters, clientFilterState]
   );
 
-  const useServerJobs = feedKind === "live" || liveListings > 0;
+  const useServerJobs = isLiveFeed;
   const needsClientFilterPool = useServerJobs && hasClientOnlyJobFilters(clientFilterState);
 
   const profileOverlapOptions = useMemo(
     () => ({
       profile: profileMatch,
       requireProfileOverlap:
-        showProfileMatchesOnly && profileMatchActive && feedKind === "live" && !userFiltersActive,
+        showProfileMatchesOnly && profileMatchActive && isLiveFeed && !userFiltersActive,
       minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
     }),
-    [profileMatch, showProfileMatchesOnly, profileMatchActive, feedKind, userFiltersActive]
+    [profileMatch, showProfileMatchesOnly, profileMatchActive, isLiveFeed, userFiltersActive]
   );
 
   const listingPipeline = useMemo(() => {
@@ -856,9 +857,9 @@ export default function RecommendedJobsSection({
 
   const sourceFilterOptions = useMemo(() => {
     if (platformsInFeed.length > 0) return platformsInFeed;
-    if (feedKind === "live") return [...JOB_FEED_SOURCE_OPTIONS];
+    if (isLiveFeed) return [...JOB_FEED_SOURCE_OPTIONS];
     return platformsInFeed;
-  }, [platformsInFeed, feedKind]);
+  }, [platformsInFeed, isLiveFeed]);
 
   const visibleIndustryOptions = useMemo(
     () =>
@@ -887,10 +888,8 @@ export default function RecommendedJobsSection({
       const params = new URLSearchParams();
       params.set("page", String(page));
       params.set("page_size", String(batchSize));
-
-      const rankByProfile =
-        batchSize === PAGE_SIZE && sortBy === "best" && skillHints.length > 0 && !needsClientFilterPool;
-      if (!rankByProfile) params.set("rank_profile", "0");
+      // Paginate the full Postgres catalog; profile match sorting runs client-side.
+      params.set("rank_profile", "0");
 
       if (skillHints.length > 0) {
         params.set("profile_skills", skillHints.join(","));
@@ -916,7 +915,7 @@ export default function RecommendedJobsSection({
 
       return params.toString();
     },
-    [sortBy, skillHints, profileHeadline, profileSummary, catalogFilters, needsClientFilterPool]
+    [skillHints, profileHeadline, profileSummary, catalogFilters]
   );
 
   const serverCatalogFilters = useMemo(
@@ -970,8 +969,7 @@ export default function RecommendedJobsSection({
         const fallback = await loadLiveJobCardsPage(supabase, skillHints, {
           page: fetchPage,
           pageSize: fetchSize,
-          rankByProfile:
-            fetchSize === PAGE_SIZE && sortBy === "best" && skillHints.length > 0 && !needsClientFilterPool,
+          rankByProfile: false,
           profile: profileMatch,
           filters: serverCatalogFilters,
         });
@@ -1005,7 +1003,6 @@ export default function RecommendedJobsSection({
     buildJobsFetchQuery,
     skillHints,
     profileMatch,
-    sortBy,
     serverCatalogFilters,
   ]);
 
@@ -1409,7 +1406,7 @@ export default function RecommendedJobsSection({
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Job board</p>
           <h2 className="mt-1 text-[18px] font-semibold text-[#2C2C2E] sm:text-[18px]">
-            {feedKind === "live"
+            {isLiveFeed
               ? profileMatchActive
                 ? "Jobs matching your profile"
                 : "Browse live job listings"
@@ -1419,16 +1416,16 @@ export default function RecommendedJobsSection({
         </div>
         <span
           className={`rounded-[20px] px-3 py-1 text-xs font-medium uppercase tracking-wide ring-1 ${
-            feedKind === "live"
+            isLiveFeed
               ? "border-0 bg-[#E8F0FE] text-[#1557B0] ring-[#DADCE0]"
               : "border-[#DADCE0] bg-[#FEF7E0] text-[#5F6368] ring-[#DADCE0]"
           }`}
         >
-          {feedKind === "live" ? "Live Postgres feed" : "Demo preview"}
+          {isLiveFeed ? "Live Postgres feed" : "Demo preview"}
         </span>
       </div>
 
-      {feedKind === "demo" && feedDemoHint ? (
+      {!isLiveFeed && feedDemoHint ? (
         <div className="flex gap-3 rounded-xl border border-[#DADCE0] bg-[#FEF7E0] p-4 text-sm text-[#3A3A3C] ring-1 ring-[#DADCE0] wg-section-fade" style={{ animationDelay: "100ms" }}>
           <span className="mt-0.5 shrink-0 text-amber-700">
             <LifeBuoy className="h-5 w-5" aria-hidden />
@@ -1536,7 +1533,7 @@ export default function RecommendedJobsSection({
         </p>
       ) : null}
 
-      {(initialJobs.length > 0 || liveListings > 0 || feedKind === "live") ? (
+      {(initialJobs.length > 0 || isLiveFeed) ? (
         <>
           <div className="md:hidden">
             <Button

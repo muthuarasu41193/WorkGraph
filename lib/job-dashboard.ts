@@ -400,6 +400,19 @@ function countBySourceFromJobRows(rows: JobRow[]): Partial<Record<JobFeedSource,
   return bySource;
 }
 
+/** Prefer ranked matches; fall back to newest live rows so the Jobs tab never shows demo placeholders when Postgres has data. */
+function recommendedFromJobRows(
+  rows: JobRow[],
+  profile: ProfileMatchInput,
+  limit = 150,
+): RecommendedJobCard[] {
+  const ranked = rankJobRows(rows, profile, { limit });
+  if (ranked.length > 0) {
+    return ranked.map((r) => rowToCard(r, profile));
+  }
+  return rows.slice(0, Math.min(limit, 50)).map((r) => rowToCard(r, profile));
+}
+
 async function withHiringSignalsInFeed(
   supabase: SupabaseClient,
   profile: ProfileMatchInput,
@@ -411,12 +424,13 @@ async function withHiringSignalsInFeed(
   const hasOnlyDemo =
     payload.feedKind === "demo" &&
     payload.recommended.every((job) => job.id.startsWith("demo-"));
+  const hasLiveCatalog = payload.liveListings > 0;
   return {
     ...payload,
     recommended,
     liveListings: payload.liveListings + signals.length,
-    feedKind: hasOnlyDemo || payload.feedKind === "live" ? "live" : payload.feedKind,
-    feedDemoHint: hasOnlyDemo ? null : payload.feedDemoHint,
+    feedKind: hasOnlyDemo || payload.feedKind === "live" || hasLiveCatalog ? "live" : payload.feedKind,
+    feedDemoHint: hasOnlyDemo || hasLiveCatalog ? null : payload.feedDemoHint,
   };
 }
 
@@ -466,9 +480,9 @@ async function loadProfileJobDashboardCore(
         pipeline,
         liveListings: stats.total,
         listingsBySource: stats.bySource,
-        recommended: DEMO_RECOMMENDED_JOBS,
+        recommended: [],
         communityPosts,
-        feedKind: "demo",
+        feedKind: "live",
         feedDemoHint: "rows_unavailable",
       };
     }
@@ -478,25 +492,24 @@ async function loadProfileJobDashboardCore(
         pipeline,
         liveListings: stats.total,
         listingsBySource: stats.bySource,
-        recommended: DEMO_RECOMMENDED_JOBS,
+        recommended: [],
         communityPosts,
-        feedKind: "demo",
+        feedKind: "live",
         feedDemoHint: "select_returned_empty",
       };
     }
 
-    const ranked = rankJobRows(atsRows, matchProfile, { limit: 150 });
-    const recommended =
-      ranked.length > 0 ? ranked.map((r) => rowToCard(r, matchProfile)) : DEMO_RECOMMENDED_JOBS;
+    const listingsBySource = countBySourceFromJobRows(atsRows);
+    const recommended = recommendedFromJobRows(atsRows, matchProfile);
 
     return {
       pipeline,
       liveListings: stats.total,
-      listingsBySource: stats.bySource,
+      listingsBySource,
       recommended,
       communityPosts,
-      feedKind: ranked.length > 0 ? "live" : "demo",
-      feedDemoHint: ranked.length > 0 ? null : "select_returned_empty",
+      feedKind: "live",
+      feedDemoHint: null,
     };
   }
 
