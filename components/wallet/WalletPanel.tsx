@@ -34,7 +34,7 @@ export default function WalletPanel() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Available</CardTitle>
+              <CardTitle className="text-sm font-medium text-[var(--text-tertiary)]">Available</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold tabular-nums">{formatUsd(balance)}</p>
@@ -42,7 +42,7 @@ export default function WalletPanel() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Pending payout</CardTitle>
+              <CardTitle className="text-sm font-medium text-[var(--text-tertiary)]">Pending payout</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold tabular-nums">{formatUsd(pending)}</p>
@@ -50,7 +50,7 @@ export default function WalletPanel() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Lifetime earned</CardTitle>
+              <CardTitle className="text-sm font-medium text-[var(--text-tertiary)]">Lifetime earned</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold tabular-nums">{formatUsd(lifetime)}</p>
@@ -60,7 +60,7 @@ export default function WalletPanel() {
       )}
 
       {dashboard ? (
-        <p className="text-sm text-[var(--wg-color-text-secondary)]">
+        <p className="text-sm text-[var(--text-secondary)]">
           Trust score {dashboard.trust_score} · Contribution score {dashboard.contribution_score}
         </p>
       ) : null}
@@ -73,7 +73,7 @@ export default function WalletPanel() {
         <CardContent>
           <form className="flex flex-wrap items-end gap-3" onSubmit={onPayout}>
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--wg-color-text-tertiary)]">Amount (USD)</label>
+              <label className="mb-1 block text-xs font-medium text-[var(--text-tertiary)]">Amount (USD)</label>
               <Input
                 type="number"
                 min={5}
@@ -89,7 +89,7 @@ export default function WalletPanel() {
           </form>
           {payout.isError ? <p className="mt-2 text-sm text-red-600">{(payout.error as Error).message}</p> : null}
           {payout.isSuccess ? (
-            <p className="mt-2 text-sm text-emerald-700">Payout request submitted.</p>
+            <p className="mt-2 text-sm text-success-foreground">Payout request submitted.</p>
           ) : null}
         </CardContent>
       </Card>
@@ -100,18 +100,18 @@ export default function WalletPanel() {
         </CardHeader>
         <CardContent>
           {error ? <p className="text-sm text-red-600">Could not load wallet.</p> : null}
-          <ul className="divide-y divide-[var(--wg-color-border)]">
+          <ul className="divide-y divide-[var(--border-default)]">
             {(data?.transactions ?? []).map((tx) => (
               <li key={tx.id} className="flex items-center justify-between py-2.5 text-sm first:pt-0 last:pb-0">
                 <div>
-                  <p className="font-medium text-[var(--wg-color-text-primary)]">{tx.description ?? tx.kind}</p>
-                  <p className="text-xs text-[var(--wg-color-text-tertiary)]">
+                  <p className="font-medium text-[var(--text-primary)]">{tx.description ?? tx.kind}</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">
                     {tx.status} · {new Date(tx.created_at).toLocaleString()}
                   </p>
                 </div>
                 <span
                   className={`tabular-nums font-semibold ${
-                    tx.amount_cents >= 0 ? "text-emerald-700" : "text-[var(--wg-color-text-primary)]"
+                    tx.amount_cents >= 0 ? "text-success-foreground" : "text-[var(--text-primary)]"
                   }`}
                 >
                   {tx.amount_cents >= 0 ? "+" : ""}
@@ -121,7 +121,7 @@ export default function WalletPanel() {
             ))}
           </ul>
           {!isLoading && !data?.transactions?.length ? (
-            <p className="text-sm text-[var(--wg-color-text-tertiary)]">No transactions yet — publish community posts to earn.</p>
+            <p className="text-sm text-[var(--text-tertiary)]">No transactions yet — publish community posts to earn.</p>
           ) : null}
         </CardContent>
       </Card>

@@ -36,11 +36,11 @@ const EVENT_ICONS: Record<TimelineEvent["type"], LucideIcon> = {
 
 const EVENT_COLORS: Record<TimelineEvent["type"], string> = {
   resume_improved: "bg-blue-50 text-blue-600",
-  jobs_matched: "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]",
-  application_submitted: "bg-gray-100 text-gray-600",
+  jobs_matched: "bg-[var(--accent-subtle)] text-[var(--accent)]",
+  application_submitted: "bg-surface-secondary text-text-secondary",
   recruiter_viewed: "bg-purple-50 text-purple-600",
-  interview_invitation: "bg-amber-50 text-amber-600",
-  offer_received: "bg-emerald-50 text-emerald-600",
+  interview_invitation: "bg-warning-subtle text-warning",
+  offer_received: "bg-success-subtle text-success",
 };
 
 type Props = {
@@ -60,7 +60,7 @@ export default function ActivityTimeline({ events, className }: Props) {
           <div key={event.id} className="relative flex gap-3 pb-6" role="listitem">
             {!isLast ? (
               <span
-                className="absolute left-[17px] top-9 h-[calc(100%-12px)] w-px bg-[var(--dash-border)]"
+                className="absolute left-[17px] top-9 h-[calc(100%-12px)] w-px bg-[var(--border-default)]"
                 aria-hidden
               />
             ) : null}
@@ -74,11 +74,11 @@ export default function ActivityTimeline({ events, className }: Props) {
             </span>
             <div className="min-w-0 flex-1 pt-0.5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm font-medium text-[var(--dash-text)]">{event.title}</p>
-                <time className="text-xs text-[var(--dash-text-secondary)]">{event.timestamp}</time>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{event.title}</p>
+                <time className="text-xs text-[var(--text-secondary)]">{event.timestamp}</time>
               </div>
               {event.description ? (
-                <p className="mt-0.5 text-xs text-[var(--dash-text-secondary)]">{event.description}</p>
+                <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{event.description}</p>
               ) : null}
             </div>
           </div>

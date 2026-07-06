@@ -31,12 +31,12 @@ export default function PageHero({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           {greeting ? (
-            <p className="text-sm font-medium text-[var(--dash-text-secondary)]">{greeting}</p>
+            <p className="text-sm font-medium text-[var(--text-secondary)]">{greeting}</p>
           ) : null}
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-3xl">
             {title}
           </h1>
-          <p className="max-w-2xl text-sm leading-relaxed text-[var(--dash-text-secondary)]">
+          <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)]">
             {subtitle}
           </p>
         </div>
@@ -51,12 +51,12 @@ export default function PageHero({
               className={cn(
                 "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                 m.accent
-                  ? "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
-                  : "bg-white ring-1 ring-[var(--dash-border)]",
+                  ? "bg-[var(--accent-subtle)] text-[var(--accent)]"
+                  : "bg-surface-primary ring-1 ring-[var(--border-default)]",
               )}
             >
               <span className="font-semibold tabular-nums">{m.value}</span>
-              <span className="text-[var(--dash-text-secondary)]">{m.label}</span>
+              <span className="text-[var(--text-secondary)]">{m.label}</span>
             </div>
           ))}
         </div>

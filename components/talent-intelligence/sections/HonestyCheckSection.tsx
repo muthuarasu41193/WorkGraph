@@ -11,7 +11,7 @@ type Props = { data: HonestyCheck };
 
 const SEVERITY_STYLES = {
   low: "bg-muted text-muted-foreground",
-  medium: "bg-amber-100 text-amber-800 dark:bg-amber-950",
+  medium: "bg-warning-subtle text-warning-foreground dark:bg-warning-subtle",
   high: "bg-rose-100 text-rose-800 dark:bg-rose-950",
 };
 
@@ -20,7 +20,7 @@ export default function HonestyCheckSection({ data }: Props) {
     <ExpandableCard
       title="Honesty Check"
       description="Authenticity signals — buzzwords, generic language, and weak measurables."
-      icon={<ShieldCheck className="h-5 w-5 text-emerald-600" />}
+      icon={<ShieldCheck className="h-5 w-5 text-success" />}
       defaultOpen={false}
     >
       <div className="mb-4 flex items-center gap-4">
@@ -45,7 +45,7 @@ export default function HonestyCheckSection({ data }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-emerald-700 dark:text-emerald-400">
+        <p className="text-sm text-success-foreground dark:text-success">
           No significant authenticity concerns detected.
         </p>
       )}

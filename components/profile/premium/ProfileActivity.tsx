@@ -35,19 +35,19 @@ export default function ProfileActivity({ activities = MOCK_ACTIVITIES }: Props)
         description="Applications, saves, recruiter touchpoints, and posts."
       />
 
-      <ul className="divide-y divide-[var(--wg-color-border)]">
+      <ul className="divide-y divide-[var(--border-default)]">
         {activities.map((item) => {
           const Icon = ICONS[item.type];
           return (
             <li key={item.id} className="flex gap-3 py-3 first:pt-0 last:pb-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] text-[var(--wg-color-text-secondary)]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]">
                 <Icon className="h-3.5 w-3.5" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[var(--wg-color-text-primary)]">{item.title}</p>
-                <p className="text-xs text-[var(--wg-color-text-tertiary)]">{item.subtitle}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{item.subtitle}</p>
               </div>
-              <span className="shrink-0 text-xs tabular-nums text-[var(--wg-color-text-tertiary)]">{item.timeAgo}</span>
+              <span className="shrink-0 text-xs tabular-nums text-[var(--text-tertiary)]">{item.timeAgo}</span>
             </li>
           );
         })}

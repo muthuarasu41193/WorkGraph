@@ -157,7 +157,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
         <DialogHeader className="border-b px-4 py-3">
           <DialogTitle className="sr-only">Command palette</DialogTitle>
           <div className="relative">
-            <Search className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-secondary)]" />
+            <Search className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -173,7 +173,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
         <div className="max-h-80 overflow-y-auto p-2">
           {groups.map((group) => (
             <div key={group} className="mb-2">
-              <p className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-secondary)]">
+              <p className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                 {group}
               </p>
               {filtered
@@ -190,11 +190,11 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
                         "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
                       )}
                     >
-                      <Icon className="h-4 w-4 shrink-0 text-[var(--dash-text-secondary)]" />
+                      <Icon className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
                       <div className="min-w-0">
-                        <p className="font-medium text-[var(--dash-text)]">{item.label}</p>
+                        <p className="font-medium text-[var(--text-primary)]">{item.label}</p>
                         {item.description ? (
-                          <p className="truncate text-xs text-[var(--dash-text-secondary)]">
+                          <p className="truncate text-xs text-[var(--text-secondary)]">
                             {item.description}
                           </p>
                         ) : null}
@@ -205,7 +205,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
             </div>
           ))}
           {filtered.length === 0 ? (
-            <p className="px-3 py-6 text-center text-sm text-[var(--dash-text-secondary)]">
+            <p className="px-3 py-6 text-center text-sm text-[var(--text-secondary)]">
               No results for &ldquo;{query}&rdquo;
             </p>
           ) : null}

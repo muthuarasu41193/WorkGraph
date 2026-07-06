@@ -100,7 +100,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
         ) : (
           <div className="space-y-5 text-sm">
             <div className="flex flex-wrap gap-2">
-              <Badge className="bg-[var(--wg-red)]/10 text-[var(--wg-red)]">
+              <Badge className="bg-[var(--accent)]/10 text-[var(--accent)]">
                 {connection.fit_snapshot?.matchPercent ?? "—"}% fit
               </Badge>
               {connection.fit_snapshot?.matchedSignals?.map((s) => (
@@ -135,7 +135,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
                 href={app.resume_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--wg-red)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--wg-red)]/90"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--accent)]/90"
               >
                 <FileText className="h-4 w-4" />
                 View resume

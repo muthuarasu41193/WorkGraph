@@ -41,17 +41,17 @@ export default function MetricCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-3">
-          <p className="text-xs font-medium text-[var(--dash-text-secondary)]">{label}</p>
+          <p className="text-xs font-medium text-[var(--text-secondary)]">{label}</p>
           <div className="flex items-baseline gap-2">
-            <p className="text-2xl font-semibold tabular-nums tracking-tight text-[var(--dash-text)]">
+            <p className="text-2xl font-semibold tabular-nums tracking-tight text-[var(--text-primary)]">
               {value}
             </p>
             {trend !== undefined ? (
               <span
                 className={cn(
                   "inline-flex items-center gap-0.5 text-xs font-medium",
-                  trendUp && "text-emerald-600",
-                  trendDown && "text-amber-600",
+                  trendUp && "text-success",
+                  trendDown && "text-warning",
                 )}
               >
                 {trendUp ? (
@@ -65,13 +65,13 @@ export default function MetricCard({
             ) : null}
           </div>
           {description ? (
-            <p className="text-xs leading-relaxed text-[var(--dash-text-secondary)]">{description}</p>
+            <p className="text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
           ) : null}
           {trendLabel && !description ? (
-            <p className="text-xs text-[var(--dash-text-secondary)]">{trendLabel}</p>
+            <p className="text-xs text-[var(--text-secondary)]">{trendLabel}</p>
           ) : null}
         </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)] transition-transform group-hover:scale-105">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)] transition-transform group-hover:scale-105">
           <Icon className="h-[18px] w-[18px]" aria-hidden />
         </span>
       </div>

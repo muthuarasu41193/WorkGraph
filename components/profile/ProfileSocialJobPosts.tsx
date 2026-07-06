@@ -23,7 +23,7 @@ type SourceMeta = {
 function RemoteOkLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#059669" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--success)" />
       <path d="M7 12h3.2l1.5 2.2L14.6 10 17 12h0" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="17" cy="12" r="1.3" fill="white" />
     </svg>
@@ -37,7 +37,7 @@ function RedditLogoMark() {
 function HackerNewsLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#FF6600" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--warning)" />
       <path d="M8 7h2l2 4 2-4h2l-3 5.8V17h-2v-4.2L8 7Z" fill="white" />
     </svg>
   );
@@ -46,7 +46,7 @@ function HackerNewsLogo() {
 function ArbeitnowLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#0891B2" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--info)" />
       <path d="M8 17 12 7l4 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9.6 13h4.8" stroke="white" strokeWidth="2" strokeLinecap="round" />
     </svg>
@@ -56,7 +56,7 @@ function ArbeitnowLogo() {
 function RssLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#B91C1C" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--accent)" />
       <path
         d="M7 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0-6a8 8 0 0 1 8 8"
         stroke="white"
@@ -75,8 +75,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Structured remote listings that people can jump into directly when they want a fast apply path.",
     ctaLabel: "Open RemoteOK",
     destinationUrl: "https://remoteok.com/",
-    brandShellClassName: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500/15",
-    badgeClassName: "bg-emerald-600/10 text-emerald-700",
+    brandShellClassName: "bg-success-subtle text-success-foreground ring-1 ring-success/20",
+    badgeClassName: "bg-success/10 text-success-foreground",
     fallback: {
       id: "community-remoteok-fallback",
       title: "Senior Frontend Engineer",
@@ -270,14 +270,14 @@ export default function ProfileSocialJobPosts({
   });
 
   return (
-    <section className="rounded-xl border border-[#DADCE0] bg-white p-4 sm:p-6">
+    <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Community jobs</p>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#1D1D1F]">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[var(--text-tertiary)]">Community jobs</p>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-[var(--text-primary)]">
             Community job posts — Reddit, RSS, RemoteOK, Arbeitnow, and Hacker News
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#3A3A3C]">
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
             Separate from live ATS jobs above. This lane surfaces Reddit threads, RSS syndication, and other public feeds —
             clearly marked as listings vs discussion posts.
           </p>
@@ -289,15 +289,15 @@ export default function ProfileSocialJobPosts({
                 type="button"
                 onClick={handleAdminSync}
                 disabled={syncState === "loading"}
-                className="inline-flex items-center gap-2 rounded-[18px] border border-[#1A73E8] bg-white px-3.5 py-2 text-xs font-semibold text-[#1557B0] shadow-sm transition hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-[18px] border border-[var(--info)] bg-surface-primary px-3.5 py-2 text-xs font-semibold text-[var(--info-foreground)] shadow-sm transition hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${syncState === "loading" ? "animate-spin" : ""}`} aria-hidden />
                 Sync community jobs now
               </button>
               {syncMessage ? (
                 <p
-                  className={`max-w-[280px] text-right text-[11px] leading-snug ${
-                    syncState === "error" ? "text-red-600" : "text-[#1E8E3E]"
+                  className={`max-w-[280px] text-right text-[length:var(--font-size-label)] leading-snug ${
+                    syncState === "error" ? "text-red-600" : "text-[var(--success)]"
                   }`}
                 >
                   {syncMessage}
@@ -305,7 +305,7 @@ export default function ProfileSocialJobPosts({
               ) : null}
             </div>
           ) : null}
-          <span className="rounded-[20px] bg-[#E8F0FE] px-3 py-1 text-xs font-medium text-[#1557B0] ring-1 ring-[#DADCE0]">
+          <span className="rounded-full bg-[var(--info-subtle)] px-3 py-1 text-xs font-medium text-[var(--info-foreground)] ring-1 ring-[var(--border-default)]">
             Separate job posts / community jobs lane
           </span>
         </div>
@@ -319,7 +319,7 @@ export default function ProfileSocialJobPosts({
           return (
             <article
               key={meta.label}
-              className="flex h-full flex-col rounded-2xl border border-[#DADCE0] bg-[#FCFCFD] p-5 transition hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
+              className="flex h-full flex-col rounded-2xl border border-[var(--border-default)] bg-surface-primary p-5 transition hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lg"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -327,27 +327,27 @@ export default function ProfileSocialJobPosts({
                     <Logo />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#8E8E93]">{meta.eyebrow}</p>
-                    <h3 className="text-lg font-semibold text-[#1D1D1F]">{meta.label}</h3>
+                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-[var(--text-tertiary)]">{meta.eyebrow}</p>
+                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">{meta.label}</h3>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${meta.badgeClassName}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-[length:var(--font-size-label)] font-medium ${meta.badgeClassName}`}>
                     {isLive ? "Live source" : "Community lane"}
                   </span>
                   {lowPriority ? (
-                    <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-medium text-amber-800">
+                    <span className="rounded-full bg-warning-subtle px-2.5 py-1 text-[length:var(--font-size-label)] font-medium text-warning-foreground">
                       Low priority
                     </span>
                   ) : null}
                 </div>
               </div>
 
-              <p className="mt-4 text-sm leading-relaxed text-[#3A3A3C]">{meta.description}</p>
+              <p className="mt-4 text-sm leading-relaxed text-[var(--text-secondary)]">{meta.description}</p>
 
-              <div className="mt-4 rounded-2xl border border-[#DADCE0] bg-white p-4">
-                <h4 className="text-base font-semibold leading-snug text-[#1D1D1F]">{post.title}</h4>
-                <div className="mt-2 flex flex-wrap gap-3 text-sm text-[#5F6368]">
+              <div className="mt-4 rounded-2xl border border-[var(--border-default)] bg-surface-primary p-4">
+                <h4 className="text-base font-semibold leading-snug text-[var(--text-primary)]">{post.title}</h4>
+                <div className="mt-2 flex flex-wrap gap-3 text-sm text-[var(--text-secondary)]">
                   <span className="inline-flex items-center gap-1">
                     <Briefcase className="h-3.5 w-3.5" aria-hidden />
                     {post.company}
@@ -358,25 +358,25 @@ export default function ProfileSocialJobPosts({
                   </span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[#E8F0FE] px-2.5 py-1 text-[11px] font-medium text-[#1557B0]">
+                  <span className="rounded-full bg-[var(--info-subtle)] px-2.5 py-1 text-[length:var(--font-size-label)] font-medium text-[var(--info-foreground)]">
                     {post.kind === "listing" ? "Listing" : "Post"}
                   </span>
                   <span
-                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
-                      lowPriority ? "bg-amber-100 text-amber-800" : "bg-[#E6F4EA] text-[#1E8E3E]"
+                    className={`rounded-full px-2.5 py-1 text-[length:var(--font-size-label)] font-medium ${
+                      lowPriority ? "bg-warning-subtle text-warning-foreground" : "bg-[var(--success-subtle)] text-[var(--success)]"
                     }`}
                   >
                     {classificationLabel(post.classification)}
                   </span>
                 </div>
-                <p className="mt-3 min-h-[72px] text-sm leading-6 text-[#3A3A3C]">{trimSnippet(post)}</p>
-                <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#E5E7EB] pt-3">
-                  <span className="text-xs font-medium text-[#8E8E93]">{post.postedAgo}</span>
+                <p className="mt-3 min-h-[72px] text-sm leading-6 text-[var(--text-secondary)]">{trimSnippet(post)}</p>
+                <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
+                  <span className="text-xs font-medium text-[var(--text-tertiary)]">{post.postedAgo}</span>
                   <a
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                    className="inline-flex items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-4 py-2 text-sm font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                   >
                     {meta.ctaLabel}
                     {isLive ? <ExternalLink className="h-4 w-4" aria-hidden /> : <ArrowUpRight className="h-4 w-4" aria-hidden />}

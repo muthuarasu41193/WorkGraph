@@ -46,7 +46,7 @@ export default function MissingSkillsSection({ data }: Props) {
     <ExpandableCard
       title="Missing Skills"
       description="Gaps identified — only highlight skills you genuinely possess."
-      icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
+      icon={<AlertTriangle className="h-5 w-5 text-warning" />}
     >
       <div className="space-y-6">
         <SkillTier title="Critical" variant="destructive" items={data.critical} />

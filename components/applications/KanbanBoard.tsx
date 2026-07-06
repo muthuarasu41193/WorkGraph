@@ -55,13 +55,13 @@ function KanbanColumn({
       ref={setNodeRef}
       className={cn(
         "flex w-[min(100%,280px)] shrink-0 flex-col rounded-xl border border-border bg-muted/20",
-        isOver && "ring-2 ring-[var(--dash-accent)] ring-offset-2 ring-offset-background",
+        isOver && "ring-2 ring-[var(--accent)] ring-offset-2 ring-offset-background",
       )}
     >
       <header className="border-b border-border px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-sm font-semibold">{label}</h3>
-          <span className="rounded-full bg-[var(--dash-accent-soft)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--dash-accent)]">
+          <span className="rounded-full bg-[var(--accent-subtle)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--accent)]">
             {applications.length}
           </span>
         </div>

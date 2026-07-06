@@ -121,7 +121,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
       <div className="space-y-6">
         {categories.map((cat) => (
           <div key={cat.id}>
-            <p className="mb-2 text-xs font-semibold text-[var(--wg-color-text-tertiary)]">{cat.label}</p>
+            <p className="mb-2 text-xs font-semibold text-[var(--text-tertiary)]">{cat.label}</p>
             <div className="flex flex-wrap gap-2">
               {cat.skills.map((skill) => (
                 <Badge

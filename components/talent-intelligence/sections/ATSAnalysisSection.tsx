@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 type Props = { data: ATSAnalysis };
 
 const STATUS_STYLES = {
-  good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
-  warning: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+  good: "bg-success-subtle text-success-foreground dark:bg-success-subtle dark:text-success",
+  warning: "bg-warning-subtle text-warning-foreground dark:bg-warning-subtle dark:text-warning",
   critical: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
 };
 

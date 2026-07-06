@@ -101,7 +101,7 @@ export default function PulseInbox({ signalId }: Props) {
                   return (
                     <Card
                       key={c.id}
-                      className="cursor-pointer overflow-hidden transition hover:border-[var(--wg-red)]/30"
+                      className="cursor-pointer overflow-hidden transition hover:border-[var(--accent)]/30"
                       onClick={() => setDetailConnection(c)}
                     >
                       <CardHeader className="p-3 pb-1">
@@ -114,7 +114,7 @@ export default function PulseInbox({ signalId }: Props) {
                       </CardHeader>
                       <CardContent className="space-y-2 p-3 pt-0">
                         <div className="flex items-center gap-1.5">
-                          <Sparkles className="h-3.5 w-3.5 text-[var(--wg-red)]" aria-hidden />
+                          <Sparkles className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />
                           <span className="text-sm font-semibold tabular-nums">
                             {c.fit_snapshot?.matchPercent ?? "—"}% fit
                           </span>
@@ -139,7 +139,7 @@ export default function PulseInbox({ signalId }: Props) {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--wg-red)] hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)] hover:underline"
                           >
                             <FileText className="h-3 w-3" />
                             Resume

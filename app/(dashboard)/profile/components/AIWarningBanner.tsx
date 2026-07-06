@@ -9,7 +9,7 @@ export default function AIWarningBanner() {
   if (!open) return null;
 
   return (
-    <div className="rounded-lg border border-amber-300/80 bg-amber-100/70 p-3 text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
+    <div className="rounded-lg border border-warning/20 bg-warning-subtle/70 p-3 text-warning-foreground dark:border-warning/20 dark:bg-warning-subtle/40 dark:text-warning-foreground">
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
         <p className="text-sm leading-6">
@@ -21,7 +21,7 @@ export default function AIWarningBanner() {
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="ml-auto h-7 w-7 shrink-0 text-amber-900 hover:bg-amber-200/60 dark:text-amber-100 dark:hover:bg-amber-900/50"
+          className="ml-auto h-7 w-7 shrink-0 text-warning-foreground hover:bg-warning-subtle dark:text-warning-foreground dark:hover:bg-warning-subtle"
           onClick={() => setOpen(false)}
           aria-label="Dismiss warning"
         >

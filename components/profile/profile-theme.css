@@ -1,72 +1,40 @@
-/* WorkGraph profile — matches marketing design system */
+/* WorkGraph profile — layout patterns using global design tokens */
 .wg-profile-root,
 .wg-profile-app {
-  --wg-color-primary: #b91c1c;
-  --wg-color-primary-dark: #991b1b;
-  --wg-color-accent: #b91c1c;
-  --wg-color-success: #15803d;
-  --wg-color-warning: #b45309;
-  --wg-color-error: #b91c1c;
-  --wg-color-surface: #ffffff;
-  --wg-color-surface-variant: #fafaf9;
-  --wg-color-page: #fafaf9;
-  --wg-color-border: #e7e5e4;
-  --wg-color-text-primary: #09090b;
-  --wg-color-text-secondary: #27272a;
-  --wg-color-text-tertiary: #52525b;
-  --wg-profile-radius: 14px;
-  --wg-profile-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   min-height: 100dvh;
-  background: var(--wg-color-page);
-  color: var(--wg-color-text-primary);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
   font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;
 }
 
-[data-theme="dark"] .wg-profile-root,
-[data-theme="dark"] .wg-profile-app {
-  --wg-color-primary: #f87171;
-  --wg-color-primary-dark: #ef4444;
-  --wg-color-accent: #f87171;
-  --wg-color-success: #4ade80;
-  --wg-color-warning: #fbbf24;
-  --wg-color-error: #f87171;
-  --wg-color-surface: #1e293b;
-  --wg-color-surface-variant: #0f172a;
-  --wg-color-page: #020617;
-  --wg-color-border: #334155;
-  --wg-color-text-primary: #f1f5f9;
-  --wg-color-text-secondary: #94a3b8;
-  --wg-color-text-tertiary: #64748b;
-}
-
 .wg-profile-app .wg-profile-nav {
-  background: var(--wg-color-surface);
-  border-bottom: 1px solid var(--wg-color-border);
-  box-shadow: var(--wg-profile-shadow);
+  background: var(--surface-primary);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: var(--shadow-sm);
   backdrop-filter: blur(8px);
 }
 
 .wg-profile-app .wg-profile-hero {
-  background: var(--wg-color-surface);
-  border: 1px solid var(--wg-color-border);
-  border-radius: var(--wg-profile-radius);
-  box-shadow: var(--wg-profile-shadow);
-  transition: box-shadow 0.2s ease;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-shadow);
 }
 
 .wg-profile-app .wg-profile-hero:hover {
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 .wg-profile-app .wg-profile-card {
-  background: var(--wg-color-surface);
-  border-radius: var(--wg-profile-radius);
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg);
 }
 
 .wg-profile-app .wg-profile-card--neutral {
-  border-left-color: var(--wg-color-border) !important;
+  border-left-color: var(--border-default) !important;
 }
 
 .wg-profile-app .wg-profile-kpi {
@@ -74,10 +42,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
-  background: var(--wg-color-border);
-  border: 1px solid var(--wg-color-border);
-  border-radius: var(--wg-profile-radius);
-  box-shadow: var(--wg-profile-shadow);
+  background: var(--border-default);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (min-width: 640px) {
@@ -87,39 +55,39 @@
 }
 
 .wg-profile-app .wg-profile-kpi > div {
-  background: var(--wg-color-surface);
-  padding: 1rem 1.25rem;
-  transition: background-color 0.15s ease;
+  background: var(--surface-primary);
+  padding: var(--space-4) var(--space-5);
+  transition: background-color var(--duration-fast) var(--ease-out);
 }
 
 .wg-profile-app .wg-profile-kpi > div:hover {
-  background: var(--wg-color-surface-variant);
+  background: var(--surface-secondary);
 }
 
 .wg-profile-app .wg-profile-kpi dt {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wider);
   text-transform: uppercase;
-  color: var(--wg-color-text-tertiary);
+  color: var(--text-tertiary);
 }
 
 .wg-profile-app .wg-profile-kpi dd {
-  margin-top: 0.25rem;
-  font-size: 1.375rem;
-  font-weight: 700;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
   font-variant-numeric: tabular-nums;
-  color: var(--wg-color-text-primary);
+  color: var(--text-primary);
 }
 
 .wg-profile-app .wg-profile-aside .wg-profile-card:first-child {
-  border-left: 3px solid var(--wg-color-border) !important;
+  border-left: 3px solid var(--border-default) !important;
 }
 
 .wg-profile-app .bg-gradient-to-br,
-.wg-profile-app [class*="from-[#1a73e8]"],
-.wg-profile-app [class*="via-[#669df6]"] {
-  background: var(--wg-color-surface-variant) !important;
+.wg-profile-app [class*="from-["],
+.wg-profile-app [class*="via-["] {
+  background: var(--surface-secondary) !important;
   background-image: none !important;
 }

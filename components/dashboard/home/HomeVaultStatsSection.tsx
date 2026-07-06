@@ -46,23 +46,23 @@ export default async function HomeVaultStatsSection() {
           <dl className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Eye className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Eye className="h-4 w-4 text-[var(--accent)]" />
                 Views
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums">{vault.views.toLocaleString("en-IN")}</dd>
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Wallet className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Wallet className="h-4 w-4 text-[var(--accent)]" />
                 Earnings
               </dt>
-              <dd className="mt-2 text-2xl font-bold tabular-nums text-[var(--dash-accent)]">
+              <dd className="mt-2 text-2xl font-bold tabular-nums text-[var(--accent)]">
                 {formatCurrencyAmount(vault.earningsInr, displayCurrency)}
               </dd>
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Star className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Star className="h-4 w-4 text-[var(--accent)]" />
                 Ratings
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums">

@@ -16,9 +16,9 @@ type Props = {
 };
 
 const variantStyles = {
-  default: "bg-white",
+  default: "bg-surface-primary",
   accent: "bg-gradient-to-br from-white to-red-50/40",
-  success: "bg-gradient-to-br from-white to-emerald-50/40",
+  success: "bg-gradient-to-br from-surface-primary to-success-subtle/40",
 };
 
 export default function InsightCard({
@@ -40,25 +40,25 @@ export default function InsightCard({
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)]">
           <Icon className="h-[17px] w-[17px]" aria-hidden />
         </span>
         {badge ? (
-          <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dash-text-secondary)]">
+          <span className="rounded-md bg-surface-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
             {badge}
           </span>
         ) : null}
       </div>
       <div className="mt-4 flex-1 space-y-1.5">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className="text-sm font-semibold text-[var(--dash-text)]">{title}</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">{title}</h3>
           {score !== undefined ? (
-            <span className="text-lg font-semibold tabular-nums text-[var(--dash-accent)]">
+            <span className="text-lg font-semibold tabular-nums text-[var(--accent)]">
               {score}
             </span>
           ) : null}
         </div>
-        <p className="text-xs leading-relaxed text-[var(--dash-text-secondary)]">{description}</p>
+        <p className="text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
       </div>
       {action ? <div className="mt-4">{action}</div> : null}
     </div>

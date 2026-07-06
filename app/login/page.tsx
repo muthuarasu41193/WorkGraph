@@ -120,7 +120,7 @@ export default function LoginPage() {
       <div className="wg-auth-enter space-y-8">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign in</h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
             Enter your email and password to continue.
           </p>
         </div>
@@ -172,14 +172,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[15px]">
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
             {isSubmitting ? "Signing in…" : "Continue"}
           </Button>
         </form>
 
         {message ? (
-          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
-            <AlertDescription className="text-center text-emerald-900">{message}</AlertDescription>
+          <Alert className="border-success/20 bg-success-subtle text-success-foreground">
+            <AlertDescription className="text-center text-success-foreground">{message}</AlertDescription>
           </Alert>
         ) : null}
         {error ? (
@@ -188,7 +188,7 @@ export default function LoginPage() {
           </Alert>
         ) : null}
 
-        <Card className="border-slate-200 bg-muted/30 shadow-none">
+        <Card className="border-border bg-muted/30 shadow-none">
           <CardContent className="p-4 text-sm text-muted-foreground">
             <button
               type="button"
@@ -209,21 +209,21 @@ export default function LoginPage() {
                   {forgotBusy ? "Sending…" : "Send reset link"}
                 </Button>
                 {forgotSent ? (
-                  <p className="text-xs text-emerald-700">If an account exists, check your inbox for the reset link.</p>
+                  <p className="text-xs text-success-foreground">If an account exists, check your inbox for the reset link.</p>
                 ) : null}
               </form>
             ) : null}
           </CardContent>
         </Card>
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
           New to WorkGraph?{" "}
           <Link href="/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign up
           </Link>
         </p>
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
           Hiring?{" "}
           <Link
             href="/employer/signup"

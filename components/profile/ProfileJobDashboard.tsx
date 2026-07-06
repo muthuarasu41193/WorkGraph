@@ -116,18 +116,18 @@ export default function ProfileJobDashboard({
   }, []);
 
   return (
-    <Card className="border-slate-200 shadow-sm transition-shadow hover:shadow-md">
+    <Card className="border-border shadow-sm transition-shadow hover:shadow-md">
       <CardContent className="p-4 sm:p-6">
       <section aria-labelledby="job-dashboard-heading">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
           <div>
-            <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[#1D1D1F]">
+            <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[var(--text-primary)]">
               Job Dashboard
             </h2>
-            <p className="mt-1 text-sm font-normal text-[#8E8E93]">Live ATS jobs matched to your profile (excludes community posts)</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-[20px] bg-[#E6F4EA] px-3 py-1 text-xs font-medium text-[#1E8E3E]">
-              <span className="h-2 w-2 rounded-full bg-[#1E8E3E] animate-pulse" aria-hidden />
+            <p className="mt-1 text-sm font-normal text-[var(--text-tertiary)]">Live ATS jobs matched to your profile (excludes community posts)</p>
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--success-subtle)] px-3 py-1 text-xs font-medium text-[var(--success)]">
+              <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" aria-hidden />
               Live • Last synced {lastSyncedLabel}
             </span>
           </div>
@@ -137,12 +137,12 @@ export default function ProfileJobDashboard({
             type="button"
             onClick={refreshListings}
             disabled={isRefreshing}
-            className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-[#DADCE0] px-5 text-sm font-medium text-[#5F6368] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--border-default)] px-5 text-sm font-medium text-[var(--text-secondary)] transition hover:shadow-sm disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
           >
             {syncStatus === "success" ? (
-              <CheckCircle2 className="h-4 w-4 text-[#1E8E3E]" aria-hidden />
+              <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
             ) : syncStatus === "error" ? (
-              <XCircle className="h-4 w-4 text-[#D93025] wg-shake" aria-hidden />
+              <XCircle className="h-4 w-4 text-[var(--danger)] wg-shake" aria-hidden />
             ) : (
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
             )}
@@ -156,7 +156,7 @@ export default function ProfileJobDashboard({
             <Bell className="h-4 w-4" aria-hidden />
             <span className="hidden sm:inline">Set Job Alerts</span>
           </Button>
-          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[#FEF7E0] px-3 py-1.5 text-xs font-medium text-[#F9AB00]">
+          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[var(--warning-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--warning)]">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
             Profile {profileCompleteness}% complete
           </span>
@@ -166,7 +166,7 @@ export default function ProfileJobDashboard({
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
         {isSectionLoading ? (
           Array.from({ length: 4 }).map((_, idx) => (
-            <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-4 md:px-6 md:py-5">
+            <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 md:px-6 md:py-5">
               <div className="mb-3 flex items-start gap-3">
                 <div className="h-10 w-10 rounded-[10px] wg-skeleton-shimmer" />
                 <div className="space-y-2">
@@ -181,16 +181,16 @@ export default function ProfileJobDashboard({
           <>
         <article
           onClick={() => triggerFilter("all")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+          className="cursor-pointer rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
         >
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E8F0FE] text-[#1A73E8]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[var(--info-subtle)] text-[var(--info)]">
               <Briefcase className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={liveListings} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Live Jobs Available</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
+              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={liveListings} /></p>
+              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Live Jobs Available</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-xs font-medium text-[var(--success)]">
                 <TrendingUp className="h-3.5 w-3.5" />
                 +284 new today
               </span>
@@ -200,16 +200,16 @@ export default function ProfileJobDashboard({
 
         <article
           onClick={() => triggerFilter("matched")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 shadow-[0_0_0_2px_#1E8E3E20] transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] wg-matched-live-pulse"
+          className="cursor-pointer rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 ring-2 ring-success/20 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md wg-matched-live-pulse"
         >
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E6F4EA] text-[#1E8E3E]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[var(--success-subtle)] text-[var(--success)]">
               <Sparkles className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={matchedCount} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Matched to Your Profile</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
+              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={matchedCount} /></p>
+              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Matched to Your Profile</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--success-subtle)] px-2 py-1 text-xs font-medium text-[var(--success)]">
                 <TrendingUp className="h-3.5 w-3.5" />
                 +47 new matches
               </span>
@@ -219,16 +219,16 @@ export default function ProfileJobDashboard({
 
         <article
           onClick={() => triggerFilter("applied")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+          className="cursor-pointer rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
         >
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FEF7E0] text-[#F9AB00]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[var(--warning-subtle)] text-[var(--warning)]">
               <CheckCircle2 className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.applied} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
+              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.applied} /></p>
+              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Applications Sent</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--warning-subtle)] px-2 py-1 text-xs font-medium text-[var(--warning)]">
                 <LoaderCircle className="h-3.5 w-3.5" />
                 3 awaiting response
               </span>
@@ -238,16 +238,16 @@ export default function ProfileJobDashboard({
 
         <article
           onClick={() => triggerFilter("saved")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+          className="cursor-pointer rounded-xl border border-[var(--border-default)] bg-surface-primary p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
         >
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FCE8E6] text-[#D93025]">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[var(--danger-subtle)] text-[var(--danger)]">
               <Bookmark className="h-5 w-5" aria-hidden />
             </span>
             <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.saved} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Jobs Saved</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FCE8E6] px-2 py-1 text-xs font-medium text-[#D93025]">
+              <p className="text-[length:var(--font-size-display)] font-bold leading-none text-[var(--text-primary)]"><AnimatedCount value={stats.saved} /></p>
+              <p className="mt-2 text-[length:var(--font-size-body)] text-[var(--text-tertiary)]">Jobs Saved</p>
+              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[var(--danger-subtle)] px-2 py-1 text-xs font-medium text-[var(--danger)]">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 12 expiring soon
               </span>
@@ -259,11 +259,11 @@ export default function ProfileJobDashboard({
       </div>
 
       {totalTracked === 0 ? (
-        <p className="mt-4 rounded-xl border border-dashed border-[#DADCE0] bg-[#F8F9FA] px-4 py-3 text-center text-xs leading-relaxed text-[#3A3A3C]">
+        <p className="mt-4 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--surface-secondary)] px-4 py-3 text-center text-xs leading-relaxed text-[var(--text-secondary)]">
           {liveListings > 0 ? (
             <>
               No personal tracker rows yet — listing totals above come from shared ATS ingest. Insert rows into{" "}
-              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">job_tracker_entries</code> when your CRM
+              <code className="rounded bg-surface-secondary px-1 py-0.5 text-[length:var(--font-size-label)]">job_tracker_entries</code> when your CRM
               ships.
             </>
           ) : (

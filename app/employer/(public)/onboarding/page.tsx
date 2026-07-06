@@ -69,7 +69,7 @@ export default function EmployerOnboardingPage() {
           <h2 className="text-xl font-semibold">Company setup</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Already a jobseeker? Same account —{" "}
-            <Link href="/profile" className="text-[var(--wg-red)] underline-offset-2 hover:underline">
+            <Link href="/profile" className="text-[var(--accent)] underline-offset-2 hover:underline">
               switch to seeker view
             </Link>
             .

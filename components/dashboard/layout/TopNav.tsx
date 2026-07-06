@@ -48,7 +48,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
 
   return (
     <>
-      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] border-b">
+      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--header-height)] border-b">
         <div className="flex h-full items-center gap-2 px-3 md:gap-3 md:px-5">
           <div className="flex shrink-0 items-center gap-2">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -95,9 +95,9 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
             {liveListings > 0 ? (
               <Badge
                 variant="secondary"
-                className="hidden rounded-md border-0 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 lg:inline-flex"
+                className="hidden rounded-md border-0 bg-success-subtle px-2 py-0.5 text-[length:var(--font-size-label)] font-semibold text-success-foreground lg:inline-flex"
               >
-                <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+                <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-success-subtle0" />
                 {liveListings.toLocaleString()} live
               </Badge>
             ) : null}
@@ -106,7 +106,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               type="button"
               variant="ghost"
               size="sm"
-              className="hidden h-8 gap-1.5 px-2 text-xs text-[var(--dash-text-secondary)] lg:inline-flex"
+              className="hidden h-8 gap-1.5 px-2 text-xs text-[var(--text-secondary)] lg:inline-flex"
               onClick={() => setCmdOpen(true)}
             >
               <Command className="h-3.5 w-3.5" />
@@ -132,7 +132,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />
-              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--dash-accent)] ring-2 ring-white" />
+              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--accent)] ring-2 ring-white" />
             </Button>
 
             {onToggleTheme ? (
@@ -156,7 +156,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                   aria-label="Account menu"
                 >
                   <Avatar size="default">
-                    <AvatarFallback className="bg-[var(--dash-accent-soft)] text-xs font-semibold text-[var(--dash-accent)]">
+                    <AvatarFallback className="bg-[var(--accent-subtle)] text-xs font-semibold text-[var(--accent)]">
                       {initials}
                     </AvatarFallback>
                   </Avatar>

@@ -16,8 +16,8 @@ const toneVariants: Record<Tone, React.ComponentProps<typeof Badge>["variant"]> 
 
 const toneStyles: Record<Tone, string> = {
   default: "",
-  success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
-  warning: "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200",
+  success: "border-success/20 bg-success-subtle text-success-foreground dark:border-success/20 dark:bg-success-subtle/40 dark:text-success",
+  warning: "border-warning/20 bg-warning-subtle text-warning-foreground dark:border-warning/20 dark:bg-warning-subtle/40 dark:text-warning-foreground",
   info: "border-border bg-muted text-foreground",
   muted: "text-muted-foreground",
 };

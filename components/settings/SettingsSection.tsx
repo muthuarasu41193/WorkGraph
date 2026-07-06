@@ -21,23 +21,23 @@ export default function SettingsSection() {
       <div className="space-y-6">
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)]">
               <User className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Appearance</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">Customize how WorkGraph looks</p>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Appearance</h2>
+              <p className="text-xs text-[var(--text-secondary)]">Customize how WorkGraph looks</p>
             </div>
           </div>
           <Separator className="my-4" />
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Moon className="h-4 w-4 text-[var(--dash-text-secondary)]" />
+              <Moon className="h-4 w-4 text-[var(--text-secondary)]" />
               <div>
                 <Label htmlFor="dark-mode" className="text-sm font-medium">
                   Dark mode
                 </Label>
-                <p className="text-xs text-[var(--dash-text-secondary)]">
+                <p className="text-xs text-[var(--text-secondary)]">
                   Switch between light and dark themes
                 </p>
               </div>
@@ -52,12 +52,12 @@ export default function SettingsSection() {
 
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)]">
               <Bell className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Notifications</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Notifications</h2>
+              <p className="text-xs text-[var(--text-secondary)]">
                 Control how you receive career updates
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function SettingsSection() {
                   <Label htmlFor={item.id} className="text-sm font-medium">
                     {item.label}
                   </Label>
-                  <p className="text-xs text-[var(--dash-text-secondary)]">{item.desc}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{item.desc}</p>
                 </div>
                 <Checkbox id={item.id} defaultChecked />
               </div>
@@ -84,12 +84,12 @@ export default function SettingsSection() {
 
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-subtle)] text-[var(--accent)]">
               <Shield className="h-4 w-4" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Privacy & Data</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">Privacy & Data</h2>
+              <p className="text-xs text-[var(--text-secondary)]">
                 Control your data and profile visibility
               </p>
             </div>
@@ -101,7 +101,7 @@ export default function SettingsSection() {
                 <Label htmlFor="recruiter-visibility" className="text-sm font-medium">
                   Recruiter visibility
                 </Label>
-                <p className="text-xs text-[var(--dash-text-secondary)]">
+                <p className="text-xs text-[var(--text-secondary)]">
                   Allow recruiters to discover your profile
                 </p>
               </div>

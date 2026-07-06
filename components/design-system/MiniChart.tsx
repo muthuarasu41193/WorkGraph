@@ -20,12 +20,12 @@ export default function MiniChart({ data, positive = true, className }: Props) {
             <linearGradient id="wgChartGrad" x1="0" y1="0" x2="0" y2="1">
               <stop
                 offset="0%"
-                stopColor={positive ? "#10B981" : "#F59E0B"}
+                stopColor={positive ? "var(--success)" : "var(--warning)"}
                 stopOpacity={0.2}
               />
               <stop
                 offset="100%"
-                stopColor={positive ? "#10B981" : "#F59E0B"}
+                stopColor={positive ? "var(--success)" : "var(--warning)"}
                 stopOpacity={0}
               />
             </linearGradient>
@@ -33,7 +33,7 @@ export default function MiniChart({ data, positive = true, className }: Props) {
           <Area
             type="monotone"
             dataKey="value"
-            stroke={positive ? "#10B981" : "#F59E0B"}
+            stroke={positive ? "var(--success)" : "var(--warning)"}
             strokeWidth={1.5}
             fill="url(#wgChartGrad)"
             dot={false}

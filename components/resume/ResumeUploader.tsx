@@ -193,7 +193,7 @@ export default function ResumeUploader() {
   if (status === "success") {
     return (
       <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-        <CheckCircle className="mx-auto h-10 w-10 text-emerald-600" />
+        <CheckCircle className="mx-auto h-10 w-10 text-success" />
         <p className="mt-4 text-base font-semibold text-foreground">Resume parsed successfully!</p>
         <p className="mt-1 text-sm text-muted-foreground">Redirecting to your profile...</p>
       </div>
@@ -202,7 +202,7 @@ export default function ResumeUploader() {
 
   if (status === "error") {
     return (
-      <div className="rounded-2xl border border-[#FECACA] bg-white p-8 text-center shadow-sm">
+      <div className="rounded-2xl border border-danger/20 bg-surface-primary p-8 text-center shadow-sm">
         <AlertCircle className="mx-auto h-10 w-10 text-rose-600" />
         <p className="mt-4 text-base font-semibold text-foreground">Upload failed</p>
         <p className="mt-1 text-sm text-muted-foreground">{errorMessage}</p>
@@ -226,7 +226,7 @@ export default function ResumeUploader() {
             <p className="truncate text-sm font-medium text-foreground">{selectedFile.name}</p>
             <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
           </div>
-          <Check className="h-5 w-5 text-emerald-600" />
+          <Check className="h-5 w-5 text-success" />
         </div>
 
         <button

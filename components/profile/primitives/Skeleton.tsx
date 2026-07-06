@@ -9,7 +9,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
 
 export function SkeletonCard() {
   return (
-    <Card className="border-slate-200 shadow-sm">
+    <Card className="border-border shadow-sm">
       <CardContent className="space-y-3 p-6">
         <UiSkeleton className="h-4 w-1/3" />
         <UiSkeleton className="h-3 w-full" />

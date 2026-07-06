@@ -150,7 +150,7 @@ export default function WorkgraphDirectSection({
     <div className="space-y-5">
       <header>
         <div className="flex items-center gap-2">
-          <Radio className="h-6 w-6 text-[var(--wg-red)]" aria-hidden />
+          <Radio className="h-6 w-6 text-[var(--accent)]" aria-hidden />
           <h1 className="text-2xl font-bold tracking-tight">WorkGraph Direct</h1>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -186,7 +186,7 @@ export default function WorkgraphDirectSection({
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
             No live hiring signals yet. Employers on WorkGraph publish intent posts here — check back
             soon, or{" "}
-            <a href="/employer/signup" className="font-medium text-[var(--wg-red)] underline-offset-2 hover:underline">
+            <a href="/employer/signup" className="font-medium text-[var(--accent)] underline-offset-2 hover:underline">
               post as an employer
             </a>
             .
@@ -199,7 +199,7 @@ export default function WorkgraphDirectSection({
             const already = connectedIds.has(signal.id);
             return (
               <li key={signal.id}>
-                <Card className="h-full border-[var(--wg-red)]/10">
+                <Card className="h-full border-[var(--accent)]/10">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -209,7 +209,7 @@ export default function WorkgraphDirectSection({
                           signal.employer.company_slug ? (
                             <Link
                               href={`/company/${signal.employer.company_slug}`}
-                              className="hover:text-[var(--wg-red)] hover:underline"
+                              className="hover:text-[var(--accent)] hover:underline"
                             >
                               {signal.employer.company_name}
                             </Link>
@@ -219,7 +219,7 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-emerald-600/40 px-1.5 text-[10px] text-emerald-700"
+                              className="h-5 gap-0.5 border-success/40 px-1.5 text-[10px] text-success-foreground"
                             >
                               <BadgeCheck className="h-3 w-3" />
                               Verified
@@ -228,7 +228,7 @@ export default function WorkgraphDirectSection({
                         </p>
                         <CardTitle className="mt-1 text-base">{signal.title}</CardTitle>
                       </div>
-                      <Badge className="shrink-0 bg-[var(--wg-red)]/10 text-[var(--wg-red)] hover:bg-[var(--wg-red)]/15">
+                      <Badge className="shrink-0 bg-[var(--accent)]/10 text-[var(--accent)] hover:bg-[var(--accent)]/15">
                         <Sparkles className="mr-1 h-3 w-3" />
                         {preview.matchPercent}% fit
                       </Badge>
@@ -246,7 +246,7 @@ export default function WorkgraphDirectSection({
                       <span>{HIRING_INTENT_LABELS[signal.hiring_intent]}</span>
                     </div>
                     {signal.why_now ? (
-                      <p className="text-xs italic text-foreground/80 border-l-2 border-[var(--wg-red)] pl-2">
+                      <p className="text-xs italic text-foreground/80 border-l-2 border-[var(--accent)] pl-2">
                         {signal.why_now}
                       </p>
                     ) : null}

@@ -1,12 +1,14 @@
+import { platformBrandColors } from "@/lib/tokens/brands";
+
 type Props = {
   className?: string;
 };
 
-/** Reddit Snoo mark on brand orange (#FF4500). */
+/** Reddit Snoo mark — uses platform brand token */
 export function RedditLogo({ className = "h-4 w-4" }: Props) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="10" fill="#FF4500" />
+      <circle cx="12" cy="12" r="10" fill={platformBrandColors.reddit} />
       <circle cx="9" cy="12.5" r="1.3" fill="white" />
       <circle cx="15" cy="12.5" r="1.3" fill="white" />
       <path

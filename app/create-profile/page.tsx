@@ -306,7 +306,7 @@ export default function CreateProfilePage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">Create your profile</h2>
-            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+            <p className="mt-2 max-w-xl text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
               Signed-in accounts only. Choose import or manual entry — you can edit everything later.
             </p>
           </div>
@@ -337,10 +337,10 @@ export default function CreateProfilePage() {
           </TabsList>
 
           <TabsContent value="resume" className="mt-6">
-            <Card className="border-slate-200 shadow-md">
+            <Card className="border-border shadow-md">
               <CardContent className="space-y-6 p-6 sm:p-8">
                 {message ? (
-                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <Alert className="border-success/20 bg-success-subtle text-success-foreground">
                     <AlertDescription>{message}</AlertDescription>
                   </Alert>
                 ) : null}
@@ -389,14 +389,14 @@ export default function CreateProfilePage() {
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-200 group-hover:scale-105">
                           <FileText className="h-6 w-6 text-primary" aria-hidden />
                         </div>
-                        <p className="mt-5 text-[15px] font-semibold text-foreground">
+                        <p className="mt-5 text-[length:var(--font-size-body)] font-semibold text-foreground">
                           {isDragActive ? "Drop your file here" : "Drag & drop your resume"}
                         </p>
                         <p className="mt-1 text-sm text-muted-foreground">or click to browse — PDF or DOCX</p>
                       </div>
                     ) : (
                       <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3.5">
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-success" aria-hidden />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
                           <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
@@ -408,7 +408,7 @@ export default function CreateProfilePage() {
                     )}
                   </div>
 
-                  <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-[15px]">
+                  <Button type="submit" disabled={isLoading || !file} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -427,10 +427,10 @@ export default function CreateProfilePage() {
           </TabsContent>
 
           <TabsContent value="manual" className="mt-6">
-            <Card className="border-slate-200 shadow-md">
+            <Card className="border-border shadow-md">
               <CardContent className="space-y-5 p-6 sm:p-8">
                 {message ? (
-                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <Alert className="border-success/20 bg-success-subtle text-success-foreground">
                     <AlertDescription>{message}</AlertDescription>
                   </Alert>
                 ) : null}
@@ -584,7 +584,7 @@ export default function CreateProfilePage() {
                     />
                   </div>
 
-                  <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-[15px]">
+                  <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

@@ -30,21 +30,21 @@ function CompanyAvatar({ company, logo }: { company: string; logo?: string }) {
       <img
         src={logo}
         alt=""
-        className="h-10 w-10 rounded-xl object-cover ring-1 ring-[var(--dash-border)]"
+        className="h-10 w-10 rounded-xl object-cover ring-1 ring-[var(--border-default)]"
       />
     );
   }
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-[var(--dash-text-secondary)] ring-1 ring-[var(--dash-border)]">
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-secondary text-sm font-semibold text-[var(--text-secondary)] ring-1 ring-[var(--border-default)]">
       {company.charAt(0).toUpperCase()}
     </span>
   );
 }
 
 function matchColor(percent: number) {
-  if (percent >= 80) return "text-emerald-600 bg-emerald-50";
-  if (percent >= 60) return "text-[var(--dash-accent)] bg-[var(--dash-accent-soft)]";
-  return "text-amber-600 bg-amber-50";
+  if (percent >= 80) return "text-success bg-success-subtle";
+  if (percent >= 60) return "text-[var(--accent)] bg-[var(--accent-subtle)]";
+  return "text-warning bg-warning-subtle";
 }
 
 export default function JobCard({
@@ -70,8 +70,8 @@ export default function JobCard({
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs font-medium text-[var(--dash-text-secondary)]">{job.company}</p>
-                <h3 className="mt-0.5 text-sm font-semibold leading-snug text-[var(--dash-text)] sm:text-base">
+                <p className="text-xs font-medium text-[var(--text-secondary)]">{job.company}</p>
+                <h3 className="mt-0.5 text-sm font-semibold leading-snug text-[var(--text-primary)] sm:text-base">
                   {job.title}
                 </h3>
               </div>
@@ -87,8 +87,8 @@ export default function JobCard({
               ) : null}
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--dash-text-secondary)]">
-              {job.salaryRange ? <span className="font-medium text-[var(--dash-text)]">{job.salaryRange}</span> : null}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-secondary)]">
+              {job.salaryRange ? <span className="font-medium text-[var(--text-primary)]">{job.salaryRange}</span> : null}
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" aria-hidden />
                 {job.location}
@@ -113,7 +113,7 @@ export default function JobCard({
                 {job.matchedSkills.slice(0, 4).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
+                    className="rounded-md bg-success-subtle px-1.5 py-0.5 text-[10px] font-medium text-success-foreground"
                   >
                     {skill}
                   </span>
@@ -121,7 +121,7 @@ export default function JobCard({
                 {job.missingSkills?.slice(0, 2).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-[var(--dash-text-secondary)]"
+                    className="rounded-md bg-surface-secondary px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]"
                   >
                     +{skill}
                   </span>
@@ -131,7 +131,7 @@ export default function JobCard({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--dash-border)] pt-4">
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border-default)] pt-4">
           {job.applyUrl ? (
             <Button asChild size="sm" className="wg-dash-compact-btn">
               <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
@@ -154,7 +154,7 @@ export default function JobCard({
               onClick={() => onSave(job.id)}
               aria-label={saved ? "Remove from saved" : "Save job"}
             >
-              <Bookmark className={cn("h-3.5 w-3.5", saved && "fill-current text-[var(--dash-accent)]")} />
+              <Bookmark className={cn("h-3.5 w-3.5", saved && "fill-current text-[var(--accent)]")} />
               {saved ? "Saved" : "Save"}
             </Button>
           ) : null}

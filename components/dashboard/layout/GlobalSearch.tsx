@@ -84,7 +84,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
           }}
           onFocus={() => setOpen(true)}
           className={cn(
-            "h-11 rounded-lg border-slate-200 bg-slate-50/80 pl-10 pr-3 shadow-sm transition-shadow focus-visible:bg-background focus-visible:shadow-md dark:border-slate-700 dark:bg-slate-900/50",
+            "h-11 rounded-lg border-border bg-surface-secondary/80 pl-10 pr-3 shadow-sm transition-shadow focus-visible:bg-background focus-visible:shadow-md",
             compact && "h-10",
           )}
         />
@@ -97,7 +97,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
         <div
           id="global-search-listbox"
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-slate-200 bg-background shadow-xl dark:border-slate-700"
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-border bg-background shadow-xl"
         >
           <div className="flex flex-wrap gap-1 border-b border-border p-2">
             {FILTERS.map((f) => (

@@ -39,7 +39,7 @@ export default function JobNewsSection() {
           Hiring posts and community listings from social platforms — filtered by source.
         </p>
         {feedKind === "live" ? (
-          <p className="mt-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+          <p className="mt-1 text-xs font-medium text-success-foreground dark:text-success">
             {allPosts.length} posts synced from your jobs database
           </p>
         ) : null}

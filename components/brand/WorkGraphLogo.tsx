@@ -16,12 +16,12 @@ export function WorkGraphMark({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <line x1="16" y1="7" x2="7" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <line x1="16" y1="7" x2="25" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <line x1="9" y1="23" x2="23" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <circle cx="16" cy="7" r="3.25" fill="#B91C1C" />
-      <circle cx="7" cy="23" r="3.25" fill="#B91C1C" />
-      <circle cx="25" cy="23" r="3.25" fill="#B91C1C" />
+      <line x1="16" y1="7" x2="7" y2="23" stroke="var(--accent)" strokeWidth="1.25" strokeLinecap="round" />
+      <line x1="16" y1="7" x2="25" y2="23" stroke="var(--accent)" strokeWidth="1.25" strokeLinecap="round" />
+      <line x1="9" y1="23" x2="23" y2="23" stroke="var(--accent)" strokeWidth="1.25" strokeLinecap="round" />
+      <circle cx="16" cy="7" r="3.25" fill="var(--accent)" />
+      <circle cx="7" cy="23" r="3.25" fill="var(--accent)" />
+      <circle cx="25" cy="23" r="3.25" fill="var(--accent)" />
     </svg>
   );
 }
@@ -36,7 +36,7 @@ export function WorkGraphLogo({
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <WorkGraphMark className={iconClassName} />
       {showWordmark ? (
-        <span className={cn("text-[17px] leading-none tracking-tight", wordmarkClassName)}>
+        <span className={cn("text-[length:var(--font-size-title)] leading-none tracking-tight", wordmarkClassName)}>
           <span className="font-normal text-muted-foreground">work</span>
           <span className="font-semibold text-foreground">graph</span>
         </span>

@@ -25,9 +25,9 @@ export default class SectionErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <section className="rounded-xl border border-[#DADCE0] bg-white p-6">
-          <h2 className="text-base font-semibold text-[#1D1D1F]">Something went wrong</h2>
-          <p className="mt-1 text-sm text-[#8E8E93]">
+        <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary p-6">
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">Something went wrong</h2>
+          <p className="mt-1 text-sm text-[var(--text-tertiary)]">
             We could not render {this.props.sectionName}. Refresh the page to try again.
           </p>
         </section>

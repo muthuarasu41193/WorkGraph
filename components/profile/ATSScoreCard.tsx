@@ -32,9 +32,9 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
   const grade = localFeedback?.grade ?? gradeFromScore(currentScore);
 
   const ringColor = useMemo(() => {
-    if (currentScore >= 80) return "#16a34a";
-    if (currentScore >= 60) return "#f59e0b";
-    return "#ef4444";
+    if (currentScore >= 80) return "var(--success)";
+    if (currentScore >= 60) return "var(--warning)";
+    return "var(--danger)";
   }, [currentScore]);
 
   const analyze = async () => {
@@ -93,7 +93,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <Card id="ats-score" className="scroll-mt-28 border-slate-200 shadow-sm transition-shadow hover:shadow-md">
+    <Card id="ats-score" className="scroll-mt-28 border-border shadow-sm transition-shadow hover:shadow-md">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">ATS Score</CardTitle>
         <CardDescription>Your parsed resume quality and action points.</CardDescription>
@@ -144,7 +144,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                       tabItems.map((item, idx) => (
                         <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm text-muted-foreground">
                           {tab === "strengths" ? (
-                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                           ) : tab === "weaknesses" ? (
                             <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
                           ) : (

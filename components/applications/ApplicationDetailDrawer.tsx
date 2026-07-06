@@ -118,7 +118,7 @@ export default function ApplicationDetailDrawer({
           <div className="flex items-start gap-3 pr-8">
             <Avatar className="h-12 w-12 rounded-lg">
               {logo ? <AvatarImage src={logo} alt="" /> : null}
-              <AvatarFallback className="rounded-lg bg-[var(--dash-accent-soft)] font-semibold text-[var(--dash-accent)]">
+              <AvatarFallback className="rounded-lg bg-[var(--accent-subtle)] font-semibold text-[var(--accent)]">
                 {application.company.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -222,7 +222,7 @@ export default function ApplicationDetailDrawer({
               <ol className="relative space-y-4 border-l border-border pl-4">
                 {application.timeline.map((event) => (
                   <li key={event.id} className="relative">
-                    <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--dash-accent)]" />
+                    <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
                     <p className="text-sm font-medium">{event.label}</p>
                     <p className="text-xs text-muted-foreground">{formatTimelineAt(event.at)}</p>
                   </li>

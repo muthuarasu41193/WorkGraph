@@ -18,11 +18,11 @@ export default function EmptyState({ icon: Icon, title, description, action, cla
         className,
       )}
     >
-      <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
+      <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-subtle)] text-[var(--accent)]">
         <Icon className="h-6 w-6" aria-hidden />
       </span>
-      <h3 className="text-base font-semibold text-[var(--dash-text)]">{title}</h3>
-      <p className="mt-1.5 max-w-sm text-sm text-[var(--dash-text-secondary)]">{description}</p>
+      <h3 className="text-base font-semibold text-[var(--text-primary)]">{title}</h3>
+      <p className="mt-1.5 max-w-sm text-sm text-[var(--text-secondary)]">{description}</p>
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );

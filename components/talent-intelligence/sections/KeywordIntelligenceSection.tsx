@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 type Props = { data: KeywordIntelligence };
 
 const STATUS_LABELS = {
-  present: { label: "Present", className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950" },
+  present: { label: "Present", className: "bg-success-subtle text-success-foreground dark:bg-success-subtle" },
   missing: { label: "Missing", className: "bg-rose-100 text-rose-800 dark:bg-rose-950" },
-  weak: { label: "Weak", className: "bg-amber-100 text-amber-800 dark:bg-amber-950" },
+  weak: { label: "Weak", className: "bg-warning-subtle text-warning-foreground dark:bg-warning-subtle" },
   overused: { label: "Overused", className: "bg-violet-100 text-violet-800 dark:bg-violet-950" },
 };
 

@@ -39,8 +39,8 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
     <aside
       className={cn(
         "wg-dash-sidenav flex h-full flex-col border-r",
-        !mobile && "sticky top-[var(--dash-topnav-h)] hidden h-[calc(100dvh-var(--dash-topnav-h))] md:flex",
-        collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",
+        !mobile && "sticky top-[var(--header-height)] hidden h-[calc(100dvh-var(--header-height))] md:flex",
+        collapsed ? "w-[var(--sidebar-width-collapsed)]" : "w-[var(--sidebar-width)]",
       )}
       aria-label="Dashboard navigation"
     >
@@ -50,7 +50,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
             {group.label && !collapsed ? (
               <p className="wg-dash-nav-group-label mb-2">{group.label}</p>
             ) : group.label && collapsed ? (
-              <div className="mb-2 h-px bg-[var(--dash-border)]" aria-hidden />
+              <div className="mb-2 h-px bg-[var(--border-default)]" aria-hidden />
             ) : null}
             <ul className="space-y-0.5">
               {group.items.map((item) => {
@@ -64,13 +64,13 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                         title={collapsed ? item.label : undefined}
                         onClick={() => onNavigate?.()}
                         className={cn(
-                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200",
-                          "text-[var(--dash-text-secondary)] hover:bg-gray-50 hover:text-[var(--dash-text)]",
+                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[length:var(--font-size-body)] font-medium transition-all duration-200",
+                          "text-text-secondary hover:bg-surface-secondary hover:text-text-primary",
                           collapsed && "justify-center px-2",
                         )}
                       >
                         <Icon
-                          className="h-[18px] w-[18px] shrink-0 stroke-[1.75] text-[var(--dash-text-secondary)] group-hover:text-[var(--dash-text)]"
+                          className="h-[18px] w-[18px] shrink-0 stroke-[1.75] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"
                           aria-hidden
                         />
                         {!collapsed ? (
@@ -90,10 +90,10 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                           }
                         }}
                         className={cn(
-                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200",
+                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-[length:var(--font-size-body)] font-medium transition-all duration-200",
                           active
                             ? "wg-dash-nav-active font-semibold"
-                            : "text-[var(--dash-text-secondary)] hover:bg-gray-50 hover:text-[var(--dash-text)]",
+                            : "text-[var(--text-secondary)] hover:bg-surface-secondary hover:text-[var(--text-primary)]",
                           collapsed && "justify-center px-2",
                         )}
                         aria-current={active ? "page" : undefined}
@@ -102,8 +102,8 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                           className={cn(
                             "h-[18px] w-[18px] shrink-0 stroke-[1.75]",
                             active
-                              ? "text-[var(--dash-accent)]"
-                              : "text-[var(--dash-text-secondary)] group-hover:text-[var(--dash-text)]",
+                              ? "text-[var(--accent)]"
+                              : "text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]",
                           )}
                           aria-hidden
                         />
@@ -123,12 +123,12 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
       </nav>
 
       {!mobile && onToggleCollapse ? (
-        <div className="hidden border-t border-[var(--dash-border)] p-2 lg:block">
+        <div className="hidden border-t border-[var(--border-default)] p-2 lg:block">
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            className="w-full justify-center text-[var(--dash-text-secondary)]"
+            className="w-full justify-center text-[var(--text-secondary)]"
             onClick={onToggleCollapse}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >

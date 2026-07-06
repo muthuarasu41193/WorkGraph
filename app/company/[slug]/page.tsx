@@ -55,7 +55,7 @@ export default async function PublicCompanyPage({ params }: Props) {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight">{profile.company_name}</h1>
               {profile.verification_status === "verified" ? (
-                <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-600">
+                <Badge className="gap-1 bg-success hover:bg-success">
                   <BadgeCheck className="h-3.5 w-3.5" />
                   {VERIFICATION_STATUS_LABELS.verified}
                 </Badge>
@@ -75,7 +75,7 @@ export default async function PublicCompanyPage({ params }: Props) {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[var(--wg-red)] hover:underline"
+                  className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
                 >
                   Website
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -96,7 +96,7 @@ export default async function PublicCompanyPage({ params }: Props) {
 
         <section className="mt-10 space-y-4">
           <h2 className="flex items-center gap-2 text-lg font-semibold">
-            <Radio className="h-5 w-5 text-[var(--wg-red)]" />
+            <Radio className="h-5 w-5 text-[var(--accent)]" />
             Live hiring signals
           </h2>
           {signals.length === 0 ? (
@@ -121,7 +121,7 @@ export default async function PublicCompanyPage({ params }: Props) {
                     </CardHeader>
                     <CardContent className="space-y-3 text-sm">
                       {signal.why_now ? (
-                        <p className="border-l-2 border-[var(--wg-red)] pl-3 italic text-foreground/90">
+                        <p className="border-l-2 border-[var(--accent)] pl-3 italic text-foreground/90">
                           {signal.why_now}
                         </p>
                       ) : null}

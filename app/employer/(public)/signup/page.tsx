@@ -70,7 +70,7 @@ export default function EmployerSignupPage() {
         <h2 className="text-xl font-semibold">Create employer account</h2>
         <p className="text-sm text-muted-foreground">
           Jobseeker?{" "}
-          <Link href="/signup" className="text-[var(--wg-red)] underline-offset-2 hover:underline">
+          <Link href="/signup" className="text-[var(--accent)] underline-offset-2 hover:underline">
             Sign up as a seeker
           </Link>
         </p>

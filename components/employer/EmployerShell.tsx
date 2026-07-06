@@ -26,7 +26,7 @@ export default function EmployerShell({ companyName, children }: Props) {
   return (
     <div className="min-h-[100dvh] bg-background">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-wide)] items-center justify-between gap-4 px-[var(--page-padding-x)]">
           <div className="flex items-center gap-4">
             <Link href="/employer/dashboard" className="shrink-0">
               <WorkGraphLogo />
@@ -49,8 +49,8 @@ export default function EmployerShell({ companyName, children }: Props) {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-6xl gap-0 px-4 py-6 sm:px-6">
-        <aside className="hidden w-52 shrink-0 pr-6 md:block">
+      <div className="mx-auto flex max-w-[var(--container-wide)] gap-0 px-[var(--page-padding-x)] py-[var(--page-padding-y)]">
+        <aside className="hidden w-[var(--sidebar-width)] shrink-0 pr-6 md:block">
           <nav className="space-y-1" aria-label="Employer">
             {NAV.map((item) => {
               const Icon = item.icon;
@@ -65,7 +65,7 @@ export default function EmployerShell({ companyName, children }: Props) {
                   className={cn(
                     "flex min-h-[40px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     active
-                      ? "bg-[var(--wg-red)]/10 text-[var(--wg-red)]"
+                      ? "bg-brand-subtle text-primary"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   )}
                 >

@@ -15,7 +15,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
         <Card className="wg-dash-section-card">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <TrendingUp className="h-4 w-4 text-[var(--dash-accent)]" />
+              <TrendingUp className="h-4 w-4 text-[var(--accent)]" />
               Trending roles
             </CardTitle>
             <CardDescription>Highest momentum titles in your matched catalog.</CardDescription>
@@ -31,7 +31,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
                     <span className="mr-2 text-muted-foreground">{index + 1}.</span>
                     {role.title}
                   </span>
-                  <span className="shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="shrink-0 text-xs font-semibold text-success-foreground dark:text-success">
                     {role.growth}
                   </span>
                 </li>

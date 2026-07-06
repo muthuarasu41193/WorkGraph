@@ -62,8 +62,8 @@ export default function EditHiringSignalPage() {
   return (
     <div className="space-y-10">
       {saveNotice ? (
-        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden />
+        <Alert className="border-success/20 bg-success-subtle text-success-foreground dark:border-success/20 dark:bg-success-subtle/40 dark:text-success-foreground">
+          <CheckCircle2 className="h-4 w-4 text-success" aria-hidden />
           <AlertDescription>{saveNotice}</AlertDescription>
         </Alert>
       ) : null}

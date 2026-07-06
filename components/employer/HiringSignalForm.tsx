@@ -149,7 +149,7 @@ export default function HiringSignalForm({ initial }: Props) {
       </div>
 
       {successMessage ? (
-        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+        <Alert className="border-success/20 bg-success-subtle text-success-foreground dark:border-success/20 dark:bg-success-subtle/40 dark:text-success-foreground">
           <AlertDescription>{successMessage}</AlertDescription>
         </Alert>
       ) : null}
@@ -224,7 +224,7 @@ export default function HiringSignalForm({ initial }: Props) {
         </div>
       </section>
 
-      <section className="space-y-4 rounded-xl border border-[var(--wg-red)]/20 bg-[var(--wg-red)]/[0.03] p-5">
+      <section className="space-y-4 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/[0.03] p-5">
         <h2 className="text-sm font-semibold">Why now?</h2>
         <p className="text-xs text-muted-foreground">
           What changed that made this role real? This replaces generic &quot;About the role&quot; boilerplate.

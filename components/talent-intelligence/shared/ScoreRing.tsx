@@ -16,14 +16,14 @@ const SIZES = {
 };
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "text-emerald-600 dark:text-emerald-400";
-  if (score >= 60) return "text-amber-600 dark:text-amber-400";
+  if (score >= 80) return "text-success dark:text-success";
+  if (score >= 60) return "text-warning dark:text-warning";
   return "text-rose-600 dark:text-rose-400";
 }
 
 function ringColor(score: number): string {
-  if (score >= 80) return "stroke-emerald-500";
-  if (score >= 60) return "stroke-amber-500";
+  if (score >= 80) return "stroke-success";
+  if (score >= 60) return "stroke-warning";
   return "stroke-rose-500";
 }
 

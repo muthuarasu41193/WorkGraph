@@ -194,7 +194,7 @@ export default function ApplicationConnectDialog({
                   href={values.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 text-[var(--wg-red)] hover:underline"
+                  className="shrink-0 text-[var(--accent)] hover:underline"
                 >
                   <ExternalLink className="h-4 w-4" />
                 </a>
@@ -203,7 +203,7 @@ export default function ApplicationConnectDialog({
             <div
               {...getRootProps()}
               className={`cursor-pointer rounded-lg border-2 border-dashed px-4 py-5 text-center text-sm transition ${
-                isDragActive ? "border-[var(--wg-red)] bg-[var(--wg-red)]/5" : "border-muted"
+                isDragActive ? "border-[var(--accent)] bg-[var(--accent)]/5" : "border-muted"
               } ${resumeUploading ? "pointer-events-none opacity-60" : ""}`}
             >
               <input {...getInputProps()} />

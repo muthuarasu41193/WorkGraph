@@ -1,45 +1,24 @@
-/* WorkGraph dashboard — premium career intelligence shell */
+/* WorkGraph dashboard shell — uses global design tokens */
 .wg-dash-root {
-  --dash-radius: 12px;
-  --dash-radius-lg: 16px;
-  --dash-topnav-h: 56px;
-  --dash-sidebar-w: 248px;
-  --dash-sidebar-collapsed-w: 68px;
-  --dash-content-max: 1280px;
-  --dash-page-bg: #fafafa;
-  --dash-surface: #ffffff;
-  --dash-accent: #b91c1c;
-  --dash-accent-soft: rgba(185, 28, 28, 0.06);
-  --dash-border: #ececec;
-  --dash-text: #111827;
-  --dash-text-secondary: #6b7280;
   min-height: 100dvh;
-  background: var(--dash-page-bg);
+  background: var(--surface-page);
   scroll-behavior: smooth;
 }
 
-.dark .wg-dash-root,
-[data-theme="dark"] .wg-dash-root {
-  --dash-page-bg: #0b1120;
-  --dash-surface: #0f172a;
-  --dash-accent: #f87171;
-  --dash-accent-soft: rgba(248, 113, 113, 0.12);
-}
-
 .wg-dash-main {
-  min-height: calc(100dvh - var(--dash-topnav-h));
-  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  min-height: calc(100dvh - var(--header-height));
+  padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 768px) {
   .wg-dash-main {
-    padding-bottom: 1.5rem;
+    padding-bottom: var(--space-6);
   }
 }
 
 .wg-dash-content {
-  max-width: var(--dash-content-max);
-  animation: wg-dash-fade-in 0.28s ease-out;
+  max-width: var(--container-wide);
+  animation: wg-dash-fade-in var(--duration-slow) var(--ease-out);
 }
 
 @keyframes wg-dash-fade-in {
@@ -53,59 +32,52 @@
   }
 }
 
+.wg-section-card,
 .wg-dash-section-card {
-  border-radius: var(--dash-radius);
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-border);
-  box-shadow: var(--wg-shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: var(--radius-lg);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-shadow), var(--transition-transform);
 }
 
+.wg-section-card:hover,
 .wg-dash-section-card:hover {
-  box-shadow: var(--wg-shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 .wg-dash-card-lift:hover {
   transform: translateY(-2px);
 }
 
-.dark .wg-dash-section-card,
-[data-theme="dark"] .wg-dash-section-card {
-  border-color: rgb(51 65 85 / 0.8);
-}
-
 .wg-dash-sidenav {
-  background: var(--dash-surface) !important;
-  border-color: var(--dash-border) !important;
+  background: var(--surface-primary) !important;
+  border-color: var(--border-default) !important;
 }
 
 .wg-dash-topnav {
-  background: rgba(255, 255, 255, 0.75) !important;
-  border-color: var(--dash-border) !important;
-  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04) !important;
+  background: var(--surface-overlay) !important;
+  border-color: var(--border-default) !important;
+  box-shadow: var(--shadow-topnav) !important;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 
-.dark .wg-dash-topnav {
-  background: rgba(15, 23, 42, 0.92) !important;
-}
-
 .wg-dash-nav-active {
-  background: var(--dash-accent-soft) !important;
-  color: var(--dash-accent) !important;
-  box-shadow: inset 3px 0 0 var(--dash-accent) !important;
-  border-radius: 0 8px 8px 0 !important;
+  background: var(--accent-subtle) !important;
+  color: var(--accent) !important;
+  box-shadow: inset 3px 0 0 var(--accent) !important;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
 }
 
 .wg-dash-nav-group-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
-  color: var(--dash-text-secondary);
-  padding: 0 12px;
-  margin-bottom: 4px;
+  color: var(--text-secondary);
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-1);
 }
 
 .wg-dash-skeleton-pulse {
@@ -118,15 +90,15 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.45;
+    opacity: var(--opacity-muted);
   }
 }
 
 .wg-dash-root button,
 .wg-dash-root a[role="button"] {
-  min-height: 44px;
+  min-height: var(--touch-target-min);
 }
 
 .wg-dash-root .wg-dash-compact-btn {
-  min-height: 36px;
+  min-height: var(--button-height-md);
 }

@@ -102,7 +102,7 @@ export default function SignupPage() {
       <div className="wg-auth-enter space-y-8">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign up</h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">
             Enter your email and password to create your WorkGraph account.
           </p>
         </div>
@@ -176,20 +176,20 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[15px]">
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[length:var(--font-size-body)]">
             {isSubmitting ? "Creating account…" : "Create account"}
             {!isSubmitting ? <Sparkles className="h-4 w-4" aria-hidden /> : null}
           </Button>
         </form>
 
         {message ? (
-          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+          <Alert className="border-success/20 bg-success-subtle text-success-foreground">
             <AlertDescription className="space-y-3 text-center">
               <p>{message}</p>
-              <p className="text-xs leading-relaxed text-emerald-900/90">
+              <p className="text-xs leading-relaxed text-success-foreground/90">
                 After you confirm your email, sign in with the same password to upload your resume.
               </p>
-              <Button asChild variant="outline" className="w-full rounded-full border-emerald-300 bg-white text-emerald-950 hover:bg-emerald-50">
+              <Button asChild variant="outline" className="w-full rounded-full border-success/20 bg-surface-primary text-success-foreground hover:bg-success-subtle">
                 <Link href="/login?next=/create-profile">Go to sign in</Link>
               </Button>
             </AlertDescription>
@@ -201,14 +201,14 @@ export default function SignupPage() {
           </Alert>
         ) : null}
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login?next=/create-profile" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign in
           </Link>
         </p>
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-[length:var(--font-size-body)] text-muted-foreground">
           Hiring talent?{" "}
           <Link href="/employer/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Employer signup

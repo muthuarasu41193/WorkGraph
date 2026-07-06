@@ -55,18 +55,18 @@ export default function ProfileCompleteness({
 
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs">
-              <span className="font-medium text-[var(--wg-color-text-primary)]/85">Overall completeness</span>
-              <span className="tabular-nums font-semibold text-[var(--wg-color-text-primary)]">{completeness}%</span>
+              <span className="font-medium text-[var(--text-primary)]/85">Overall completeness</span>
+              <span className="tabular-nums font-semibold text-[var(--text-primary)]">{completeness}%</span>
             </div>
             <Progress value={completeness} className="h-1.5" />
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-semibold text-[var(--wg-color-text-primary)]">Suggested improvements</p>
+            <p className="mb-2 text-xs font-semibold text-[var(--text-primary)]">Suggested improvements</p>
             <ul className="space-y-2">
               {suggestions.map((tip) => (
-                <li key={tip} className="flex gap-2.5 text-sm text-[var(--wg-color-text-primary)]/85">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--wg-color-primary)]" />
+                <li key={tip} className="flex gap-2.5 text-sm text-[var(--text-primary)]/85">
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" />
                   {tip}
                 </li>
               ))}

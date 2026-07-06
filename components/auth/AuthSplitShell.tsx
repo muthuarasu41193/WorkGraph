@@ -55,7 +55,7 @@ export function AuthSplitShell({
               <ul className="space-y-3 pt-2">
                 {highlights.map((item) => (
                   <li key={item} className="flex gap-3 text-sm leading-snug text-muted-foreground">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--wg-red)]" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
                     <span>{item}</span>
                   </li>
                 ))}

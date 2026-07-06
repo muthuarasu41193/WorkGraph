@@ -34,7 +34,7 @@ type Props = {
 };
 
 const inputClass =
-  "border-slate-200 bg-background focus-visible:ring-primary/20";
+  "border-border bg-background focus-visible:ring-primary/20";
 
 export default function ProfileHero({ profile, userId, openToWork = true }: Props) {
   const [photoUrl, setPhotoUrl] = useState(profile.photo_url);
@@ -134,7 +134,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-surface-inverse/40 opacity-0 transition-opacity group-hover:opacity-100">
               <Camera className="h-4 w-4 text-white" />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
@@ -148,7 +148,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
+            <p className="text-[length:var(--font-size-label)] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
               Professional profile
             </p>
 
@@ -177,7 +177,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-2 text-sm`}
               />
             ) : (
-              <p className="mt-1 flex items-center justify-center gap-2 text-[15px] text-muted-foreground sm:justify-start">
+              <p className="mt-1 flex items-center justify-center gap-2 text-[length:var(--font-size-body)] text-muted-foreground sm:justify-start">
                 <Briefcase className="h-4 w-4 shrink-0 opacity-60" />
                 {form.headline || "Add your current role"}
               </p>
@@ -198,7 +198,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap justify-center gap-2 border-t border-[var(--wg-color-border)] pt-4 lg:border-t-0 lg:pt-0">
+        <div className="flex shrink-0 flex-wrap justify-center gap-2 border-t border-[var(--border-default)] pt-4 lg:border-t-0 lg:pt-0">
           {isEditing ? (
             <>
               <ProfileButton variant="primary" onClick={() => void saveBasics()} disabled={isSaving}>
@@ -231,8 +231,8 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
         </div>
       </div>
 
-      <div className="mt-6 border-t border-[var(--wg-color-border)] pt-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
+      <div className="mt-6 border-t border-[var(--border-default)] pt-5">
+        <p className="text-[length:var(--font-size-label)] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]">
           Summary
         </p>
         {isEditing ? (
@@ -244,7 +244,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
             className={`${inputClass} mt-2 text-sm leading-relaxed`}
           />
         ) : form.summary ? (
-          <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">{form.summary}</p>
+          <p className="mt-2 max-w-3xl text-[length:var(--font-size-body)] leading-relaxed text-muted-foreground">{form.summary}</p>
         ) : (
           <p className="mt-2 text-sm text-muted-foreground">
             Add a concise summary for recruiters and hiring managers.
@@ -259,7 +259,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 href={href!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2.5 py-1.5 text-xs font-semibold text-[var(--wg-color-text-secondary)] hover:border-[var(--wg-color-primary)] hover:text-[var(--wg-color-primary)]"
+                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {label}

@@ -50,7 +50,7 @@ export default function CircularProgress({
             {Math.round(clamped)}%
           </span>
           {label ? (
-            <span className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</span>
+            <span className="mt-0.5 text-[length:var(--font-size-label)] font-medium text-muted-foreground">{label}</span>
           ) : null}
         </div>
       </div>

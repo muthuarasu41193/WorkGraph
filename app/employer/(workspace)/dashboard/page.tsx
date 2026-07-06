@@ -51,7 +51,7 @@ export default function EmployerDashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <LayoutDashboard className="h-7 w-7 text-[var(--wg-red)]" />
+            <LayoutDashboard className="h-7 w-7 text-[var(--accent)]" />
             Hiring signals
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -89,7 +89,7 @@ export default function EmployerDashboardPage() {
                     <CardTitle className="text-base">
                       <Link
                         href={`/employer/signals/${s.id}`}
-                        className="hover:text-[var(--wg-red)]"
+                        className="hover:text-[var(--accent)]"
                       >
                         {s.title}
                       </Link>

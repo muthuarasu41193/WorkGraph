@@ -43,7 +43,7 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
           aria-label={`${star} star${star > 1 ? "s" : ""}`}
         >
           <Star
-            className={`h-5 w-5 ${star <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground"}`}
+            className={`h-5 w-5 ${star <= value ? "fill-warning text-warning" : "text-muted-foreground"}`}
           />
         </button>
       ))}
@@ -191,7 +191,7 @@ export default function VaultExperienceDetail({
           </h2>
           {avgRating != null ? (
             <span className="flex items-center gap-1 text-sm">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              <Star className="h-4 w-4 fill-warning text-warning" />
               {avgRating.toFixed(1)} ({reviews.length})
             </span>
           ) : null}

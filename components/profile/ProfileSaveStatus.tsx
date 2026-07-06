@@ -111,18 +111,18 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <Loader2 className="h-4 w-4 animate-spin text-emerald-700" aria-hidden />
+      <Loader2 className="h-4 w-4 animate-spin text-success-foreground" aria-hidden />
     ) : state === "error" ? (
       <AlertCircle className="h-4 w-4 text-red-600" aria-hidden />
     ) : (
-      <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden />
+      <CheckCircle2 className="h-4 w-4 text-success" aria-hidden />
     );
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 rounded-2xl border border-emerald-200/90 bg-white/95 px-4 py-3 shadow-lg shadow-emerald-900/10 backdrop-blur-sm">
+    <div className="fixed bottom-5 right-5 z-40 rounded-2xl border border-success/20 bg-surface-primary/95 px-4 py-3 shadow-lg shadow-success/10 backdrop-blur-sm">
       <div className="flex items-center gap-2.5">
         {icon}
-        <p className="text-xs font-medium text-slate-700">{text}</p>
+        <p className="text-xs font-medium text-text-secondary">{text}</p>
       </div>
     </div>
   );
