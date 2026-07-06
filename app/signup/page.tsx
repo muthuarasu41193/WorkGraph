@@ -176,9 +176,15 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-body">
-            {isSubmitting ? "Creating account…" : "Create account"}
-            {!isSubmitting ? <Sparkles className="h-4 w-4" aria-hidden /> : null}
+          <Button
+            type="submit"
+            size="lg"
+            loading={isSubmitting}
+            loadingText="Creating account…"
+            className="w-full rounded-full"
+          >
+            Create account
+            <Sparkles className="h-4 w-4" aria-hidden />
           </Button>
         </form>
 

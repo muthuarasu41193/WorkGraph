@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
 import { useToastStore, type ToastVariant } from "@/hooks/use-toast";
 
@@ -36,14 +37,15 @@ export function Toaster() {
                 <p className="mt-1 text-body opacity-90">{item.description}</p>
               ) : null}
             </div>
-            <button
+            <IconButton
               type="button"
+              variant="ghost"
+              iconSize="sm"
               onClick={() => dismiss(item.id)}
-              className="shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100"
-              aria-label="Dismiss notification"
-            >
-              <X className="h-4 w-4" />
-            </button>
+              className="shrink-0 opacity-70 hover:opacity-100"
+              label="Dismiss notification"
+              icon={<X className="h-4 w-4" />}
+            />
           </div>
         </div>
       ))}

@@ -5,6 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { format, parseISO } from "date-fns";
 import { GripVertical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { companyLogoUrl, type Application } from "@/lib/applications";
@@ -44,16 +45,17 @@ export default function ApplicationCard({ application, onOpen }: Props) {
     >
       <CardContent className="p-3">
         <div className="flex items-start gap-2">
-          <button
+          <IconButton
             type="button"
-            className="mt-1 shrink-0 touch-none text-muted-foreground hover:text-foreground"
-            aria-label="Drag application"
+            variant="ghost"
+            iconSize="sm"
+            className="mt-1 shrink-0 touch-none text-muted-foreground"
+            label="Drag application"
+            icon={<GripVertical className="h-4 w-4" />}
             onClick={(e) => e.stopPropagation()}
             {...listeners}
             {...attributes}
-          >
-            <GripVertical className="h-4 w-4" />
-          </button>
+          />
           <Avatar className="h-9 w-9 shrink-0 rounded-md">
             {logo ? <AvatarImage src={logo} alt="" /> : null}
             <AvatarFallback className="rounded-md bg-[var(--accent-subtle)] text-caption font-semibold text-[var(--accent)]">

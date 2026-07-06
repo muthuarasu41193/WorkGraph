@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 import { getDashboardRoute } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
@@ -29,11 +30,13 @@ export default function MobileNav() {
           const active = activeRoute === routeId;
           return (
             <li key={routeId}>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => navigate(routeId)}
                 className={cn(
-                  "flex min-h-12 w-full flex-col items-center justify-center gap-1 px-1 py-2 text-caption font-medium transition-colors",
+                  "h-auto min-h-12 w-full flex-col gap-1 px-1 py-2 text-caption font-medium shadow-none",
                   active ? "text-[var(--accent)]" : "text-[var(--text-secondary)]",
                 )}
                 aria-current={active ? "page" : undefined}
@@ -41,7 +44,7 @@ export default function MobileNav() {
               >
                 <Icon className={cn("h-5 w-5", active && "stroke-[2.25]")} aria-hidden />
                 <span className="max-w-full truncate leading-none">{route.shortLabel}</span>
-              </button>
+              </Button>
             </li>
           );
         })}

@@ -80,8 +80,10 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                         )}
                       </Link>
                     ) : (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         title={collapsed ? item.label : undefined}
                         onClick={() => handleNavClick(item.id, item.href)}
                         onMouseEnter={() => {
@@ -90,10 +92,10 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                           }
                         }}
                         className={cn(
-                          "group flex w-full min-h-[40px] items-center gap-3 rounded-lg px-3 py-2 text-body font-medium transition-all duration-200",
+                          "h-auto w-full min-h-[40px] justify-start gap-3 px-3 py-2 text-body font-medium shadow-none",
                           active
                             ? "wg-dash-nav-active font-semibold"
-                            : "text-[var(--text-secondary)] hover:bg-surface-secondary hover:text-[var(--text-primary)]",
+                            : "text-[var(--text-secondary)]",
                           collapsed && "justify-center px-2",
                         )}
                         aria-current={active ? "page" : undefined}
@@ -112,7 +114,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
                         ) : (
                           <span className="sr-only">{item.label}</span>
                         )}
-                      </button>
+                      </Button>
                     )}
                   </li>
                 );

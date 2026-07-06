@@ -220,10 +220,11 @@ export default function ResumeIntelligenceSection({
             <ul className="space-y-2">
               {history.map((h) => (
                 <li key={h.id}>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => loadReport(h.id)}
-                    className="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-body transition hover:bg-muted/50"
+                    className="h-auto w-full justify-between px-3 py-2 text-left text-body font-normal"
                   >
                     <span>
                       {h.jobTitle ?? "Untitled role"}
@@ -232,7 +233,7 @@ export default function ResumeIntelligenceSection({
                     <span className="tabular-nums text-muted-foreground">
                       {h.overallScore ?? "—"}% · {new Date(h.createdAt).toLocaleDateString()}
                     </span>
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>

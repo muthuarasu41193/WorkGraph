@@ -1,29 +1,29 @@
 import * as React from "react"
 
-import { Button, type buttonVariants } from "@/components/ui/button"
+import { Button, type ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { VariantProps } from "class-variance-authority"
 
-type IconButtonProps = React.ComponentProps<typeof Button> &
-  VariantProps<typeof buttonVariants> & {
-    icon: React.ReactNode
-    label: string
-    iconSize?: "xs" | "sm" | "default" | "lg"
-  }
+type IconButtonSize = "sm" | "md" | "lg"
 
-const iconSizeMap = {
-  xs: "icon-xs",
+type IconButtonProps = Omit<ButtonProps, "size" | "children"> & {
+  icon: React.ReactNode
+  label: string
+  iconSize?: IconButtonSize
+}
+
+const iconSizeMap: Record<IconButtonSize, ButtonProps["size"]> = {
   sm: "icon-sm",
-  default: "icon",
+  md: "icon",
   lg: "icon-lg",
-} as const
+}
 
 function IconButton({
   icon,
   label,
-  iconSize = "default",
+  iconSize = "md",
   className,
   size,
+  loading,
   ...props
 }: IconButtonProps) {
   return (
@@ -31,12 +31,14 @@ function IconButton({
       data-slot="icon-button"
       size={size ?? iconSizeMap[iconSize]}
       aria-label={label}
+      loading={loading}
       className={cn(className)}
       {...props}
     >
-      {icon}
+      {!loading ? icon : null}
     </Button>
   )
 }
 
 export { IconButton }
+export type { IconButtonProps }

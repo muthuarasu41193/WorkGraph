@@ -189,18 +189,20 @@ export default function VaultSellForm({ initialDraft }: Props) {
       <ol className="flex flex-wrap gap-2" aria-label="Form steps">
         {VAULT_SELL_STEPS.map((s) => (
           <li key={s.id}>
-            <button
+            <Button
               type="button"
+              variant={step === s.id ? "secondary" : "ghost"}
+              size="sm"
               onClick={() => setStep(s.id)}
               className={cn(
-                "flex items-center gap-2 rounded-full border px-3 py-1 text-caption font-medium transition-colors",
-                step === s.id ? "border-primary bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted",
+                "rounded-full",
+                step === s.id && "border-primary bg-primary/10 text-primary",
                 step > s.id && "border-green-500/50 text-green-700 dark:text-green-400",
               )}
             >
               {step > s.id ? <Check className="h-3 w-3" /> : null}
               {s.label}
-            </button>
+            </Button>
           </li>
         ))}
       </ol>

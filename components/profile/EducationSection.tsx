@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Education } from "../../lib/types";
 import {
@@ -91,14 +93,15 @@ export default function EducationSection({ userId, education }: Props) {
             </p>
           </div>
         </div>
-        <button
+        <Button
           type="button"
+          size="sm"
           onClick={() => void addItem()}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-4 py-2 text-caption font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
           Add credential
-        </button>
+        </Button>
       </header>
 
       <div className="px-2 pb-2 pt-1 sm:px-4 sm:pb-4 sm:pt-2">
@@ -120,14 +123,15 @@ export default function EducationSection({ userId, education }: Props) {
                   </div>
 
                   <div className="relative min-w-0 flex-1 pl-0 sm:border-l sm:border-border sm:pl-6">
-                    <button
+                    <IconButton
                       type="button"
+                      variant="ghost"
+                      iconSize="sm"
                       onClick={() => void removeItem(idx)}
-                      className="absolute -top-1 right-0 rounded p-2 text-text-tertiary opacity-0 transition hover:bg-surface-secondary hover:text-red-600 group-hover:opacity-100 sm:top-0"
-                      aria-label="Remove education"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                      className="absolute -top-1 right-0 text-text-tertiary opacity-0 hover:text-danger group-hover:opacity-100 sm:top-0"
+                      label="Remove education"
+                      icon={<Trash2 className="h-4 w-4" />}
+                    />
 
                     <input
                       value={item.degree}

@@ -172,8 +172,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-body">
-            {isSubmitting ? "Signing in…" : "Continue"}
+          <Button
+            type="submit"
+            size="lg"
+            loading={isSubmitting}
+            loadingText="Signing in…"
+            className="w-full rounded-full"
+          >
+            Continue
           </Button>
         </form>
 
@@ -190,23 +196,30 @@ export default function LoginPage() {
 
         <Card className="border-border bg-muted/30 shadow-none">
           <CardContent className="p-4 text-body text-muted-foreground">
-            <button
+            <Button
               type="button"
+              variant="link"
               onClick={() => {
                 setShowForgot((v) => !v);
                 setForgotSent(false);
               }}
-              className="font-semibold text-primary underline decoration-primary/30 underline-offset-4 hover:text-primary/80"
+              className="font-semibold"
             >
               {showForgot ? "Hide password reset" : "Forgot password?"}
-            </button>
+            </Button>
             {showForgot ? (
               <form className="mt-3 space-y-2" onSubmit={onForgotPassword}>
                 <p className="text-caption leading-relaxed">
                   Uses the email in the &quot;Email&quot; field. We send a reset link — you&apos;ll set a new password on the next screen.
                 </p>
-                <Button type="submit" variant="outline" disabled={forgotBusy} className="w-full">
-                  {forgotBusy ? "Sending…" : "Send reset link"}
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  loading={forgotBusy}
+                  loadingText="Sending…"
+                  className="w-full"
+                >
+                  Send reset link
                 </Button>
                 {forgotSent ? (
                   <p className="text-caption text-success-foreground">If an account exists, check your inbox for the reset link.</p>

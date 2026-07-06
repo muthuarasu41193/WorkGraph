@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 
@@ -181,13 +182,13 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
                 .map((item) => {
                   const Icon = item.icon;
                   return (
-                    <button
+                    <Button
                       key={item.id}
                       type="button"
+                      variant="ghost"
                       onClick={item.action}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-body transition-colors",
-                        "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
+                        "h-auto w-full justify-start gap-3 px-3 py-3 text-left text-body font-normal",
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
@@ -199,7 +200,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
                           </p>
                         ) : null}
                       </div>
-                    </button>
+                    </Button>
                   );
                 })}
             </div>

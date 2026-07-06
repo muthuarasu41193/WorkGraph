@@ -24,6 +24,7 @@ import {
 import ProfileBadge from "../primitives/ProfileBadge";
 import ProfileButton from "../primitives/ProfileButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -122,10 +123,11 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
     <header className="wg-profile-hero px-5 py-6 sm:px-8 sm:py-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => fileRef.current?.click()}
-            className="group relative mx-auto shrink-0 sm:mx-0"
+            className="group relative mx-auto h-auto min-h-0 p-0 hover:bg-transparent sm:mx-0"
             aria-label="Change profile photo"
           >
             <Avatar className="h-[88px] w-[88px] border-2 border-border">
@@ -138,7 +140,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               <Camera className="h-4 w-4 text-white" />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
-          </button>
+          </Button>
           <input
             ref={fileRef}
             type="file"

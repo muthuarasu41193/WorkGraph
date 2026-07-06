@@ -51,9 +51,10 @@ function ExperienceItem({
       </span>
 
       <div className="rounded-lg border border-border bg-muted/40 p-4 transition-shadow hover:shadow-sm">
-        <button
+        <Button
           type="button"
-          className="flex w-full items-start justify-between gap-3 text-left"
+          variant="ghost"
+          className="h-auto w-full items-start justify-between gap-3 p-0 text-left font-normal hover:bg-transparent"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
         >
@@ -66,7 +67,7 @@ function ExperienceItem({
           <ChevronDown
             className={cn("h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
           />
-        </button>
+        </Button>
 
         <div
           className={cn(

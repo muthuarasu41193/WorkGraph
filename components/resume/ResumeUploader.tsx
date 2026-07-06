@@ -11,6 +11,7 @@ import {
   Upload,
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -206,13 +207,9 @@ export default function ResumeUploader() {
         <AlertCircle className="mx-auto h-10 w-10 text-rose-600" />
         <p className="mt-4 text-body-lg font-semibold text-foreground">Upload failed</p>
         <p className="mt-1 text-body text-muted-foreground">{errorMessage}</p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-5 rounded-lg border border-border bg-card px-4 py-2 text-body font-medium text-foreground"
-        >
+        <Button type="button" variant="secondary" onClick={reset} className="mt-5">
           Try Again
-        </button>
+        </Button>
       </div>
     );
   }
@@ -229,13 +226,9 @@ export default function ResumeUploader() {
           <Check className="h-5 w-5 text-success" />
         </div>
 
-        <button
-          type="button"
-          onClick={handleUpload}
-          className="mt-6 w-full rounded-[14px] bg-primary px-4 py-3 text-body font-semibold text-primary-foreground hover:bg-primary/90"
-        >
+        <Button type="button" onClick={handleUpload} className="mt-6 w-full">
           Upload Resume
-        </button>
+        </Button>
       </div>
     );
   }

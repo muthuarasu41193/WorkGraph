@@ -150,9 +150,11 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
+                <Button
                   type="button"
-                  className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
                   aria-label="Account menu"
                 >
                   <Avatar size="default">
@@ -160,7 +162,7 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                       {initials}
                     </AvatarFallback>
                   </Avatar>
-                </button>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>

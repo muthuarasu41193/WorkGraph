@@ -17,6 +17,7 @@ import {
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -133,11 +134,13 @@ export default function ProfileJobDashboard({
           </div>
         </div>
         <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={refreshListings}
             disabled={isRefreshing}
-            className="inline-flex h-10 items-center gap-2 rounded-full border border-[var(--border-default)] px-5 text-body font-medium text-[var(--text-secondary)] transition hover:shadow-sm disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+            loading={isRefreshing}
+            className="rounded-full"
           >
             {syncStatus === "success" ? (
               <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
@@ -147,7 +150,7 @@ export default function ProfileJobDashboard({
               <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
             )}
             <span className="hidden sm:inline">{isRefreshing ? "Syncing…" : "Sync Jobs"}</span>
-          </button>
+          </Button>
           <Button
             type="button"
             onClick={() => setIsAlertModalOpen(true)}
@@ -294,14 +297,15 @@ export default function ProfileJobDashboard({
                 {keywords.map((kw) => (
                   <Badge key={kw} variant="secondary" className="gap-1 pr-1">
                     {kw}
-                    <button
+                    <IconButton
                       type="button"
+                      variant="ghost"
+                      iconSize="sm"
                       onClick={() => setKeywords((prev) => prev.filter((x) => x !== kw))}
-                      className="ml-1 rounded-full hover:bg-muted"
-                      aria-label={`Remove ${kw}`}
-                    >
-                      <XCircle className="h-3 w-3" />
-                    </button>
+                      className="ml-1 rounded-full"
+                      label={`Remove ${kw}`}
+                      icon={<XCircle className="h-3 w-3" />}
+                    />
                   </Badge>
                 ))}
               </div>

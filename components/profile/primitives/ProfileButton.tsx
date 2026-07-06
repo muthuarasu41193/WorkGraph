@@ -1,38 +1,40 @@
 "use client";
 
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import type { ReactNode } from "react";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost" | "outline";
+type ProfileButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "success" | "link" | "outline";
 
-type ProfileButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: Variant;
+type ProfileButtonProps = Omit<ButtonProps, "variant"> & {
+  variant?: ProfileButtonVariant;
   icon?: ReactNode;
-  size?: React.ComponentProps<typeof Button>["size"];
 };
 
-const variantMap: Record<Variant, React.ComponentProps<typeof Button>["variant"]> = {
-  primary: "default",
+const variantMap: Record<ProfileButtonVariant, ButtonProps["variant"]> = {
+  primary: "primary",
   secondary: "secondary",
   ghost: "ghost",
-  outline: "outline",
+  danger: "danger",
+  success: "success",
+  link: "link",
+  outline: "secondary",
 };
 
-/** Thin wrapper over Button — prefer importing Button from @/components/ui/button */
+/** @deprecated Prefer Button from @/components/ui/button */
 export default function ProfileButton({
   variant = "primary",
   children,
   icon,
-  className = "",
-  size = "default",
+  className,
+  size = "md",
   ...props
 }: ProfileButtonProps) {
   return (
     <Button
       variant={variantMap[variant]}
       size={size}
-      className={cn("font-semibold transition-shadow hover:shadow-sm", className)}
+      className={cn(className)}
       {...props}
     >
       {icon}

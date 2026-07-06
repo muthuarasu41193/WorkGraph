@@ -2,8 +2,9 @@
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Briefcase, Building2, Search as SearchIcon, Sparkles } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
@@ -102,19 +103,16 @@ export default function GlobalSearch({ className, compact = false }: Props) {
         >
           <div className="flex flex-wrap gap-1 border-b border-border p-2">
             {FILTERS.map((f) => (
-              <button
+              <Button
                 key={f.id}
                 type="button"
+                size="sm"
+                variant={filter === f.id ? "primary" : "ghost"}
                 onClick={() => setFilter(f.id)}
-                className={cn(
-                  "rounded-md px-3 py-1 text-caption font-medium transition-colors",
-                  filter === f.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted",
-                )}
+                className="h-7 px-3 text-caption"
               >
                 {f.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -128,9 +126,10 @@ export default function GlobalSearch({ className, compact = false }: Props) {
             <ul className="max-h-72 overflow-y-auto py-1">
               {results.map((job) => (
                 <li key={job.id} role="option">
-                  <button
+                  <Button
                     type="button"
-                    className="flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/70"
+                    variant="ghost"
+                    className="h-auto w-full items-start justify-start gap-3 rounded-none px-3 py-3 text-left shadow-none"
                     onClick={() => selectJob(job.id, job.title)}
                   >
                     <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -149,7 +148,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                     {job.matchedSkills.length > 0 ? (
                       <Sparkles className="mt-1 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                     ) : null}
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>

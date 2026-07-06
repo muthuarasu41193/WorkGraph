@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -27,9 +28,10 @@ export default function ExpandableCard({
   return (
     <Card className={cn("wg-dash-section-card", className)}>
       <CardHeader className="pb-2">
-        <button
+        <Button
           type="button"
-          className="flex w-full items-start justify-between gap-3 text-left"
+          variant="ghost"
+          className="h-auto w-full items-start justify-between gap-3 px-0 py-0 text-left shadow-none hover:bg-transparent"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
         >
@@ -43,7 +45,7 @@ export default function ExpandableCard({
           <span className="mt-1 shrink-0 text-muted-foreground" aria-hidden>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </span>
-        </button>
+        </Button>
       </CardHeader>
       {open ? <CardContent className="pt-0">{children}</CardContent> : null}
     </Card>

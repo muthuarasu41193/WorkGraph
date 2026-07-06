@@ -27,10 +27,11 @@ export default function SignOutButton() {
       variant="ghost"
       size="sm"
       onClick={handleSignOut}
-      disabled={isLoading}
+      loading={isLoading}
+      loadingText="Signing out…"
     >
       <LogOut className="h-4 w-4" aria-hidden />
-      {isLoading ? "Signing out…" : "Sign out"}
+      Sign out
     </Button>
   );
 }

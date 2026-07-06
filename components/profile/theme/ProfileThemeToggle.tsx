@@ -1,19 +1,20 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
+import { IconButton } from "@/components/ui/icon-button";
 import { useProfileTheme } from "./ProfileThemeProvider";
 
 export default function ProfileThemeToggle() {
   const { theme, toggle } = useProfileTheme();
 
   return (
-    <button
+    <IconButton
       type="button"
+      variant="secondary"
+      iconSize="md"
       onClick={toggle}
-      aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--surface-primary)] text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-    >
-      {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-    </button>
+      label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+      icon={theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+    />
   );
 }

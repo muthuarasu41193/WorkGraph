@@ -2,6 +2,7 @@ import * as React from "react"
 import { X } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { IconButton } from "@/components/ui/icon-button"
 import { cn } from "@/lib/utils"
 
 const tagVariants = cva(
@@ -43,14 +44,15 @@ function Tag({
     >
       {children}
       {onRemove ? (
-        <button
+        <IconButton
           type="button"
+          variant="ghost"
+          iconSize="sm"
           onClick={onRemove}
-          aria-label={removeLabel}
-          className="rounded-sm p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <X className="size-3" aria-hidden />
-        </button>
+          label={removeLabel}
+          className="size-5 min-h-0 opacity-70 hover:opacity-100"
+          icon={<X className="size-3" aria-hidden />}
+        />
       ) : null}
     </span>
   )

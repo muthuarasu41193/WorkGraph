@@ -50,6 +50,7 @@ import {
 import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -1454,14 +1455,15 @@ export default function RecommendedJobsSection({
             <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
             <p className="mt-1 text-body text-[var(--text-tertiary)]">Based on your profile, we match jobs by:</p>
           </div>
-          <button
+          <IconButton
             type="button"
+            variant="secondary"
+            iconSize="sm"
             onClick={() => setIsMatchProfileExpanded((v) => !v)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
-            aria-label={isMatchProfileExpanded ? "Collapse profile analysis" : "Expand profile analysis"}
-          >
-            {isMatchProfileExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
+            className="h-8 w-8 rounded-lg"
+            label={isMatchProfileExpanded ? "Collapse profile analysis" : "Expand profile analysis"}
+            icon={isMatchProfileExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          />
         </div>
 
         {isMatchProfileExpanded ? (
@@ -1565,15 +1567,17 @@ export default function RecommendedJobsSection({
                   className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-12 pr-10 text-body text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
                 />
                 {searchInput ? (
-                  <button
+                  <IconButton
                     type="button"
+                    variant="ghost"
+                    iconSize="sm"
                     onClick={() => {
                       setSearchInput("");
                     }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                    label="Clear search"
+                    icon={<X className="h-4 w-4" />}
+                  />
                 ) : null}
                 {isSearching ? <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" /> : null}
               </div>
@@ -1623,17 +1627,19 @@ export default function RecommendedJobsSection({
                   />
                   <div className="flex flex-wrap gap-2">
                     {["any", "remote", "hybrid", "onsite"].map((loc) => (
-                      <button
+                      <Button
                         key={loc}
                         type="button"
+                        size="sm"
+                        variant={locationMode === loc ? "primary" : "secondary"}
                         onClick={() => {
                           setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
                           setCurrentPage(1);
                         }}
-                        className={`rounded-lg px-3 py-1 text-caption ${locationMode === loc ? "bg-[var(--info)] text-white" : "bg-[var(--surface-secondary)] text-[var(--text-secondary)]"}`}
+                        className="rounded-lg text-caption"
                       >
                         {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                   <p className="mt-2 text-caption text-[var(--text-tertiary)]">Popular: Remote, New York, London, San Francisco</p>
@@ -1646,31 +1652,35 @@ export default function RecommendedJobsSection({
                 </summary>
                 <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-48 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
                   {DATE_OPTIONS.map((d) => (
-                    <button
+                    <Button
                       key={d.id}
                       type="button"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setDateWindow(d.id);
                         setCurrentPage(1);
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-body hover:bg-[var(--surface-secondary)]"
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-body"
                     >
                       {d.label}
                       {dateWindow === d.id ? <Check className="h-4 w-4 text-[var(--info)]" /> : null}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </details>
 
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsMoreFiltersOpen(true)}
                 className={`${advancedFilterCount > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS} shrink-0`}
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 Advanced
                 {advancedFilterCount > 0 ? ` · ${advancedFilterCount}` : ""}
-              </button>
+              </Button>
             </div>
           </section>
 
@@ -1680,14 +1690,20 @@ export default function RecommendedJobsSection({
               {activeFilterChips.map((chip) => (
                 <span key={chip.key} className="inline-flex items-center gap-1 rounded-2xl bg-[var(--info-subtle)] px-2 py-1 pl-3 text-caption text-[var(--info)] transition-all duration-200 wg-chip-enter">
                   {chip.label}
-                  <button type="button" onClick={() => removeChip(chip.key)} className="text-[var(--info)] hover:text-[var(--info-foreground)]">
-                    <X className="h-4 w-4" />
-                  </button>
+                  <IconButton
+                    type="button"
+                    variant="ghost"
+                    iconSize="sm"
+                    onClick={() => removeChip(chip.key)}
+                    className="text-[var(--info)] hover:text-[var(--info-foreground)]"
+                    label={`Remove ${chip.label} filter`}
+                    icon={<X className="h-4 w-4" />}
+                  />
                 </span>
               ))}
-              <button type="button" onClick={clearFilters} className="ml-1 text-body font-medium text-[var(--danger)]">
+              <Button type="button" variant="link" size="sm" onClick={clearFilters} className="ml-1 text-body font-medium text-[var(--danger)]">
                 Clear all filters
-              </button>
+              </Button>
             </div>
           ) : null}
 
@@ -2214,8 +2230,10 @@ export default function RecommendedJobsSection({
                       Skills 60% · Experience 20% · Location 20%
                     </span>
                   </span>
-                  <button
+                  <IconButton
                     type="button"
+                    variant="ghost"
+                    iconSize="md"
                     onClick={(e) => {
                       e.stopPropagation();
                       setBouncingBookmarkId(job.id);
@@ -2228,10 +2246,10 @@ export default function RecommendedJobsSection({
                       });
                     }}
                     title="Save job"
-                    className={`rounded-md p-1 text-[var(--text-tertiary)] transition hover:bg-[var(--info-subtle)] hover:text-[var(--info)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-1 ${bouncingBookmarkId === job.id ? "wg-bookmark-bounce" : ""}`}
-                  >
-                    {isSaved ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
-                  </button>
+                    label="Save job"
+                    className={`rounded-md text-[var(--text-tertiary)] transition hover:bg-[var(--info-subtle)] hover:text-[var(--info)] ${bouncingBookmarkId === job.id ? "wg-bookmark-bounce" : ""}`}
+                    icon={isSaved ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
+                  />
                 </div>
               </div>
 
@@ -2274,8 +2292,10 @@ export default function RecommendedJobsSection({
                       Quick Apply
                     </a>
                   ) : null}
-                  <button
+                  <Button
                     type="button"
+                    variant="link"
+                    size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
                       setExpandedJobId((prev) => (prev === job.id ? null : job.id));
@@ -2283,7 +2303,7 @@ export default function RecommendedJobsSection({
                     className="text-body font-medium text-[var(--info)] opacity-0 transition group-hover:opacity-100"
                   >
                     View Details
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -2370,48 +2390,50 @@ export default function RecommendedJobsSection({
           </p>
           {totalPages > 1 ? (
             <div className="flex flex-wrap items-center justify-center gap-1">
-              <button
+              <IconButton
                 type="button"
+                variant="secondary"
+                iconSize="sm"
                 onClick={() => goToPage(safePage - 1)}
                 disabled={safePage <= 1 || isPageLoading}
-                aria-label="Previous page"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] transition hover:border-[var(--info)] hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
+                label="Previous page"
+                className="h-9 w-9 rounded-full"
+                icon={<ChevronLeft className="h-4 w-4" />}
+              />
               {paginationTokens.map((token, index) =>
                 token === "ellipsis" ? (
                   <span key={`ellipsis-${index}`} className="px-1 text-body text-[var(--text-tertiary)]">
                     …
                   </span>
                 ) : (
-                  <button
+                  <Button
                     key={token}
                     type="button"
+                    variant={token === safePage ? "primary" : "secondary"}
+                    size="sm"
                     onClick={() => goToPage(token)}
                     disabled={isPageLoading}
                     aria-label={`Page ${token}`}
                     aria-current={token === safePage ? "page" : undefined}
                     className={cn(
-                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-body font-medium transition",
-                      token === safePage
-                        ? "bg-[var(--info)] text-white shadow-sm"
-                        : "border border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] hover:border-[var(--info)] hover:bg-[var(--info-subtle)]"
+                      "h-9 min-w-9 rounded-full px-3 text-body font-medium",
+                      token !== safePage && "hover:border-[var(--info)] hover:bg-[var(--info-subtle)]",
                     )}
                   >
                     {token}
-                  </button>
+                  </Button>
                 )
               )}
-              <button
+              <IconButton
                 type="button"
+                variant="secondary"
+                iconSize="sm"
                 onClick={() => goToPage(safePage + 1)}
                 disabled={safePage >= totalPages || isPageLoading}
-                aria-label="Next page"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] transition hover:border-[var(--info)] hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+                label="Next page"
+                className="h-9 w-9 rounded-full"
+                icon={<ChevronRight className="h-4 w-4" />}
+              />
             </div>
           ) : null}
         </nav>
@@ -2430,17 +2452,18 @@ export default function RecommendedJobsSection({
             catalog or update your profile skills.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <button
+            <Button
               type="button"
+              variant="primary"
               onClick={() => {
                 setShowProfileMatchesOnly(false);
                 setSkillsPick(new Set());
                 setCurrentPage(1);
               }}
-              className="inline-flex h-10 items-center rounded-full bg-[var(--info)] px-5 text-body font-medium text-white hover:bg-[var(--info-foreground)]"
+              className="rounded-full"
             >
               Browse all {liveListings.toLocaleString()} jobs
-            </button>
+            </Button>
             <Link
               href="/profile?view=profile"
               className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-body font-medium text-[var(--info)]"
@@ -2457,23 +2480,24 @@ export default function RecommendedJobsSection({
           <h3 className="mt-4 text-heading-m text-[var(--text-primary)]">No jobs found</h3>
           <p className="mt-2 text-body text-[var(--text-tertiary)]">Try adjusting your filters or search terms</p>
           <div className="mt-4 flex items-center justify-center gap-4">
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={clearFilters}
-              className="inline-flex h-10 items-center rounded-full border border-[var(--info)] px-5 text-body font-medium text-[var(--info)]"
+              className="rounded-full"
             >
               Clear all filters
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="link"
               onClick={() => {
                 clearFilters();
                 setCurrentPage(1);
               }}
-              className="text-body font-medium text-[var(--info)] underline underline-offset-2"
             >
               Browse all jobs
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
@@ -2552,9 +2576,14 @@ export default function RecommendedJobsSection({
         <div className="fixed inset-0 z-[125] bg-surface-primary p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Job Details</h3>
-            <button type="button" onClick={() => setMobileDetailJobId(null)}>
-              <X className="h-5 w-5 text-[var(--text-secondary)]" />
-            </button>
+            <IconButton
+              type="button"
+              variant="ghost"
+              iconSize="md"
+              onClick={() => setMobileDetailJobId(null)}
+              label="Close job details"
+              icon={<X className="h-5 w-5 text-[var(--text-secondary)]" />}
+            />
           </div>
           {(() => {
             const jobEntry = listingPipeline.find(({ job }) => job.id === mobileDetailJobId);
@@ -2592,14 +2621,15 @@ export default function RecommendedJobsSection({
       ) : null}
 
       {showScrollTop ? (
-        <button
+        <IconButton
           type="button"
+          variant="secondary"
+          iconSize="lg"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-[110] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-default)] bg-surface-primary text-[var(--text-secondary)] transition hover:bg-[var(--surface-secondary)] hover:shadow-md"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
+          className="fixed bottom-6 right-6 z-[110] h-12 w-12 rounded-full hover:shadow-md"
+          label="Scroll to top"
+          icon={<ArrowUp className="h-5 w-5" />}
+        />
       ) : null}
     </section>
   );

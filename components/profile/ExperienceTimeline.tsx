@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { WorkExperience } from "../../lib/types";
 import {
@@ -91,14 +93,15 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
             </p>
           </div>
         </div>
-        <button
+        <Button
           type="button"
+          size="sm"
           onClick={() => void addItem()}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-4 py-2 text-caption font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
+          className="self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
           Add role
-        </button>
+        </Button>
       </header>
 
       <div className="px-2 pb-2 pt-1 sm:px-4 sm:pb-4 sm:pt-2">
@@ -113,14 +116,15 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
                 </div>
 
                 <div className="relative min-w-0 flex-1 border-l-2 border-text-primary py-5 pl-4 pr-10 sm:pl-6 sm:pr-12">
-                  <button
+                  <IconButton
                     type="button"
+                    variant="ghost"
+                    iconSize="sm"
                     onClick={() => void removeItem(idx)}
-                    className="absolute right-2 top-5 rounded p-2 text-text-tertiary opacity-0 transition hover:bg-surface-secondary hover:text-red-600 group-hover:opacity-100"
-                    aria-label="Remove role"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                    className="absolute right-2 top-5 text-text-tertiary opacity-0 hover:text-danger group-hover:opacity-100"
+                    label="Remove role"
+                    icon={<Trash2 className="h-4 w-4" />}
+                  />
 
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
                     <div className="min-w-0 flex-1 space-y-2">

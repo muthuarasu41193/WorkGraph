@@ -4,6 +4,7 @@ import { ArrowUpRight, Briefcase, ExternalLink, MapPin, RefreshCw } from "lucide
 import { useRouter } from "next/navigation";
 import { useCallback, useState, type JSX } from "react";
 import { RedditLogo } from "@/components/icons/RedditLogo";
+import { Button } from "@/components/ui/button";
 import type { JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 
 type CommunitySource = Extract<JobFeedSource, "remoteok" | "arbeitnow" | "reddit" | "rss" | "hackernews">;
@@ -285,15 +286,18 @@ export default function ProfileSocialJobPosts({
         <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
           {canSyncCommunityJobs ? (
             <div className="flex flex-col items-end gap-2">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="sm"
                 onClick={handleAdminSync}
                 disabled={syncState === "loading"}
-                className="inline-flex items-center gap-2 rounded-[18px] border border-[var(--info)] bg-surface-primary px-4 py-2 text-caption font-semibold text-[var(--info-foreground)] shadow-sm transition hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                loading={syncState === "loading"}
+                className="rounded-[18px] border-[var(--info)] text-[var(--info-foreground)] shadow-sm hover:bg-[var(--info-subtle)]"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${syncState === "loading" ? "animate-spin" : ""}`} aria-hidden />
                 Sync community jobs now
-              </button>
+              </Button>
               {syncMessage ? (
                 <p
                   className={`max-w-[280px] text-right text-caption leading-snug ${

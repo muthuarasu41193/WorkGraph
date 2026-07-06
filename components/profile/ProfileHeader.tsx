@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, MapPin, Pencil, X } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 import {
@@ -132,11 +133,12 @@ export default function ProfileHeader({ profile, userId }: Props) {
       ) : null}
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => fileRef.current?.click()}
           aria-label={isUploading ? "Uploading profile photo" : "Upload or change profile photo"}
-          className="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full ring-4 ring-success/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success focus-visible:ring-offset-2 sm:h-28 sm:w-28"
+          className="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full p-0 ring-4 ring-success/20 hover:bg-transparent sm:h-28 sm:w-28"
         >
           {photoUrl ? (
             <Image
@@ -159,7 +161,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               <span>{isUploading ? "Uploading..." : "Change Photo"}</span>
             </div>
           </div>
-        </button>
+        </Button>
 
         <input
           ref={fileRef}
@@ -185,17 +187,15 @@ export default function ProfileHeader({ profile, userId }: Props) {
             </div>
 
             {!isEditing ? (
-              <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-2 text-caption font-medium text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
-              >
+              <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditing(true)}>
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="sm"
                 onClick={() => {
                   setForm({
                     full_name: profile.full_name || "",
@@ -205,11 +205,10 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   });
                   setIsEditing(false);
                 }}
-                className="inline-flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-2 text-caption font-medium text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
               >
                 <X className="h-3.5 w-3.5" />
                 Cancel
-              </button>
+              </Button>
             )}
           </div>
 
@@ -252,14 +251,16 @@ export default function ProfileHeader({ profile, userId }: Props) {
 
           {isEditing ? (
             <div className="mt-3 flex justify-end">
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={() => void saveProfileBasics()}
                 disabled={isSaving}
-                className="rounded-md bg-[var(--info)] px-3 py-2 text-caption font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                loading={isSaving}
+                loadingText="Saving..."
               >
-                {isSaving ? "Saving..." : "Save changes"}
-              </button>
+                Save changes
+              </Button>
             </div>
           ) : null}
 

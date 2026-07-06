@@ -6,6 +6,7 @@ import { Lock, Star, Unlock } from "lucide-react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,18 +35,21 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
   return (
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
-        <button
+        <IconButton
           key={star}
           type="button"
+          variant="ghost"
+          iconSize="sm"
           disabled={!onChange}
           onClick={() => onChange?.(star)}
           className="disabled:cursor-default"
-          aria-label={`${star} star${star > 1 ? "s" : ""}`}
-        >
-          <Star
-            className={`h-5 w-5 ${star <= value ? "fill-warning text-warning" : "text-muted-foreground"}`}
-          />
-        </button>
+          label={`${star} star${star > 1 ? "s" : ""}`}
+          icon={
+            <Star
+              className={`h-5 w-5 ${star <= value ? "fill-warning text-warning" : "text-muted-foreground"}`}
+            />
+          }
+        />
       ))}
     </div>
   );

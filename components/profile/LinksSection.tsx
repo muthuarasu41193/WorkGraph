@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { GitBranch, Globe, Link2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 import {
@@ -127,21 +128,13 @@ export default function LinksSection({ profile, userId }: Props) {
                 className="flex-1 border-none bg-transparent text-body font-normal text-[var(--text-secondary)] outline-none placeholder:text-[var(--text-tertiary)]"
               />
               {!isEditing ? (
-                <button
-                  type="button"
-                  onClick={() => setEditing(row.key)}
-                  className="rounded-lg border border-[var(--border-default)] bg-surface-primary px-3 py-2 text-caption font-medium text-[var(--text-secondary)] transition hover:shadow-sm"
-                >
+                <Button type="button" variant="secondary" size="sm" onClick={() => setEditing(row.key)}>
                   Edit
-                </button>
+                </Button>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => saveField(row.key)}
-                  className="rounded-lg bg-[var(--info)] px-3 py-2 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)]"
-                >
+                <Button type="button" size="sm" onClick={() => saveField(row.key)}>
                   Save
-                </button>
+                </Button>
               )}
             </div>
           );

@@ -15,7 +15,8 @@ export {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./breadcrumb";
-export { Button, buttonVariants } from "./button";
+export { Button, buttonVariants, normalizeVariant, normalizeSize } from "./button";
+export type { ButtonProps, ButtonVariant, ButtonSize, LegacyVariant, LegacySize } from "./button";
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants } from "./card";
 export { Checkbox } from "./checkbox";
 export {

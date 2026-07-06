@@ -59,18 +59,20 @@ export default function CommunityPanel() {
           <form className="space-y-3" onSubmit={onSubmit}>
             <div className="flex flex-wrap gap-2">
               {POST_TYPES.map((t) => (
-                <button
+                <Button
                   key={t.value}
                   type="button"
+                  variant={postType === t.value ? "secondary" : "ghost"}
+                  size="sm"
                   onClick={() => setPostType(t.value)}
-                  className={`rounded-md border px-2 py-1 text-caption font-medium ${
+                  className={
                     postType === t.value
                       ? "border-success bg-success-subtle text-success-foreground"
-                      : "border-[var(--border-default)] text-[var(--text-secondary)]"
-                  }`}
+                      : "text-[var(--text-secondary)]"
+                  }
                 >
                   {t.label}
-                </button>
+                </Button>
               ))}
             </div>
             <Input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />

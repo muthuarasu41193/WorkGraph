@@ -13,6 +13,7 @@ import {
 import ProfileCard from "../primitives/ProfileCard";
 import SectionHeader from "../primitives/SectionHeader";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
@@ -136,14 +137,15 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                     </span>
                   ) : null}
                   {cat.id === "user" || cat.id === "more" ? (
-                    <button
+                    <IconButton
                       type="button"
+                      variant="ghost"
+                      iconSize="sm"
                       onClick={() => void removeSkill(skill.name)}
-                      className="opacity-0 transition group-hover:opacity-100"
-                      aria-label={`Remove ${skill.name}`}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
+                      className="h-auto min-h-0 w-auto min-w-0 p-0 opacity-0 transition group-hover:opacity-100"
+                      label={`Remove ${skill.name}`}
+                      icon={<X className="h-3 w-3" />}
+                    />
                   ) : null}
                   {skill.top ? (
                     <span className="rounded px-1 text-caption font-semibold">Top</span>

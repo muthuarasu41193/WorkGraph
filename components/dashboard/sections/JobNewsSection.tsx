@@ -47,24 +47,24 @@ export default function JobNewsSection() {
 
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by platform">
         {SOCIAL_PLATFORM_TABS.map((tab) => (
-          <button
+          <Button
             key={tab.id}
             type="button"
             role="tab"
+            variant={platform === tab.id ? "secondary" : "ghost"}
+            size="sm"
             aria-selected={platform === tab.id}
             onClick={() => setPlatform(tab.id)}
             className={cn(
-              "inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-3 py-2 text-body font-medium transition-colors",
-              platform === tab.id
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-background text-muted-foreground hover:bg-muted",
+              "min-h-[44px] gap-2",
+              platform === tab.id && "border-primary bg-primary/10 text-primary",
             )}
           >
             {tab.label}
             <Badge variant="secondary" className="h-5 px-2 text-caption">
               {counts[tab.id]}
             </Badge>
-          </button>
+          </Button>
         ))}
       </div>
 

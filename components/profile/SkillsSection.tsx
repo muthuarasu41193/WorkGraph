@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { PlusCircle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import {
   emitProfileSaved,
@@ -71,13 +73,14 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
           <h2 className="text-heading-s text-text-primary">Skills</h2>
           <p className="mt-1 text-caption font-semibold text-text-secondary">Resume keywords that improve recruiter and ATS visibility.</p>
         </div>
-        <button
+        <IconButton
           type="button"
+          variant="success"
+          iconSize="md"
           onClick={() => setShowAdd((v) => !v)}
-          className="rounded-xl border border-success/20 bg-success-subtle p-2 text-success-foreground transition hover:bg-success-subtle"
-        >
-          <PlusCircle className="h-5 w-5" />
-        </button>
+          label="Add skill"
+          icon={<PlusCircle className="h-5 w-5" />}
+        />
       </div>
       {status ? <p className="mb-3 text-caption font-medium text-success-foreground">{status}</p> : null}
 
@@ -95,13 +98,9 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
             placeholder="Add a skill"
             className="flex-1 rounded-xl border border-border bg-surface-secondary/80 px-3 py-2 text-body outline-none transition focus:border-success/20 focus:bg-surface-primary focus:ring-4 focus:ring-success/20"
           />
-          <button
-            type="button"
-            onClick={() => void addSkill()}
-            className="rounded-xl bg-success px-3 py-2 text-body font-semibold text-white transition hover:bg-success-hover"
-          >
+          <Button type="button" variant="success" size="sm" onClick={() => void addSkill()}>
             Add
-          </button>
+          </Button>
         </div>
       ) : null}
 
@@ -113,9 +112,15 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
               className="inline-flex items-center gap-1 rounded-full bg-success-subtle px-3 py-1 text-body font-semibold text-success-foreground ring-1 ring-success/20"
             >
               {skill}
-              <button type="button" onClick={() => void removeSkill(skill)} className="text-success-foreground">
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <IconButton
+                type="button"
+                variant="ghost"
+                iconSize="sm"
+                onClick={() => void removeSkill(skill)}
+                className="h-auto min-h-0 w-auto min-w-0 p-0 text-success-foreground hover:bg-transparent"
+                label={`Remove ${skill}`}
+                icon={<X className="h-3.5 w-3.5" />}
+              />
             </span>
           ))
         ) : (
