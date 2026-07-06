@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/design-system/EmptyState";
-import JobCard, { jobCardFromMatch } from "@/components/design-system/JobCard";
+import JobCard from "@/components/design-system/JobCard";
 import SectionHeader from "@/components/design-system/SectionHeader";
+import { jobCardFromMatch } from "@/lib/job-card-data";
 import type { JobMatchPreviewExt } from "@/lib/home-dashboard";
 import { dashboardHref } from "@/lib/dashboard-routes";
 
