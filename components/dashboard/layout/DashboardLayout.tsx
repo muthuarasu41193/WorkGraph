@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useSyncExternalStore, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { AppShell } from "@/components/layout";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
@@ -18,37 +18,51 @@ type Props = {
   onToggleTheme?: () => void;
 };
 
+function readCollapsedPreference(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+const collapsedListeners = new Set<() => void>();
+
+function subscribeCollapsed(onStoreChange: () => void) {
+  collapsedListeners.add(onStoreChange);
+  const onStorage = () => onStoreChange();
+  window.addEventListener("storage", onStorage);
+  return () => {
+    collapsedListeners.delete(onStoreChange);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+function emitCollapsedChange() {
+  collapsedListeners.forEach((listener) => listener());
+}
+
 export default function DashboardLayout({ children, isDark, onToggleTheme }: Props) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const sidebarCollapsed = useSyncExternalStore(
+    subscribeCollapsed,
+    readCollapsedPreference,
+    () => false,
+  );
   const { navigate } = useDashboardNavigation();
 
-  useEffect(() => {
+  const toggleSidebar = useCallback(() => {
+    const next = !readCollapsedPreference();
     try {
-      const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-      if (stored === "true") setSidebarCollapsed(true);
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
     } catch {
       /* ignore storage errors */
     }
-    setHydrated(true);
-  }, []);
-
-  const toggleSidebar = useCallback(() => {
-    setSidebarCollapsed((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
-      } catch {
-        /* ignore storage errors */
-      }
-      return next;
-    });
+    emitCollapsedChange();
   }, []);
 
   useSidebarShortcuts({
     onToggleCollapse: toggleSidebar,
     navigate,
-    enabled: hydrated,
   });
 
   return (
@@ -62,10 +76,7 @@ export default function DashboardLayout({ children, isDark, onToggleTheme }: Pro
       </AppShell.Header>
 
       <AppShell.Body>
-        <SideNav
-          collapsed={hydrated ? sidebarCollapsed : false}
-          onToggleCollapse={toggleSidebar}
-        />
+        <SideNav collapsed={sidebarCollapsed} onToggleCollapse={toggleSidebar} />
 
         <AppShell.Main>
           <AppShell.Content>{children}</AppShell.Content>

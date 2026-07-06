@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgeCheck, Building2, ExternalLink, MapPin, Radio } from "lucide-react";
-import { AppShell } from "@/components/layout";
+import {
+  AppShell,
+  AppShellBody,
+  AppShellContent,
+  AppShellHeader,
+  AppShellMain,
+  AppShellPage,
+  AppShellPageHeader,
+} from "@/components/layout/AppShell";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { getPublicCompanyBySlug } from "@/lib/employer/public-company";
 import {
@@ -36,7 +44,7 @@ export default async function PublicCompanyPage({ params }: Props) {
 
   return (
     <AppShell className="bg-background">
-      <AppShell.Header className="border-b">
+      <AppShellHeader className="border-b">
         <div className="mx-auto flex h-full max-w-3xl items-center justify-between px-4 sm:px-6">
           <Link href="/">
             <WorkGraphLogo />
@@ -45,12 +53,12 @@ export default async function PublicCompanyPage({ params }: Props) {
             <Link href="/profile?view=workgraph-direct">WorkGraph Direct</Link>
           </Button>
         </div>
-      </AppShell.Header>
+      </AppShellHeader>
 
-      <AppShell.Body>
-        <AppShell.Main className="mx-auto max-w-3xl">
-          <AppShell.Page>
-            <AppShell.PageHeader padding={false}>
+      <AppShellBody>
+        <AppShellMain className="mx-auto max-w-3xl">
+          <AppShellPage>
+            <AppShellPageHeader padding={false}>
               <div className="flex flex-wrap items-start gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted">
                   <Building2 className="h-7 w-7 text-muted-foreground" aria-hidden />
@@ -88,9 +96,9 @@ export default async function PublicCompanyPage({ params }: Props) {
                   </div>
                 </div>
               </div>
-            </AppShell.PageHeader>
+            </AppShellPageHeader>
 
-            <AppShell.Content constrained={false} className="space-y-10 py-10">
+            <AppShellContent constrained={false} className="space-y-10 py-10">
               {profile.hiring_philosophy ? (
                 <section className="rounded-xl border bg-muted/30 p-5">
                   <h2 className="text-body font-semibold">Hiring philosophy</h2>
@@ -154,10 +162,10 @@ export default async function PublicCompanyPage({ params }: Props) {
               <p className="text-center text-caption text-muted-foreground">
                 Employers post signals on WorkGraph Direct — not scraped ATS listings.
               </p>
-            </AppShell.Content>
-          </AppShell.Page>
-        </AppShell.Main>
-      </AppShell.Body>
+            </AppShellContent>
+          </AppShellPage>
+        </AppShellMain>
+      </AppShellBody>
     </AppShell>
   );
 }

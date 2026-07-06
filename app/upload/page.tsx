@@ -1,23 +1,31 @@
 import Link from "next/link";
-import { AppShell } from "@/components/layout";
+import {
+  AppShell,
+  AppShellBody,
+  AppShellContent,
+  AppShellHeader,
+  AppShellMain,
+  AppShellPage,
+  AppShellPageHeader,
+} from "@/components/layout/AppShell";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import ResumeUploader from "../../components/resume/ResumeUploader";
 
 export default function UploadPage() {
   return (
     <AppShell className="bg-surface-primary">
-      <AppShell.Header className="border-b bg-surface-primary/95 backdrop-blur">
+      <AppShellHeader className="border-b bg-surface-primary/95 backdrop-blur">
         <div className="mx-auto flex h-full max-w-[600px] items-center px-6">
           <Link href="/profile">
             <WorkGraphLogo />
           </Link>
         </div>
-      </AppShell.Header>
+      </AppShellHeader>
 
-      <AppShell.Body>
-        <AppShell.Main className="mx-auto w-full max-w-[600px]">
-          <AppShell.Page>
-            <AppShell.PageHeader padding={false}>
+      <AppShellBody>
+        <AppShellMain className="mx-auto w-full max-w-[600px]">
+          <AppShellPage>
+            <AppShellPageHeader padding={false}>
               <div className="text-center">
                 <h1 className="mt-3 text-heading-xl text-text-primary">Upload Your Resume</h1>
                 <p className="mt-3 text-body leading-6 text-[var(--text-secondary)]">
@@ -25,14 +33,14 @@ export default function UploadPage() {
                   professional profile automatically.
                 </p>
               </div>
-            </AppShell.PageHeader>
+            </AppShellPageHeader>
 
-            <AppShell.Content constrained={false}>
+            <AppShellContent constrained={false}>
               <ResumeUploader />
-            </AppShell.Content>
-          </AppShell.Page>
-        </AppShell.Main>
-      </AppShell.Body>
+            </AppShellContent>
+          </AppShellPage>
+        </AppShellMain>
+      </AppShellBody>
     </AppShell>
   );
 }

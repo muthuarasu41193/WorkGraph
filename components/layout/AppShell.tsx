@@ -359,6 +359,21 @@ export const AppShell = Object.assign(AppShellRoot, {
   Auth: AppShellAuth,
 });
 
+export {
+  AppShellRoot,
+  AppShellHeader,
+  AppShellBody,
+  AppShellSidebar,
+  AppShellMain,
+  AppShellScrollArea,
+  AppShellPage,
+  AppShellPageHeader,
+  AppShellFilters,
+  AppShellContent,
+  AppShellFooter,
+  AppShellAuth,
+};
+
 export default AppShell;
 
 export type {

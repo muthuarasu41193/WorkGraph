@@ -1,6 +1,21 @@
 "use client";
 
-export { AppShell, default } from "./AppShell";
+export {
+  AppShell,
+  AppShellAuth,
+  AppShellBody,
+  AppShellContent,
+  AppShellFilters,
+  AppShellFooter,
+  AppShellHeader,
+  AppShellMain,
+  AppShellPage,
+  AppShellPageHeader,
+  AppShellRoot,
+  AppShellScrollArea,
+  AppShellSidebar,
+  default,
+} from "./AppShell";
 export type {
   AppShellProps,
   AuthPanelProps,

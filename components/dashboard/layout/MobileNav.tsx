@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 import { getDashboardRoute } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
