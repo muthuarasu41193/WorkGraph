@@ -62,9 +62,9 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] p-0">
-                <SheetHeader className="border-b px-4 py-4 text-left">
-                  <SheetTitle>WorkGraph</SheetTitle>
+              <SheetContent side="left" className="w-[var(--shell-sheet-width)] p-0">
+                <SheetHeader className="border-b px-4 py-3 text-left">
+                  <SheetTitle className="text-body font-semibold">Navigation</SheetTitle>
                 </SheetHeader>
                 <SideNav mobile onNavigate={() => setMenuOpen(false)} />
               </SheetContent>
