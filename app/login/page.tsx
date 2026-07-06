@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import { signInWithPassword } from "../../lib/auth/client";
 import { supertokensEnabled } from "../../lib/auth/config";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
@@ -107,7 +107,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       panelEyebrow="Welcome back"
       panelHeadline="Sign in and keep your profile interview-ready."
       panelDescription="Use your WorkGraph email and password."
@@ -252,6 +252,6 @@ export default function LoginPage() {
           Keep your password secure and do not share it with anyone.
         </p>
       </div>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

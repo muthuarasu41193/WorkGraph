@@ -11,7 +11,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import {
   MAX_RESUME_UPLOAD_BYTES,
   MAX_RESUME_UPLOAD_LABEL,
@@ -275,7 +275,7 @@ export default function CreateProfilePage() {
 
   if (!authReady) {
     return (
-      <AuthSplitShell
+      <AppShell.Auth
         wide
         panelEyebrow="Get started"
         panelHeadline="Build a profile recruiters skim in seconds."
@@ -286,12 +286,12 @@ export default function CreateProfilePage() {
           <Spinner className="mr-2" aria-hidden />
           Verifying sign-in…
         </div>
-      </AuthSplitShell>
+      </AppShell.Auth>
     );
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       wide
       panelEyebrow="Get started"
       panelHeadline="Build a profile recruiters skim in seconds."
@@ -614,6 +614,6 @@ export default function CreateProfilePage() {
           </Link>
         </p>
       </div>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

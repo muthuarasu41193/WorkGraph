@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
-import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import { slugifyCompany } from "@/lib/employer/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +54,7 @@ export default function EmployerOnboardingPage() {
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       panelEyebrow="Employer"
       panelHeadline="Hire through signals, not job-board clones"
       panelDescription="WorkGraph Direct lets you post hiring intent with fit criteria. Seekers connect with their profile graph — you see alignment, not resume spam."
@@ -138,6 +138,6 @@ export default function EmployerOnboardingPage() {
           Continue to dashboard
         </Button>
       </form>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

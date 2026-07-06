@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { Building2, LayoutDashboard, Plus, Radio, Users } from "lucide-react";
+import { Building2, Plus, Radio, Users } from "lucide-react";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
+import { AppShell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
@@ -24,9 +25,9 @@ export default function EmployerShell({ companyName, children }: Props) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-[100dvh] bg-background">
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-wide)] items-center justify-between gap-4 px-[var(--page-padding-x)]">
+    <AppShell className="bg-background">
+      <AppShell.Header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto flex h-full max-w-[var(--container-wide)] items-center justify-between gap-4 px-[var(--page-padding-x)]">
           <div className="flex items-center gap-4">
             <Link href="/employer/dashboard" className="shrink-0">
               <WorkGraphLogo />
@@ -47,10 +48,10 @@ export default function EmployerShell({ companyName, children }: Props) {
             </Button>
           </div>
         </div>
-      </header>
+      </AppShell.Header>
 
-      <div className="mx-auto flex max-w-[var(--container-wide)] gap-0 px-[var(--page-padding-x)] py-[var(--page-padding-y)]">
-        <aside className="hidden w-[var(--sidebar-width)] shrink-0 pr-6 md:block">
+      <AppShell.Body className="mx-auto max-w-[var(--container-wide)] px-[var(--page-padding-x)] py-[var(--page-padding-y)]">
+        <AppShell.Sidebar sticky={false} className="w-[var(--sidebar-width)] pr-6">
           <nav className="space-y-1" aria-label="Employer">
             {NAV.map((item) => {
               const Icon = item.icon;
@@ -79,11 +80,15 @@ export default function EmployerShell({ companyName, children }: Props) {
             Hiring Signals are intent posts with fit criteria — not cloned job boards. Seekers connect with
             their WorkGraph profile, not a PDF portal.
           </p>
-        </aside>
+        </AppShell.Sidebar>
 
-        <main className="min-w-0 flex-1">{children}</main>
-      </div>
+        <AppShell.Main padded={false}>
+          <AppShell.Content scroll={false} constrained={false}>
+            {children}
+          </AppShell.Content>
+        </AppShell.Main>
+      </AppShell.Body>
       <Toaster />
-    </div>
+    </AppShell>
   );
 }

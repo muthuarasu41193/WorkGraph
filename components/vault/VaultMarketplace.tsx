@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { AppShell } from "@/components/layout";
 import { Search } from "@/components/ui/search";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,15 +59,16 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
   }, [experiences]);
 
   return (
-    <div className="space-y-6">
-      <header>
+    <AppShell.Page>
+      <AppShell.PageHeader padding={false}>
         <h1 className="text-heading-l">Interview Vault</h1>
         <p className="mt-1 text-body text-muted-foreground">
           Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
         </p>
-      </header>
+      </AppShell.PageHeader>
 
-      <div className="space-y-4 rounded-xl border bg-card p-4">
+      <AppShell.Filters sticky={false} padding={false}>
+        <div className="space-y-4 rounded-xl border bg-card p-4">
         <Search
           placeholder="Search company, role, or level…"
           value={query}
@@ -133,25 +135,28 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </AppShell.Filters>
 
-      {filtered.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((exp) => (
-            <li key={exp.id}>
-              <VaultExperienceCard experience={exp} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="rounded-xl border border-dashed p-8 text-center text-body text-muted-foreground">
-          No experiences match your filters yet. Be the first to{" "}
-          <a href="/interview-vault/sell" className="text-primary underline-offset-4 hover:underline">
-            sell an experience
-          </a>
-          .
-        </p>
-      )}
-    </div>
+      <AppShell.Content constrained={false} className="space-y-6">
+        {filtered.length > 0 ? (
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((exp) => (
+              <li key={exp.id}>
+                <VaultExperienceCard experience={exp} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="rounded-xl border border-dashed p-8 text-center text-body text-muted-foreground">
+            No experiences match your filters yet. Be the first to{" "}
+            <a href="/interview-vault/sell" className="text-primary underline-offset-4 hover:underline">
+              sell an experience
+            </a>
+            .
+          </p>
+        )}
+      </AppShell.Content>
+    </AppShell.Page>
   );
 }

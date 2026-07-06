@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "@/lib/auth-errors";
 import { hardNavigate, syncServerAuthCookies, waitForSignedIn } from "@/lib/client-auth";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
@@ -56,7 +56,7 @@ export default function EmployerSignupPage() {
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       panelEyebrow="Employer"
       panelHeadline="Post hiring signals on WorkGraph Direct"
       panelDescription="Not another job board — intent posts with fit criteria and profile-based connections."
@@ -118,6 +118,6 @@ export default function EmployerSignupPage() {
           </Link>
         </p>
       </form>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

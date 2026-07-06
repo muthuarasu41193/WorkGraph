@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
-import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import { updatePassword } from "@/lib/auth/client";
 import { humanizeSupabaseAuthMessage } from "@/lib/auth-errors";
 import { hardNavigate, syncServerAuthCookies } from "@/lib/client-auth";
@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       panelEyebrow="Account security"
       panelHeadline="Choose a new password"
       panelDescription="Your reset link is valid for a short time. Set a new password to sign in later."
@@ -206,6 +206,6 @@ export default function ResetPasswordPage() {
           </Link>
         </p>
       </div>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import PageHero from "@/components/design-system/PageHero";
+import { AppShell } from "@/components/layout";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
 import { useHiddenJobs } from "@/hooks/use-hidden-jobs";
@@ -51,33 +52,41 @@ export default function HiddenDiscoverySection() {
   );
 
   return (
-    <section className="space-y-4" aria-labelledby="hidden-discovery-heading">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <PageHero
-          title="Hidden Job Discovery"
-          subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
-        />
-        <div className="flex shrink-0 flex-wrap gap-2 sm:pt-2">
-          <Button
-            type="button"
-            variant={showSavedOnly ? "default" : "outline"}
-            size="sm"
-            onClick={() => setShowSavedOnly((v) => !v)}
-          >
-            Saved ({savedIds.size})
-          </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
-            {loading ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
-            Refresh
-          </Button>
+    <AppShell.Page>
+      <AppShell.PageHeader padding={false}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <PageHero
+            title="Hidden Job Discovery"
+            subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
+          />
+          <div className="flex shrink-0 flex-wrap gap-2 sm:pt-2">
+            <Button
+              type="button"
+              variant={showSavedOnly ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowSavedOnly((v) => !v)}
+            >
+              Saved ({savedIds.size})
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
+              {loading ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
+              Refresh
+            </Button>
+          </div>
         </div>
-      </div>
-      {meta ? (
-        <p className="text-caption text-muted-foreground">
-          {meta.filtered} shown · {meta.total} unique ·{" "}
-          {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
-        </p>
-      ) : null}
+        {meta ? (
+          <p className="mt-3 text-caption text-muted-foreground">
+            {meta.filtered} shown · {meta.total} unique ·{" "}
+            {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
+          </p>
+        ) : null}
+      </AppShell.PageHeader>
+
+      <AppShell.Filters sticky={false} padding={false}>
+        <HiddenDiscoveryFilters filters={filters} onChange={(patch) => setFilters((f) => ({ ...f, ...patch }))} />
+      </AppShell.Filters>
+
+      <AppShell.Content constrained={false} className="space-y-4">
 
       <Card className="wg-dash-section-card border-border bg-muted/40">
         <CardContent className="space-y-2 p-4 text-body text-muted-foreground">
@@ -95,8 +104,6 @@ export default function HiddenDiscoverySection() {
           </p>
         </CardContent>
       </Card>
-
-      <HiddenDiscoveryFilters filters={filters} onChange={(patch) => setFilters((f) => ({ ...f, ...patch }))} />
 
       {error ? (
         <Alert variant="destructive">
@@ -145,6 +152,7 @@ export default function HiddenDiscoverySection() {
           ))}
         </ul>
       )}
-    </section>
+    </AppShell.Content>
+    </AppShell.Page>
   );
 }

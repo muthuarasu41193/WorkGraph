@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail, Sparkles } from "lucide-react";
-import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { AppShell } from "@/components/layout";
 import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
 import { signUpWithPassword } from "../../lib/auth/client";
 import { supertokensEnabled } from "../../lib/auth/config";
@@ -89,7 +89,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthSplitShell
+    <AppShell.Auth
       panelEyebrow="Create account"
       panelHeadline="Upload your resume and launch your profile in minutes."
       panelDescription="Create your account with email and password, then start building your profile."
@@ -224,6 +224,6 @@ export default function SignupPage() {
           </Link>
         </p>
       </div>
-    </AuthSplitShell>
+    </AppShell.Auth>
   );
 }

@@ -31,8 +31,10 @@ export const iconSize = {
 
 /** Tailwind class bundles for shell layout */
 export const shellClasses = {
-  page: "wg-dash-root min-h-dvh",
-  content: "wg-dash-content mx-auto w-full max-w-[var(--container-wide)]",
+  page: "wg-app-shell min-h-dvh",
+  legacyPage: "wg-dash-root min-h-dvh",
+  content: "wg-app-shell-content-inner mx-auto w-full max-w-[var(--container-wide)]",
+  legacyContent: "wg-dash-content mx-auto w-full max-w-[var(--container-wide)]",
   sectionCard: "wg-section-card rounded-lg border border-border bg-surface-primary",
   touchTarget: "min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)]",
   fadeIn: "animate-in fade-in duration-300",

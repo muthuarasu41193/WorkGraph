@@ -1,0 +1,148 @@
+/* WorkGraph application shell — shared layout chrome */
+.wg-app-shell {
+  min-height: 100dvh;
+  background: var(--surface-page);
+  scroll-behavior: smooth;
+}
+
+.wg-app-shell-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.wg-app-shell-sidebar {
+  flex-shrink: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wg-app-shell-sidebar--sticky {
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100dvh - var(--header-height));
+}
+
+.wg-app-shell-main {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.wg-app-shell-main--padded {
+  min-height: calc(100dvh - var(--header-height));
+  padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .wg-app-shell-main--padded {
+    padding-bottom: var(--space-6);
+  }
+}
+
+.wg-app-shell-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wg-app-shell-page-header {
+  flex-shrink: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--surface-page) 95%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.wg-app-shell-page-header--sticky {
+  position: sticky;
+  top: var(--header-height);
+}
+
+.wg-app-shell-filters {
+  flex-shrink: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--surface-primary) 95%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.wg-app-shell-filters--sticky {
+  position: sticky;
+  top: var(--sticky-below-header);
+}
+
+.wg-app-shell-content {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.wg-app-shell-content--scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wg-app-shell-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+  height: var(--header-height);
+}
+
+.wg-app-shell-footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.wg-app-shell-content-inner {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin-inline: auto;
+  animation: wg-app-shell-fade-in var(--duration-slow) var(--ease-out);
+}
+
+@keyframes wg-app-shell-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Auth split variant */
+.wg-app-shell--auth {
+  min-height: 100dvh;
+  background: var(--background);
+}
+
+.wg-app-shell-auth-panel {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.wg-app-shell-auth-content {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  background: var(--card);
+}
+
+@media (min-width: 1024px) {
+  .wg-app-shell-auth-content {
+    max-height: 100dvh;
+    overflow-y: auto;
+  }
+}

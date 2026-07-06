@@ -9,6 +9,7 @@ import type { EmployerProfile, HiringSignal } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS } from "@/lib/employer/types";
 import PulseInbox from "@/components/employer/PulseInbox";
 import VerificationBanner from "@/components/employer/VerificationBanner";
+import { AppShell } from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,31 +42,41 @@ export default function EmployerDashboardPage() {
   }, [load]);
 
   if (tab === "inbox") {
-    return <PulseInbox />;
+    return (
+      <AppShell.Page>
+        <AppShell.Content constrained={false}>
+          <PulseInbox />
+        </AppShell.Content>
+      </AppShell.Page>
+    );
   }
 
   return (
-    <div className="space-y-6">
+    <AppShell.Page>
+      <AppShell.PageHeader padding={false}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="flex items-center gap-2 text-heading-l">
+              <LayoutDashboard className="h-7 w-7 text-[var(--accent)]" />
+              Hiring signals
+            </h1>
+            <p className="mt-1 text-body text-muted-foreground">
+              Live signals appear in WorkGraph Direct for jobseekers.
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/employer/signals/new">
+              <Radio className="mr-2 h-4 w-4" />
+              New signal
+            </Link>
+          </Button>
+        </div>
+      </AppShell.PageHeader>
+
+      <AppShell.Content constrained={false} className="space-y-6">
       {employerProfile ? (
         <VerificationBanner profile={employerProfile} onUpdated={setEmployerProfile} />
       ) : null}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="flex items-center gap-2 text-heading-l">
-            <LayoutDashboard className="h-7 w-7 text-[var(--accent)]" />
-            Hiring signals
-          </h1>
-          <p className="mt-1 text-body text-muted-foreground">
-            Live signals appear in WorkGraph Direct for jobseekers.
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/employer/signals/new">
-            <Radio className="mr-2 h-4 w-4" />
-            New signal
-          </Link>
-        </Button>
-      </div>
 
       {loading ? (
         <div className="flex justify-center py-12">
@@ -107,6 +118,7 @@ export default function EmployerDashboardPage() {
           ))}
         </ul>
       )}
-    </div>
+      </AppShell.Content>
+    </AppShell.Page>
   );
 }
