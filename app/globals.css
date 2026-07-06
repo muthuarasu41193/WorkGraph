@@ -165,10 +165,19 @@ body {
   animation: wg-job-card-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.wg-premium-job-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wg-dash-stat-enter,
   .wg-job-card-enter {
     animation: none;
+  }
+
+  .wg-premium-job-card:hover {
+    transform: none;
   }
 
   .wg-dash-icon-float {
