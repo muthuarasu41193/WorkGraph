@@ -162,10 +162,10 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search commands, pages, jobs..."
-              className="border-0 bg-transparent pl-7 shadow-none focus-visible:ring-0"
+              className="border-0 bg-transparent pl-8 shadow-none focus-visible:ring-0"
               autoFocus
             />
-            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 text-caption font-medium sm:inline">
+            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-2 py-1 text-caption font-medium sm:inline">
               ESC
             </kbd>
           </div>
@@ -173,7 +173,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
         <div className="max-h-80 overflow-y-auto p-2">
           {groups.map((group) => (
             <div key={group} className="mb-2">
-              <p className="px-2 py-1.5 text-caption font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+              <p className="px-2 py-2 text-caption font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                 {group}
               </p>
               {filtered
@@ -186,7 +186,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
                       type="button"
                       onClick={item.action}
                       className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-body transition-colors",
+                        "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-body transition-colors",
                         "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
                       )}
                     >

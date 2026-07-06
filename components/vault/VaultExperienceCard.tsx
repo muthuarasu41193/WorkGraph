@@ -31,7 +31,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
               <h2 className="truncate font-semibold group-hover:text-primary">{experience.company}</h2>
               <p className="truncate text-body text-muted-foreground">{experience.role}</p>
               {experience.level ? (
-                <p className="mt-0.5 text-caption text-muted-foreground">{experience.level}</p>
+                <p className="mt-1 text-caption text-muted-foreground">{experience.level}</p>
               ) : null}
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
@@ -40,7 +40,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             </div>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2 flex flex-wrap gap-2">
             {experience.difficulty ? (
               <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
             ) : null}

@@ -127,7 +127,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                 <Badge
                   key={skill.name}
                   variant={skill.top ? "default" : "outline"}
-                  className="group gap-2 px-2.5 py-1 text-body font-medium transition-colors hover:shadow-sm"
+                  className="group gap-2 px-3 py-1 text-body font-medium transition-colors hover:shadow-sm"
                 >
                   {skill.name}
                   {skill.endorsements > 0 ? (

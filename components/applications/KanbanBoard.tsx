@@ -61,11 +61,11 @@ function KanbanColumn({
       <header className="border-b border-border px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-body font-semibold">{label}</h3>
-          <span className="rounded-full bg-[var(--accent-subtle)] px-2 py-0.5 text-caption font-semibold tabular-nums text-[var(--accent)]">
+          <span className="rounded-full bg-[var(--accent-subtle)] px-2 py-1 text-caption font-semibold tabular-nums text-[var(--accent)]">
             {applications.length}
           </span>
         </div>
-        <p className="mt-0.5 text-caption text-muted-foreground">{description}</p>
+        <p className="mt-1 text-caption text-muted-foreground">{description}</p>
       </header>
 
       <ul className="flex min-h-[120px] flex-1 flex-col gap-2 p-2">

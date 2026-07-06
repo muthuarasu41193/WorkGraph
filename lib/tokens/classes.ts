@@ -39,7 +39,7 @@ export const matchScoreClass = {
 /** Filter chip active/inactive */
 export const filterChipClass = {
   base: "inline-flex h-10 cursor-pointer items-center gap-1 rounded-[length:var(--radius-full)] border px-4 text-body transition-[var(--transition-colors)] focus-visible:outline-none focus-visible:ring-[length:var(--focus-ring-width)] focus-visible:ring-[var(--focus-ring-color)] focus-visible:ring-offset-[length:var(--focus-ring-offset)]",
-  inactive: "border-border bg-surface-primary text-text-secondary hover:border-primary hover:bg-info-subtle",
+  inactive: "border-border bg-surface-primary text-text-secondary hover:border-border-strong hover:bg-[var(--interactive-hover)]",
   active: "border-primary bg-primary text-primary-foreground",
 } as const;
 

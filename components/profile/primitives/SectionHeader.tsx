@@ -24,7 +24,7 @@ export default function SectionHeader({
         {eyebrow ? (
           <p className="wg-label-mono mb-1">{eyebrow}</p>
         ) : null}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {Icon ? (
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]">
               <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
@@ -37,7 +37,7 @@ export default function SectionHeader({
         {description ? (
           <p
             className={[
-              "mt-1.5 max-w-prose text-body text-[var(--text-primary)]/80",
+              "mt-2 max-w-prose text-body text-[var(--text-primary)]/80",
               Icon ? "sm:pl-[2.625rem]" : "",
             ].join(" ")}
           >
@@ -45,7 +45,7 @@ export default function SectionHeader({
           </p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0 sm:pb-0.5">{action}</div> : null}
+      {action ? <div className="shrink-0 sm:pb-1">{action}</div> : null}
     </header>
   );
 }

@@ -61,7 +61,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-caption font-medium text-[var(--text-tertiary)]">{job.company}</p>
-                <h3 className="mt-0.5 font-semibold leading-snug text-[var(--text-primary)]">{job.title}</h3>
+                <h3 className="mt-1 font-semibold leading-snug text-[var(--text-primary)]">{job.title}</h3>
               </div>
               <span className="shrink-0 rounded-md bg-[var(--surface-secondary)] px-2 py-1 text-body font-bold tabular-nums text-[var(--accent)]">
                 {job.matchPercent}%
@@ -69,7 +69,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
             </div>
 
             <p className="mt-2 text-body text-[var(--text-primary)]/85">{job.salaryRange}</p>
-            <p className="mt-0.5 flex items-center gap-1 text-caption text-[var(--text-tertiary)]">
+            <p className="mt-1 flex items-center gap-1 text-caption text-[var(--text-tertiary)]">
               <MapPin className="h-3.5 w-3.5" />
               {job.location}
             </p>

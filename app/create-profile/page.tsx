@@ -378,10 +378,10 @@ export default function CreateProfilePage() {
                       <div
                         {...getRootProps()}
                         className={cn(
-                          "group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-200",
+                          "group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-16 text-center transition-all duration-200",
                           isDragActive
                             ? "scale-[1.01] border-primary bg-primary/5"
-                            : "border-border bg-gradient-to-b from-muted/40 via-background to-background hover:border-primary/40 hover:shadow-md",
+                            : "border-border bg-surface-secondary hover:border-primary/40 hover:bg-[var(--interactive-hover)] hover:shadow-md",
                           isLoading && "pointer-events-none opacity-50"
                         )}
                       >
@@ -395,7 +395,7 @@ export default function CreateProfilePage() {
                         <p className="mt-1 text-body text-muted-foreground">or click to browse — PDF or DOCX</p>
                       </div>
                     ) : (
-                      <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3.5">
+                      <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-4">
                         <CheckCircle2 className="h-5 w-5 shrink-0 text-success" aria-hidden />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-body font-medium text-foreground">{file.name}</p>

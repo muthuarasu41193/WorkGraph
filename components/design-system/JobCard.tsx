@@ -71,7 +71,7 @@ export default function JobCard({
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className="text-caption font-medium text-[var(--text-secondary)]">{job.company}</p>
-                <h3 className="mt-0.5 text-body font-semibold leading-snug text-[var(--text-primary)] sm:text-body-lg">
+                <h3 className="mt-1 text-body font-semibold leading-snug text-[var(--text-primary)] sm:text-body-lg">
                   {job.title}
                 </h3>
               </div>
@@ -94,7 +94,7 @@ export default function JobCard({
                 {job.location}
               </span>
               {job.workMode ? (
-                <Badge variant="secondary" className="h-5 rounded-md px-1.5 text-caption font-medium">
+                <Badge variant="secondary" className="h-5 rounded-md px-2 text-caption font-medium">
                   {job.workMode}
                 </Badge>
               ) : null}
@@ -113,7 +113,7 @@ export default function JobCard({
                 {job.matchedSkills.slice(0, 4).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-success-subtle px-1.5 py-0.5 text-caption font-medium text-success-foreground"
+                    className="rounded-md bg-success-subtle px-2 py-1 text-caption font-medium text-success-foreground"
                   >
                     {skill}
                   </span>
@@ -121,7 +121,7 @@ export default function JobCard({
                 {job.missingSkills?.slice(0, 2).map((skill) => (
                   <span
                     key={skill}
-                    className="rounded-md bg-surface-secondary px-1.5 py-0.5 text-caption font-medium text-[var(--text-secondary)]"
+                    className="rounded-md bg-surface-secondary px-2 py-1 text-caption font-medium text-[var(--text-secondary)]"
                   >
                     +{skill}
                   </span>

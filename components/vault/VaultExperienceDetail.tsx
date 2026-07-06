@@ -168,7 +168,7 @@ export default function VaultExperienceDetail({
                 aria-hidden
                 dangerouslySetInnerHTML={{ __html: fullContent.slice(0, Math.floor(fullContent.length * 0.35)) }}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-background via-background/90 to-transparent">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface-overlay backdrop-blur-[2px]">
                 <Lock className="h-8 w-8 text-muted-foreground" />
                 <p className="text-body font-medium">Premium content locked</p>
                 {!isOwner ? (

@@ -28,7 +28,7 @@ export default function OverallMatchScoreSection({ data }: Props) {
           <p className="text-caption text-muted-foreground italic">{data.methodology}</p>
           <div className="grid gap-3 sm:grid-cols-2">
             {data.dimensions.map((dim) => (
-              <div key={dim.dimension} className="space-y-1.5 rounded-lg border bg-muted/30 p-3">
+              <div key={dim.dimension} className="space-y-2 rounded-lg border bg-muted/30 p-3">
                 <div className="flex items-center justify-between gap-2 text-body">
                   <span className="font-medium">{dim.label}</span>
                   <span className="tabular-nums text-muted-foreground">{dim.score}%</span>

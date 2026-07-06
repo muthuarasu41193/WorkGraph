@@ -49,7 +49,7 @@ export default function MetricCard({
             {trend !== undefined ? (
               <span
                 className={cn(
-                  "inline-flex items-center gap-0.5 text-caption font-medium",
+                  "inline-flex items-center gap-1 text-caption font-medium",
                   trendUp && "text-success",
                   trendDown && "text-warning",
                 )}

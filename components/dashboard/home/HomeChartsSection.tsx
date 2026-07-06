@@ -48,7 +48,7 @@ export default function HomeChartsSection() {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="wg-dash-section-card p-5 lg:col-span-1">
           <h3 className="text-body font-semibold text-[var(--text-primary)]">Application Funnel</h3>
-          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Conversion by stage</p>
+          <p className="mt-1 text-caption text-[var(--text-secondary)]">Conversion by stage</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={FUNNEL_DATA} layout="vertical" margin={{ left: 0, right: 8 }}>
@@ -81,7 +81,7 @@ export default function HomeChartsSection() {
 
         <div className="wg-dash-section-card p-5 lg:col-span-1">
           <h3 className="text-body font-semibold text-[var(--text-primary)]">Weekly Applications</h3>
-          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Last 7 days</p>
+          <p className="mt-1 text-caption text-[var(--text-secondary)]">Last 7 days</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={WEEKLY_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
@@ -112,7 +112,7 @@ export default function HomeChartsSection() {
 
         <div className="wg-dash-section-card p-5 lg:col-span-1">
           <h3 className="text-body font-semibold text-[var(--text-primary)]">Skills Growth</h3>
-          <p className="mt-0.5 text-caption text-[var(--text-secondary)]">Proficiency vs target</p>
+          <p className="mt-1 text-caption text-[var(--text-secondary)]">Proficiency vs target</p>
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>

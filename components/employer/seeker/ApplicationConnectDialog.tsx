@@ -215,7 +215,7 @@ export default function ApplicationConnectDialog({
               <p className="mt-2 font-medium">
                 {values.resumeUrl ? "Replace resume" : "Upload resume (required)"}
               </p>
-              <p className="mt-0.5 text-caption text-muted-foreground">
+              <p className="mt-1 text-caption text-muted-foreground">
                 PDF or DOCX · max {MAX_RESUME_UPLOAD_LABEL}
               </p>
             </div>

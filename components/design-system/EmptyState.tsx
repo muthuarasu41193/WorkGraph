@@ -22,7 +22,7 @@ export default function EmptyState({ icon: Icon, title, description, action, cla
         <Icon className="h-6 w-6" aria-hidden />
       </span>
       <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">{title}</h3>
-      <p className="mt-1.5 max-w-sm text-body text-[var(--text-secondary)]">{description}</p>
+      <p className="mt-2 max-w-sm text-body text-[var(--text-secondary)]">{description}</p>
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );

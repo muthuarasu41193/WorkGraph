@@ -52,7 +52,7 @@ export default function VaultRichEditor({
 
   return (
     <div className="rounded-lg border bg-background">
-      <div className="flex flex-wrap gap-0.5 border-b p-1">
+      <div className="flex flex-wrap gap-1 border-b p-1">
         <Button
           type="button"
           variant={editor.isActive("bold") ? "secondary" : "ghost"}

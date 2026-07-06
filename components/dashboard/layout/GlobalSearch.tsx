@@ -97,7 +97,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
         <div
           id="global-search-listbox"
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-border bg-background shadow-xl"
+          className="absolute left-0 right-0 top-[calc(100%+var(--space-2))] z-50 overflow-hidden rounded-lg border border-border bg-background shadow-xl"
         >
           <div className="flex flex-wrap gap-1 border-b border-border p-2">
             {FILTERS.map((f) => (
@@ -106,7 +106,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                 type="button"
                 onClick={() => setFilter(f.id)}
                 className={cn(
-                  "rounded-md px-2.5 py-1 text-caption font-medium transition-colors",
+                  "rounded-md px-3 py-1 text-caption font-medium transition-colors",
                   filter === f.id
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted",
@@ -129,18 +129,18 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                 <li key={job.id} role="option">
                   <button
                     type="button"
-                    className="flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-muted/70"
+                    className="flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/70"
                     onClick={() => selectJob(job.id, job.title)}
                   >
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                       <Briefcase className="h-4 w-4" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-body font-medium">{job.title}</span>
-                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-caption text-muted-foreground">
+                      <span className="mt-1 flex flex-wrap items-center gap-2 text-caption text-muted-foreground">
                         <Building2 className="h-3 w-3" />
                         {job.company}
-                        <Badge variant="outline" className="h-5 px-1.5 text-caption">
+                        <Badge variant="outline" className="h-5 px-2 text-caption">
                           {job.source}
                         </Badge>
                       </span>

@@ -126,7 +126,7 @@ export default function ProfileJobDashboard({
               Job Dashboard
             </h2>
             <p className="mt-1 text-body font-normal text-[var(--text-tertiary)]">Live ATS jobs matched to your profile (excludes community posts)</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--success-subtle)] px-3 py-1 text-caption font-medium text-[var(--success)]">
+            <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--success-subtle)] px-3 py-1 text-caption font-medium text-[var(--success)]">
               <span className="h-2 w-2 rounded-full bg-[var(--success)] animate-pulse" aria-hidden />
               Live • Last synced {lastSyncedLabel}
             </span>
@@ -156,7 +156,7 @@ export default function ProfileJobDashboard({
             <Bell className="h-4 w-4" aria-hidden />
             <span className="hidden sm:inline">Set Job Alerts</span>
           </Button>
-          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[var(--warning-subtle)] px-3 py-1.5 text-caption font-medium text-[var(--warning)]">
+          <span className="inline-flex items-center gap-2 rounded-2xl bg-[var(--warning-subtle)] px-3 py-2 text-caption font-medium text-[var(--warning)]">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
             Profile {profileCompleteness}% complete
           </span>
@@ -263,7 +263,7 @@ export default function ProfileJobDashboard({
           {liveListings > 0 ? (
             <>
               No personal tracker rows yet — listing totals above come from shared ATS ingest. Insert rows into{" "}
-              <code className="rounded bg-surface-secondary px-1 py-0.5 text-caption">job_tracker_entries</code> when your CRM
+              <code className="rounded bg-surface-secondary px-1 py-1 text-caption">job_tracker_entries</code> when your CRM
               ships.
             </>
           ) : (
@@ -297,7 +297,7 @@ export default function ProfileJobDashboard({
                     <button
                       type="button"
                       onClick={() => setKeywords((prev) => prev.filter((x) => x !== kw))}
-                      className="ml-0.5 rounded-full hover:bg-muted"
+                      className="ml-1 rounded-full hover:bg-muted"
                       aria-label={`Remove ${kw}`}
                     >
                       <XCircle className="h-3 w-3" />

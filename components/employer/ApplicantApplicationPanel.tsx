@@ -110,7 +110,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
               ))}
             </div>
 
-            <div className="space-y-1.5 text-muted-foreground">
+            <div className="space-y-2 text-muted-foreground">
               {app.email ? (
                 <p className="flex items-center gap-2">
                   <Mail className="h-4 w-4 shrink-0" />
@@ -156,7 +156,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
 
             {app.message ? (
               <section>
-                <h3 className="mb-1.5 font-semibold text-foreground">Message</h3>
+                <h3 className="mb-2 font-semibold text-foreground">Message</h3>
                 <p className="whitespace-pre-wrap rounded-lg border bg-muted/30 p-3 text-muted-foreground">
                   {app.message}
                 </p>
@@ -165,15 +165,15 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
 
             {app.summary ? (
               <section>
-                <h3 className="mb-1.5 font-semibold text-foreground">Summary</h3>
+                <h3 className="mb-2 font-semibold text-foreground">Summary</h3>
                 <p className="text-muted-foreground">{app.summary}</p>
               </section>
             ) : null}
 
             {app.skills.length > 0 ? (
               <section>
-                <h3 className="mb-1.5 font-semibold text-foreground">Skills</h3>
-                <div className="flex flex-wrap gap-1.5">
+                <h3 className="mb-2 font-semibold text-foreground">Skills</h3>
+                <div className="flex flex-wrap gap-2">
                   {app.skills.map((skill) => (
                     <Badge key={skill} variant="outline">
                       {skill}
@@ -222,7 +222,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
 
             {app.certifications.length > 0 ? (
               <section>
-                <h3 className="mb-1.5 font-semibold text-foreground">Certifications</h3>
+                <h3 className="mb-2 font-semibold text-foreground">Certifications</h3>
                 <ul className="list-inside list-disc text-muted-foreground">
                   {app.certifications.map((cert) => (
                     <li key={cert}>{cert}</li>

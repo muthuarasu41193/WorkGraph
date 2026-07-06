@@ -1,0 +1,253 @@
+/**
+ * WorkGraph Color Tokens
+ * Professional · Premium · Data-driven · Enterprise · Minimal
+ * @see docs/COLOR_TOKENS.md
+ *
+ * Primary accent (#B91C1C) matches the WorkGraph logo mark.
+ * No decorative gradients — color carries meaning only.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ─── Surfaces ─── */
+  --surface-page: #f7f8fa;
+  --surface-primary: #ffffff;
+  --surface-secondary: #eef0f3;
+  --surface-elevated: #ffffff;
+  --surface-overlay: rgba(255, 255, 255, 0.92);
+  --surface-inverse: #111318;
+  --surface-disabled: #eef0f3;
+
+  /* ─── Text ─── */
+  --text-primary: #111318;
+  --text-secondary: #4b5563;
+  --text-tertiary: #8b939e;
+  --text-inverse: #f7f8fa;
+  --text-disabled: #b8bfc8;
+  --text-on-accent: #ffffff;
+
+  /* ─── Borders ─── */
+  --border-default: #e2e5eb;
+  --border-muted: #eef0f3;
+  --border-strong: #c8cdd6;
+  --border-focus: #b91c1c;
+
+  /* ─── Brand / accent (WorkGraph logo) ─── */
+  --accent: #b91c1c;
+  --accent-hover: #9a1818;
+  --accent-pressed: #7f1414;
+  --accent-selected: rgba(185, 28, 28, 0.08);
+  --accent-disabled: #d4a0a0;
+  --accent-subtle: rgba(185, 28, 28, 0.06);
+  --accent-muted: rgba(185, 28, 28, 0.12);
+  --accent-foreground: #ffffff;
+
+  /* ─── Success ─── */
+  --success: #146b4a;
+  --success-hover: #105a3e;
+  --success-pressed: #0d4933;
+  --success-selected: rgba(20, 107, 74, 0.08);
+  --success-disabled: #8fb8a8;
+  --success-subtle: #e6f2ed;
+  --success-foreground: #105a3e;
+  --success-border: rgba(20, 107, 74, 0.22);
+
+  /* ─── Warning ─── */
+  --warning: #8a5c00;
+  --warning-hover: #704b00;
+  --warning-pressed: #5c3d00;
+  --warning-selected: rgba(138, 92, 0, 0.08);
+  --warning-disabled: #c4b48a;
+  --warning-subtle: #f5f0e4;
+  --warning-foreground: #704b00;
+  --warning-border: rgba(138, 92, 0, 0.22);
+
+  /* ─── Error / danger ─── */
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --danger-pressed: #791a16;
+  --danger-selected: rgba(180, 35, 24, 0.08);
+  --danger-disabled: #d4a09a;
+  --danger-subtle: #fcf0ef;
+  --danger-foreground: #912018;
+  --danger-border: rgba(180, 35, 24, 0.22);
+
+  /* Error aliases (semantic naming) */
+  --error: var(--danger);
+  --error-hover: var(--danger-hover);
+  --error-pressed: var(--danger-pressed);
+  --error-selected: var(--danger-selected);
+  --error-disabled: var(--danger-disabled);
+  --error-subtle: var(--danger-subtle);
+  --error-foreground: var(--danger-foreground);
+  --error-border: var(--danger-border);
+
+  /* ─── Information ─── */
+  --info: #2b5f8a;
+  --info-hover: #234d71;
+  --info-pressed: #1c3e5a;
+  --info-selected: rgba(43, 95, 138, 0.08);
+  --info-disabled: #94adc4;
+  --info-subtle: #ebf1f7;
+  --info-foreground: #234d71;
+  --info-border: rgba(43, 95, 138, 0.22);
+
+  /* ─── Interactive (neutral controls) ─── */
+  --interactive-hover: #eef0f3;
+  --interactive-pressed: #e2e5eb;
+  --interactive-selected: rgba(185, 28, 28, 0.06);
+  --interactive-disabled: #eef0f3;
+  --interactive-hover-foreground: #111318;
+
+  /* ─── Focus ─── */
+  --focus-ring-color: #b91c1c;
+  --focus-ring-offset-color: #ffffff;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring: 0 0 0 var(--focus-ring-width) var(--accent-muted);
+
+  /* ─── Opacity ─── */
+  --opacity-disabled: 0.45;
+  --opacity-muted: 0.72;
+  --opacity-overlay: 0.08;
+  --opacity-backdrop: 0.88;
+
+  /* ─── Charts (restrained, data-first) ─── */
+  --chart-1: #111318;
+  --chart-2: #4b5563;
+  --chart-3: #8b939e;
+  --chart-4: #b91c1c;
+  --chart-5: #c8cdd6;
+
+  /* ─── shadcn/ui compatibility ─── */
+  --background: var(--surface-page);
+  --foreground: var(--text-primary);
+  --card: var(--surface-primary);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-elevated);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: var(--text-on-accent);
+  --secondary: var(--surface-secondary);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-secondary);
+  --muted-foreground: var(--text-secondary);
+  --destructive: var(--danger);
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--focus-ring-color);
+  --radius: var(--radius-lg);
+
+  --sidebar: var(--surface-page);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--text-on-accent);
+  --sidebar-accent: var(--surface-secondary);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border-default);
+  --sidebar-ring: var(--focus-ring-color);
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* ─── Surfaces ─── */
+  --surface-page: #0c0e12;
+  --surface-primary: #14171d;
+  --surface-secondary: #1c2028;
+  --surface-elevated: #181c24;
+  --surface-overlay: rgba(12, 14, 18, 0.94);
+  --surface-inverse: #f7f8fa;
+  --surface-disabled: #1c2028;
+
+  /* ─── Text ─── */
+  --text-primary: #f0f2f5;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --text-inverse: #111318;
+  --text-disabled: #4b5563;
+  --text-on-accent: #ffffff;
+
+  /* ─── Borders ─── */
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-muted: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-focus: #d43d52;
+
+  /* ─── Brand / accent ─── */
+  --accent: #d43d52;
+  --accent-hover: #e85468;
+  --accent-pressed: #c42d42;
+  --accent-selected: rgba(212, 61, 82, 0.14);
+  --accent-disabled: #6b3a42;
+  --accent-subtle: rgba(212, 61, 82, 0.1);
+  --accent-muted: rgba(212, 61, 82, 0.22);
+  --accent-foreground: #ffffff;
+
+  /* ─── Success ─── */
+  --success: #3d9b74;
+  --success-hover: #4db088;
+  --success-pressed: #348a66;
+  --success-selected: rgba(61, 155, 116, 0.14);
+  --success-disabled: #2a5c48;
+  --success-subtle: rgba(61, 155, 116, 0.12);
+  --success-foreground: #a7e0c8;
+  --success-border: rgba(61, 155, 116, 0.28);
+
+  /* ─── Warning ─── */
+  --warning: #c9a227;
+  --warning-hover: #dbb43a;
+  --warning-pressed: #b08f1f;
+  --warning-selected: rgba(201, 162, 39, 0.14);
+  --warning-disabled: #6b5a28;
+  --warning-subtle: rgba(201, 162, 39, 0.12);
+  --warning-foreground: #f5e6a8;
+  --warning-border: rgba(201, 162, 39, 0.28);
+
+  /* ─── Error / danger ─── */
+  --danger: #e05243;
+  --danger-hover: #ec6a5d;
+  --danger-pressed: #c94438;
+  --danger-selected: rgba(224, 82, 67, 0.14);
+  --danger-disabled: #6b3a36;
+  --danger-subtle: rgba(224, 82, 67, 0.12);
+  --danger-foreground: #fccbc6;
+  --danger-border: rgba(224, 82, 67, 0.28);
+
+  /* ─── Information ─── */
+  --info: #5a8fc4;
+  --info-hover: #6da3d6;
+  --info-pressed: #4a7db0;
+  --info-selected: rgba(90, 143, 196, 0.14);
+  --info-disabled: #3a5570;
+  --info-subtle: rgba(90, 143, 196, 0.12);
+  --info-foreground: #c5ddf5;
+  --info-border: rgba(90, 143, 196, 0.28);
+
+  /* ─── Interactive ─── */
+  --interactive-hover: #1c2028;
+  --interactive-pressed: #252a34;
+  --interactive-selected: rgba(212, 61, 82, 0.1);
+  --interactive-disabled: #1c2028;
+  --interactive-hover-foreground: #f0f2f5;
+
+  /* ─── Focus ─── */
+  --focus-ring-color: #d43d52;
+  --focus-ring-offset-color: #14171d;
+  --focus-ring: 0 0 0 var(--focus-ring-width) var(--accent-muted);
+
+  /* ─── Charts ─── */
+  --chart-1: #f0f2f5;
+  --chart-2: #9ca3af;
+  --chart-3: #6b7280;
+  --chart-4: #d43d52;
+  --chart-5: #4b5563;
+
+  /* ─── Shadows (dark) ─── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24), 0 1px 3px rgba(0, 0, 0, 0.16);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.32), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.24);
+  --shadow-topnav: 0 1px 0 rgba(255, 255, 255, 0.06);
+}

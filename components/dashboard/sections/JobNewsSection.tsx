@@ -61,7 +61,7 @@ export default function JobNewsSection() {
             )}
           >
             {tab.label}
-            <Badge variant="secondary" className="h-5 px-1.5 text-caption">
+            <Badge variant="secondary" className="h-5 px-2 text-caption">
               {counts[tab.id]}
             </Badge>
           </button>

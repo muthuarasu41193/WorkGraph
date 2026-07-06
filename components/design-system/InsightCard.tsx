@@ -17,8 +17,8 @@ type Props = {
 
 const variantStyles = {
   default: "bg-surface-primary",
-  accent: "bg-gradient-to-br from-white to-red-50/40",
-  success: "bg-gradient-to-br from-surface-primary to-success-subtle/40",
+  accent: "border-l-[3px] border-l-primary bg-[var(--accent-subtle)]",
+  success: "border-l-[3px] border-l-success bg-success-subtle",
 };
 
 export default function InsightCard({
@@ -44,12 +44,12 @@ export default function InsightCard({
           <Icon className="h-[17px] w-[17px]" aria-hidden />
         </span>
         {badge ? (
-          <span className="rounded-md bg-surface-secondary px-2 py-0.5 text-caption font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+          <span className="rounded-md bg-surface-secondary px-2 py-1 text-caption font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
             {badge}
           </span>
         ) : null}
       </div>
-      <div className="mt-4 flex-1 space-y-1.5">
+      <div className="mt-4 flex-1 space-y-2">
         <div className="flex items-baseline justify-between gap-2">
           <h3 className="text-body font-semibold text-[var(--text-primary)]">{title}</h3>
           {score !== undefined ? (

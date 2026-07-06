@@ -127,7 +127,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email"
-                className="h-12 pl-11"
+                className="h-12 pl-12"
               />
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password (min 8 chars)"
-                className="h-12 pl-11"
+                className="h-12 pl-12"
               />
             </div>
           </div>
@@ -171,7 +171,7 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 placeholder="Confirm password"
-                className="h-12 pl-11"
+                className="h-12 pl-12"
               />
             </div>
           </div>

@@ -130,7 +130,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => setEditing(row.key)}
-                  className="rounded-lg border border-[var(--border-default)] bg-surface-primary px-3 py-1.5 text-caption font-medium text-[var(--text-secondary)] transition hover:shadow-sm"
+                  className="rounded-lg border border-[var(--border-default)] bg-surface-primary px-3 py-2 text-caption font-medium text-[var(--text-secondary)] transition hover:shadow-sm"
                 >
                   Edit
                 </button>
@@ -138,7 +138,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => saveField(row.key)}
-                  className="rounded-lg bg-[var(--info)] px-3 py-1.5 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)]"
+                  className="rounded-lg bg-[var(--info)] px-3 py-2 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)]"
                 >
                   Save
                 </button>

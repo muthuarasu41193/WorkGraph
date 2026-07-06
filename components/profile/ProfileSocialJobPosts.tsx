@@ -284,12 +284,12 @@ export default function ProfileSocialJobPosts({
         </div>
         <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
           {canSyncCommunityJobs ? (
-            <div className="flex flex-col items-end gap-1.5">
+            <div className="flex flex-col items-end gap-2">
               <button
                 type="button"
                 onClick={handleAdminSync}
                 disabled={syncState === "loading"}
-                className="inline-flex items-center gap-2 rounded-[18px] border border-[var(--info)] bg-surface-primary px-3.5 py-2 text-caption font-semibold text-[var(--info-foreground)] shadow-sm transition hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-[18px] border border-[var(--info)] bg-surface-primary px-4 py-2 text-caption font-semibold text-[var(--info-foreground)] shadow-sm transition hover:bg-[var(--info-subtle)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${syncState === "loading" ? "animate-spin" : ""}`} aria-hidden />
                 Sync community jobs now
@@ -332,11 +332,11 @@ export default function ProfileSocialJobPosts({
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className={`rounded-full px-2.5 py-1 text-caption font-medium ${meta.badgeClassName}`}>
+                  <span className={`rounded-full px-3 py-1 text-caption font-medium ${meta.badgeClassName}`}>
                     {isLive ? "Live source" : "Community lane"}
                   </span>
                   {lowPriority ? (
-                    <span className="rounded-full bg-warning-subtle px-2.5 py-1 text-caption font-medium text-warning-foreground">
+                    <span className="rounded-full bg-warning-subtle px-3 py-1 text-caption font-medium text-warning-foreground">
                       Low priority
                     </span>
                   ) : null}
@@ -358,11 +358,11 @@ export default function ProfileSocialJobPosts({
                   </span>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[var(--info-subtle)] px-2.5 py-1 text-caption font-medium text-[var(--info-foreground)]">
+                  <span className="rounded-full bg-[var(--info-subtle)] px-3 py-1 text-caption font-medium text-[var(--info-foreground)]">
                     {post.kind === "listing" ? "Listing" : "Post"}
                   </span>
                   <span
-                    className={`rounded-full px-2.5 py-1 text-caption font-medium ${
+                    className={`rounded-full px-3 py-1 text-caption font-medium ${
                       lowPriority ? "bg-warning-subtle text-warning-foreground" : "bg-[var(--success-subtle)] text-[var(--success)]"
                     }`}
                   >
@@ -376,7 +376,7 @@ export default function ProfileSocialJobPosts({
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-4 py-2 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                    className="inline-flex items-center gap-2 rounded-[18px] bg-[var(--info)] px-4 py-2 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                   >
                     {meta.ctaLabel}
                     {isLive ? <ExternalLink className="h-4 w-4" aria-hidden /> : <ArrowUpRight className="h-4 w-4" aria-hidden />}

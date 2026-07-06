@@ -113,7 +113,7 @@ export default function PulseInbox({ signalId }: Props) {
                         </p>
                       </CardHeader>
                       <CardContent className="space-y-2 p-3 pt-0">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <Sparkles className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />
                           <span className="text-body font-semibold tabular-nums">
                             {c.fit_snapshot?.matchPercent ?? "—"}% fit

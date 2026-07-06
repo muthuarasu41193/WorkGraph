@@ -33,7 +33,7 @@ export function WorkGraphLogo({
   wordmarkClassName,
 }: WorkGraphLogoProps) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("inline-flex items-center gap-3", className)}>
       <WorkGraphMark className={iconClassName} />
       {showWordmark ? (
         <span className={cn("text-title leading-none tracking-tight", wordmarkClassName)}>

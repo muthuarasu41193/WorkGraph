@@ -36,21 +36,21 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
         className,
       )}
     >
-      <div className="space-y-1.5 sm:col-span-2 lg:col-span-2">
+      <div className="space-y-2 sm:col-span-2 lg:col-span-2">
         <Label htmlFor="hidden-jobs-search">Search</Label>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             id="hidden-jobs-search"
             placeholder="Title, company, skills…"
             value={filters.q}
             onChange={(e) => onChange({ q: e.target.value })}
-            className="pl-9"
+            className="pl-10"
           />
         </div>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <Label>Source</Label>
         <Select
           value={filters.source || "all"}
@@ -70,7 +70,7 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
         </Select>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <Label>Country / region</Label>
         <Input
           placeholder="e.g. US, UK, Canada"
@@ -79,7 +79,7 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
         />
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <Label>Date posted</Label>
         <Select
           value={filters.postedWithinDays ? String(filters.postedWithinDays) : "any"}
@@ -108,7 +108,7 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
           />
           Remote only
         </label>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <Label>Sort</Label>
           <Select
             value={filters.sort}

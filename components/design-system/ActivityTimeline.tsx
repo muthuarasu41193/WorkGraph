@@ -60,7 +60,7 @@ export default function ActivityTimeline({ events, className }: Props) {
           <div key={event.id} className="relative flex gap-3 pb-6" role="listitem">
             {!isLast ? (
               <span
-                className="absolute left-[17px] top-9 h-[calc(100%-12px)] w-px bg-[var(--border-default)]"
+                className="absolute left-[17px] top-10 h-[calc(100%-12px)] w-px bg-[var(--border-default)]"
                 aria-hidden
               />
             ) : null}
@@ -72,13 +72,13 @@ export default function ActivityTimeline({ events, className }: Props) {
             >
               <Icon className="h-4 w-4" aria-hidden />
             </span>
-            <div className="min-w-0 flex-1 pt-0.5">
+            <div className="min-w-0 flex-1 pt-1">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="text-body font-medium text-[var(--text-primary)]">{event.title}</p>
                 <time className="text-caption text-[var(--text-secondary)]">{event.timestamp}</time>
               </div>
               {event.description ? (
-                <p className="mt-0.5 text-caption text-[var(--text-secondary)]">{event.description}</p>
+                <p className="mt-1 text-caption text-[var(--text-secondary)]">{event.description}</p>
               ) : null}
             </div>
           </div>

@@ -89,8 +89,8 @@ export default function HiddenDiscoverySection() {
           </ol>
           <p className="text-caption">
             Bookmark this page:{" "}
-            <code className="rounded bg-muted px-1 py-0.5">/discovery</code> or{" "}
-            <code className="rounded bg-muted px-1 py-0.5">/profile?view=job-discovery</code>
+            <code className="rounded bg-muted px-1 py-1">/discovery</code> or{" "}
+            <code className="rounded bg-muted px-1 py-1">/profile?view=job-discovery</code>
           </p>
         </CardContent>
       </Card>

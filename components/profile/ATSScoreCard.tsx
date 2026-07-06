@@ -93,7 +93,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         : localFeedback?.suggestions ?? [];
 
   return (
-    <Card id="ats-score" className="scroll-mt-28 border-border shadow-sm transition-shadow hover:shadow-md">
+    <Card id="ats-score" className="scroll-mt-32 border-border shadow-sm transition-shadow hover:shadow-md">
       <CardHeader>
         <CardTitle className="text-heading-s">ATS Score</CardTitle>
         <CardDescription>Your parsed resume quality and action points.</CardDescription>
@@ -144,11 +144,11 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
                       tabItems.map((item, idx) => (
                         <li key={`${item}-${idx}`} className="flex items-start gap-2 text-body text-muted-foreground">
                           {tab === "strengths" ? (
-                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                            <CheckCircle className="mt-1 h-4 w-4 shrink-0 text-success" />
                           ) : tab === "weaknesses" ? (
-                            <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                            <XCircle className="mt-1 h-4 w-4 shrink-0 text-destructive" />
                           ) : (
-                            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                            <Lightbulb className="mt-1 h-4 w-4 shrink-0 text-primary" />
                           )}
                           <span>{item}</span>
                         </li>

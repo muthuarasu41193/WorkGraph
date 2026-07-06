@@ -77,7 +77,7 @@ function ExperienceItem({
           <div className="overflow-hidden">
             <div className="space-y-3 border-t border-border pt-4">
               {bullets.length > 0 ? (
-                <ul className="list-disc space-y-1.5 pl-5 text-body text-muted-foreground">
+                <ul className="list-disc space-y-2 pl-5 text-body text-muted-foreground">
                   {bullets.map((b) => (
                     <li key={b}>{b}</li>
                   ))}

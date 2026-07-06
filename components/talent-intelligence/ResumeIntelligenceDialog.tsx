@@ -105,7 +105,7 @@ export default function ResumeIntelligenceDialog({
           className={triggerClassName}
           onClick={(e) => e.stopPropagation()}
         >
-          <Brain className="mr-1.5 h-4 w-4" />
+          <Brain className="mr-2 h-4 w-4" />
           Analyze Resume
         </Button>
       </DialogTrigger>

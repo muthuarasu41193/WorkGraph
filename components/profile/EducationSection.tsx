@@ -75,7 +75,7 @@ export default function EducationSection({ userId, education }: Props) {
   return (
     <section className="overflow-hidden rounded-2xl border border-border/90 bg-surface-page shadow-sm">
       {toast ? (
-        <p className="border-b border-warning/20/80 bg-warning-subtle px-6 py-2.5 text-body text-warning-foreground">{toast}</p>
+        <p className="border-b border-warning/20/80 bg-warning-subtle px-6 py-3 text-body text-warning-foreground">{toast}</p>
       ) : null}
 
       <header className="flex flex-col gap-4 border-b border-border/80 bg-surface-primary px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
@@ -85,7 +85,7 @@ export default function EducationSection({ userId, education }: Props) {
           </span>
           <div>
             <p className="text-caption font-semibold uppercase tracking-[0.22em] text-muted-foreground">Credentials</p>
-            <h2 className="mt-0.5 text-heading-m text-foreground">Education</h2>
+            <h2 className="mt-1 text-heading-m text-foreground">Education</h2>
             <p className="mt-1 max-w-md text-caption leading-relaxed text-foreground/85">
               Degree first, school second — year sits in its own lane so scanners and humans parse it fast.
             </p>
@@ -94,7 +94,7 @@ export default function EducationSection({ userId, education }: Props) {
         <button
           type="button"
           onClick={() => void addItem()}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-3.5 py-2 text-caption font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 self-start rounded-[14px] border border-primary bg-primary px-4 py-2 text-caption font-semibold uppercase tracking-wider text-primary-foreground transition hover:bg-primary/90 sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
           Add credential
@@ -123,7 +123,7 @@ export default function EducationSection({ userId, education }: Props) {
                     <button
                       type="button"
                       onClick={() => void removeItem(idx)}
-                      className="absolute -top-1 right-0 rounded p-1.5 text-text-tertiary opacity-0 transition hover:bg-surface-secondary hover:text-red-600 group-hover:opacity-100 sm:top-0"
+                      className="absolute -top-1 right-0 rounded p-2 text-text-tertiary opacity-0 transition hover:bg-surface-secondary hover:text-red-600 group-hover:opacity-100 sm:top-0"
                       aria-label="Remove education"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -139,7 +139,7 @@ export default function EducationSection({ userId, education }: Props) {
                       value={item.institution}
                       onChange={(e) => void updateField(idx, "institution", e.target.value)}
                       placeholder="Institution"
-                      className={`${inputReset} mt-1.5 w-full pr-8 text-body text-foreground/85 sm:pr-10`}
+                      className={`${inputReset} mt-2 w-full pr-8 text-body text-foreground/85 sm:pr-10`}
                     />
                   </div>
                 </div>

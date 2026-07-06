@@ -222,7 +222,7 @@ export default function ApplicationDetailDrawer({
               <ol className="relative space-y-4 border-l border-border pl-4">
                 {application.timeline.map((event) => (
                   <li key={event.id} className="relative">
-                    <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
+                    <span className="absolute -left-[21px] top-2 h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
                     <p className="text-body font-medium">{event.label}</p>
                     <p className="text-caption text-muted-foreground">{formatTimelineAt(event.at)}</p>
                   </li>

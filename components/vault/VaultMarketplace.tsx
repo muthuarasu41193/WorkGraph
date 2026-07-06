@@ -70,7 +70,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            className="pl-9"
+            className="pl-10"
             placeholder="Search company, role, or level…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -78,7 +78,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="filter-difficulty">Difficulty</Label>
             <Select value={difficulty} onValueChange={setDifficulty}>
               <SelectTrigger id="filter-difficulty">
@@ -95,7 +95,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="filter-rounds">Rounds</Label>
             <Select value={rounds} onValueChange={setRounds}>
               <SelectTrigger id="filter-rounds">
@@ -112,7 +112,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="filter-result">Result</Label>
             <Select value={result} onValueChange={setResult}>
               <SelectTrigger id="filter-result">
@@ -129,7 +129,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
             </Select>
           </div>
 
-          <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+          <div className="space-y-2 sm:col-span-2 lg:col-span-1">
             <Label>Interview date</Label>
             <div className="flex gap-2">
               <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} aria-label="From date" />

@@ -170,7 +170,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <p className="mt-1 text-body text-muted-foreground">
           Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-caption text-muted-foreground">
+        <p className="mt-1 flex items-center gap-2 text-caption text-muted-foreground">
           {saving ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin" /> Saving…
@@ -192,7 +192,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
               type="button"
               onClick={() => setStep(s.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-caption font-medium transition-colors",
+                "flex items-center gap-2 rounded-full border px-3 py-1 text-caption font-medium transition-colors",
                 step === s.id ? "border-primary bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted",
                 step > s.id && "border-green-500/50 text-green-700 dark:text-green-400",
               )}
@@ -219,12 +219,12 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <CardContent className="space-y-4">
           {step === 0 ? (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label htmlFor="company">Company</Label>
                 <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. Google" />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="difficulty">Difficulty</Label>
                   <Select value={difficulty} onValueChange={setDifficulty}>
                     <SelectTrigger id="difficulty">
@@ -239,7 +239,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="interview-date">Interview date</Label>
                   <Input id="interview-date" type="date" value={interviewDate} onChange={(e) => setInterviewDate(e.target.value)} />
                 </div>
@@ -249,16 +249,16 @@ export default function VaultSellForm({ initialDraft }: Props) {
 
           {step === 1 ? (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
                 <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} placeholder="e.g. Software Engineer" />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="level">Level</Label>
                   <Input id="level" value={level} onChange={(e) => setLevel(e.target.value)} placeholder="e.g. L4, SDE-2" />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label htmlFor="result">Outcome</Label>
                   <Select value={result} onValueChange={setResult}>
                     <SelectTrigger id="result">
@@ -279,7 +279,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
 
           {step === 2 ? (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label htmlFor="round-count">Total rounds</Label>
                 <Input id="round-count" type="number" min={1} max={20} value={rounds} onChange={(e) => setRounds(e.target.value)} />
               </div>
@@ -329,7 +329,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
 
           {step === 5 ? (
             <>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <Label htmlFor="price">Price (INR)</Label>
                 <Input
                   id="price"

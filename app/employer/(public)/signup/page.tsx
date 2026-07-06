@@ -86,7 +86,7 @@ export default function EmployerSignupPage() {
             <Input
               id="email"
               type="email"
-              className="pl-9"
+              className="pl-10"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -100,7 +100,7 @@ export default function EmployerSignupPage() {
             <Input
               id="password"
               type="password"
-              className="pl-9"
+              className="pl-10"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

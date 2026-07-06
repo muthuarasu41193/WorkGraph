@@ -69,7 +69,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-heading-s text-text-primary">Skills</h2>
-          <p className="mt-0.5 text-caption font-semibold text-text-secondary">Resume keywords that improve recruiter and ATS visibility.</p>
+          <p className="mt-1 text-caption font-semibold text-text-secondary">Resume keywords that improve recruiter and ATS visibility.</p>
         </div>
         <button
           type="button"

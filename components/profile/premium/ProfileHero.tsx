@@ -119,7 +119,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
   ].filter((s) => s.href);
 
   return (
-    <header className="wg-profile-hero px-5 py-6 sm:px-7 sm:py-7">
+    <header className="wg-profile-hero px-5 py-6 sm:px-8 sm:py-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
           <button
@@ -190,7 +190,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-2 text-body`}
               />
             ) : (
-              <p className="mt-1 flex items-center justify-center gap-1.5 text-body text-muted-foreground sm:justify-start">
+              <p className="mt-1 flex items-center justify-center gap-2 text-body text-muted-foreground sm:justify-start">
                 <MapPin className="h-3.5 w-3.5 opacity-70" />
                 {form.location || "Add location"}
               </p>
@@ -259,7 +259,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 href={href!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1.5 text-caption font-semibold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--border-default)] bg-[var(--surface-secondary)] px-3 py-2 text-caption font-semibold text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {label}

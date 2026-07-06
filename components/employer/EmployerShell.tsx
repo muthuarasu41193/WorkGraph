@@ -37,7 +37,7 @@ export default function EmployerShell({ companyName, children }: Props) {
           </div>
           <div className="flex items-center gap-2">
             {companyName ? (
-              <span className="hidden items-center gap-1.5 text-body text-muted-foreground sm:flex">
+              <span className="hidden items-center gap-2 text-body text-muted-foreground sm:flex">
                 <Building2 className="h-4 w-4" aria-hidden />
                 {companyName}
               </span>

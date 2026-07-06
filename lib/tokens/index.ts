@@ -4,9 +4,9 @@
  * @see app/tokens.css — CSS source of truth
  */
 
-export { colors, colorVars } from "./colors";
+export { colors, colorVars, semanticColors } from "./colors";
 export { fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, paragraphSpacing, typography } from "./typography";
-export { space, spacePx } from "./spacing";
+export { space, spacePx, SPACING_SCALE_PX, snapSpacingPx } from "./spacing";
 export { shell, container, breakpoints, iconSize, shellClasses } from "./layout";
 export { radius, shadow, opacity, duration, transition, focusRing, focusRingClass } from "./effects";
 export { platformBrandColors } from "./brands";

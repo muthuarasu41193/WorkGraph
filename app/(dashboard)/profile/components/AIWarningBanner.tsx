@@ -11,7 +11,7 @@ export default function AIWarningBanner() {
   return (
     <div className="rounded-lg border border-warning/20 bg-warning-subtle/70 p-3 text-warning-foreground dark:border-warning/20 dark:bg-warning-subtle/40 dark:text-warning-foreground">
       <div className="flex items-start gap-2">
-        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+        <AlertTriangle className="mt-1 h-4 w-4 shrink-0" aria-hidden />
         <p className="text-body leading-6">
           <span className="font-medium">Modern ATS systems are increasingly detecting AI-generated content.</span>{" "}
           We provide suggestions only — please edit your resume yourself using these insights to ensure it passes

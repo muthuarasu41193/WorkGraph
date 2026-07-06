@@ -203,7 +203,7 @@ export default function WorkgraphDirectSection({
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-caption font-medium text-muted-foreground flex flex-wrap items-center gap-1.5">
+                        <p className="text-caption font-medium text-muted-foreground flex flex-wrap items-center gap-2">
                           <Building2 className="h-3.5 w-3.5 shrink-0" />
                           {signal.employer?.verification_status === "verified" &&
                           signal.employer.company_slug ? (
@@ -219,7 +219,7 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-success/40 px-1.5 text-caption text-success-foreground"
+                              className="h-5 gap-1 border-success/40 px-2 text-caption text-success-foreground"
                             >
                               <BadgeCheck className="h-3 w-3" />
                               Verified

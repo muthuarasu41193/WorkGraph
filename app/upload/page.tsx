@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function UploadPage() {
   return (
-    <main className={`${inter.className} min-h-screen bg-surface-primary px-6 py-14`}>
+    <main className={`${inter.className} min-h-screen bg-surface-primary px-6 py-16`}>
       <div className="mx-auto w-full max-w-[600px]">
         <div className="mb-8 text-center">
           <p className="text-body font-semibold tracking-wide text-text-primary">WorkGraph</p>

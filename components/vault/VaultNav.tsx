@@ -29,7 +29,7 @@ export default function VaultNav() {
             const active = pathname === href || (href !== "/interview-vault" && pathname.startsWith(href));
             return (
               <Button key={href} variant={active ? "secondary" : "ghost"} size="sm" asChild>
-                <Link href={href} className={cn("gap-1.5", active && "font-medium")}>
+                <Link href={href} className={cn("gap-2", active && "font-medium")}>
                   <Icon className="h-4 w-4" />
                   <span className="hidden md:inline">{label}</span>
                 </Link>

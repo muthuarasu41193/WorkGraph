@@ -123,7 +123,7 @@ export default function InterviewVaultSection() {
           <ul className="space-y-2">
             {STARTER_QUESTIONS.map((q) => (
               <li key={q} className="flex items-start gap-2 text-body">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 {q}
               </li>
             ))}

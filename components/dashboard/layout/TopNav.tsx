@@ -91,13 +91,13 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
             <GlobalSearch compact />
           </div>
 
-          <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1">
             {liveListings > 0 ? (
               <Badge
                 variant="secondary"
-                className="hidden rounded-md border-0 bg-success-subtle px-2 py-0.5 text-caption font-semibold text-success-foreground lg:inline-flex"
+                className="hidden rounded-md border-0 bg-success-subtle px-2 py-1 text-caption font-semibold text-success-foreground lg:inline-flex"
               >
-                <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-success-subtle0" />
+                <span className="mr-2 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-success-subtle0" />
                 {liveListings.toLocaleString()} live
               </Badge>
             ) : null}
@@ -106,11 +106,11 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               type="button"
               variant="ghost"
               size="sm"
-              className="hidden h-8 gap-1.5 px-2 text-caption text-[var(--text-secondary)] lg:inline-flex"
+              className="hidden h-8 gap-2 px-2 text-caption text-[var(--text-secondary)] lg:inline-flex"
               onClick={() => setCmdOpen(true)}
             >
               <Command className="h-3.5 w-3.5" />
-              <kbd className="rounded border bg-muted px-1 py-0.5 text-caption font-medium">⌘K</kbd>
+              <kbd className="rounded border bg-muted px-1 py-1 text-caption font-medium">⌘K</kbd>
             </Button>
 
             <Button

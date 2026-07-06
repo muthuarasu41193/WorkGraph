@@ -119,7 +119,7 @@ export default function ResumeAnalyzer() {
         </Tabs>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="target-role">Target Role (optional)</Label>
             <Input
               id="target-role"
@@ -128,7 +128,7 @@ export default function ResumeAnalyzer() {
               placeholder="e.g. Senior Frontend Engineer"
             />
           </div>
-          <div className="space-y-1.5 sm:col-span-2">
+          <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="job-description">Job Description (optional)</Label>
             <Textarea
               id="job-description"

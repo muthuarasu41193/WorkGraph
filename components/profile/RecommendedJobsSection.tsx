@@ -1401,7 +1401,7 @@ export default function RecommendedJobsSection({
   const ringOffset = ringCircumference - (overallMatch / 100) * ringCircumference;
 
   return (
-    <section id="recommended-jobs" className="scroll-mt-28 space-y-5">
+    <section id="recommended-jobs" className="scroll-mt-32 space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
           <p className="text-caption font-medium uppercase tracking-[var(--letter-spacing-label)] text-[var(--text-tertiary)]">Job board</p>
@@ -1427,7 +1427,7 @@ export default function RecommendedJobsSection({
 
       {!isLiveFeed && feedDemoHint ? (
         <div className="flex gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--warning-subtle)] p-4 text-body text-[var(--text-secondary)] ring-1 ring-[var(--border-default)] wg-section-fade" style={{ animationDelay: "100ms" }}>
-          <span className="mt-0.5 shrink-0 text-warning-foreground">
+          <span className="mt-1 shrink-0 text-warning-foreground">
             <LifeBuoy className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0 space-y-2">
@@ -1553,7 +1553,7 @@ export default function RecommendedJobsSection({
             </Button>
           </div>
 
-          <section className="sticky top-[68px] z-[100] hidden border-b border-[var(--border-default)] bg-[rgba(255,255,255,0.95)] py-3 backdrop-blur-[8px] md:block">
+          <section className="sticky top-[var(--sticky-below-header)] z-[100] hidden border-b border-[var(--border-default)] bg-[rgba(255,255,255,0.95)] py-3 backdrop-blur-[8px] md:block">
             <div className="wg-no-scrollbar flex items-center gap-2 overflow-x-auto">
               <div className="relative w-full min-w-[280px] md:w-[280px] md:min-w-[280px]">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-tertiary)]" aria-hidden />
@@ -1562,7 +1562,7 @@ export default function RecommendedJobsSection({
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search job titles, companies..."
-                  className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-11 pr-9 text-body text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
+                  className="h-10 w-full rounded-full border border-[var(--border-default)] bg-surface-primary py-2 pl-12 pr-10 text-body text-[var(--text-secondary)] placeholder:text-[var(--text-tertiary)] outline-none transition focus:border-[var(--info)] focus:shadow-[0_0_0_3px_var(--info-subtle)]"
                 />
                 {searchInput ? (
                   <button
@@ -1585,9 +1585,9 @@ export default function RecommendedJobsSection({
                 <summary className={jobTypes.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"} <ChevronDown className="h-4 w-4" />
                 </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-52 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
+                <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-52 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
                   {JOB_TYPE_OPTIONS.map((type) => (
-                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-body hover:bg-[var(--surface-secondary)]">
+                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-2 text-body hover:bg-[var(--surface-secondary)]">
                       <input
                         type="checkbox"
                         checked={jobTypes.has(type)}
@@ -1611,7 +1611,7 @@ export default function RecommendedJobsSection({
                 <summary className={locationMode !== "any" || locationQuery.trim() ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
                 </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[var(--border-default)] bg-surface-primary p-3 shadow-lg">
+                <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-64 rounded-xl border border-[var(--border-default)] bg-surface-primary p-3 shadow-lg">
                   <input
                     value={locationQuery}
                     onChange={(e) => {
@@ -1644,7 +1644,7 @@ export default function RecommendedJobsSection({
                 <summary className={dateWindow !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
                   Date posted <ChevronDown className="h-4 w-4" />
                 </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-48 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
+                <div data-filter-menu="true" className="absolute left-0 top-12 z-20 w-48 rounded-xl border border-[var(--border-default)] bg-surface-primary p-2 shadow-lg">
                   {DATE_OPTIONS.map((d) => (
                     <button
                       key={d.id}
@@ -1653,7 +1653,7 @@ export default function RecommendedJobsSection({
                         setDateWindow(d.id);
                         setCurrentPage(1);
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-body hover:bg-[var(--surface-secondary)]"
+                      className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-body hover:bg-[var(--surface-secondary)]"
                     >
                       {d.label}
                       {dateWindow === d.id ? <Check className="h-4 w-4 text-[var(--info)]" /> : null}
@@ -2060,7 +2060,7 @@ export default function RecommendedJobsSection({
       <div className="min-w-0">
       {(listingPipeline.length > 0 || isPageLoading || userFiltersActive) ? (
         <div className="flex items-center justify-between gap-2">
-          <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
+          <div className="inline-flex rounded-lg border border-border p-1" role="group" aria-label="Choose jobs list view">
             <Button
               type="button"
               variant={viewMode === "list" ? "default" : "ghost"}
@@ -2192,7 +2192,7 @@ export default function RecommendedJobsSection({
                     className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} relative shrink-0 overflow-hidden rounded-[14px] border border-border bg-muted`}
                     aria-label={`${job.company} logo placeholder`}
                   >
-                    <Building2 className="absolute left-1.5 top-1.5 h-3.5 w-3.5 text-[var(--text-secondary)]" aria-hidden />
+                    <Building2 className="absolute left-1.5 top-2 h-3.5 w-3.5 text-[var(--text-secondary)]" aria-hidden />
                     <span className="absolute bottom-1 right-1 text-caption font-semibold tracking-wide text-[var(--text-secondary)]">
                       {companyInitials(job.company)}
                     </span>
@@ -2207,7 +2207,7 @@ export default function RecommendedJobsSection({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="group/score relative inline-flex items-center rounded-2xl px-2.5 py-1 text-caption font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
+                  <span className="group/score relative inline-flex items-center rounded-2xl px-3 py-1 text-caption font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
                     <MatchIcon className="mr-1 inline h-3.5 w-3.5" />
                     {matchBadge.label}
                     <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden w-48 rounded-lg border border-[var(--border-default)] bg-surface-primary px-2 py-1 text-caption font-normal text-[var(--text-secondary)] shadow-lg group-hover/score:block">
@@ -2236,23 +2236,23 @@ export default function RecommendedJobsSection({
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-caption text-[var(--text-secondary)]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
+                <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-3 py-1 text-caption text-[var(--text-secondary)]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
                 {meta.experienceLevel ? (
-                  <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-2.5 py-1 text-caption text-[var(--text-secondary)]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
+                  <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--surface-secondary)] px-3 py-1 text-caption text-[var(--text-secondary)]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
                 ) : null}
-                <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-caption ${isFresh ? "border-[var(--success-subtle)] bg-[var(--success-subtle)] text-[var(--success)]" : "border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-tertiary)]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
-                <span className="rounded-xl bg-info-subtle px-2.5 py-1 text-caption text-[var(--info)]">via {src.label}</span>
-                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--success-subtle)] px-2.5 py-1 text-caption text-[var(--success)]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
-                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--danger-subtle)] px-2.5 py-1 text-caption text-[var(--danger)] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
+                <span className={`inline-flex items-center gap-1 rounded-xl border px-3 py-1 text-caption ${isFresh ? "border-[var(--success-subtle)] bg-[var(--success-subtle)] text-[var(--success)]" : "border-[var(--border-default)] bg-[var(--surface-secondary)] text-[var(--text-tertiary)]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
+                <span className="rounded-xl bg-info-subtle px-3 py-1 text-caption text-[var(--info)]">via {src.label}</span>
+                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--success-subtle)] px-3 py-1 text-caption text-[var(--success)]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
+                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[var(--danger-subtle)] px-3 py-1 text-caption text-[var(--danger)] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
               </div>
 
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {job.matchedSkills.slice(0, 3).map((s) => (
-                    <span key={s} className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-caption text-[var(--info)]">{s}</span>
+                    <span key={s} className="rounded-xl bg-[var(--info-subtle)] px-3 py-1 text-caption text-[var(--info)]">{s}</span>
                   ))}
-                  {job.matchedSkills.length > 3 ? <span className="rounded-xl bg-[var(--info-subtle)] px-2.5 py-0.5 text-caption text-[var(--info)]">+{job.matchedSkills.length - 3} more</span> : null}
-                  <span className="rounded-xl bg-[var(--warning-subtle)] px-2.5 py-0.5 text-caption text-[var(--warning)]">Missing: AWS, Docker</span>
+                  {job.matchedSkills.length > 3 ? <span className="rounded-xl bg-[var(--info-subtle)] px-3 py-1 text-caption text-[var(--info)]">+{job.matchedSkills.length - 3} more</span> : null}
+                  <span className="rounded-xl bg-[var(--warning-subtle)] px-3 py-1 text-caption text-[var(--warning)]">Missing: AWS, Docker</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ResumeIntelligenceDialog
@@ -2268,7 +2268,7 @@ export default function RecommendedJobsSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-5 text-body font-medium text-white transition hover:scale-[1.02] hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                      className="inline-flex h-9 items-center gap-2 rounded-[18px] bg-[var(--info)] px-5 text-body font-medium text-white transition hover:scale-[1.02] hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                     >
                       <Zap className="h-4 w-4" />
                       Quick Apply
@@ -2311,7 +2311,7 @@ export default function RecommendedJobsSection({
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
                     {meta.hasVisaSponsorship ? <span>Visa sponsorship available</span> : null}
-                    <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-[var(--warning)]" /> 4.2</span>
+                    <span className="inline-flex items-center gap-2"><Star className="h-3.5 w-3.5 text-[var(--warning)]" /> 4.2</span>
                     <a href="#" onClick={(e) => e.preventDefault()} className="text-[var(--info)]">View company</a>
                   </div>
                   {canApply ? (
@@ -2320,7 +2320,7 @@ export default function RecommendedJobsSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--info)] px-4 py-3 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
                     >
                       <ExternalLink className="h-4 w-4" />
                       Apply Now
@@ -2343,7 +2343,7 @@ export default function RecommendedJobsSection({
                   <div className="flex items-center justify-between">
                     <span className="text-caption text-[var(--text-tertiary)]">Posted {job.postedAgo}</span>
                     {canApply ? (
-                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-[18px] bg-[var(--info)] px-3 py-1.5 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
+                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-2 rounded-[18px] bg-[var(--info)] px-3 py-2 text-caption font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
                         <ExternalLink className="h-3.5 w-3.5" />
                         Apply
                       </a>
@@ -2506,7 +2506,7 @@ export default function RecommendedJobsSection({
       ) : null}
       </div>
 
-      <aside className="hidden space-y-4 lg:sticky lg:top-[132px] lg:block">
+      <aside className="hidden space-y-4 lg:sticky lg:top-[var(--sticky-aside-top)] lg:block">
         <section className="rounded-xl border border-[var(--border-default)] bg-surface-primary px-4 py-4">
           <h3 className="text-body-lg font-semibold text-[var(--text-primary)]">Your Match Profile</h3>
           <p className="mt-1 text-caption text-[var(--text-tertiary)]">Based on your profile and preferences</p>
@@ -2537,8 +2537,8 @@ export default function RecommendedJobsSection({
 
       <p className="rounded-2xl border border-border bg-surface-secondary/80 px-4 py-3 text-center text-caption leading-relaxed text-foreground/80">
         Ingest jobs with{" "}
-        <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-caption text-foreground">job_aggregator</code> using the
-        same <code className="rounded bg-surface-primary px-1 py-0.5 font-mono text-caption">DATABASE_URL</code> as Supabase.{" "}
+        <code className="rounded bg-surface-primary px-1 py-1 font-mono text-caption text-foreground">job_aggregator</code> using the
+        same <code className="rounded bg-surface-primary px-1 py-1 font-mono text-caption">DATABASE_URL</code> as Supabase.{" "}
         <Link
           href="/create-profile"
           className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -2572,7 +2572,7 @@ export default function RecommendedJobsSection({
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
-                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--info)] px-4 py-2.5 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
+                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--info)] px-4 py-3 text-body font-medium text-white transition hover:bg-[var(--info-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2">
                     <ExternalLink className="h-4 w-4" />
                     Apply Now
                   </a>

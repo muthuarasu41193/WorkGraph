@@ -219,67 +219,60 @@ Minimum interactive target: **44×44px** on touch devices. Visual elements may b
 
 ## Color Principles
 
+> **Full token reference:** [`docs/COLOR_TOKENS.md`](docs/COLOR_TOKENS.md) — documents every color token, light/dark values, and interactive states.
+
 ### Philosophy
 
-Color carries **meaning**, not mood. Neutrals do 90% of the work. Brand red and semantic colors appear only where they communicate state or action. Dark mode preserves the same semantic roles — it does not become a different brand.
+Color carries **meaning**, not mood. Neutrals do 90% of the work. Brand burgundy (`#B91C1C`, matching the WorkGraph logo) and semantic colors appear only where they communicate state or action. Dark mode preserves the same semantic roles — it does not become a different brand. **No bright AI-style gradients** in application UI.
 
 ### Neutral palette (light)
 
 | Token | Hex | Role |
 |-------|-----|------|
-| `bg-page` | `#FAFAFA` | App background |
-| `bg-surface` | `#FFFFFF` | Cards, panels, popovers |
-| `bg-subtle` | `#F4F4F5` | Muted fills, secondary buttons, table stripes |
-| `border-default` | `#E4E4E7` | Standard borders |
-| `border-strong` | `#D4D4D8` | Emphasized dividers, input borders on focus-adjacent |
-| `text-primary` | `#18181B` | Headings, primary body |
-| `text-secondary` | `#52525B` | Descriptions, metadata |
-| `text-tertiary` | `#A1A1AA` | Placeholders, disabled, timestamps |
-| `text-inverse` | `#FAFAFA` | Text on dark fills |
+| `surface-page` | `#F7F8FA` | App background |
+| `surface-primary` | `#FFFFFF` | Cards, panels, popovers |
+| `surface-secondary` | `#EEF0F3` | Muted fills, secondary buttons, table stripes |
+| `border-default` | `#E2E5EB` | Standard borders |
+| `border-strong` | `#C8CDD6` | Emphasized dividers |
+| `text-primary` | `#111318` | Headings, primary body |
+| `text-secondary` | `#4B5563` | Descriptions, metadata |
+| `text-tertiary` | `#8B939E` | Placeholders, disabled, timestamps |
+| `text-disabled` | `#B8BFC8` | Disabled labels |
 
 ### Brand palette
 
-| Token | Hex | Role |
-|-------|-----|------|
-| `brand` | `#B91C1C` | Primary brand, primary actions |
-| `brand-hover` | `#991B1B` | Hover on brand fills |
-| `brand-subtle` | `rgba(185, 28, 28, 0.08)` | Active nav bg, selected chip bg (light) |
-| `brand-muted` | `rgba(185, 28, 28, 0.16)` | Focus rings, highlight washes |
+| Token | Hex (light) | Role |
+|-------|-------------|------|
+| `accent` | `#B91C1C` | Primary brand, primary actions, logo mark |
+| `accent-hover` | `#9A1818` | Hover on brand fills |
+| `accent-pressed` | `#7F1414` | Pressed brand controls |
+| `accent-selected` | `rgba(185,28,28,0.08)` | Active nav bg, selected chip bg |
+| `accent-subtle` | `rgba(185,28,28,0.06)` | Light brand wash |
+| `accent-muted` | `rgba(185,28,28,0.12)` | Focus rings, highlight washes |
 
 ### Semantic palette (light)
 
 | Token | Hex | Role |
 |-------|-----|------|
-| `success` | `#059669` | Confirmed, high match, completed |
-| `success-subtle` | `#ECFDF5` | Success background |
-| `warning` | `#D97706` | Caution, medium match, pending review |
-| `warning-subtle` | `#FFFBEB` | Warning background |
-| `error` | `#DC2626` | Errors, destructive actions, failed states |
-| `error-subtle` | `#FEF2F2` | Error background |
-| `info` | `#2563EB` | Informational, links to external context |
-| `info-subtle` | `#EFF6FF` | Info background |
+| `success` | `#146B4A` | Confirmed, high match, completed |
+| `warning` | `#8A5C00` | Caution, medium match, pending |
+| `error` / `danger` | `#B42318` | Errors, destructive actions |
+| `info` | `#2B5F8A` | Informational callouts |
 
-Semantic colors are **never** used as primary action color. Primary actions always use `brand`.
+Each semantic color has `-hover`, `-pressed`, `-selected`, `-disabled`, `-subtle`, `-foreground`, and `-border` variants. See [`docs/COLOR_TOKENS.md`](docs/COLOR_TOKENS.md).
 
-### Dark mode palette
+### Interactive & focus
 
-Dark mode uses the same token names. Values shift; semantics do not.
+| Token | Role |
+|-------|------|
+| `interactive-hover` | Neutral row/menu hover |
+| `interactive-pressed` | Neutral pressed state |
+| `interactive-selected` | Subtle brand-tinted selection |
+| `focus-ring-color` | Keyboard focus ring (brand burgundy) |
 
-| Token | Hex (dark) |
-|-------|------------|
-| `bg-page` | `#09090B` |
-| `bg-surface` | `#18181B` |
-| `bg-subtle` | `#27272A` |
-| `border-default` | `rgba(255, 255, 255, 0.08)` |
-| `border-strong` | `rgba(255, 255, 255, 0.14)` |
-| `text-primary` | `#FAFAFA` |
-| `text-secondary` | `#A1A1AA` |
-| `text-tertiary` | `#71717A` |
-| `brand` | `#EF4444` |
-| `brand-hover` | `#DC2626` |
-| `brand-subtle` | `rgba(239, 68, 68, 0.12)` |
+### Dark mode
 
-Dark mode brand remains **red** — never blue, white, or purple as primary.
+Dark mode uses the same token names. Brand stays burgundy (`#D43D52`) — never blue, purple, or neon as primary. Full dark values in [`docs/COLOR_TOKENS.md`](docs/COLOR_TOKENS.md).
 
 ### Color usage rules
 
@@ -566,7 +559,8 @@ When this system conflicts with existing code, **this document wins**. Proposed 
 
 ```
 Personality:  Clear · Composed · Connected · Credible · Current
-Brand red:    #B91C1C — signal only, not decoration
+Brand accent: #B91C1C — logo-aligned burgundy, signal only
+Colors:       docs/COLOR_TOKENS.md — full semantic reference
 Type:         Inter (UI) + Geist Mono (data)
 Scale:        11 · 12 · 14 · 16 · 20 · 24 · 30/36px — no arbitrary sizes
 Grid:         8px base

@@ -52,7 +52,7 @@ export default function SideNav({ collapsed = false, onToggleCollapse, mobile, o
             ) : group.label && collapsed ? (
               <div className="mb-2 h-px bg-[var(--border-default)]" aria-hidden />
             ) : null}
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.id);

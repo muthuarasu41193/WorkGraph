@@ -46,7 +46,7 @@ export default function ApplicationCard({ application, onOpen }: Props) {
         <div className="flex items-start gap-2">
           <button
             type="button"
-            className="mt-0.5 shrink-0 touch-none text-muted-foreground hover:text-foreground"
+            className="mt-1 shrink-0 touch-none text-muted-foreground hover:text-foreground"
             aria-label="Drag application"
             onClick={(e) => e.stopPropagation()}
             {...listeners}
@@ -63,7 +63,7 @@ export default function ApplicationCard({ application, onOpen }: Props) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-body font-semibold leading-snug">{application.role}</p>
             <p className="truncate text-caption text-muted-foreground">{application.company}</p>
-            <dl className="mt-2 space-y-0.5 text-caption text-muted-foreground">
+            <dl className="mt-2 space-y-1 text-caption text-muted-foreground">
               <div className="flex justify-between gap-2">
                 <dt>Applied</dt>
                 <dd className="tabular-nums text-foreground/80">

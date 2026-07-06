@@ -102,7 +102,7 @@ export default function WalletPanel() {
           {error ? <p className="text-body text-red-600">Could not load wallet.</p> : null}
           <ul className="divide-y divide-[var(--border-default)]">
             {(data?.transactions ?? []).map((tx) => (
-              <li key={tx.id} className="flex items-center justify-between py-2.5 text-body first:pt-0 last:pb-0">
+              <li key={tx.id} className="flex items-center justify-between py-3 text-body first:pt-0 last:pb-0">
                 <div>
                   <p className="font-medium text-[var(--text-primary)]">{tx.description ?? tx.kind}</p>
                   <p className="text-caption text-[var(--text-tertiary)]">

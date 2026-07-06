@@ -343,35 +343,82 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --color-surface-primary: var(--surface-primary);
   --color-surface-secondary: var(--surface-secondary);
   --color-surface-elevated: var(--surface-elevated);
+  --color-surface-disabled: var(--surface-disabled);
 
   /* Semantic text */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
   --color-text-inverse: var(--text-inverse);
+  --color-text-disabled: var(--text-disabled);
 
   /* Semantic borders */
   --color-border-default: var(--border-default);
   --color-border-muted: var(--border-muted);
   --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
 
-  /* Brand & semantic status */
+  /* Brand / accent */
   --color-brand: var(--accent);
   --color-brand-hover: var(--accent-hover);
+  --color-brand-pressed: var(--accent-pressed);
+  --color-brand-selected: var(--accent-selected);
+  --color-brand-disabled: var(--accent-disabled);
   --color-brand-subtle: var(--accent-subtle);
+  --color-brand-muted: var(--accent-muted);
+  --color-brand-foreground: var(--accent-foreground);
+
+  /* Semantic status */
   --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-pressed: var(--danger-pressed);
+  --color-danger-selected: var(--danger-selected);
+  --color-danger-disabled: var(--danger-disabled);
   --color-danger-subtle: var(--danger-subtle);
   --color-danger-foreground: var(--danger-foreground);
+  --color-danger-border: var(--danger-border);
+
+  --color-error: var(--error);
+  --color-error-hover: var(--error-hover);
+  --color-error-pressed: var(--error-pressed);
+  --color-error-selected: var(--error-selected);
+  --color-error-disabled: var(--error-disabled);
+  --color-error-subtle: var(--error-subtle);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-border: var(--error-border);
+
   --color-warning: var(--warning);
+  --color-warning-hover: var(--warning-hover);
+  --color-warning-pressed: var(--warning-pressed);
+  --color-warning-selected: var(--warning-selected);
+  --color-warning-disabled: var(--warning-disabled);
   --color-warning-subtle: var(--warning-subtle);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-border: var(--warning-border);
+
   --color-success: var(--success);
   --color-success-hover: var(--success-hover);
+  --color-success-pressed: var(--success-pressed);
+  --color-success-selected: var(--success-selected);
+  --color-success-disabled: var(--success-disabled);
   --color-success-subtle: var(--success-subtle);
   --color-success-foreground: var(--success-foreground);
+  --color-success-border: var(--success-border);
+
   --color-info: var(--info);
+  --color-info-hover: var(--info-hover);
+  --color-info-pressed: var(--info-pressed);
+  --color-info-selected: var(--info-selected);
+  --color-info-disabled: var(--info-disabled);
   --color-info-subtle: var(--info-subtle);
   --color-info-foreground: var(--info-foreground);
+  --color-info-border: var(--info-border);
+
+  /* Interactive (neutral) */
+  --color-interactive-hover: var(--interactive-hover);
+  --color-interactive-pressed: var(--interactive-pressed);
+  --color-interactive-selected: var(--interactive-selected);
+  --color-interactive-disabled: var(--interactive-disabled);
 
   /* shadcn/ui compatibility */
   --color-background: var(--background);
@@ -420,7 +467,8 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
 
-  /* Spacing */
+  /* Spacing — 8pt grid (4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128) */
+  --spacing-0: 0;
   --spacing-1: var(--space-1);
   --spacing-2: var(--space-2);
   --spacing-3: var(--space-3);
@@ -431,6 +479,9 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --spacing-10: var(--space-10);
   --spacing-12: var(--space-12);
   --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
+  --spacing-32: var(--space-32);
 
   /* Breakpoints */
   --breakpoint-sm: 640px;

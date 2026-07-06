@@ -24,7 +24,7 @@ export default function KeywordIntelligenceSection({ data }: Props) {
       defaultOpen={false}
     >
       <p className="mb-4 text-body text-muted-foreground">{data.summary}</p>
-      <div className="flex flex-wrap gap-1.5 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         {data.extractedFromJd.slice(0, 15).map((kw) => (
           <Badge key={kw} variant="outline" className="text-caption">
             {kw}

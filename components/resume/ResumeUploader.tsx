@@ -232,7 +232,7 @@ export default function ResumeUploader() {
         <button
           type="button"
           onClick={handleUpload}
-          className="mt-6 w-full rounded-[14px] bg-primary px-4 py-2.5 text-body font-semibold text-primary-foreground hover:bg-primary/90"
+          className="mt-6 w-full rounded-[14px] bg-primary px-4 py-3 text-body font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Upload Resume
         </button>

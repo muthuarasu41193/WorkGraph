@@ -188,7 +188,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] px-3 py-1.5 text-caption font-medium text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-2 text-caption font-medium text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
@@ -205,7 +205,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   });
                   setIsEditing(false);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-default)] px-3 py-1.5 text-caption font-medium text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-md border border-[var(--border-default)] px-3 py-2 text-caption font-medium text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
               >
                 <X className="h-3.5 w-3.5" />
                 Cancel

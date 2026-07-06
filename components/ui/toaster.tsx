@@ -33,7 +33,7 @@ export function Toaster() {
             <div className="min-w-0">
               <p className="text-body font-semibold">{item.title}</p>
               {item.description ? (
-                <p className="mt-0.5 text-body opacity-90">{item.description}</p>
+                <p className="mt-1 text-body opacity-90">{item.description}</p>
               ) : null}
             </div>
             <button

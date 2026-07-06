@@ -37,18 +37,18 @@ export default function ProfileSidebar() {
   const data = MOCK_SIDEBAR;
 
   return (
-    <aside className="wg-profile-aside space-y-4 lg:sticky lg:top-[3.75rem] lg:max-h-[calc(100dvh-4.5rem)] lg:overflow-y-auto">
+    <aside className="wg-profile-aside space-y-4 lg:sticky lg:top-16 lg:max-h-[calc(100dvh-4.5rem)] lg:overflow-y-auto">
       <Widget title="Profile analytics" icon={BarChart3}>
         <dl className="grid grid-cols-2 gap-4">
           <div>
             <dt className="text-caption text-[var(--text-tertiary)]">Profile views</dt>
-            <dd className="mt-0.5 text-heading-m tabular-nums text-[var(--text-primary)]">
+            <dd className="mt-1 text-heading-m tabular-nums text-[var(--text-primary)]">
               {data.analytics.profileViews}
             </dd>
           </div>
           <div>
             <dt className="text-caption text-[var(--text-tertiary)]">Search appearances</dt>
-            <dd className="mt-0.5 text-heading-m tabular-nums text-[var(--text-primary)]">
+            <dd className="mt-1 text-heading-m tabular-nums text-[var(--text-primary)]">
               {data.analytics.searchAppearances}
             </dd>
           </div>
@@ -58,13 +58,13 @@ export default function ProfileSidebar() {
 
       <Widget title="Recruiter views" icon={Eye}>
         <p className="text-heading-l tabular-nums text-[var(--text-primary)]">{data.recruiterViews}</p>
-        <p className="mt-0.5 text-caption text-[var(--text-tertiary)]">This week</p>
+        <p className="mt-1 text-caption text-[var(--text-tertiary)]">This week</p>
       </Widget>
 
       <Widget title="Interview tracker" icon={Calendar}>
         <ul className="divide-y divide-[var(--border-default)]">
           {data.interviews.map((iv) => (
-            <li key={iv.company} className="flex items-center justify-between py-2.5 text-body first:pt-0 last:pb-0">
+            <li key={iv.company} className="flex items-center justify-between py-3 text-body first:pt-0 last:pb-0">
               <span className="font-medium text-[var(--text-primary)]">{iv.company}</span>
               <span className="text-caption tabular-nums text-[var(--text-tertiary)]">{iv.date}</span>
             </li>
@@ -73,7 +73,7 @@ export default function ProfileSidebar() {
       </Widget>
 
       <Widget title="Trending skills" icon={TrendingUp}>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {data.trendingSkills.map((s) => (
             <span
               key={s}

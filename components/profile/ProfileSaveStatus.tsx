@@ -120,7 +120,7 @@ export default function ProfileSaveStatus() {
 
   return (
     <div className="fixed bottom-5 right-5 z-40 rounded-2xl border border-success/20 bg-surface-primary/95 px-4 py-3 shadow-lg shadow-success/10 backdrop-blur-sm">
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         {icon}
         <p className="text-caption font-medium text-text-secondary">{text}</p>
       </div>
