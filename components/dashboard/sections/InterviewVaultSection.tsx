@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import PageHeader from "@/components/design-system/PageHeader";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -84,12 +86,11 @@ export default function InterviewVaultSection() {
 
   return (
     <section className="space-y-5" aria-labelledby="vault-heading">
-      <header>
-        <h1 id="vault-heading" className="text-heading-l">Prep Vault</h1>
-        <p className="mt-1 text-body text-muted-foreground">
-          Private prep notes stored on this device — questions, answers, and company research.
-        </p>
-      </header>
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("vault")}
+        title="Prep Vault"
+        subtitle="Private prep notes stored on this device — questions, answers, and company research."
+      />
 
       <Card className="wg-dash-section-card">
         <CardHeader>

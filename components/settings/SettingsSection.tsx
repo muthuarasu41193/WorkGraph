@@ -1,19 +1,21 @@
 "use client";
 
 import { Bell, Moon, Shield, User } from "lucide-react";
-import PageHero from "@/components/design-system/PageHero";
+import PageHeader from "@/components/design-system/PageHeader";
 import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 
 export default function SettingsSection() {
   const { theme, toggle } = useProfileTheme();
 
   return (
     <div className="space-y-8">
-      <PageHero
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("settings")}
         title="Settings"
         subtitle="Manage your account preferences, notifications, and privacy."
       />

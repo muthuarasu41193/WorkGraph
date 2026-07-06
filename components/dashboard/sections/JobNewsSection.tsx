@@ -9,6 +9,8 @@ import {
   type SocialPlatform,
 } from "@/lib/job-social-platforms";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import PageHeader from "@/components/design-system/PageHeader";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,17 +35,18 @@ export default function JobNewsSection() {
 
   return (
     <section className="space-y-4" aria-labelledby="job-news-heading">
-      <header>
-        <h1 id="job-news-heading" className="text-heading-l">Job News</h1>
-        <p className="mt-1 text-body text-muted-foreground">
-          Hiring posts and community listings from social platforms — filtered by source.
-        </p>
-        {feedKind === "live" ? (
-          <p className="mt-1 text-caption font-medium text-success-foreground dark:text-success">
-            {allPosts.length} posts synced from your jobs database
-          </p>
-        ) : null}
-      </header>
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("job-news")}
+        title="Job News"
+        subtitle="Hiring posts and community listings from social platforms — filtered by source."
+        footer={
+          feedKind === "live" ? (
+            <p className="text-caption font-medium text-success-foreground dark:text-success">
+              {allPosts.length} posts synced from your jobs database
+            </p>
+          ) : undefined
+        }
+      />
 
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by platform">
         {SOCIAL_PLATFORM_TABS.map((tab) => (

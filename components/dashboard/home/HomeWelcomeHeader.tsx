@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import PageHero from "@/components/design-system/PageHero";
+import PageHeader from "@/components/design-system/PageHeader";
 import { Button } from "@/components/ui/button";
-import { dashboardHref } from "@/lib/dashboard-routes";
+import { dashboardBreadcrumbs, dashboardHref } from "@/lib/dashboard-routes";
 
 export default function HomeWelcomeHeader({
   greeting,
@@ -22,17 +22,16 @@ export default function HomeWelcomeHeader({
   careerHealth?: number;
 }) {
   return (
-    <PageHero
-      greeting={`${greeting}, ${displayName}`}
+    <PageHeader
+      breadcrumbs={dashboardBreadcrumbs("home")}
+      eyebrow={`${greeting}, ${displayName}`}
       title="Let's accelerate your career."
       subtitle="WorkGraph helps you make better career decisions — discover hidden jobs, improve your resume, and apply strategically."
       metrics={[
         ...(newMatches !== undefined
           ? [{ label: "new matches", value: newMatches, accent: true }]
           : []),
-        ...(hiddenJobs !== undefined
-          ? [{ label: "hidden jobs", value: hiddenJobs }]
-          : []),
+        ...(hiddenJobs !== undefined ? [{ label: "hidden jobs", value: hiddenJobs }] : []),
         ...(resumeScore !== undefined
           ? [{ label: "Resume Score", value: `${resumeScore}%` }]
           : []),
@@ -43,7 +42,7 @@ export default function HomeWelcomeHeader({
           ? [{ label: "Career Health", value: `${careerHealth}%` }]
           : []),
       ]}
-      cta={
+      primaryAction={
         <Button asChild size="default" className="gap-2">
           <Link href={dashboardHref("jobs")}>
             View Recommended Jobs

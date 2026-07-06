@@ -10,7 +10,8 @@ import { DashboardProvider } from "../../dashboard/DashboardProvider";
 import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
 import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
-import PageHero from "@/components/design-system/PageHero";
+import PageHeader from "@/components/design-system/PageHeader";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import ProfileHero from "./ProfileHero";
 import ProfileSkills from "./ProfileSkills";
 import ProfileExperience from "./ProfileExperience";
@@ -137,7 +138,8 @@ function ProfileShellInner({
       home: homeDashboard,
       applications: (
         <div className="space-y-6">
-          <PageHero
+          <PageHeader
+            breadcrumbs={dashboardBreadcrumbs("applications")}
             title="Application Intelligence"
             subtitle="Track every opportunity and maximize your response rate."
           />
@@ -163,7 +165,8 @@ function ProfileShellInner({
       vault: <InterviewVaultSection />,
       profile: (
         <div className="space-y-6">
-          <PageHero
+          <PageHeader
+            breadcrumbs={dashboardBreadcrumbs("profile")}
             title="Your Profile"
             subtitle="Keep your skills, experience, and resume data accurate for better AI matching."
           />
@@ -194,7 +197,8 @@ function ProfileShellInner({
       ),
       "resume-intelligence": (
         <div className="space-y-6">
-          <PageHero
+          <PageHeader
+            breadcrumbs={dashboardBreadcrumbs("resume-intelligence")}
             title="Your Resume Intelligence"
             subtitle="Improve your interview chances by fixing the highest-impact resume issues."
           />

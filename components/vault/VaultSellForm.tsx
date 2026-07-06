@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, ChevronLeft, ChevronRight, Save } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import VaultRichEditor from "@/components/vault/VaultRichEditor";
+import PageHeader from "@/components/design-system/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -166,25 +167,31 @@ export default function VaultSellForm({ initialDraft }: Props) {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-heading-l">Sell Your Experience</h1>
-        <p className="mt-1 text-body text-muted-foreground">
-          Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
-        </p>
-        <p className="mt-1 flex items-center gap-2 text-caption text-muted-foreground">
-          {saving ? (
-            <>
-              <Spinner size="xs" /> Saving…
-            </>
-          ) : lastSaved ? (
-            <>
-              <Save className="h-3 w-3" /> Saved {lastSaved.toLocaleTimeString()}
-            </>
-          ) : (
-            "Draft will auto-save as you type"
-          )}
-        </p>
-      </header>
+      <PageHeader
+        sticky={false}
+        padding={false}
+        breadcrumbs={[
+          { label: "Interview Vault", href: "/interview-vault" },
+          { label: "Sell experience" },
+        ]}
+        title="Sell Your Experience"
+        subtitle="Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds."
+        footer={
+          <p className="flex items-center gap-2 text-caption text-muted-foreground">
+            {saving ? (
+              <>
+                <Spinner size="xs" /> Saving…
+              </>
+            ) : lastSaved ? (
+              <>
+                <Save className="h-3 w-3" /> Saved {lastSaved.toLocaleTimeString()}
+              </>
+            ) : (
+              "Draft will auto-save as you type"
+            )}
+          </p>
+        }
+      />
 
       <ol className="flex flex-wrap gap-2" aria-label="Form steps">
         {VAULT_SELL_STEPS.map((s) => (

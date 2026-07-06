@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import PageHeader from "@/components/design-system/PageHeader";
 import { AppShell } from "@/components/layout";
 import { Search } from "@/components/ui/search";
 import { Input } from "@/components/ui/input";
@@ -60,12 +61,15 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
 
   return (
     <AppShell.Page>
-      <AppShell.PageHeader padding={false}>
-        <h1 className="text-heading-l">Interview Vault</h1>
-        <p className="mt-1 text-body text-muted-foreground">
-          Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
-        </p>
-      </AppShell.PageHeader>
+      <PageHeader
+        pinned
+        breadcrumbs={[
+          { label: "Interview Vault", href: "/interview-vault" },
+          { label: "Marketplace" },
+        ]}
+        title="Interview Vault"
+        subtitle="Real interview experiences from candidates who got the offer — preview free, unlock the full playbook."
+      />
 
       <AppShell.Filters sticky={false} padding={false}>
         <div className="space-y-4 rounded-xl border bg-card p-4">

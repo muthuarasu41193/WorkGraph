@@ -5,6 +5,8 @@ import { ExternalLink, Eye, RotateCcw } from "lucide-react";
 import type { RecommendedJobCard } from "@/lib/job-dashboard";
 import { readHiddenJobIds, restoreJob } from "@/lib/hidden-jobs-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import PageHeader from "@/components/design-system/PageHeader";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,14 +32,11 @@ export default function HiddenJobsSection() {
 
   return (
     <section className="space-y-4" aria-labelledby="hidden-jobs-heading">
-      <header>
-        <h1 id="hidden-jobs-heading" className="text-heading-l text-foreground">
-          Hidden Jobs
-        </h1>
-        <p className="mt-1 text-body text-muted-foreground">
-          Roles you dismissed from your feed. Restore any job to see it again under Jobs.
-        </p>
-      </header>
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("hidden-jobs")}
+        title="Hidden Jobs"
+        subtitle="Roles you dismissed from your feed. Restore any job to see it again under Jobs."
+      />
 
       {hiddenJobs.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">

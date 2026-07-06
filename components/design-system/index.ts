@@ -3,6 +3,9 @@
  * Composed components built on ui primitives — one implementation per pattern.
  */
 
+export { default as PageHeader } from "./PageHeader";
+export type { PageHeaderBreadcrumb, PageHeaderMetric, PageHeaderProps } from "./PageHeader";
+/** @deprecated Use PageHeader instead. */
 export { default as PageHero } from "./PageHero";
 export { default as MetricCard } from "./MetricCard";
 export { default as StatCard } from "./StatCard";

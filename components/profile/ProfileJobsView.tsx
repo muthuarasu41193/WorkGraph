@@ -1,7 +1,8 @@
 "use client";
 
-import PageHero from "@/components/design-system/PageHero";
+import PageHeader from "@/components/design-system/PageHeader";
 import type { FeedDemoHint, JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import ProfileJobDashboard from "./ProfileJobDashboard";
 import RecommendedJobsSection from "./RecommendedJobsSection";
 
@@ -33,7 +34,8 @@ export default function ProfileJobsView({
 }: Props) {
   return (
     <div className="space-y-6">
-      <PageHero
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("jobs")}
         title="Job Discovery"
         subtitle="Browse live listings ranked by AI match score for your skills and experience."
       />

@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import PageHeader from "@/components/design-system/PageHeader";
 
 const DEFAULT_FIT: FitSignal[] = [
   { label: "", kind: "skill", weight: 2 },
@@ -139,15 +140,17 @@ export default function HiringSignalForm({ initial }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-8">
-      <div className="space-y-1">
-        <h1 className="text-heading-l">
-          {initial ? "Edit hiring signal" : "Post a hiring signal"}
-        </h1>
-        <p className="text-body text-muted-foreground">
-          Share why the role exists and what actually fits — seekers connect with their WorkGraph profile,
-          not a cover letter factory.
-        </p>
-      </div>
+      <PageHeader
+        sticky={false}
+        padding={false}
+        breadcrumbs={[
+          { label: "Employer", href: "/employer/dashboard" },
+          { label: "Hiring signals", href: "/employer/dashboard" },
+          { label: initial ? "Edit signal" : "New signal" },
+        ]}
+        title={initial ? "Edit hiring signal" : "Post a hiring signal"}
+        subtitle="Share why the role exists and what actually fits — seekers connect with their WorkGraph profile, not a cover letter factory."
+      />
 
       {successMessage ? (
         <Alert className="border-success/20 bg-success-subtle text-success-foreground dark:border-success/20 dark:bg-success-subtle/40 dark:text-success-foreground">

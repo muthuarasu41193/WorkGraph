@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import PageHeader from "@/components/design-system/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
@@ -128,27 +129,42 @@ export default function VaultExperienceDetail({
 
   return (
     <div className="space-y-8">
-      <header className="space-y-3">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-heading-l">{experience.company}</h1>
-            <p className="text-heading-s text-muted-foreground">{experience.role}</p>
-            {experience.level ? <p className="text-body text-muted-foreground">{experience.level}</p> : null}
+      <PageHeader
+        sticky={false}
+        padding={false}
+        breadcrumbs={[
+          { label: "Interview Vault", href: "/interview-vault" },
+          { label: experience.company },
+        ]}
+        title={experience.company}
+        subtitle={
+          <>
+            <span className="block text-heading-s">{experience.role}</span>
+            {experience.level ? (
+              <span className="block text-body text-muted-foreground">{experience.level}</span>
+            ) : null}
+          </>
+        }
+        primaryAction={
+          <Badge className="px-3 py-1 text-body-lg">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
+        }
+        footer={
+          <div className="flex flex-wrap gap-2">
+            {experience.difficulty ? (
+              <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
+            ) : null}
+            {experience.rounds != null ? (
+              <Badge variant="outline">{experience.rounds} rounds</Badge>
+            ) : null}
+            {experience.result ? (
+              <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge>
+            ) : null}
+            {experience.interview_date ? (
+              <Badge variant="outline">{new Date(experience.interview_date).toLocaleDateString()}</Badge>
+            ) : null}
           </div>
-          <Badge className="text-body-lg px-3 py-1">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {experience.difficulty ? (
-            <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
-          ) : null}
-          {experience.rounds != null ? <Badge variant="outline">{experience.rounds} rounds</Badge> : null}
-          {experience.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge> : null}
-          {experience.interview_date ? (
-            <Badge variant="outline">{new Date(experience.interview_date).toLocaleDateString()}</Badge>
-          ) : null}
-        </div>
-      </header>
+        }
+      />
 
       <Card>
         <CardHeader>

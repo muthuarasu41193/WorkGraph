@@ -23,6 +23,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import ApplicationConnectDialog, {
   type ApplicationFormValues,
 } from "./ApplicationConnectDialog";
+import PageHeader from "@/components/design-system/PageHeader";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 
 type Props = {
   skills: string[];
@@ -148,16 +150,12 @@ export default function WorkgraphDirectSection({
 
   return (
     <div className="space-y-5">
-      <header>
-        <div className="flex items-center gap-2">
-          <Radio className="h-6 w-6 text-[var(--accent)]" aria-hidden />
-          <h1 className="text-heading-l">WorkGraph Direct</h1>
-        </div>
-        <p className="mt-1 text-body text-muted-foreground">
-          Apply to employer hiring signals with your resume, profile links, and a tailored message —
-          employers review your full application in their Pulse inbox.
-        </p>
-      </header>
+      <PageHeader
+        breadcrumbs={dashboardBreadcrumbs("workgraph-direct")}
+        icon={<Radio aria-hidden />}
+        title="WorkGraph Direct"
+        subtitle="Apply to employer hiring signals with your resume, profile links, and a tailored message — employers review your full application in their Pulse inbox."
+      />
 
       {connections.length > 0 ? (
         <section className="rounded-xl border bg-muted/30 p-4">

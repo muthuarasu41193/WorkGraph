@@ -9,6 +9,7 @@ import {
   CONNECTION_STAGE_ORDER,
 } from "@/lib/employer/types";
 import ApplicantApplicationPanel from "@/components/employer/ApplicantApplicationPanel";
+import SectionHeader from "@/components/design-system/SectionHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,12 +75,12 @@ export default function PulseInbox({ signalId }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-heading-s">Pulse inbox</h2>
-        <p className="text-body text-muted-foreground">
-          Review applicant resumes, links, and profile details — click a card for the full application.
-        </p>
-      </div>
+      {signalId ? (
+        <SectionHeader
+          title="Pulse inbox"
+          description="Review applicant resumes, links, and profile details — click a card for the full application."
+        />
+      ) : null}
 
       {connections.length === 0 ? (
         <Card>

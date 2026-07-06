@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, ShoppingBag, Wallet } from "lucide-react";
 import VaultEarningsChart from "@/components/vault/VaultEarningsChart";
+import PageHeader from "@/components/design-system/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,31 +55,22 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-heading-l">Seller Dashboard</h1>
-          <p className="mt-1 text-body text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
-        </div>
-        <Button variant="outline" asChild>
-          <Link href="/interview-vault/sell">+ New experience</Link>
-        </Button>
-      </header>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map(({ label, value, icon: Icon }) => (
-          <Card key={label}>
-            <CardContent className="flex items-center gap-3 p-4">
-              <div className="rounded-lg bg-primary/10 p-2">
-                <Icon className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-caption text-muted-foreground">{label}</p>
-                <p className="text-heading-m">{value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <PageHeader
+        sticky={false}
+        padding={false}
+        breadcrumbs={[
+          { label: "Interview Vault", href: "/interview-vault" },
+          { label: "Seller dashboard" },
+        ]}
+        title="Seller Dashboard"
+        subtitle="Track earnings, views, and manage your published experiences."
+        metrics={stats.map(({ label, value }) => ({ label, value }))}
+        primaryAction={
+          <Button variant="outline" asChild>
+            <Link href="/interview-vault/sell">+ New experience</Link>
+          </Button>
+        }
+      />
 
       <Card>
         <CardHeader>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, Building2, ExternalLink, MapPin, Radio } from "lucide-react";
+import { ExternalLink, MapPin, Radio } from "lucide-react";
+import CompanyPageHeader from "@/components/employer/CompanyPageHeader";
 import {
   AppShell,
   AppShellBody,
@@ -8,13 +9,11 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellPage,
-  AppShellPageHeader,
 } from "@/components/layout/AppShell";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { getPublicCompanyBySlug } from "@/lib/employer/public-company";
 import {
   HIRING_INTENT_LABELS,
-  VERIFICATION_STATUS_LABELS,
   WORK_MODE_LABELS,
 } from "@/lib/employer/types";
 import { Badge } from "@/components/ui/badge";
@@ -58,45 +57,7 @@ export default async function PublicCompanyPage({ params }: Props) {
       <AppShellBody>
         <AppShellMain className="mx-auto max-w-3xl">
           <AppShellPage>
-            <AppShellPageHeader padding={false}>
-              <div className="flex flex-wrap items-start gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted">
-                  <Building2 className="h-7 w-7 text-muted-foreground" aria-hidden />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-heading-l">{profile.company_name}</h1>
-                    {profile.verification_status === "verified" ? (
-                      <Badge className="gap-1 bg-success hover:bg-success">
-                        <BadgeCheck className="h-3.5 w-3.5" />
-                        {VERIFICATION_STATUS_LABELS.verified}
-                      </Badge>
-                    ) : null}
-                  </div>
-                  {profile.tagline ? (
-                    <p className="mt-1 text-muted-foreground">{profile.tagline}</p>
-                  ) : null}
-                  <div className="mt-3 flex flex-wrap gap-3 text-body text-muted-foreground">
-                    {profile.team_size ? <span>{profile.team_size} team</span> : null}
-                    {profile.website_url ? (
-                      <a
-                        href={
-                          profile.website_url.startsWith("http")
-                            ? profile.website_url
-                            : `https://${profile.website_url}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline"
-                      >
-                        Website
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            </AppShellPageHeader>
+            <CompanyPageHeader profile={profile} liveSignals={signals.length} />
 
             <AppShellContent constrained={false} className="space-y-10 py-10">
               {profile.hiring_philosophy ? (

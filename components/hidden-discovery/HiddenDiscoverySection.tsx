@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import PageHero from "@/components/design-system/PageHero";
+import PageHeader from "@/components/design-system/PageHeader";
 import { AppShell } from "@/components/layout";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
@@ -14,6 +14,7 @@ import {
   toggleSavedOpportunity,
 } from "@/lib/hidden-opportunities/saved-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import { dashboardBreadcrumbs } from "@/lib/dashboard-routes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -53,13 +54,13 @@ export default function HiddenDiscoverySection() {
 
   return (
     <AppShell.Page>
-      <AppShell.PageHeader padding={false}>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <PageHero
-            title="Hidden Job Discovery"
-            subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
-          />
-          <div className="flex shrink-0 flex-wrap gap-2 sm:pt-2">
+      <PageHeader
+        pinned
+        breadcrumbs={dashboardBreadcrumbs("job-discovery")}
+        title="Hidden Job Discovery"
+        subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
+        secondaryActions={
+          <>
             <Button
               type="button"
               variant={showSavedOnly ? "default" : "outline"}
@@ -72,15 +73,19 @@ export default function HiddenDiscoverySection() {
               {loading ? <Spinner /> : <RefreshCw className="h-4 w-4" />}
               Refresh
             </Button>
-          </div>
-        </div>
-        {meta ? (
-          <p className="mt-3 text-caption text-muted-foreground">
-            {meta.filtered} shown · {meta.total} unique ·{" "}
-            {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
-          </p>
-        ) : null}
-      </AppShell.PageHeader>
+          </>
+        }
+        footer={
+          meta ? (
+            <p className="text-caption text-muted-foreground">
+              {meta.filtered} shown · {meta.total} unique ·{" "}
+              {meta.cached
+                ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}`
+                : "fresh fetch"}
+            </p>
+          ) : undefined
+        }
+      />
 
       <AppShell.Filters sticky={false} padding={false}>
         <HiddenDiscoveryFilters filters={filters} onChange={(patch) => setFilters((f) => ({ ...f, ...patch }))} />

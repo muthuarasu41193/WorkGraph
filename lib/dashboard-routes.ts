@@ -151,3 +151,19 @@ export function dashboardHref(id: DashboardRouteId, pathname = "/profile"): stri
   if (id === DEFAULT_DASHBOARD_ROUTE) return pathname;
   return `${pathname}?view=${id}`;
 }
+
+export type DashboardBreadcrumb = {
+  label: string;
+  href?: string;
+};
+
+export function dashboardBreadcrumbs(routeId: DashboardRouteId): DashboardBreadcrumb[] {
+  const route = getDashboardRoute(routeId);
+  if (routeId === DEFAULT_DASHBOARD_ROUTE) {
+    return [{ label: route.label }];
+  }
+  return [
+    { label: "Home", href: dashboardHref("home") },
+    { label: route.label },
+  ];
+}
