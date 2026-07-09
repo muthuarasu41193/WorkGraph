@@ -1,12 +1,9 @@
 "use client";
 
-import { Bookmark, ExternalLink } from "lucide-react";
+import { Bookmark, Github } from "lucide-react";
 import { RedditLogo } from "@/components/icons/RedditLogo";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import "./hidden-opportunity-card.css";
 
 const SOURCE_LABELS: Record<string, string> = {
   reddit: "Reddit",
@@ -14,23 +11,17 @@ const SOURCE_LABELS: Record<string, string> = {
   github: "GitHub",
 };
 
-function SourceBadge({ source }: { source: string }) {
-  const label = SOURCE_LABELS[source] ?? source;
-
+function SourceIcon({ source }: { source: string }) {
   if (source === "reddit") {
-    return (
-      <Badge variant="secondary" className="gap-1.5 py-0.5 pl-1 pr-2 text-[10px] font-medium normal-case tracking-normal">
-        <RedditLogo className="h-3.5 w-3.5 shrink-0" />
-        {label}
-      </Badge>
-    );
+    return <RedditLogo className="h-6 w-6" />;
   }
-
-  return (
-    <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-      {label}
-    </Badge>
-  );
+  if (source === "hackernews") {
+    return <span aria-hidden>Y</span>;
+  }
+  if (source === "github") {
+    return <Github className="h-5 w-5" strokeWidth={2} />;
+  }
+  return <span className="text-xs font-semibold uppercase">{source.slice(0, 2)}</span>;
 }
 
 function formatPostedDate(iso: string): string {
@@ -58,57 +49,44 @@ export default function HiddenOpportunityCard({
   onViewSource,
   onVisible,
 }: Props) {
+  const sourceLabel = SOURCE_LABELS[opportunity.source] ?? opportunity.source;
+  const meta = [opportunity.company, opportunity.author, formatPostedDate(opportunity.postedAt)]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <Card
-      className="wg-dash-section-card transition-shadow hover:shadow-md"
+    <article
+      className="hidden-opp-card"
       onMouseEnter={onVisible}
       onFocus={onVisible}
     >
-      <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <SourceBadge source={opportunity.source} />
-            {opportunity.score > 0 ? (
-              <Badge variant="outline" className="text-[10px]">
-                Score {opportunity.score}
-              </Badge>
-            ) : null}
-          </div>
-          <h2 className="text-base font-semibold leading-snug text-foreground">
-            {opportunity.title}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {[opportunity.company, opportunity.location, opportunity.author].filter(Boolean).join(" · ")}
-          </p>
-          <p className="text-xs text-muted-foreground">{formatPostedDate(opportunity.postedAt)}</p>
-          {opportunity.tags.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {opportunity.tags.slice(0, 6).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-[10px] font-normal">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
+      <div className="hidden-opp-card__source">
+        <div className="hidden-opp-card__source-icon" data-source={opportunity.source}>
+          <SourceIcon source={opportunity.source} />
         </div>
-        <div className="flex shrink-0 flex-row gap-2 sm:flex-col">
-          <Button
-            type="button"
-            variant={saved ? "default" : "outline"}
-            size="sm"
-            onClick={onToggleSave}
-            aria-pressed={saved}
-            className={cn(saved && "gap-1")}
-          >
-            <Bookmark className={cn("h-4 w-4", saved && "fill-current")} />
-            {saved ? "Saved" : "Save"}
-          </Button>
-          <Button type="button" size="sm" onClick={onViewSource}>
-            <ExternalLink className="h-4 w-4" />
-            View Original Source
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        <span className="hidden-opp-card__source-name">{sourceLabel}</span>
+      </div>
+
+      <div className="hidden-opp-card__main">
+        <h2 className="hidden-opp-card__title">{opportunity.title}</h2>
+        <p className="hidden-opp-card__meta">{meta}</p>
+      </div>
+
+      <div className="hidden-opp-card__actions">
+        <button
+          type="button"
+          className="hidden-opp-card__save"
+          data-saved={saved ? "true" : "false"}
+          onClick={onToggleSave}
+          aria-pressed={saved}
+          aria-label={saved ? "Remove from saved" : "Save opportunity"}
+        >
+          <Bookmark className="h-3.5 w-3.5" fill={saved ? "currentColor" : "none"} />
+        </button>
+        <button type="button" className="hidden-opp-card__open" onClick={onViewSource}>
+          Open source
+        </button>
+      </div>
+    </article>
   );
 }

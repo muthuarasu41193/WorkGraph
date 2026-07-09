@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
-import PageHero from "@/components/design-system/PageHero";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
 import { useHiddenJobs } from "@/hooks/use-hidden-jobs";
@@ -50,13 +49,26 @@ export default function HiddenDiscoverySection() {
   );
 
   return (
-    <section className="space-y-4" aria-labelledby="hidden-discovery-heading">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <PageHero
-          title="Hidden Job Discovery"
-          subtitle="Discover opportunities unavailable on traditional job portals — from Reddit, Hacker News, and GitHub."
-        />
-        <div className="flex shrink-0 flex-wrap gap-2 sm:pt-2">
+    <section className="space-y-3" aria-labelledby="hidden-discovery-heading">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 id="hidden-discovery-heading" className="text-xl font-semibold tracking-tight text-foreground">
+            Unlisted Jobs
+          </h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Hiring posts from Reddit, Hacker News, and GitHub.
+            {meta ? (
+              <span className="text-muted-foreground/80">
+                {" "}
+                · {meta.filtered.toLocaleString()} shown
+                {meta.cached && meta.expiresAt
+                  ? ` · cached until ${new Date(meta.expiresAt).toLocaleTimeString()}`
+                  : ""}
+              </span>
+            ) : null}
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
           <Button
             type="button"
             variant={showSavedOnly ? "default" : "outline"}
@@ -70,30 +82,7 @@ export default function HiddenDiscoverySection() {
             Refresh
           </Button>
         </div>
-      </div>
-      {meta ? (
-        <p className="text-xs text-muted-foreground">
-          {meta.filtered} shown · {meta.total} unique ·{" "}
-          {meta.cached ? `cached until ${meta.expiresAt ? new Date(meta.expiresAt).toLocaleTimeString() : "—"}` : "fresh fetch"}
-        </p>
-      ) : null}
-
-      <Card className="wg-dash-section-card border-border bg-muted/40">
-        <CardContent className="space-y-2 p-4 text-sm text-muted-foreground">
-          <p className="font-medium text-foreground">Quick start</p>
-          <ol className="list-decimal space-y-1 pl-5">
-            <li>Wait a few seconds while we load posts from Reddit, Hacker News, and GitHub.</li>
-            <li>Use <strong>Search</strong> or filters (Remote, Source, Date) to narrow results.</li>
-            <li>Click <strong>View Original Source</strong> to open the listing on Reddit, HN, GitHub, or the company site.</li>
-            <li>Click <strong>Save</strong> to bookmark roles you want to revisit (stored in your browser).</li>
-          </ol>
-          <p className="text-xs">
-            Bookmark this page:{" "}
-            <code className="rounded bg-muted px-1 py-0.5">/discovery</code> or{" "}
-            <code className="rounded bg-muted px-1 py-0.5">/profile?view=job-discovery</code>
-          </p>
-        </CardContent>
-      </Card>
+      </header>
 
       <HiddenDiscoveryFilters filters={filters} onChange={(patch) => setFilters((f) => ({ ...f, ...patch }))} />
 
@@ -128,7 +117,7 @@ export default function HiddenDiscoverySection() {
           </CardContent>
         </Card>
       ) : (
-        <ul className="space-y-3">
+        <ul className="hidden-discovery-feed">
           {visible.map((opportunity) => (
             <li key={opportunity.id}>
               <HiddenOpportunityCard

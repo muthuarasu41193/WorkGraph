@@ -1,0 +1,162 @@
+.hidden-discovery-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hidden-opp-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.hidden-opp-card:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+}
+
+.hidden-opp-card__source {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.hidden-opp-card__source-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.hidden-opp-card__source-icon[data-source="reddit"] {
+  background: #fff1eb;
+}
+
+.hidden-opp-card__source-icon[data-source="hackernews"] {
+  background: #fff7ed;
+  color: #ea580c;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.hidden-opp-card__source-icon[data-source="github"] {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.hidden-opp-card__source-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  line-height: 1.2;
+}
+
+.hidden-opp-card__main {
+  min-width: 0;
+}
+
+.hidden-opp-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hidden-opp-card__meta {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hidden-opp-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hidden-opp-card__save {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.hidden-opp-card__save:hover {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.hidden-opp-card__save[data-saved="true"] {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #6366f1;
+}
+
+.hidden-opp-card__open {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+
+.hidden-opp-card__open:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #111827;
+}
+
+@media (max-width: 640px) {
+  .hidden-opp-card {
+    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+  }
+
+  .hidden-opp-card__source {
+    grid-row: span 2;
+  }
+
+  .hidden-opp-card__actions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .hidden-opp-card__source-icon {
+    width: 36px;
+    height: 36px;
+  }
+}

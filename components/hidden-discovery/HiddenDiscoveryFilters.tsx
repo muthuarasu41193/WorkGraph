@@ -32,7 +32,7 @@ export default function HiddenDiscoveryFilters({ filters, onChange, className }:
   return (
     <div
       className={cn(
-        "grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-5",
+        "grid gap-2.5 rounded-lg border border-[#f1f5f9] bg-white p-3 sm:grid-cols-2 lg:grid-cols-5",
         className,
       )}
     >
