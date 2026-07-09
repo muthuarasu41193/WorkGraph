@@ -80,6 +80,7 @@ export type ProfileShellProps = {
   semanticJobMatches?: JobMatchPreviewExt[] | null;
   jobPipeline?: JobPipelineCounts;
   liveListings?: number;
+  matchedListings?: number;
   listingsBySource?: Partial<Record<string, number>>;
   feedKind?: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
@@ -94,8 +95,9 @@ function ProfileShellInner({
   semanticJobMatches,
   jobPipeline,
   liveListings = 0,
+  matchedListings = 0,
   listingsBySource = {},
-  feedKind = "demo",
+  feedKind = "live",
   feedDemoHint,
 }: ProfileShellProps) {
   const wgEnabled = workgraphApiEnabled();
@@ -152,6 +154,7 @@ function ProfileShellInner({
           feedKind={feedKind}
           feedDemoHint={feedDemoHint}
           liveListings={liveListings}
+          matchedListings={matchedListings}
           jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
           profileCompleteness={profile.profile_completeness ?? 0}
           hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
@@ -213,7 +216,9 @@ function ProfileShellInner({
       feedDemoHint,
       jobPipeline,
       feedKind,
+      feedDemoHint,
       liveListings,
+      matchedListings,
     ],
   );
 

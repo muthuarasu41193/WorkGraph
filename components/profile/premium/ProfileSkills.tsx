@@ -3,7 +3,7 @@
 import { Plus, Sparkles, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
-import { MOCK_SKILL_CATEGORIES, type SkillCategory } from "../../../lib/profile-mock-data";
+import type { SkillCategory } from "../../../lib/profile-mock-data";
 import {
   emitProfileSaved,
   emitProfileSaveError,
@@ -22,13 +22,13 @@ type Props = {
 };
 
 function skillsToCategories(skills: string[]): SkillCategory[] {
-  if (!skills.length) return MOCK_SKILL_CATEGORIES;
-  const top = skills.slice(0, 3).map((name, i) => ({
+  if (!skills.length) return [];
+  const top = skills.slice(0, 3).map((name) => ({
     name,
-    endorsements: 12 - i * 2,
+    endorsements: 0,
     top: true,
   }));
-  const rest = skills.slice(3).map((name) => ({ name, endorsements: 4 }));
+  const rest = skills.slice(3).map((name) => ({ name, endorsements: 0 }));
   return [
     { id: "user", label: "Your skills", skills: top },
     ...(rest.length
@@ -119,6 +119,11 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
       ) : null}
 
       <div className="space-y-6">
+        {categories.length === 0 ? (
+          <p className="text-sm text-[var(--wg-color-text-tertiary)]">
+            No skills added yet. Add skills to improve job matching.
+          </p>
+        ) : null}
         {categories.map((cat) => (
           <div key={cat.id}>
             <p className="mb-2 text-xs font-semibold text-[var(--wg-color-text-tertiary)]">{cat.label}</p>

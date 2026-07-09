@@ -3,39 +3,22 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import {
-  AlertTriangle,
-  Bell,
   Bookmark,
   Briefcase,
   CheckCircle2,
   LoaderCircle,
   RefreshCw,
   Sparkles,
-  TrendingUp,
   XCircle,
 } from "lucide-react";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 type Props = {
   stats: JobPipelineCounts;
   profileCompleteness: number;
-  /** Total rows in public.jobs (Python ATS ingest target table). */
   liveListings: number;
-  lastSyncedLabel?: string;
+  matchedListings: number;
 };
 
 type DashboardFilter = "all" | "matched" | "applied" | "saved";
@@ -63,25 +46,12 @@ export default function ProfileJobDashboard({
   stats,
   profileCompleteness,
   liveListings,
-  lastSyncedLabel = "2 mins ago",
+  matchedListings,
 }: Props) {
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
   const [syncStatus, setSyncStatus] = useState<"idle" | "success" | "error">("idle");
   const [isSectionLoading, setIsSectionLoading] = useState(true);
-  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-  const [alertName, setAlertName] = useState("Senior React Engineer in Remote");
-  const [keywordInput, setKeywordInput] = useState("");
-  const [keywords, setKeywords] = useState<string[]>(["React", "TypeScript", "Remote"]);
-  const [alertLocation, setAlertLocation] = useState("Remote");
-  const [frequency, setFrequency] = useState<"realtime" | "daily" | "weekly">("daily");
-  const [emailEnabled, setEmailEnabled] = useState(true);
-  const [inAppEnabled, setInAppEnabled] = useState(true);
-  const [smsEnabled, setSmsEnabled] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [matchThreshold, setMatchThreshold] = useState(70);
-  const totalTracked = stats.applied + stats.interview + stats.offers + stats.saved;
-  const matchedCount = liveListings > 0 ? Math.min(liveListings, Math.max(totalTracked, Math.round(liveListings * 0.1))) : 0;
 
   function refreshListings() {
     if (typeof navigator !== "undefined" && !navigator.onLine) {
@@ -101,15 +71,6 @@ export default function ProfileJobDashboard({
     window.dispatchEvent(new CustomEvent("wg:job-filter", { detail: { filter } }));
   }
 
-  function addKeyword() {
-    const kw = keywordInput.trim();
-    if (!kw) return;
-    if (!keywords.some((existing) => existing.toLowerCase() === kw.toLowerCase())) {
-      setKeywords((prev) => [...prev, kw]);
-    }
-    setKeywordInput("");
-  }
-
   useEffect(() => {
     const t = window.setTimeout(() => setIsSectionLoading(false), 650);
     return () => window.clearTimeout(t);
@@ -118,285 +79,130 @@ export default function ProfileJobDashboard({
   return (
     <Card className="border-slate-200 shadow-sm transition-shadow hover:shadow-md">
       <CardContent className="p-4 sm:p-6">
-      <section aria-labelledby="job-dashboard-heading">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
-        <div className="min-w-0 flex-1">
-          <div>
-            <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[#1D1D1F]">
-              Job Dashboard
-            </h2>
-            <p className="mt-1 text-sm font-normal text-[#8E8E93]">Live ATS jobs matched to your profile (excludes community posts)</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-[20px] bg-[#E6F4EA] px-3 py-1 text-xs font-medium text-[#1E8E3E]">
-              <span className="h-2 w-2 rounded-full bg-[#1E8E3E] animate-pulse" aria-hidden />
-              Live • Last synced {lastSyncedLabel}
-            </span>
-          </div>
-        </div>
-        <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
-          <button
-            type="button"
-            onClick={refreshListings}
-            disabled={isRefreshing}
-            className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-[#DADCE0] px-5 text-sm font-medium text-[#5F6368] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
-          >
-            {syncStatus === "success" ? (
-              <CheckCircle2 className="h-4 w-4 text-[#1E8E3E]" aria-hidden />
-            ) : syncStatus === "error" ? (
-              <XCircle className="h-4 w-4 text-[#D93025] wg-shake" aria-hidden />
-            ) : (
-              <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
-            )}
-            <span className="hidden sm:inline">{isRefreshing ? "Syncing…" : "Sync Jobs"}</span>
-          </button>
-          <Button
-            type="button"
-            onClick={() => setIsAlertModalOpen(true)}
-            className="rounded-full"
-          >
-            <Bell className="h-4 w-4" aria-hidden />
-            <span className="hidden sm:inline">Set Job Alerts</span>
-          </Button>
-          <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[#FEF7E0] px-3 py-1.5 text-xs font-medium text-[#F9AB00]">
-            <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-            Profile {profileCompleteness}% complete
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
-        {isSectionLoading ? (
-          Array.from({ length: 4 }).map((_, idx) => (
-            <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-4 md:px-6 md:py-5">
-              <div className="mb-3 flex items-start gap-3">
-                <div className="h-10 w-10 rounded-[10px] wg-skeleton-shimmer" />
-                <div className="space-y-2">
-                  <div className="h-8 w-20 rounded wg-skeleton-shimmer" />
-                  <div className="h-3 w-24 rounded wg-skeleton-shimmer" />
-                </div>
-              </div>
-              <div className="h-5 w-28 rounded wg-skeleton-shimmer" />
-            </article>
-          ))
-        ) : (
-          <>
-        <article
-          onClick={() => triggerFilter("all")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
-        >
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E8F0FE] text-[#1A73E8]">
-              <Briefcase className="h-5 w-5" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={liveListings} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Live Jobs Available</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
-                <TrendingUp className="h-3.5 w-3.5" />
-                +284 new today
-              </span>
+        <section aria-labelledby="job-dashboard-heading">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
+            <div className="min-w-0 flex-1">
+              <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[#1D1D1F]">
+                Job Dashboard
+              </h2>
+              <p className="mt-1 text-sm font-normal text-[#8E8E93]">
+                Live ATS jobs matched to your profile
+              </p>
             </div>
-          </div>
-        </article>
-
-        <article
-          onClick={() => triggerFilter("matched")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 shadow-[0_0_0_2px_#1E8E3E20] transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] wg-matched-live-pulse"
-        >
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E6F4EA] text-[#1E8E3E]">
-              <Sparkles className="h-5 w-5" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={matchedCount} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Matched to Your Profile</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#E6F4EA] px-2 py-1 text-xs font-medium text-[#1E8E3E]">
-                <TrendingUp className="h-3.5 w-3.5" />
-                +47 new matches
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <article
-          onClick={() => triggerFilter("applied")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
-        >
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FEF7E0] text-[#F9AB00]">
-              <CheckCircle2 className="h-5 w-5" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.applied} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
-                <LoaderCircle className="h-3.5 w-3.5" />
-                3 awaiting response
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <article
-          onClick={() => triggerFilter("saved")}
-          className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
-        >
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FCE8E6] text-[#D93025]">
-              <Bookmark className="h-5 w-5" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[32px] font-bold leading-none text-[#1D1D1F]"><AnimatedCount value={stats.saved} /></p>
-              <p className="mt-2 text-[13px] text-[#8E8E93]">Jobs Saved</p>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FCE8E6] px-2 py-1 text-xs font-medium text-[#D93025]">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                12 expiring soon
-              </span>
-            </div>
-          </div>
-        </article>
-        </>
-        )}
-      </div>
-
-      {totalTracked === 0 ? (
-        <p className="mt-4 rounded-xl border border-dashed border-[#DADCE0] bg-[#F8F9FA] px-4 py-3 text-center text-xs leading-relaxed text-[#3A3A3C]">
-          {liveListings > 0 ? (
-            <>
-              No personal tracker rows yet — listing totals above come from shared ATS ingest. Insert rows into{" "}
-              <code className="rounded bg-slate-100 px-1 py-0.5 text-[11px]">job_tracker_entries</code> when your CRM
-              ships.
-            </>
-          ) : (
-            <>
-              No applications synced yet — ingest jobs first, then wire tracker events. Until then, browse recommended
-              roles below.
-            </>
-          )}
-        </p>
-      ) : null}
-
-      <Dialog open={isAlertModalOpen} onOpenChange={setIsAlertModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle id="create-job-alert-title">Create Job Alert</DialogTitle>
-            <DialogDescription>
-              Get notified when new matching jobs are posted
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="alert-name">Alert name</Label>
-              <Input id="alert-name" value={alertName} onChange={(e) => setAlertName(e.target.value)} />
-            </div>
-            <div className="grid gap-2">
-              <Label>Keywords</Label>
-              <div className="flex flex-wrap gap-1">
-                {keywords.map((kw) => (
-                  <Badge key={kw} variant="secondary" className="gap-1 pr-1">
-                    {kw}
-                    <button
-                      type="button"
-                      onClick={() => setKeywords((prev) => prev.filter((x) => x !== kw))}
-                      className="ml-0.5 rounded-full hover:bg-muted"
-                      aria-label={`Remove ${kw}`}
-                    >
-                      <XCircle className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Add keyword"
-                  value={keywordInput}
-                  onChange={(e) => setKeywordInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addKeyword();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" onClick={addKeyword}>
-                  Add
-                </Button>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="alert-location">Location</Label>
-              <Input id="alert-location" value={alertLocation} onChange={(e) => setAlertLocation(e.target.value)} />
-            </div>
-            <div className="grid gap-2">
-              <Label>Frequency</Label>
-              <div className="space-y-2">
-                {(
-                  [
-                    { value: "realtime", label: "Real-time (instant notification)" },
-                    { value: "daily", label: "Daily digest (9 AM)" },
-                    { value: "weekly", label: "Weekly digest (Mondays)" },
-                  ] as const
-                ).map((opt) => (
-                  <label key={opt.value} className="flex cursor-pointer items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="frequency"
-                      value={opt.value}
-                      checked={frequency === opt.value}
-                      onChange={(e) => setFrequency(e.target.value as "realtime" | "daily" | "weekly")}
-                      className="accent-primary"
-                    />
-                    {opt.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label>Channels</Label>
-              <div className="space-y-2">
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
-                  <Checkbox checked={emailEnabled} onCheckedChange={(c) => setEmailEnabled(c === true)} />
-                  Email notifications
-                </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
-                  <Checkbox checked={inAppEnabled} onCheckedChange={(c) => setInAppEnabled(c === true)} />
-                  In-app notifications
-                </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm">
-                  <Checkbox checked={smsEnabled} onCheckedChange={(c) => setSmsEnabled(c === true)} />
-                  SMS (add phone number)
-                </label>
-              </div>
-              {smsEnabled ? (
-                <Input placeholder="+1 555 123 4567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">
+              <button
+                type="button"
+                onClick={refreshListings}
+                disabled={isRefreshing}
+                className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-[#DADCE0] px-5 text-sm font-medium text-[#5F6368] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+              >
+                {syncStatus === "error" ? (
+                  <XCircle className="h-4 w-4 text-[#D93025] wg-shake" aria-hidden />
+                ) : (
+                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
+                )}
+                <span className="hidden sm:inline">{isRefreshing ? "Syncing…" : "Sync Jobs"}</span>
+              </button>
+              {profileCompleteness < 100 ? (
+                <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[#FEF7E0] px-3 py-1.5 text-xs font-medium text-[#F9AB00]">
+                  Profile {profileCompleteness}% complete
+                </span>
               ) : null}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="match-threshold">
-                Only notify me for jobs with {matchThreshold}%+ match
-              </Label>
-              <input
-                id="match-threshold"
-                type="range"
-                min={40}
-                max={100}
-                value={matchThreshold}
-                onChange={(e) => setMatchThreshold(Number(e.target.value))}
-                className="w-full accent-primary"
-              />
-              <span className="text-xs text-muted-foreground">{matchThreshold}%</span>
-            </div>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsAlertModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={() => setIsAlertModalOpen(false)}>
-              Create Alert
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      </section>
+
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
+            {isSectionLoading ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-4 md:px-6 md:py-5">
+                  <div className="mb-3 flex items-start gap-3">
+                    <div className="h-10 w-10 rounded-[10px] wg-skeleton-shimmer" />
+                    <div className="space-y-2">
+                      <div className="h-8 w-20 rounded wg-skeleton-shimmer" />
+                      <div className="h-3 w-24 rounded wg-skeleton-shimmer" />
+                    </div>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <>
+                <article
+                  onClick={() => triggerFilter("all")}
+                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E8F0FE] text-[#1A73E8]">
+                      <Briefcase className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                        <AnimatedCount value={liveListings} />
+                      </p>
+                      <p className="mt-2 text-[13px] text-[#8E8E93]">Live Jobs Available</p>
+                    </div>
+                  </div>
+                </article>
+
+                <article
+                  onClick={() => triggerFilter("matched")}
+                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 shadow-[0_0_0_2px_#1E8E3E20] transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] wg-matched-live-pulse"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E6F4EA] text-[#1E8E3E]">
+                      <Sparkles className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                        <AnimatedCount value={matchedListings} />
+                      </p>
+                      <p className="mt-2 text-[13px] text-[#8E8E93]">Matched to Your Profile</p>
+                    </div>
+                  </div>
+                </article>
+
+                <article
+                  onClick={() => triggerFilter("applied")}
+                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FEF7E0] text-[#F9AB00]">
+                      <CheckCircle2 className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                        <AnimatedCount value={stats.applied} />
+                      </p>
+                      <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
+                      {stats.interview > 0 ? (
+                        <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
+                          <LoaderCircle className="h-3.5 w-3.5" />
+                          {stats.interview} in interview
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                </article>
+
+                <article
+                  onClick={() => triggerFilter("saved")}
+                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FCE8E6] text-[#D93025]">
+                      <Bookmark className="h-5 w-5" aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                        <AnimatedCount value={stats.saved} />
+                      </p>
+                      <p className="mt-2 text-[13px] text-[#8E8E93]">Jobs Saved</p>
+                    </div>
+                  </div>
+                </article>
+              </>
+            )}
+          </div>
+        </section>
       </CardContent>
     </Card>
   );

@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import type { CommunityJobClassification, JobCardKind, JobFeedSource, RecommendedJobCard } from "../../../lib/job-dashboard";
-import { DEMO_COMMUNITY_POSTS } from "../../../lib/job-dashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -87,7 +86,7 @@ export async function GET() {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
-    return NextResponse.json({ ok: true, jobs: DEMO_COMMUNITY_POSTS, source: "demo_env_missing" });
+    return NextResponse.json({ ok: false, jobs: [], source: "env_missing" });
   }
 
   const supabase = createClient(url, anonKey, {
@@ -106,9 +105,9 @@ export async function GET() {
 
   if (error || !data) {
     return NextResponse.json({
-      ok: true,
-      jobs: DEMO_COMMUNITY_POSTS,
-      source: "demo_query_failed",
+      ok: false,
+      jobs: [],
+      source: "query_failed",
       error: error?.message ?? null,
     });
   }
@@ -119,7 +118,7 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
-    jobs: jobs.length > 0 ? jobs : DEMO_COMMUNITY_POSTS,
-    source: jobs.length > 0 ? "live" : "demo_empty",
+    jobs,
+    source: jobs.length > 0 ? "live" : "empty",
   });
 }

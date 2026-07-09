@@ -25,8 +25,9 @@ export default async function ProfileLayout({ children }: { children: React.Reac
     recommended: [],
     communityPosts: [],
     liveListings: 0,
+    matchedListings: 0,
     listingsBySource: {},
-    feedKind: "demo",
+    feedKind: "live",
     feedDemoHint: "empty_table",
   };
 
@@ -61,6 +62,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           semanticJobMatches={semanticJobMatches}
           jobPipeline={jobDashboard.pipeline}
           liveListings={jobDashboard.liveListings}
+          matchedListings={jobDashboard.matchedListings}
           listingsBySource={jobDashboard.listingsBySource}
           feedKind={jobDashboard.feedKind}
           feedDemoHint={jobDashboard.feedDemoHint}

@@ -13,6 +13,7 @@ type Props = {
   feedKind: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
   liveListings: number;
+  matchedListings: number;
   jobPipeline: JobPipelineCounts;
   profileCompleteness: number;
   hasResume?: boolean;
@@ -27,6 +28,7 @@ export default function ProfileJobsView({
   feedKind,
   feedDemoHint,
   liveListings,
+  matchedListings,
   jobPipeline,
   profileCompleteness,
   hasResume = false,
@@ -41,6 +43,7 @@ export default function ProfileJobsView({
         stats={jobPipeline}
         profileCompleteness={profileCompleteness}
         liveListings={liveListings}
+        matchedListings={matchedListings}
       />
       <RecommendedJobsSection
         jobs={jobs}
@@ -50,6 +53,7 @@ export default function ProfileJobsView({
         feedKind={feedKind}
         feedDemoHint={feedDemoHint}
         liveListings={liveListings}
+        matchedListings={matchedListings}
         hasResume={hasResume}
       />
     </div>

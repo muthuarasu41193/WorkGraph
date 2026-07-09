@@ -33,8 +33,9 @@ export async function loadHomeDashboardPageProps(): Promise<HomeDashboardLoadRes
     recommended: [],
     communityPosts: [],
     liveListings: 0,
+    matchedListings: 0,
     listingsBySource: {},
-    feedKind: "demo",
+    feedKind: "live",
     feedDemoHint: "empty_table",
   };
 

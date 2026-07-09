@@ -6,6 +6,7 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import {
   ArrowUpRight,
   ArrowRight,
+  ArrowUp,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -18,10 +19,7 @@ import {
   SearchX,
   Search,
   SlidersHorizontal,
-  Star,
   TriangleAlert,
-  ArrowUp,
-  Bell,
   UserSearch,
   X,
 } from "lucide-react";
@@ -553,8 +551,8 @@ type Props = {
   profileSummary?: string | null;
   feedKind: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
-  /** Total indexed live rows — used while the full catalog loads client-side. */
   liveListings?: number;
+  matchedListings?: number;
   hasResume?: boolean;
 };
 
@@ -606,6 +604,7 @@ export default function RecommendedJobsSection({
   feedKind,
   feedDemoHint,
   liveListings = 0,
+  matchedListings = 0,
   hasResume = false,
 }: Props) {
   const profileMatch = useMemo<ProfileMatchInput>(
@@ -641,12 +640,8 @@ export default function RecommendedJobsSection({
   const initialBenefits = parseCsvSet(searchParams.get("benefits"), BENEFIT_OPTIONS);
   const hint =
     skillHints.length > 0
-      ? isLiveFeed
-        ? `Sorted by fit to your resume — skills, headline, and summary matched against each role (${skillHints.slice(0, 4).join(", ")}${skillHints.length > 4 ? "…" : ""}).`
-        : `Demo cards — once ingest fills Postgres, listings personalize against ${skillHints.slice(0, 3).join(", ")}${skillHints.length > 3 ? "…" : ""}.`
-      : isLiveFeed
-        ? "Add skills, headline, and summary on your profile so we can rank roles that fit your background."
-        : "Add skills to your profile to sharpen ranking after ingest runs.";
+      ? `Sorted by fit to your resume — skills, headline, and summary matched against each role (${skillHints.slice(0, 4).join(", ")}${skillHints.length > 4 ? "…" : ""}).`
+      : "Add skills, headline, and summary on your profile so we can rank roles that fit your background.";
 
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const [dateWindow, setDateWindow] = useState<"any" | "1" | "7" | "30">(initialDateWindow);
@@ -1444,23 +1439,15 @@ export default function RecommendedJobsSection({
     setCurrentPage(1);
   }
 
-  const matchBreakdown = [
-    { label: "Skills", score: 87, color: "#1A73E8", detail: "React, Node.js, Python +12 more" },
-    { label: "Experience", score: 92, color: "#1E8E3E", detail: "5 years matches senior roles" },
-    { label: "Location", score: 100, color: "#F9AB00", detail: "Remote preferred" },
-    { label: "Salary", score: 78, color: "#1A73E8", detail: "$120K-$180K range" },
-    { label: "Industry", score: 85, color: "#1E8E3E", detail: "Tech, SaaS, FinTech" },
-  ];
-  const jobAlerts = [
-    { title: "Senior React Engineer", frequency: "Daily digest", active: true },
-    { title: "Remote TypeScript", frequency: "Weekly", active: false },
-  ];
-  const overallMatch = Math.round(matchBreakdown.reduce((acc, item) => acc + item.score, 0) / matchBreakdown.length);
-  const overallMatchLabel =
-    overallMatch >= 90 ? "Excellent Match" : overallMatch >= 80 ? "Strong Match" : overallMatch >= 65 ? "Good Match" : "Fair Match";
-  const ringRadius = 34;
-  const ringCircumference = 2 * Math.PI * ringRadius;
-  const ringOffset = ringCircumference - (overallMatch / 100) * ringCircumference;
+  const matchBreakdown = useMemo(() => {
+    if (skillHints.length === 0) return [];
+    return skillHints.slice(0, 6).map((skill) => ({
+      label: skill,
+      score: 100,
+      color: "#1A73E8",
+      detail: "Listed on your profile",
+    }));
+  }, [skillHints]);
 
   return (
     <section id="recommended-jobs" className="scroll-mt-28">
@@ -1472,7 +1459,7 @@ export default function RecommendedJobsSection({
               ? profileMatchActive
                 ? "Jobs matching your profile"
                 : "Browse live job listings"
-              : "Sample roles (run ingest or community sync for live data)"}
+              : "No live jobs indexed yet"}
           </h2>
           <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-[#3A3A3C]">{hint}</p>
         </div>
@@ -1483,7 +1470,7 @@ export default function RecommendedJobsSection({
               : "border-[#DADCE0] bg-[#FEF7E0] text-[#5F6368] ring-[#DADCE0]"
           }`}
         >
-          {isLiveFeed ? "Live Postgres feed" : "Demo preview"}
+          {isLiveFeed ? "Live feed" : "No data"}
         </span>
       </div>
 
@@ -1526,46 +1513,27 @@ export default function RecommendedJobsSection({
           </button>
         </div>
 
-        {isMatchProfileExpanded ? (
-          <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div className="flex flex-1 flex-col gap-2 md:flex-row md:flex-wrap">
-              {matchBreakdown.map((item) => (
-                <article key={item.label} className="w-full rounded-[20px] border border-[#DADCE0] bg-[#F8F9FA] px-4 py-3 md:w-[calc(50%-8px)] lg:w-[calc(33.333%-8px)] xl:w-[calc(20%-8px)]">
-                  <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-[#E8F0FE]">
-                    <div className="h-full rounded-full" style={{ width: `${item.score}%`, backgroundColor: item.color }} />
-                  </div>
-                  <p className="text-sm font-semibold text-[#1D1D1F]">
-                    {item.label} <span className="text-[#5F6368]">{item.score}%</span>
-                  </p>
-                  <p className="mt-1 text-xs text-[#8E8E93]">{item.detail}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-[#DADCE0] bg-white px-5 py-4">
-              <div className="relative h-20 w-20">
-                <svg viewBox="0 0 80 80" className="-rotate-90">
-                  <circle cx="40" cy="40" r={ringRadius} fill="none" stroke="#E8F0FE" strokeWidth="8" />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r={ringRadius}
-                    fill="none"
-                    stroke="#1A73E8"
-                    strokeWidth="8"
-                    strokeDasharray={ringCircumference}
-                    strokeDashoffset={ringOffset}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-[20px] font-bold text-[#1A73E8]">{overallMatch}%</div>
-              </div>
-              <p className="mt-1 text-[11px] text-[#8E8E93]">Match Score</p>
-              <Link href="/create-profile" className="mt-2 text-[13px] font-medium text-[#1A73E8] hover:underline">
-                Update profile to improve matches
-              </Link>
-            </div>
+        {isMatchProfileExpanded && matchBreakdown.length > 0 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {matchBreakdown.map((item) => (
+              <span
+                key={item.label}
+                className="inline-flex items-center rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1 text-xs font-medium text-[#3A3A3C]"
+              >
+                {item.label}
+              </span>
+            ))}
+            <Link href="/profile?view=profile" className="text-[13px] font-medium text-[#1A73E8] hover:underline">
+              Update profile skills
+            </Link>
           </div>
+        ) : isMatchProfileExpanded ? (
+          <p className="mt-4 text-sm text-[#8E8E93]">
+            Add skills to your profile to enable job matching.{" "}
+            <Link href="/profile?view=profile" className="font-medium text-[#1A73E8] hover:underline">
+              Edit profile
+            </Link>
+          </p>
         ) : null}
       </section>
 
@@ -2099,7 +2067,7 @@ export default function RecommendedJobsSection({
         </SheetContent>
       </Sheet>
 
-      {(listingPipeline.length > 0 || isPageLoading || userFiltersActive) ? (
+      {(listingPipeline.length > 0 || isPageLoading || userFiltersActive || liveListings > 0) ? (
         <div className="results-bar -mx-4 sm:-mx-6 md:-mx-8">
           <div className="results-bar__meta" aria-live="polite">
             <span className="results-bar__count">{totalMatched.toLocaleString()} jobs</span>
@@ -2197,12 +2165,10 @@ export default function RecommendedJobsSection({
           const canApply = Boolean(applyHref);
           const isSaved = savedJobs.has(job.id);
           const isExpanded = expandedJobId === job.id;
-          const reqs = [
-            { label: "React", status: "ok" },
-            { label: "Node.js", status: "ok" },
-            { label: "AWS", status: "warn" },
-            { label: "Docker", status: "miss" },
-          ] as const;
+          const reqs = job.matchedSkills.slice(0, 6).map((skill) => ({
+            label: skill,
+            status: "ok" as const,
+          }));
 
           return (
             <JobCard
@@ -2261,12 +2227,6 @@ export default function RecommendedJobsSection({
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
                     {meta.hasVisaSponsorship ? <span>Visa sponsorship available</span> : null}
-                    <span className="inline-flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 text-gray-400" /> 4.2
-                    </span>
-                    <a href="#" onClick={(e) => e.preventDefault()} className="text-indigo-600">
-                      View company
-                    </a>
                   </div>
                   {canApply && applyHref ? (
                     <JobApplyButton
@@ -2355,15 +2315,15 @@ export default function RecommendedJobsSection({
 
       {!showSkeleton &&
       listingPipeline.length === 0 &&
-      !userFiltersActive &&
       showProfileMatchesOnly &&
       (liveListings > 0 || pageJobs.length > 0) ? (
         <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No profile matches on this page</h3>
+          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No profile matches found</h3>
           <p className="mt-2 text-sm text-[#8E8E93]">
-            {liveListings.toLocaleString()} jobs are indexed, but none on this page overlap your skills. Browse the full
-            catalog or update your profile skills.
+            {matchedListings > 0
+              ? `${matchedListings.toLocaleString()} jobs match your profile in the index. Try browsing all jobs or updating your skills.`
+              : `${liveListings.toLocaleString()} jobs are indexed, but none overlap your current skills. Browse the full catalog or update your profile.`}
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <button
@@ -2387,7 +2347,27 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 ? (
+      {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings === 0 && !isPageLoading ? (
+        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
+          <SearchX className="mx-auto h-20 w-20 text-[#DADCE0]" />
+          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No jobs indexed yet</h3>
+          <p className="mt-2 text-sm text-[#8E8E93]">
+            Run the job ingest pipeline to populate live listings from ATS sources.
+          </p>
+        </div>
+      ) : null}
+
+      {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings > 0 && !showProfileMatchesOnly && !isPageLoading ? (
+        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-[#1A73E8]" />
+          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Loading jobs…</h3>
+          <p className="mt-2 text-sm text-[#8E8E93]">
+            {liveListings.toLocaleString()} jobs are indexed. Fetching listings now.
+          </p>
+        </div>
+      ) : null}
+
+      {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 && !showProfileMatchesOnly ? (
         <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
           <SearchX className="mx-auto h-20 w-20 text-[#DADCE0]" />
           <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No jobs found</h3>
@@ -2418,15 +2398,6 @@ export default function RecommendedJobsSection({
         <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
           <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Complete your profile to see matches</h3>
-          <div className="mx-auto mt-3 max-w-xs">
-            <div className="mb-1 flex items-center justify-between text-xs text-[#8E8E93]">
-              <span>Profile progress</span>
-              <span>78% complete</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-[#E8F0FE]">
-              <div className="h-full w-[78%] bg-[#1A73E8]" />
-            </div>
-          </div>
           <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
             <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[#1A73E8]">Add your skills <ArrowRight className="h-3.5 w-3.5" /></Link>
             <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[#1A73E8]">Add expected salary <ArrowRight className="h-3.5 w-3.5" /></Link>
@@ -2442,61 +2413,32 @@ export default function RecommendedJobsSection({
       ) : null}
       </div>
 
-      <aside className="right-sidebar hidden lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
-        <section className="sidebar-card">
-          <h3 className="card-title">Your Profile Match</h3>
-          {matchBreakdown.map((item) => (
-            <div key={`side-${item.label}`} className="match-bar-container">
-              <div className="match-label-row">
-                <span>{item.label}</span>
-                <span>{item.score}%</span>
-              </div>
-              <div className="match-bar-track">
-                <div className="match-bar-fill" style={{ width: `${item.score}%` }} />
-              </div>
+      {skillHints.length > 0 ? (
+        <aside className="right-sidebar hidden lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
+          <section className="sidebar-card">
+            <h3 className="card-title">Your Skills</h3>
+            <div className="flex flex-wrap gap-1.5">
+              {skillHints.map((skill) => (
+                <span
+                  key={skill}
+                  className="inline-flex items-center rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-0.5 text-xs text-[#3A3A3C]"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
-          ))}
-          <p className="match-overall">Overall: {overallMatchLabel}</p>
-        </section>
-
-        <section className="sidebar-card">
-          <h3 className="card-title">Job Alerts</h3>
-          {jobAlerts.map((alert) => (
-            <div key={alert.title} className="alert-row">
-              <span className="alert-icon" aria-hidden>
-                <Bell />
-              </span>
-              <div className="alert-body">
-                <p className="alert-title">{alert.title}</p>
-                <div className="alert-meta">
-                  <span>{alert.frequency}</span>
-                  <span aria-hidden>·</span>
-                  <span className="alert-toggle" data-active={alert.active ? "true" : "false"}>
-                    ●──
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-          <button type="button" className="create-alert-btn">
-            + Create alert
-          </button>
-        </section>
-      </aside>
+            {matchedListings > 0 ? (
+              <p className="match-overall mt-3">
+                {matchedListings.toLocaleString()} jobs match your profile
+              </p>
+            ) : null}
+            <Link href="/profile?view=profile" className="mt-2 inline-block text-xs font-medium text-[#1A73E8] hover:underline">
+              Update profile
+            </Link>
+          </section>
+        </aside>
+      ) : null}
       </div>
-
-      <p className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs leading-relaxed text-foreground/80">
-        Ingest jobs with{" "}
-        <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px] text-slate-800">job_aggregator</code> using the
-        same <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">DATABASE_URL</code> as Supabase.{" "}
-        <Link
-          href="/create-profile"
-          className="font-semibold text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          Refresh resume
-        </Link>{" "}
-        to tune keyword overlap ranking.
-      </p>
 
       {mobileDetailJobId ? (
         <div className="fixed inset-0 z-[125] bg-white p-4 md:hidden">

@@ -1,5 +1,5 @@
 import type { RecommendedJobCard } from "../../../lib/job-dashboard";
-import { MOCK_JOB_MATCHES, type JobMatchPreview } from "../../../lib/profile-mock-data";
+import type { JobMatchPreview } from "../../../lib/profile-mock-data";
 
 function inferWorkMode(location: string): JobMatchPreview["workMode"] {
   const l = location.toLowerCase();
@@ -18,33 +18,26 @@ function parseMatchPercent(label: string): number {
 
 export type JobMatchPreviewExt = JobMatchPreview & { applyUrl?: string };
 
-/** Prefer AI semantic matches; else map Supabase job cards; mock only in demo mode. */
+/** Prefer AI semantic matches; else map live Supabase job cards. */
 export function resolveProfileJobMatches(
   semantic?: JobMatchPreviewExt[] | null,
   jobs?: RecommendedJobCard[],
-  feedKind: "live" | "demo" = "demo",
 ): JobMatchPreviewExt[] {
   if (semantic?.length) return semantic.slice(0, 12);
-  return jobCardsToMatches(jobs, feedKind);
+  return jobCardsToMatches(jobs);
 }
 
-/** Map live recommended jobs to horizontal match cards; mock only when feed is demo. */
-export function jobCardsToMatches(
-  jobs?: RecommendedJobCard[],
-  feedKind: "live" | "demo" = "demo",
-): JobMatchPreviewExt[] {
-  if (jobs?.length) {
-    return jobs.slice(0, 6).map((job) => ({
-      id: job.id,
-      title: job.title,
-      company: job.company,
-      matchPercent: parseMatchPercent(job.matchLabel),
-      salaryRange: "See listing",
-      workMode: inferWorkMode(job.location),
-      location: job.location,
-      applyUrl: job.applyUrl ?? undefined,
-    }));
-  }
-  if (feedKind === "live") return [];
-  return MOCK_JOB_MATCHES;
+/** Map live recommended jobs to horizontal match cards. */
+export function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreviewExt[] {
+  if (!jobs?.length) return [];
+  return jobs.slice(0, 6).map((job) => ({
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    matchPercent: parseMatchPercent(job.matchLabel),
+    salaryRange: "See listing",
+    workMode: inferWorkMode(job.location),
+    location: job.location,
+    applyUrl: job.applyUrl ?? undefined,
+  }));
 }

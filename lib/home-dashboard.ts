@@ -2,7 +2,7 @@ import { fetchAllHiddenOpportunities } from "@/lib/hidden-opportunities/aggregat
 import { formatCurrencyAmount } from "@/lib/currency";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import type { JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
-import { MOCK_JOB_MATCHES, MOCK_SIDEBAR, type JobMatchPreview } from "@/lib/profile-mock-data";
+import type { JobMatchPreview } from "@/lib/profile-mock-data";
 import type { Profile } from "@/lib/types";
 import { workgraphApiEnabled } from "@/lib/workgraph-api";
 import { workgraphBffFetch } from "@/lib/workgraph-bff";
@@ -37,12 +37,9 @@ function inferWorkMode(location: string): JobMatchPreview["workMode"] {
   return "On-site";
 }
 
-function jobCardsToMatches(
-  jobs?: RecommendedJobCard[],
-  feedKind: "live" | "demo" = "demo",
-): JobMatchPreviewExt[] {
-  if (jobs?.length) {
-    return jobs.slice(0, 6).map((job) => ({
+function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreviewExt[] {
+  if (!jobs?.length) return [];
+  return jobs.slice(0, 6).map((job) => ({
       id: job.id,
       title: job.title,
       company: job.company,
@@ -50,20 +47,16 @@ function jobCardsToMatches(
       salaryRange: "See listing",
       workMode: inferWorkMode(job.location),
       location: job.location,
-      applyUrl: job.applyUrl ?? undefined,
-    }));
-  }
-  if (feedKind === "live") return [];
-  return MOCK_JOB_MATCHES;
+    applyUrl: job.applyUrl ?? undefined,
+  }));
 }
 
 export function resolveProfileJobMatches(
   semantic?: JobMatchPreviewExt[] | null,
   jobs?: RecommendedJobCard[],
-  feedKind: "live" | "demo" = "demo",
 ): JobMatchPreviewExt[] {
   if (semantic?.length) return semantic.slice(0, 12);
-  return jobCardsToMatches(jobs, feedKind);
+  return jobCardsToMatches(jobs);
 }
 
 export type HomeDashboardData = {
@@ -146,26 +139,12 @@ export function buildJobMarketPulse(
   const trendingRoles = [...roleCounts.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
-    .map(([title], index) => ({
+    .map(([title]) => ({
       title,
-      growth: `+${18 - index * 3}%`,
+      growth: `${roleCounts.get(title) ?? 0} listings`,
     }));
 
-  if (trendingRoles.length < 5) {
-    const fallbacks = [
-      { title: "Senior Full Stack Engineer", growth: "+22%" },
-      { title: "Staff Software Engineer", growth: "+19%" },
-      { title: "AI Product Engineer", growth: "+31%" },
-      { title: "Platform Engineer", growth: "+17%" },
-      { title: "Frontend Tech Lead", growth: "+14%" },
-    ];
-    for (const role of fallbacks) {
-      if (trendingRoles.length >= 5) break;
-      if (!trendingRoles.some((r) => r.title === role.title)) trendingRoles.push(role);
-    }
-  }
-
-  const skillSet = new Set<string>([...profile.skills.slice(0, 2), ...MOCK_SIDEBAR.trendingSkills]);
+  const skillSet = new Set<string>(profile.skills.slice(0, 8));
   for (const job of jobs) {
     for (const skill of job.matchedSkills.slice(0, 2)) {
       if (skillSet.size >= 8) break;
@@ -253,7 +232,6 @@ export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDash
   const topMatches = resolveProfileJobMatches(
     input.semanticJobMatches,
     input.recommendedJobs,
-    input.feedKind,
   ).slice(0, 5);
 
   const stats = buildHomeStats(
@@ -281,10 +259,9 @@ export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDash
 export function resolveTopJobMatches(
   semantic: JobMatchPreviewExt[] | null | undefined,
   jobs: RecommendedJobCard[],
-  feedKind: "live" | "demo",
   limit = 5,
 ): JobMatchPreviewExt[] {
-  return resolveProfileJobMatches(semantic, jobs, feedKind).slice(0, limit);
+  return resolveProfileJobMatches(semantic, jobs).slice(0, limit);
 }
 
 export type { DashboardSnapshot };
