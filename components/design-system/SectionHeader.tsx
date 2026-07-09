@@ -10,8 +10,8 @@ type Props = {
 
 export default function SectionHeader({ title, description, action, className }: Props) {
   return (
-    <div className={cn("flex flex-wrap items-end justify-between gap-3", className)}>
-      <div className="space-y-1">
+    <div className={cn("flex flex-wrap items-end justify-between gap-4", className)}>
+      <div className="space-y-2">
         <h2 className="text-base font-semibold tracking-tight text-[var(--dash-text)]">{title}</h2>
         {description ? (
           <p className="text-sm text-[var(--dash-text-secondary)]">{description}</p>

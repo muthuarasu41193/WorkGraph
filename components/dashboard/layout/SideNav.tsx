@@ -157,7 +157,7 @@ export default function SideNav({
     }
 
     return (
-      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-slate-100 pt-2")}>
+      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-[var(--wg-border)] pt-2")}>
         <ul className="space-y-0.5 px-0">{group.items.map(renderNavItem)}</ul>
       </div>
     );
@@ -167,12 +167,13 @@ export default function SideNav({
     <aside
       className={cn(
         "wg-dash-sidenav flex h-full flex-col bg-white",
-        !mobile && "sticky top-[var(--dash-topnav-h)] hidden h-[calc(100dvh-var(--dash-topnav-h))] border-r border-slate-100 md:flex",
+        !mobile &&
+          "sticky top-[var(--dash-topnav-h)] hidden h-[calc(100dvh-var(--dash-topnav-h))] border-r border-[var(--wg-border)] md:flex",
         collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",
       )}
       aria-label="Dashboard navigation"
     >
-      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-3">
+      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-4">
         <div className="space-y-1">{DASHBOARD_NAV_GROUPS.map(renderGroup)}</div>
 
         {!collapsed && showWellbeing ? (

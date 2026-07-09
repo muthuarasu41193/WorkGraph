@@ -45,7 +45,7 @@ export default function ApplicationsTracker({ userId }: Props) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
       <KanbanBoard
         applications={api.applications}
         createApplication={api.createApplication}

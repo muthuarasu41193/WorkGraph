@@ -132,7 +132,7 @@ export default function JobCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="truncate text-[15px] font-semibold leading-tight text-[#111827]">
+              <h3 className="truncate text-[15px] font-semibold leading-tight text-wg-heading">
                 {job.title}
               </h3>
               {subtitleParts.length > 0 ? (

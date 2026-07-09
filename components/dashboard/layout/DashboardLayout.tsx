@@ -24,7 +24,7 @@ function DashboardLayoutInner({ children }: Props) {
           onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         />
 
-        <div className="wg-dash-main min-w-0 flex-1 px-4 py-6 sm:px-6 md:px-8">
+        <div className="wg-dash-main min-w-0 flex-1 px-4 py-8 sm:px-6 md:px-8">
           <div className="wg-dash-content mx-auto w-full">{children}</div>
         </div>
       </div>

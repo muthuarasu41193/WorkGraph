@@ -6,13 +6,13 @@
   --dash-sidebar-w: 240px;
   --dash-sidebar-collapsed-w: 64px;
   --dash-content-max: 1280px;
-  --dash-page-bg: #fafafa;
-  --dash-surface: #ffffff;
-  --dash-accent: #2563eb;
-  --dash-accent-soft: #eff6ff;
-  --dash-border: #ececec;
-  --dash-text: #111827;
-  --dash-text-secondary: #6b7280;
+  --dash-page-bg: var(--wg-bg-secondary);
+  --dash-surface: var(--wg-bg);
+  --dash-accent: var(--wg-primary);
+  --dash-accent-soft: color-mix(in srgb, var(--wg-primary) 8%, var(--wg-bg));
+  --dash-border: var(--wg-border);
+  --dash-text: var(--wg-text-primary);
+  --dash-text-secondary: var(--wg-text-muted);
   min-height: 100dvh;
   background: var(--dash-page-bg);
   scroll-behavior: smooth;
@@ -54,15 +54,21 @@
 }
 
 .wg-dash-section-card {
-  border-radius: var(--dash-radius);
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-border);
-  box-shadow: var(--wg-shadow-sm);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 0.75rem;
+  background: var(--wg-bg);
+  border: 1px solid var(--wg-border);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease;
 }
 
 .wg-dash-section-card:hover {
-  box-shadow: var(--wg-shadow-md);
+  border-color: var(--wg-border-hover);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .wg-dash-card-lift:hover {
@@ -76,7 +82,7 @@
 
 .wg-dash-sidenav {
   background: #ffffff !important;
-  border-color: #f1f5f9 !important;
+  border-right: 1px solid var(--wg-border) !important;
   box-shadow: none !important;
 }
 
@@ -93,10 +99,11 @@
 }
 
 .wg-dash-nav-active {
-  background: #eff6ff !important;
-  color: #2563eb !important;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border-left: 4px solid #dc2626 !important;
   box-shadow: none !important;
-  border-radius: 8px !important;
+  border-radius: 0.5rem !important;
 }
 
 .wg-dash-skeleton-pulse {

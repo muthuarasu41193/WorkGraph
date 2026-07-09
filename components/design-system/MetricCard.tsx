@@ -35,12 +35,12 @@ export default function MetricCard({
     <div
       style={{ animationDelay: `${delay * 60}ms` }}
       className={cn(
-        "wg-dash-section-card wg-dash-card-lift wg-dash-stat-enter group relative overflow-hidden p-5",
+        "wg-dash-section-card wg-dash-card-lift wg-dash-stat-enter group relative overflow-hidden p-6",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 space-y-3">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1 space-y-4">
           <p className="text-xs font-medium text-[var(--dash-text-secondary)]">{label}</p>
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-semibold tabular-nums tracking-tight text-[var(--dash-text)]">

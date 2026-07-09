@@ -83,7 +83,7 @@ export default function InterviewVaultSection() {
   }
 
   return (
-    <section className="space-y-5" aria-labelledby="vault-heading">
+    <section className="space-y-8" aria-labelledby="vault-heading">
       <header>
         <h1 id="vault-heading" className="text-2xl font-bold tracking-tight">Prep Vault</h1>
         <p className="mt-1 text-sm text-muted-foreground">

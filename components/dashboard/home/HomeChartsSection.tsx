@@ -13,10 +13,13 @@ import {
   YAxis,
 } from "recharts";
 import SectionHeader from "@/components/design-system/SectionHeader";
+import { WG_COLORS } from "@/lib/design-tokens";
+
+const CHART_RED_SCALE = ["#DC2626", "#EF4444", "#F87171", "#FECACA"] as const;
 
 const FUNNEL_DATA = [
-  { stage: "Applied", count: 24, fill: "#B91C1C" },
-  { stage: "Screening", count: 12, fill: "#DC2626" },
+  { stage: "Applied", count: 24, fill: WG_COLORS.primary },
+  { stage: "Screening", count: 12, fill: "#EF4444" },
   { stage: "Interview", count: 6, fill: "#EF4444" },
   { stage: "Offer", count: 2, fill: "#10B981" },
 ];
@@ -46,7 +49,7 @@ export default function HomeChartsSection() {
         description="Track your application funnel, weekly activity, and skill growth."
       />
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="wg-dash-section-card p-5 lg:col-span-1">
+        <div className="wg-dash-section-card p-6 lg:col-span-1">
           <h3 className="text-sm font-semibold text-[var(--dash-text)]">Application Funnel</h3>
           <p className="mt-0.5 text-xs text-[var(--dash-text-secondary)]">Conversion by stage</p>
           <div className="mt-4 h-48">
@@ -79,7 +82,7 @@ export default function HomeChartsSection() {
           </div>
         </div>
 
-        <div className="wg-dash-section-card p-5 lg:col-span-1">
+        <div className="wg-dash-section-card p-6 lg:col-span-1">
           <h3 className="text-sm font-semibold text-[var(--dash-text)]">Weekly Applications</h3>
           <p className="mt-0.5 text-xs text-[var(--dash-text-secondary)]">Last 7 days</p>
           <div className="mt-4 h-48">
@@ -104,13 +107,13 @@ export default function HomeChartsSection() {
                     fontSize: 12,
                   }}
                 />
-                <Bar dataKey="applications" fill="#B91C1C" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar dataKey="applications" fill={WG_COLORS.primary} radius={[4, 4, 0, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="wg-dash-section-card p-5 lg:col-span-1">
+        <div className="wg-dash-section-card p-6 lg:col-span-1">
           <h3 className="text-sm font-semibold text-[var(--dash-text)]">Skills Growth</h3>
           <p className="mt-0.5 text-xs text-[var(--dash-text-secondary)]">Proficiency vs target</p>
           <div className="mt-4 h-48">
@@ -129,7 +132,7 @@ export default function HomeChartsSection() {
                   {SKILLS_DATA.map((_, i) => (
                     <Cell
                       key={i}
-                      fill={["#B91C1C", "#DC2626", "#F87171", "#FECACA"][i % 4]}
+                      fill={CHART_RED_SCALE[i % CHART_RED_SCALE.length]}
                     />
                   ))}
                 </Pie>
@@ -148,7 +151,7 @@ export default function HomeChartsSection() {
               <span key={s.name} className="inline-flex items-center gap-1 text-[10px] text-[var(--dash-text-secondary)]">
                 <span
                   className="h-2 w-2 rounded-full"
-                  style={{ background: ["#B91C1C", "#DC2626", "#F87171", "#FECACA"][i % 4] }}
+                  style={{ background: CHART_RED_SCALE[i % CHART_RED_SCALE.length] }}
                 />
                 {s.name}
               </span>

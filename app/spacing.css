@@ -1,0 +1,54 @@
+/* WorkGraph spacing system — 4px increment scale */
+
+@layer components {
+  .wg-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* 32px / space-y-8 */
+  }
+
+  .wg-page-lg {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem; /* 48px / space-y-12 */
+  }
+
+  .wg-section {
+    margin-bottom: 2rem; /* mb-8 */
+  }
+
+  .wg-section-lg {
+    margin-bottom: 3rem; /* mb-12 */
+  }
+
+  .wg-section-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* gap-4 / space-y-4 */
+  }
+
+  .wg-section-stack-lg {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* gap-6 / space-y-6 */
+  }
+
+  .wg-grid {
+    display: grid;
+    gap: 1rem; /* gap-4 */
+  }
+
+  .wg-flex-gap {
+    display: flex;
+    gap: 1rem; /* gap-4 */
+  }
+
+  .wg-flex-gap-lg {
+    display: flex;
+    gap: 1.5rem; /* gap-6 */
+  }
+
+  .wg-card-pad {
+    padding: 1.5rem; /* p-6 */
+  }
+}

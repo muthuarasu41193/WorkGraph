@@ -24,7 +24,7 @@ export default function DashboardTabs({ overview, workgraphEnabled = false }: Pr
       value={activeTab}
       onValueChange={(v) => setActiveTab(v as "overview" | "community" | "wallet")}
     >
-      <TabsList className="mb-6 w-full justify-start bg-muted/50 sm:w-auto">
+      <TabsList className="mb-8 w-full justify-start bg-muted/50 sm:w-auto">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="community">Community</TabsTrigger>
         <TabsTrigger value="wallet">Wallet</TabsTrigger>

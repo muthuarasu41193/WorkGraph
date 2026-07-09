@@ -71,7 +71,7 @@
 .hidden-opp-card__title {
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
+  color: var(--wg-text-primary);
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -137,7 +137,7 @@
 .hidden-opp-card__open:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
-  color: #111827;
+  color: var(--wg-text-primary);
 }
 
 @media (max-width: 640px) {

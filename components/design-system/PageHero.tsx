@@ -27,7 +27,7 @@ export default function PageHero({
   className,
 }: Props) {
   return (
-    <header className={cn("wg-section-fade space-y-5", className)}>
+    <header className={cn("wg-section-fade space-y-6", className)}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           {greeting ? (
@@ -44,7 +44,7 @@ export default function PageHero({
       </div>
 
       {metrics && metrics.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-4">
           {metrics.map((m) => (
             <div
               key={m.label}

@@ -1,0 +1,110 @@
+/* WorkGraph typography system */
+
+:root {
+  --wg-font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --wg-leading-body: 1.5;
+  --wg-leading-heading: 1.2;
+  --wg-tracking-heading: -0.01em;
+}
+
+@layer base {
+  html {
+    font-family: var(--wg-font-sans);
+  }
+
+  body {
+    font-weight: 400;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--wg-font-sans);
+    color: var(--wg-text-heading);
+    line-height: var(--wg-leading-heading);
+    letter-spacing: var(--wg-tracking-heading);
+  }
+
+  h1 {
+    font-weight: 700;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+  }
+
+  p,
+  li,
+  dd,
+  dt {
+    font-weight: 400;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-body);
+  }
+
+  small,
+  .text-muted,
+  [data-slot="card-description"] {
+    font-weight: 400;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-muted);
+  }
+
+  label {
+    font-weight: 500;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-body);
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--wg-text-heading);
+  }
+
+  [data-slot="card-title"] {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--wg-text-primary);
+  }
+}
+
+@layer utilities {
+  .wg-text-heading {
+    font-family: var(--wg-font-sans);
+    font-weight: 600;
+    line-height: var(--wg-leading-heading);
+    letter-spacing: var(--wg-tracking-heading);
+    color: var(--wg-text-heading);
+  }
+
+  .wg-text-heading-bold {
+    font-family: var(--wg-font-sans);
+    font-weight: 700;
+    line-height: var(--wg-leading-heading);
+    letter-spacing: var(--wg-tracking-heading);
+    color: var(--wg-text-heading);
+  }
+
+  .wg-text-body {
+    font-weight: 400;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-body);
+  }
+
+  .wg-text-secondary {
+    font-weight: 400;
+    line-height: var(--wg-leading-body);
+    color: var(--wg-text-muted);
+  }
+}

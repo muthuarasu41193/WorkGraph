@@ -24,7 +24,7 @@ export default async function HomeVaultStatsSection() {
   });
 
   return (
-    <section className="space-y-3" aria-labelledby="home-vault-heading">
+    <section className="space-y-4" aria-labelledby="home-vault-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 id="home-vault-heading" className="text-lg font-semibold tracking-tight">

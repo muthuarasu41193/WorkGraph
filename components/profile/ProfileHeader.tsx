@@ -126,7 +126,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
   return (
     <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
       {toast ? (
-        <div className="fixed right-6 top-6 z-50 rounded-lg border border-[#E5E7EB] bg-white px-4 py-2 text-sm text-[#111827] shadow-md">
+        <div className="fixed right-6 top-6 z-50 rounded-lg border border-wg-border bg-white px-4 py-2 text-sm text-wg-heading shadow-md">
           {toast}
         </div>
       ) : null}

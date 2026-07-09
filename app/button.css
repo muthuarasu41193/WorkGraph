@@ -1,0 +1,60 @@
+/* WorkGraph premium button styles */
+
+@layer components {
+  .wg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 200ms ease;
+    outline: none;
+    user-select: none;
+  }
+
+  .wg-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .wg-btn:not(:disabled):hover {
+    transform: scale(1.02);
+  }
+
+  .wg-btn:focus-visible {
+    box-shadow:
+      0 0 0 2px #ffffff,
+      0 0 0 4px #ef4444;
+  }
+
+  .wg-btn-primary {
+    background-color: var(--wg-primary);
+    color: #ffffff;
+    padding: 0.625rem 1.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    border: 1px solid transparent;
+  }
+
+  .wg-btn-primary:not(:disabled):hover {
+    background-color: var(--wg-primary-hover);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .wg-btn-secondary {
+    background-color: #ffffff;
+    color: #374151;
+    padding: 0.625rem 1.5rem;
+    border: 1px solid #d1d5db;
+    box-shadow: none;
+  }
+
+  .wg-btn-secondary:not(:disabled):hover {
+    background-color: var(--wg-bg-secondary);
+    border-color: var(--wg-border-hover);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+}

@@ -1,0 +1,45 @@
+/* WorkGraph form field styles */
+
+@layer components {
+  .wg-field {
+    width: 100%;
+    min-width: 0;
+    border-radius: 0.5rem;
+    border: 1px solid var(--wg-border);
+    background-color: #ffffff;
+    padding: 0.625rem 1rem;
+    font-family: var(--wg-font-sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    transition: all 200ms ease;
+    outline: none;
+  }
+
+  .wg-field::placeholder {
+    color: var(--wg-placeholder);
+  }
+
+  .wg-field:focus-visible {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 2px #fee2e2;
+  }
+
+  .wg-field:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: var(--wg-bg-secondary);
+  }
+}
+
+[data-theme="dark"] .wg-field,
+.dark .wg-field {
+  background-color: var(--wg-bg);
+  border-color: var(--wg-border);
+}
+
+[data-theme="dark"] .wg-field:focus-visible,
+.dark .wg-field:focus-visible {
+  border-color: #f87171;
+  box-shadow: 0 0 0 2px rgb(248 113 113 / 0.2);
+}

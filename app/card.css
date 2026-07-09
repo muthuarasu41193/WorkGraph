@@ -1,0 +1,40 @@
+/* WorkGraph premium card styles */
+
+@layer components {
+  .wg-card {
+    background-color: #ffffff;
+    border: 1px solid var(--wg-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition:
+      box-shadow 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .wg-card:hover {
+    border-color: var(--wg-border-hover);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .wg-card__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--wg-text-primary);
+  }
+}
+
+[data-theme="dark"] .wg-card,
+.dark .wg-card {
+  background-color: var(--wg-bg);
+  border-color: var(--wg-border);
+}
+
+[data-theme="dark"] .wg-card:hover,
+.dark .wg-card:hover {
+  border-color: var(--wg-border-hover);
+}

@@ -27,7 +27,7 @@ export type HomeDashboardProps = {
 
 function StatCardsSkeleton() {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-hidden>
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-hidden>
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="h-36 animate-pulse rounded-xl bg-muted" />
       ))}

@@ -33,7 +33,7 @@ export default function HomeIntelligenceGrid({
         title="AI Career Intelligence"
         description="Your personalized insights — intelligence before listings."
       />
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <InsightCard
           title="Resume Score"
           description="Excellent keyword optimization. Fix 2 high-impact gaps to reach 95%."

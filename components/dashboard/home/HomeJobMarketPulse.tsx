@@ -5,7 +5,7 @@ import type { JobMarketPulse } from "@/lib/home-dashboard";
 
 export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse }) {
   return (
-    <section className="space-y-3" aria-labelledby="home-pulse-heading">
+    <section className="space-y-4" aria-labelledby="home-pulse-heading">
       <h2 id="home-pulse-heading" className="text-lg font-semibold tracking-tight">
         Job Market Pulse
       </h2>

@@ -28,7 +28,7 @@ export default async function HomeHiddenJobsFeed() {
   const { items, total } = await loadHiddenJobsFeed(5);
 
   return (
-    <section className="space-y-3" aria-labelledby="home-hidden-heading">
+    <section className="space-y-4" aria-labelledby="home-hidden-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 id="home-hidden-heading" className="flex items-center gap-2 text-lg font-semibold tracking-tight">

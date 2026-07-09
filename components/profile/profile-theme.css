@@ -1,44 +1,34 @@
 /* WorkGraph profile — matches marketing design system */
 .wg-profile-root,
 .wg-profile-app {
-  --wg-color-primary: #b91c1c;
-  --wg-color-primary-dark: #991b1b;
-  --wg-color-accent: #b91c1c;
+  --wg-color-primary: var(--wg-primary);
+  --wg-color-primary-dark: var(--wg-primary-hover);
+  --wg-color-accent: var(--wg-primary);
   --wg-color-success: #15803d;
   --wg-color-warning: #b45309;
-  --wg-color-error: #b91c1c;
-  --wg-color-surface: #ffffff;
-  --wg-color-surface-variant: #fafaf9;
-  --wg-color-page: #fafaf9;
-  --wg-color-border: #e7e5e4;
-  --wg-color-text-primary: #09090b;
-  --wg-color-text-secondary: #27272a;
-  --wg-color-text-tertiary: #52525b;
+  --wg-color-error: var(--wg-primary);
+  --wg-color-surface: var(--wg-bg);
+  --wg-color-surface-variant: var(--wg-bg-secondary);
+  --wg-color-page: var(--wg-bg-secondary);
+  --wg-color-border: var(--wg-border);
+  --wg-color-text-primary: var(--wg-text-primary);
+  --wg-color-text-body: var(--wg-text-secondary);
+  --wg-color-text-secondary: var(--wg-text-muted);
+  --wg-color-text-tertiary: var(--wg-text-muted);
   --wg-profile-radius: 14px;
   --wg-profile-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   min-height: 100dvh;
   background: var(--wg-color-page);
-  color: var(--wg-color-text-primary);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  color: var(--wg-text-secondary);
+  font-family: var(--wg-font-sans);
   font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;
 }
 
 [data-theme="dark"] .wg-profile-root,
 [data-theme="dark"] .wg-profile-app {
-  --wg-color-primary: #f87171;
-  --wg-color-primary-dark: #ef4444;
-  --wg-color-accent: #f87171;
   --wg-color-success: #4ade80;
   --wg-color-warning: #fbbf24;
-  --wg-color-error: #f87171;
-  --wg-color-surface: #1e293b;
-  --wg-color-surface-variant: #0f172a;
-  --wg-color-page: #020617;
-  --wg-color-border: #334155;
-  --wg-color-text-primary: #f1f5f9;
-  --wg-color-text-secondary: #94a3b8;
-  --wg-color-text-tertiary: #64748b;
 }
 
 .wg-profile-app .wg-profile-nav {

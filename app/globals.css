@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import "./colors.css";
+@import "./typography.css";
+@import "./button.css";
+@import "./card.css";
+@import "./forms.css";
+@import "./spacing.css";
 @import "../components/profile/profile-theme.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,73 +13,73 @@
 
 :root {
   color-scheme: light;
-  --wg-red: #b91c1c;
-  --wg-red-hover: #991b1b;
-  --wg-color-primary: #b91c1c;
-  --wg-color-primary-dark: #991b1b;
+  --wg-red: var(--wg-primary);
+  --wg-red-hover: var(--wg-primary-hover);
+  --wg-color-primary: var(--wg-primary);
+  --wg-color-primary-dark: var(--wg-primary-hover);
   --wg-color-success: #10b981;
   --wg-color-warning: #f59e0b;
   --wg-color-info: #3b82f6;
-  --wg-color-error: #b91c1c;
-  --wg-color-surface: #ffffff;
-  --wg-color-surface-variant: #fafafa;
-  --wg-color-border: #ececec;
-  --wg-color-text-primary: #111827;
-  --wg-color-text-secondary: #6b7280;
-  --wg-color-text-tertiary: #9ca3af;
-  --wg-secondary: #6b7280;
+  --wg-color-error: var(--wg-primary);
+  --wg-color-surface: var(--wg-bg);
+  --wg-color-surface-variant: var(--wg-bg-secondary);
+  --wg-color-border: var(--wg-border);
+  --wg-color-text-primary: var(--wg-text-primary);
+  --wg-color-text-body: var(--wg-text-secondary);
+  --wg-color-text-secondary: var(--wg-text-muted);
+  --wg-color-text-tertiary: var(--wg-text-muted);
+  --wg-secondary: var(--wg-text-muted);
   --wg-radius-sm: 8px;
   --wg-radius-md: 12px;
   --wg-radius-lg: 16px;
   --wg-shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.04), 0 1px 3px rgba(17, 24, 39, 0.02);
   --wg-shadow-md: 0 4px 12px rgba(17, 24, 39, 0.06), 0 2px 4px rgba(17, 24, 39, 0.03);
-  --card: #ffffff;
-  --card-foreground: #09090b;
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #b91c1c;
+  --card: var(--wg-bg);
+  --card-foreground: var(--wg-text-primary);
+  --popover: var(--wg-bg);
+  --popover-foreground: var(--wg-text-primary);
+  --primary: var(--wg-primary);
   --primary-foreground: #ffffff;
-  --secondary: #f5f5f4;
-  --secondary-foreground: #09090b;
-  --muted: #f5f5f4;
-  --muted-foreground: #3f3f46;
-  --accent: #f5f5f4;
-  --accent-foreground: #09090b;
-  --destructive: #b91c1c;
-  --border: #ececec;
-  --input: #ececec;
-  --ring: #b91c1c;
+  --secondary: var(--wg-bg-secondary);
+  --secondary-foreground: var(--wg-text-primary);
+  --muted: var(--wg-bg-secondary);
+  --muted-foreground: var(--wg-text-muted);
+  --accent: var(--wg-bg-secondary);
+  --accent-foreground: var(--wg-text-primary);
+  --destructive: var(--wg-primary);
+  --border: var(--wg-border);
+  --input: var(--wg-border);
+  --ring: var(--wg-primary);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.875rem;
-  --sidebar: #fafaf9;
-  --sidebar-foreground: #09090b;
-  --sidebar-primary: #b91c1c;
+  --sidebar: var(--wg-bg-secondary);
+  --sidebar-foreground: var(--wg-text-primary);
+  --sidebar-primary: var(--wg-primary);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f5f4;
-  --sidebar-accent-foreground: #09090b;
-  --sidebar-border: #e7e5e4;
-  --sidebar-ring: #b91c1c;
-  --background: #fafafa;
-  --foreground: #111827;
+  --sidebar-accent: var(--wg-bg-secondary);
+  --sidebar-accent-foreground: var(--wg-text-primary);
+  --sidebar-border: var(--wg-border);
+  --sidebar-ring: var(--wg-primary);
+  --background: var(--wg-bg);
+  --foreground: var(--wg-text-secondary);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --wg-color-primary: #8ab4f8;
-  --wg-color-primary-dark: #669df6;
   --wg-color-success: #81c995;
   --wg-color-warning: #fdd663;
   --wg-color-error: #f28b82;
-  --wg-color-surface: #202124;
-  --wg-color-surface-variant: #303134;
-  --wg-color-border: #5f6368;
-  --wg-color-text-primary: #e8eaed;
-  --wg-color-text-secondary: #bdc1c6;
-  --wg-color-text-tertiary: #9aa0a6;
+  --wg-color-surface: var(--wg-bg);
+  --wg-color-surface-variant: var(--wg-bg-secondary);
+  --wg-color-border: var(--wg-border);
+  --wg-color-text-primary: var(--wg-text-primary);
+  --wg-color-text-body: var(--wg-text-secondary);
+  --wg-color-text-secondary: var(--wg-text-muted);
+  --wg-color-text-tertiary: var(--wg-text-muted);
 }
 
 * {
@@ -84,7 +90,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--wg-font-sans);
   background: var(--background);
   color: var(--foreground);
 }
@@ -358,9 +364,21 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-heading: var(--wg-font-sans);
+  --font-sans: var(--wg-font-sans);
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --color-wg-primary: var(--wg-primary);
+  --color-wg-primary-hover: var(--wg-primary-hover);
+  --color-wg-heading: var(--wg-text-primary);
+  --color-wg-body: var(--wg-text-secondary);
+  --color-wg-secondary: var(--wg-text-muted);
+  --color-wg-muted: var(--wg-text-muted);
+  --color-wg-border: var(--wg-border);
+  --color-wg-surface: var(--wg-bg);
+  --color-wg-surface-secondary: var(--wg-bg-secondary);
+  --leading-body: 1.5;
+  --leading-heading: 1.2;
+  --tracking-heading: -0.01em;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -440,32 +458,9 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans antialiased;
   }
   html {
     @apply font-sans;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-semibold tracking-tight text-foreground;
-  }
-  p {
-    @apply text-foreground;
-  }
-  [data-slot="card-title"] {
-    @apply font-semibold text-foreground;
-  }
-  [data-slot="card-description"] {
-    color: var(--wg-color-text-secondary);
-  }
-  label {
-    @apply text-foreground;
-  }
-  strong {
-    @apply font-semibold text-foreground;
   }
 }

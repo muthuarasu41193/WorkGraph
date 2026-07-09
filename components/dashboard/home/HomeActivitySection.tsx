@@ -8,7 +8,7 @@ export default function HomeActivitySection() {
         title="Recent Activity"
         description="Your career momentum at a glance."
       />
-      <div className="wg-dash-section-card p-5">
+      <div className="wg-dash-section-card p-6">
         <ActivityTimeline events={DEMO_TIMELINE_EVENTS} />
       </div>
     </section>

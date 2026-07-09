@@ -56,7 +56,7 @@ function ArbeitnowLogo() {
 function RssLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#B91C1C" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="#DC2626" />
       <path
         d="M7 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0-6a8 8 0 0 1 8 8"
         stroke="white"
@@ -370,7 +370,7 @@ export default function ProfileSocialJobPosts({
                   </span>
                 </div>
                 <p className="mt-3 min-h-[72px] text-sm leading-6 text-[#3A3A3C]">{trimSnippet(post)}</p>
-                <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#E5E7EB] pt-3">
+                <div className="mt-3 flex items-center justify-between gap-3 border-t border-wg-border pt-3">
                   <span className="text-xs font-medium text-[#8E8E93]">{post.postedAgo}</span>
                   <a
                     href={href}

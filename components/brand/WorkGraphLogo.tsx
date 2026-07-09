@@ -16,12 +16,12 @@ export function WorkGraphMark({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <line x1="16" y1="7" x2="7" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <line x1="16" y1="7" x2="25" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <line x1="9" y1="23" x2="23" y2="23" stroke="#B91C1C" strokeWidth="1.25" strokeLinecap="round" />
-      <circle cx="16" cy="7" r="3.25" fill="#B91C1C" />
-      <circle cx="7" cy="23" r="3.25" fill="#B91C1C" />
-      <circle cx="25" cy="23" r="3.25" fill="#B91C1C" />
+      <line x1="16" y1="7" x2="7" y2="23" stroke="#DC2626" strokeWidth="1.25" strokeLinecap="round" />
+      <line x1="16" y1="7" x2="25" y2="23" stroke="#DC2626" strokeWidth="1.25" strokeLinecap="round" />
+      <line x1="9" y1="23" x2="23" y2="23" stroke="#DC2626" strokeWidth="1.25" strokeLinecap="round" />
+      <circle cx="16" cy="7" r="3.25" fill="#DC2626" />
+      <circle cx="7" cy="23" r="3.25" fill="#DC2626" />
+      <circle cx="25" cy="23" r="3.25" fill="#DC2626" />
     </svg>
   );
 }

@@ -125,7 +125,7 @@ export default function ResumeIntelligenceSection({
   }
 
   return (
-    <section className="space-y-5" aria-labelledby="resume-intelligence-heading">
+    <section className="space-y-8" aria-labelledby="resume-intelligence-heading">
       <header>
         <div className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />
