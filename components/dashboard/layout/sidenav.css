@@ -1,0 +1,306 @@
+/* WorkGraph sidebar — emotional nav item states */
+
+.wg-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.wg-dash-root .wg-nav-item {
+  min-height: unset;
+}
+
+.wg-nav-item:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.wg-nav-item:focus-visible {
+  outline: 2px solid rgb(37 99 235 / 0.35);
+  outline-offset: 1px;
+}
+
+.wg-nav-item--active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.wg-nav-item--active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: #2563eb;
+  border-radius: 0 2px 2px 0;
+}
+
+.wg-nav-item--collapsed {
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.wg-nav-item__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-width: 1.5;
+  color: currentColor;
+  opacity: 0.85;
+}
+
+.wg-nav-item--active .wg-nav-item__icon {
+  opacity: 1;
+}
+
+.wg-nav-item__badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #dbeafe;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #1d4ed8;
+}
+
+.wg-section-label {
+  padding: 16px 12px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+}
+
+.wg-section-label--interactive {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.wg-section-label--interactive:hover {
+  color: #94a3b8;
+}
+
+.wg-section-label--active {
+  color: #93c5fd;
+}
+
+.wg-nav-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  z-index: 60;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  border-radius: 8px;
+  background: #111827;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #ffffff;
+  pointer-events: none;
+  animation: wg-nav-tooltip-fade-in 180ms ease forwards;
+}
+
+@keyframes wg-nav-tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* ── Career Intelligence — progressive disclosure ── */
+
+.wg-intel-header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.wg-dash-root .wg-intel-header {
+  min-height: unset;
+}
+
+.wg-intel-header:hover {
+  background: #f8fafc;
+}
+
+.wg-intel-header:focus-visible {
+  outline: 2px solid rgb(37 99 235 / 0.35);
+  outline-offset: 1px;
+}
+
+.wg-intel-header--active {
+  background: #f8fafc;
+}
+
+.wg-intel-header__icon {
+  display: flex;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+
+.wg-nav-item__unvisited {
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #60a5fa;
+  transform: translateY(-50%);
+  animation: wg-unvisited-fade-in 300ms ease forwards;
+}
+
+@keyframes wg-unvisited-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+.wg-nav-item__icon-wrap--suggested::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 1.5px solid #60a5fa;
+  animation: wg-calm-pulse 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes wg-calm-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
+  }
+}
+
+.wg-nav-benefit-hint {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(100% + 6px);
+  z-index: 50;
+  border-radius: 8px;
+  background: #111827;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #ffffff;
+  text-align: center;
+  pointer-events: none;
+  animation: wg-benefit-hint-in 160ms ease forwards;
+}
+
+@keyframes wg-benefit-hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Job Search Wellbeing card ── */
+
+.wg-wellbeing-card {
+  box-shadow: none;
+}
+
+.wg-wellbeing-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgb(255 255 255 / 0.45) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: wg-wellbeing-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes wg-wellbeing-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Sidebar bottom pinned zone ── */
+
+.sidebar-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin-top: auto;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+  padding-top: 12px;
+}
+
+.wg-dash-root .sidebar-bottom .wg-dash-compact-btn,
+.wg-dash-root .sidebar-bottom button {
+  min-height: unset;
+}

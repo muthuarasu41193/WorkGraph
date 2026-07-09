@@ -3,8 +3,8 @@
   --dash-radius: 12px;
   --dash-radius-lg: 16px;
   --dash-topnav-h: 56px;
-  --dash-sidebar-w: 248px;
-  --dash-sidebar-collapsed-w: 68px;
+  --dash-sidebar-w: 240px;
+  --dash-sidebar-collapsed-w: 64px;
   --dash-content-max: 1280px;
   --dash-page-bg: #fafafa;
   --dash-surface: #ffffff;
@@ -75,8 +75,9 @@
 }
 
 .wg-dash-sidenav {
-  background: var(--dash-surface) !important;
-  border-color: var(--dash-border) !important;
+  background: #ffffff !important;
+  border-color: #f1f5f9 !important;
+  box-shadow: none !important;
 }
 
 .wg-dash-topnav {
@@ -92,20 +93,10 @@
 }
 
 .wg-dash-nav-active {
-  background: var(--dash-accent-soft) !important;
-  color: var(--dash-accent) !important;
-  box-shadow: inset 3px 0 0 var(--dash-accent) !important;
-  border-radius: 0 8px 8px 0 !important;
-}
-
-.wg-dash-nav-group-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--dash-text-secondary);
-  padding: 0 12px;
-  margin-bottom: 4px;
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
 }
 
 .wg-dash-skeleton-pulse {

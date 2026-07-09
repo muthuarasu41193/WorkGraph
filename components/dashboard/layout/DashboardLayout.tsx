@@ -9,20 +9,14 @@ import "./dashboard-layout.css";
 
 type Props = {
   children: ReactNode;
-  isDark?: boolean;
-  onToggleTheme?: () => void;
 };
 
-function DashboardLayoutInner({ children, isDark, onToggleTheme }: Props) {
+function DashboardLayoutInner({ children }: Props) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="wg-dash-root flex min-h-dvh flex-col">
-      <TopNav
-        sidebarCollapsed={sidebarCollapsed}
-        isDark={isDark}
-        onToggleTheme={onToggleTheme}
-      />
+      <TopNav sidebarCollapsed={sidebarCollapsed} />
 
       <div className="flex flex-1">
         <SideNav

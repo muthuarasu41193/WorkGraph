@@ -8,7 +8,7 @@ import DashboardLayout from "../../dashboard/layout/DashboardLayout";
 import DashboardSectionSkeleton from "../../dashboard/DashboardSectionSkeleton";
 import { DashboardProvider } from "../../dashboard/DashboardProvider";
 import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
-import ProfileThemeProvider, { useProfileTheme } from "../theme/ProfileThemeProvider";
+import ProfileThemeProvider from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
 import PageHero from "@/components/design-system/PageHero";
 import ProfileHero from "./ProfileHero";
@@ -98,7 +98,6 @@ function ProfileShellInner({
   feedKind = "demo",
   feedDemoHint,
 }: ProfileShellProps) {
-  const { theme, toggle } = useProfileTheme();
   const wgEnabled = workgraphApiEnabled();
   const atsJobs = useMemo(
     () => recommendedJobs.filter((j) => !j.isCommunity),
@@ -221,7 +220,7 @@ function ProfileShellInner({
   return (
     <DashboardProvider value={dashboardValue}>
       {wgEnabled ? <DashboardHydrator /> : null}
-      <DashboardLayout isDark={theme === "dark"} onToggleTheme={toggle}>
+      <DashboardLayout>
         <DashboardViewRouter sections={sections} />
       </DashboardLayout>
       <ProfileSaveStatus />

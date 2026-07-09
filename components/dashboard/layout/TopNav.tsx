@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Command, Menu, Moon, Plus, Sun } from "lucide-react";
+import { Bell, Command, Menu, Plus } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,11 +28,9 @@ import { dashboardHref } from "@/lib/dashboard-routes";
 
 type Props = {
   sidebarCollapsed?: boolean;
-  onToggleTheme?: () => void;
-  isDark?: boolean;
 };
 
-export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Props) {
+export default function TopNav({ sidebarCollapsed }: Props) {
   const { profile, liveListings } = useDashboardContext();
   const { navigate } = useDashboardNavigation();
   const router = useRouter();
@@ -134,19 +132,6 @@ export default function TopNav({ sidebarCollapsed, onToggleTheme, isDark }: Prop
               <Bell className="h-4 w-4" />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--dash-accent)] ring-2 ring-white" />
             </Button>
-
-            {onToggleTheme ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="hidden h-9 w-9 sm:inline-flex"
-                onClick={onToggleTheme}
-                aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-            ) : null}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
