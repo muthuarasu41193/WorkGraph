@@ -17,6 +17,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
@@ -38,6 +39,8 @@
     "node_modules",
     "services/worker",
     "job_aggregator",
-    "amazon-label-cropper"
+    "amazon-label-cropper",
+    "**/__tests__/**",
+    "**/*.test.ts"
   ]
 }

@@ -32,6 +32,8 @@ export type JobListingFilterState = {
 export type DerivedJobMeta = {
   searchBlob: string;
   jobTypes: string[];
+  /** First inferred employment type, e.g. "Full-time" */
+  primaryJobType: string | null;
   locationMode: "remote" | "hybrid" | "onsite";
   experienceLevel: string | null;
   salary: {
