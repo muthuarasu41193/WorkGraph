@@ -2121,7 +2121,7 @@ export default function RecommendedJobsSection({
               job={recommendedJobToCardData(job, {
                 matchPercent: score,
                 experienceLevel: meta.experienceLevel,
-                primaryJobType: meta.primaryJobType,
+                primaryJobType: meta.jobTypes[0] ?? null,
                 isEasyApply: job.source === "linkedin" && canApply,
               })}
               index={i}
