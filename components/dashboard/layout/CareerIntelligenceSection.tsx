@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Brain, ChevronRight } from "lucide-react";
+import { ChevronRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NavGroup, NavItem } from "@/lib/dashboard-nav-groups";
 import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
@@ -126,8 +126,6 @@ export default function CareerIntelligenceSection({
     item.id === "interview-vault" ? false : item.id === activeRoute,
   );
   const suggestedId = getSuggestedIntelligenceRoute(profileCompleteness, appliedCount);
-  const toolCount = group.items.length;
-  const subtitle = group.subtitle ?? `${toolCount} AI-powered tools`;
 
   function itemSuccessKind(itemId: string): NavFeedbackKind | null {
     if (itemId === "applications") return successState.applications ?? null;
@@ -157,8 +155,7 @@ export default function CareerIntelligenceSection({
 
   if (collapsed) {
     return (
-      <div className="mb-1">
-        <div className="mx-2 mb-1 h-px bg-slate-100" aria-hidden />
+      <div className="mb-1 mt-3 border-t border-slate-100 pt-2">
         <ul className="space-y-0.5">
           {group.items.map((item) => (
             <li key={item.id}>
@@ -182,28 +179,26 @@ export default function CareerIntelligenceSection({
   const showItems = expanded || groupActive;
 
   return (
-    <div className="mb-1">
+    <div className="mb-1 mt-3 border-t border-slate-100 pt-2">
       <button
         type="button"
         onClick={toggle}
-        className={cn("wg-intel-header", groupActive && "wg-intel-header--active")}
+        className={cn(
+          "ai-tools-header wg-nav-item",
+          groupActive && "wg-nav-item--active",
+        )}
         aria-expanded={showItems}
       >
-        <span className="wg-intel-header__icon" aria-hidden>
-          <Brain className="h-4 w-4 text-slate-500" strokeWidth={1.5} />
-        </span>
-        <span className="min-w-0 flex-1 text-left">
-          <span className="block text-sm font-medium text-slate-700">{group.label || "AI Tools"}</span>
-          <span className="block text-xs text-slate-400">{subtitle}</span>
-        </span>
+        <Sparkles className="nav-icon" aria-hidden strokeWidth={1.5} />
+        <span className="min-w-0 flex-1 truncate text-left">{group.label || "AI Tools"}</span>
         <motion.span
           animate={showItems ? "expanded" : "collapsed"}
           variants={chevronVariants}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="shrink-0 text-slate-400"
+          className="shrink-0"
           aria-hidden
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="nav-icon" strokeWidth={1.5} />
         </motion.span>
       </button>
 
@@ -214,7 +209,7 @@ export default function CareerIntelligenceSection({
         className="overflow-hidden"
       >
         <motion.ul
-          className="space-y-0.5 pt-1"
+          className="space-y-0.5 pt-0.5"
           variants={intelListVariants}
           initial={false}
           animate={showItems && hydrated ? "visible" : "hidden"}

@@ -66,7 +66,7 @@ function NavItemContent({
           suggested && "wg-nav-item__icon-wrap--suggested",
         )}
       >
-        <Icon className="wg-nav-item__icon" aria-hidden />
+        <Icon className="nav-icon" strokeWidth={1.5} aria-hidden />
       </span>
       {!collapsed ? (
         <>

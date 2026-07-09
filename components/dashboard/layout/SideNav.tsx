@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -9,11 +8,9 @@ import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/dashboard-nav-groups";
 import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
-import { dashboardHref } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useNavFeedbackListener } from "@/hooks/use-nav-feedback-listener";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
-import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { useNavUiStore } from "@/stores/nav-ui-store";
 import CareerIntelligenceSection from "./CareerIntelligenceSection";
 import JobSearchWellbeingCard from "./JobSearchWellbeingCard";
@@ -141,7 +138,7 @@ export default function SideNav({
     );
   }
 
-  function renderGroup(group: NavGroup) {
+  function renderGroup(group: NavGroup, index: number) {
     if (group.id === "intelligence") {
       return (
         <CareerIntelligenceSection
@@ -160,10 +157,7 @@ export default function SideNav({
     }
 
     return (
-      <div key={group.id} className="mb-1">
-        {group.label && !collapsed ? (
-          <p className="wg-section-label">{group.label}</p>
-        ) : null}
+      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-slate-100 pt-2")}>
         <ul className="space-y-0.5 px-0">{group.items.map(renderNavItem)}</ul>
       </div>
     );
@@ -178,36 +172,15 @@ export default function SideNav({
       )}
       aria-label="Dashboard navigation"
     >
-      <div
-        className={cn(
-          "flex h-16 shrink-0 items-center border-b border-gray-100 px-1",
-          collapsed ? "justify-center px-2" : "px-3",
-        )}
-      >
-        <Link
-          href={dashboardHref("home")}
-          className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
-          onClick={() => onNavigate?.()}
-        >
-          <WorkGraphLogo
-            iconClassName="h-7 w-7"
-            className={cn("gap-2", collapsed && "gap-0")}
-            showWordmark={!collapsed}
-          />
-        </Link>
-      </div>
-
-      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-4">
+      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-3">
         <div className="space-y-1">{DASHBOARD_NAV_GROUPS.map(renderGroup)}</div>
 
         {!collapsed && showWellbeing ? (
-          <div className="mt-4">
-            <JobSearchWellbeingCard
-              activity={activity}
-              message={message}
-              hasActivity={hasActivity}
-            />
-          </div>
+          <JobSearchWellbeingCard
+            activity={activity}
+            message={message}
+            hasActivity={hasActivity}
+          />
         ) : null}
       </nav>
 

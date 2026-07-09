@@ -98,16 +98,27 @@ export default function ResumeIntelligenceDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant={variant}
-          size={size}
-          className={triggerClassName}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Brain className="mr-1.5 h-4 w-4" />
-          Analyze Resume
-        </Button>
+        {triggerClassName ? (
+          <button
+            type="button"
+            className={triggerClassName}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Brain className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+            Analyze Resume
+          </button>
+        ) : (
+          <Button
+            type="button"
+            variant={variant}
+            size={size}
+            className={triggerClassName}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Brain className="mr-1.5 h-4 w-4" />
+            Analyze Resume
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-4xl gap-0 p-0">
         <DialogHeader className="border-b px-6 py-4">

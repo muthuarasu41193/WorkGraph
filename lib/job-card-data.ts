@@ -91,17 +91,7 @@ export function clearbitLogoUrl(company: string, applyUrl?: string | null): stri
   return `https://logo.clearbit.com/${slug}.com`;
 }
 
-export function applyButtonLabel(source?: JobFeedSource, isEasyApply?: boolean): string {
-  if (isEasyApply) return "Easy Apply";
-  if (!source) return "Apply on Company Site";
-  if (source === "workgraph" || source === "other") return "Apply on Company Site";
-  if (source === "linkedin") return "Apply on LinkedIn";
-  if (source === "greenhouse") return "Apply on Greenhouse";
-  if (source === "lever") return "Apply on Lever";
-  if (source === "indeed") return "Apply on Indeed";
-  if (source === "glassdoor") return "Apply on Glassdoor";
-  return `Apply on ${formatJobSource(source)}`;
-}
+export { getApplyLabel, applyButtonLabel } from "./job-apply";
 
 export function jobCardFromMatch(job: {
   id: string;

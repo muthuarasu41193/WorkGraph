@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Bookmark, ExternalLink } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
-import {
-  applyButtonLabel,
-  type JobCardData,
-} from "@/lib/job-card-data";
+import JobApplyButton from "@/components/design-system/JobApplyButton";
+import { type JobCardData } from "@/lib/job-card-data";
 import { cn } from "@/lib/utils";
 import "./job-card.css";
 
@@ -81,7 +79,7 @@ export default function JobCard({
 }: Props) {
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
-  const applyLabel = applyButtonLabel(job.source, job.isEasyApply);
+  const jobDescription = job.description?.trim() || job.title;
 
   const subtitleParts = [job.company, job.location, job.employmentType || job.workMode].filter(Boolean);
 
@@ -91,7 +89,6 @@ export default function JobCard({
   if (job.experience) metaParts.push(job.experience);
 
   const showSkillGaps = Boolean(job.missingSkills && job.missingSkills.length > 0);
-  const jobDescription = job.description?.trim() || job.title;
 
   return (
     <article
@@ -125,7 +122,7 @@ export default function JobCard({
             saved && "opacity-100 text-indigo-600",
           )}
         >
-          <Bookmark className={cn("h-4 w-4", saved && "fill-current")} />
+          <Bookmark className={cn("h-4 w-4", saved && "fill-current")} strokeWidth={1.75} />
         </button>
       ) : null}
 
@@ -192,43 +189,39 @@ export default function JobCard({
         </div>
       ) : null}
 
-      <div
-        className={cn(
-          "job-card__footer flex flex-wrap items-center gap-2",
-          hasResume && canApply ? "justify-between" : "justify-end",
-        )}
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={(event) => event.stopPropagation()}
-      >
-        {hasResume ? (
-          <ResumeIntelligenceDialog
-            jobId={job.id}
-            jobTitle={job.title}
-            company={job.company}
-            jobDescription={jobDescription}
-            hasResume={hasResume}
-            variant="ghost"
-            size="sm"
-            triggerClassName="!min-h-0 h-auto gap-1 px-0 py-0 text-[13px] font-normal leading-tight text-gray-500 shadow-none hover:bg-transparent hover:text-indigo-600"
-          />
-        ) : null}
+      {(hasResume || canApply) ? (
+        <div
+          className="job-card__footer job-card__actions"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
+          {hasResume ? (
+            <ResumeIntelligenceDialog
+              jobId={job.id}
+              jobTitle={job.title}
+              company={job.company}
+              jobDescription={jobDescription}
+              hasResume={hasResume}
+              triggerClassName="analyze-btn"
+            />
+          ) : (
+            <span aria-hidden />
+          )}
 
-        {canApply ? (
-          <a
-            href={applyHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => {
-              event.stopPropagation();
-              onApplyClick?.();
-            }}
-            className="job-card__apply-btn inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-          >
-            {applyLabel}
-            <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          </a>
-        ) : null}
-      </div>
+          <span className="job-card__actions-spacer" aria-hidden />
+
+          {canApply && applyHref ? (
+            <JobApplyButton
+              jobId={job.id}
+              company={job.company}
+              title={job.title}
+              applyUrl={applyHref}
+              source={job.source}
+              onClick={onApplyClick}
+            />
+          ) : null}
+        </div>
+      ) : null}
 
       {children ? <div className="job-card__expanded">{children}</div> : null}
     </article>

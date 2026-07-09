@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import { CircleHelp, MoreHorizontal, Moon, Settings, Sun } from "lucide-react";
+import { HelpCircle, MoreHorizontal, Moon, Settings2, Sun } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -63,7 +63,7 @@ function UtilityButton({
       title={label}
       aria-label={label}
       onClick={onClick}
-      className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600"
+      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-600"
     >
       {children}
     </button>
@@ -150,13 +150,13 @@ export default function SidebarBottom({
   const utilityRow = (
     <div className={cn("flex items-center", collapsed ? "flex-col gap-1" : "justify-center gap-2")}>
       <UtilityButton label="Settings" onClick={goSettings}>
-        <Settings className="h-4 w-4" strokeWidth={1.75} />
+        <Settings2 className="nav-icon" strokeWidth={1.5} />
       </UtilityButton>
       <UtilityButton
         label="Help & Support"
         onClick={() => window.open(HELP_URL, "_blank", "noopener,noreferrer")}
       >
-        <CircleHelp className="h-4 w-4" strokeWidth={1.75} />
+        <HelpCircle className="nav-icon" strokeWidth={1.5} />
       </UtilityButton>
       <UtilityButton
         label={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -170,9 +170,9 @@ export default function SidebarBottom({
           className="inline-flex"
         >
           {isDark ? (
-            <Sun className="h-4 w-4" strokeWidth={1.75} />
+            <Sun className="nav-icon" strokeWidth={1.5} />
           ) : (
-            <Moon className="h-4 w-4" strokeWidth={1.75} />
+            <Moon className="nav-icon" strokeWidth={1.5} />
           )}
         </motion.span>
       </UtilityButton>

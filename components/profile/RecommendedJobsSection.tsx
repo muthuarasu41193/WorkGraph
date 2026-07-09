@@ -11,11 +11,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  ExternalLink,
   LayoutGrid,
   LayoutList,
   LifeBuoy,
-  MapPin,
   Loader2,
   SearchX,
   Search,
@@ -61,8 +59,12 @@ import {
 import { cn } from "@/lib/utils";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
 import JobCard from "@/components/design-system/JobCard";
+import JobApplyButton from "@/components/design-system/JobApplyButton";
+import ApplyFollowupPrompt from "@/components/design-system/ApplyFollowupPrompt";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
-import { applyButtonLabel, recommendedJobToCardData } from "@/lib/job-card-data";
+import { recommendedJobToCardData } from "@/lib/job-card-data";
+import { readSavedJobIds, saveJobId, toggleSavedJobId } from "@/lib/saved-jobs-storage";
+import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import "@/components/design-system/job-card.css";
 
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
@@ -109,6 +111,17 @@ const DATE_OPTIONS = [
   { id: "7" as const, label: "Last 7 days" },
   { id: "30" as const, label: "Last 30 days" },
 ];
+
+const SORT_PARAM_VALUES = ["best", "newest", "salary_desc", "salary_asc", "company_asc"] as const;
+type SortOption = (typeof SORT_PARAM_VALUES)[number];
+
+const SORT_OPTIONS = [
+  { id: "best" as const, label: "Best Match" },
+  { id: "newest" as const, label: "Newest First" },
+  { id: "salary_desc" as const, label: "Salary: High to Low" },
+  { id: "salary_asc" as const, label: "Salary: Low to High" },
+  { id: "company_asc" as const, label: "Company Name A-Z" },
+] as const satisfies ReadonlyArray<{ id: SortOption; label: string }>;
 const JOB_TYPE_OPTIONS = ["Full-time", "Part-time", "Contract", "Freelance", "Internship", "Temporary"] as const;
 const EXPERIENCE_OPTIONS = [
   "Entry (0-2yr)",
@@ -173,7 +186,6 @@ const DATE_WINDOW_OPTIONS = ["any", "1", "7", "30"] as const;
 const LOCATION_MODE_OPTIONS = ["any", "remote", "hybrid", "onsite"] as const;
 const SALARY_PERIOD_OPTIONS = ["year", "hour"] as const;
 const VIEW_MODE_OPTIONS = ["list", "grid"] as const;
-const SORT_OPTIONS = ["best", "newest", "salary_desc", "salary_asc", "company_asc"] as const;
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 50;
@@ -210,11 +222,15 @@ function useMediaQuery(query: string): boolean {
   return matches;
 }
 
-const FILTER_TRIGGER_BASE_CLASS =
-  "inline-flex h-10 cursor-pointer list-none items-center gap-1 rounded-[20px] border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2";
-const FILTER_TRIGGER_INACTIVE_CLASS =
-  `${FILTER_TRIGGER_BASE_CLASS} border-[#DADCE0] bg-white text-[#3A3A3C] hover:border-[#1A73E8] hover:bg-[#E8F0FE]`;
-const FILTER_TRIGGER_ACTIVE_CLASS = `${FILTER_TRIGGER_BASE_CLASS} border-[#1A73E8] bg-[#1A73E8] text-white`;
+function formatLocationFilterLabel(
+  mode: "any" | "remote" | "hybrid" | "onsite",
+  query: string,
+): string {
+  if (query.trim()) return query.trim();
+  if (mode === "onsite") return "On-site";
+  if (mode === "any") return "Any";
+  return mode.charAt(0).toUpperCase() + mode.slice(1);
+}
 
 type JobTypeOption = (typeof JOB_TYPE_OPTIONS)[number];
 type ExperienceFilterOption = (typeof EXPERIENCE_OPTIONS)[number];
@@ -604,6 +620,7 @@ export default function RecommendedJobsSection({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { userId } = useDashboardContext();
   const isMobile = useMediaQuery("(max-width:767px)");
   const initialDateWindow = parseEnumParam(searchParams.get("date"), DATE_WINDOW_OPTIONS, "any");
   const initialSources = parseCsvSet(searchParams.get("src"), JOB_FEED_SOURCE_OPTIONS);
@@ -662,8 +679,8 @@ export default function RecommendedJobsSection({
   const [viewMode, setViewMode] = useState<"list" | "grid">(() =>
     resolveJobsLayoutFromSearchParams(searchParams)
   );
-  const [sortBy, setSortBy] = useState<"best" | "newest" | "salary_desc" | "salary_asc" | "company_asc">(
-    parseEnumParam(searchParams.get("sort"), SORT_OPTIONS, "best")
+  const [sortBy, setSortBy] = useState<SortOption>(
+    parseEnumParam(searchParams.get("sort"), SORT_PARAM_VALUES, "best")
   );
   const [savedJobs, setSavedJobs] = useState<Set<string>>(() => new Set());
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -683,6 +700,47 @@ export default function RecommendedJobsSection({
   const deferredSearchInput = useDeferredValue(searchInput);
   const query = searchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
+
+  useEffect(() => {
+    if (!userId) return;
+    setSavedJobs(readSavedJobIds(userId));
+  }, [userId]);
+
+  const markJobApplied = useCallback(
+    async (job: { jobId: string; company: string; title: string; applyUrl: string }) => {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          company: job.company,
+          role: job.title,
+          status: "applied",
+          job_url: job.applyUrl,
+          applied_date: new Date().toISOString().slice(0, 10),
+          notes: `Tracked from job listing (${job.jobId})`,
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error ?? "Failed to track application");
+      }
+    },
+    [],
+  );
+
+  const saveJobForLater = useCallback(
+    (jobId: string) => {
+      if (!userId) return;
+      saveJobId(userId, jobId);
+      setSavedJobs((prev) => {
+        const next = new Set(prev);
+        next.add(jobId);
+        return next;
+      });
+    },
+    [userId],
+  );
 
   const catalogFilters = useMemo(
     () => ({
@@ -1325,9 +1383,11 @@ export default function RecommendedJobsSection({
     query.trim() ? { key: "query", label: `Search: ${query.trim()}` } : null,
     matchScore !== "any" ? { key: "match", label: `Match ${matchScore}%+` } : null,
     dateWindow !== "any" ? { key: "date", label: `Date: ${DATE_OPTIONS.find((d) => d.id === dateWindow)?.label}` } : null,
-    sources.size > 0 ? { key: "source", label: `Source: ${sources.size}` } : null,
-    jobTypes.size > 0 ? { key: "jobType", label: `Job Type: ${jobTypes.size}` } : null,
-    (locationMode !== "any" || locationQuery.trim()) ? { key: "location", label: `Location` } : null,
+    sources.size > 0 ? { key: "source", label: `Source: ${Array.from(sources).map((src) => SOURCE_STYLES[src].label).join(", ")}` } : null,
+    jobTypes.size > 0 ? { key: "jobType", label: `Job Type: ${Array.from(jobTypes).join(", ")}` } : null,
+    (locationMode !== "any" || locationQuery.trim())
+      ? { key: "location", label: `Location: ${formatLocationFilterLabel(locationMode, locationQuery)}` }
+      : null,
     experienceLevel !== "any" ? { key: "exp", label: `Experience: ${experienceLevel}` } : null,
     salaryFilterActive ? { key: "salary", label: `Salary: ${currency} ${salaryMin}K-${salaryMax}K${salaryPeriod === "hour" ? "/hr" : ""}` } : null,
     companySize !== "any" ? { key: "size", label: `Size: ${companySize}` } : null,
@@ -1522,149 +1582,162 @@ export default function RecommendedJobsSection({
               aria-label="Open filters panel"
             >
               <SlidersHorizontal className="h-4 w-4" />
-              Filters
-              {activeFilterCount > 0 ? (
-                <Badge variant="default" className="ml-1">
-                  {activeFilterCount}
-                </Badge>
-              ) : null}
+              Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
             </Button>
           </div>
 
-          <section className="filter-bar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
-            <div className="wg-no-scrollbar flex items-center gap-2 overflow-x-auto">
-              <div className="relative w-full min-w-[280px] md:w-[280px] md:min-w-[280px]">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8E8E93]" aria-hidden />
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search job titles, companies..."
-                  className="h-10 w-full rounded-[20px] border border-[#DADCE0] bg-white py-2 pl-11 pr-9 text-sm text-[#3A3A3C] placeholder:text-[#8E8E93] outline-none transition focus:border-[#1A73E8] focus:shadow-[0_0_0_3px_#E8F0FE]"
-                />
-                {searchInput ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchInput("");
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93]"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                ) : null}
-                {isSearching ? <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[#8E8E93]" /> : null}
-              </div>
-              {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
-                <p className="ml-2 text-xs text-[#8E8E93]">No results for &quot;{query.trim()}&quot;.</p>
+          <section className="filter-bar wg-no-scrollbar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
+            <div className="filter-search-wrap">
+              <Search className="filter-search-icon" aria-hidden strokeWidth={1.75} />
+              <input
+                type="search"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search job titles, companies..."
+                className="filter-search"
+              />
+              {searchInput ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchInput("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               ) : null}
+              {isSearching ? (
+                <Loader2 className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-slate-400" />
+              ) : null}
+            </div>
 
-              <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={jobTypes.size > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"} <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-52 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
-                  {JOB_TYPE_OPTIONS.map((type) => (
-                    <label key={type} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F8F9FA]">
-                      <input
-                        type="checkbox"
-                        checked={jobTypes.has(type)}
-                        onChange={() => {
-                          setJobTypes((prev) => {
-                            const next = new Set(prev);
-                            if (next.has(type)) next.delete(type);
-                            else next.add(type);
-                            return next;
-                          });
-                          setCurrentPage(1);
-                        }}
-                      />
-                      {type}
-                    </label>
-                  ))}
-                </div>
-              </details>
-
-              <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={locationMode !== "any" || locationQuery.trim() ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  <MapPin className="h-4 w-4" /> Location <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-64 rounded-xl border border-[#DADCE0] bg-white p-3 shadow-lg">
-                  <input
-                    value={locationQuery}
-                    onChange={(e) => {
-                      setLocationQuery(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    placeholder="Country or city"
-                    className="mb-2 h-9 w-full rounded-lg border border-[#DADCE0] px-3 text-sm"
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    {["any", "remote", "hybrid", "onsite"].map((loc) => (
-                      <button
-                        key={loc}
-                        type="button"
-                        onClick={() => {
-                          setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
-                          setCurrentPage(1);
-                        }}
-                        className={`rounded-[16px] px-3 py-1 text-xs ${locationMode === loc ? "bg-[#1A73E8] text-white" : "bg-[#F8F9FA] text-[#3A3A3C]"}`}
-                      >
-                        {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="mt-2 text-xs text-[#8E8E93]">Popular: Remote, New York, London, San Francisco</p>
-                </div>
-              </details>
-
-              <details data-filter-dropdown="true" className="relative shrink-0">
-                <summary className={dateWindow !== "any" ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS}>
-                  Date posted <ChevronDown className="h-4 w-4" />
-                </summary>
-                <div data-filter-menu="true" className="absolute left-0 top-11 z-20 w-48 rounded-xl border border-[#DADCE0] bg-white p-2 shadow-lg">
-                  {DATE_OPTIONS.map((d) => (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() => {
-                        setDateWindow(d.id);
+            <details data-filter-dropdown="true" className="relative shrink-0">
+              <summary className={cn("filter-dropdown-btn", jobTypes.size > 0 && "active")}>
+                {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"}
+                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              </summary>
+              <div data-filter-menu="true" className="filter-menu w-52">
+                {JOB_TYPE_OPTIONS.map((type) => (
+                  <label key={type} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={jobTypes.has(type)}
+                      onChange={() => {
+                        setJobTypes((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(type)) next.delete(type);
+                          else next.add(type);
+                          return next;
+                        });
                         setCurrentPage(1);
                       }}
-                      className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-sm hover:bg-[#F8F9FA]"
+                    />
+                    {type}
+                  </label>
+                ))}
+              </div>
+            </details>
+
+            <details data-filter-dropdown="true" className="relative shrink-0">
+              <summary
+                className={cn(
+                  "filter-dropdown-btn",
+                  (locationMode !== "any" || locationQuery.trim()) && "active",
+                )}
+              >
+                Location
+                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              </summary>
+              <div data-filter-menu="true" className="filter-menu filter-menu--wide">
+                <input
+                  value={locationQuery}
+                  onChange={(e) => {
+                    setLocationQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="Country or city"
+                  className="mb-2 h-9 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-700 outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+                />
+                <div className="flex flex-wrap gap-2">
+                  {["any", "remote", "hybrid", "onsite"].map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => {
+                        setLocationMode(loc as "any" | "remote" | "hybrid" | "onsite");
+                        setCurrentPage(1);
+                      }}
+                      className={cn(
+                        "filter-location-pill",
+                        locationMode === loc && "active",
+                      )}
                     >
-                      {d.label}
-                      {dateWindow === d.id ? <Check className="h-4 w-4 text-[#1A73E8]" /> : null}
+                      {loc === "any" ? "Any" : loc === "onsite" ? "On-site" : loc[0].toUpperCase() + loc.slice(1)}
                     </button>
                   ))}
                 </div>
-              </details>
+              </div>
+            </details>
 
-              <button
-                type="button"
-                onClick={() => setIsMoreFiltersOpen(true)}
-                className={`${advancedFilterCount > 0 ? FILTER_TRIGGER_ACTIVE_CLASS : FILTER_TRIGGER_INACTIVE_CLASS} shrink-0`}
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                Advanced
-                {advancedFilterCount > 0 ? ` · ${advancedFilterCount}` : ""}
-              </button>
-            </div>
+            <details data-filter-dropdown="true" className="relative shrink-0">
+              <summary className={cn("filter-dropdown-btn", dateWindow !== "any" && "active")}>
+                Date posted
+                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              </summary>
+              <div data-filter-menu="true" className="filter-menu w-48">
+                {DATE_OPTIONS.map((d) => (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => {
+                      setDateWindow(d.id);
+                      setCurrentPage(1);
+                    }}
+                    className={cn(
+                      "results-bar__sort-option",
+                      dateWindow === d.id && "active",
+                    )}
+                  >
+                    {d.label}
+                    {dateWindow === d.id ? <Check className="h-3.5 w-3.5" aria-hidden /> : null}
+                  </button>
+                ))}
+              </div>
+            </details>
+
+            <button
+              type="button"
+              onClick={() => setIsMoreFiltersOpen(true)}
+              className={cn("filter-dropdown-btn", advancedFilterCount > 0 && "active")}
+            >
+              Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}
+              <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            </button>
           </section>
 
+          {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
+            <p className="-mx-4 hidden border-b border-slate-50 px-5 py-2 text-xs text-slate-400 sm:-mx-6 md:block md:-mx-8">
+              No results for &quot;{query.trim()}&quot;.
+            </p>
+          ) : null}
+
           {hasActiveFilters ? (
-            <div className="flex flex-wrap items-center gap-2 border-b border-[#F9FAFB] px-5 py-2">
-              <span className="text-xs text-[#8E8E93]">Active filters:</span>
+            <div className="filter-tags-bar -mx-4 sm:-mx-6 md:-mx-8">
               {activeFilterChips.map((chip) => (
-                <span key={chip.key} className="inline-flex items-center gap-1 rounded-2xl bg-[#E8F0FE] px-2 py-1 pl-3 text-xs text-[#1A73E8] transition-all duration-200 wg-chip-enter">
+                <span key={chip.key} className="filter-tag wg-chip-enter">
                   {chip.label}
-                  <button type="button" onClick={() => removeChip(chip.key)} className="text-[#1A73E8] hover:text-[#1557B0]">
-                    <X className="h-4 w-4" />
+                  <button
+                    type="button"
+                    onClick={() => removeChip(chip.key)}
+                    className="filter-tag__remove"
+                    aria-label={`Remove ${chip.label}`}
+                  >
+                    <X className="h-3 w-3" />
                   </button>
                 </span>
               ))}
-              <button type="button" onClick={clearFilters} className="ml-1 text-sm font-medium text-[#D93025]">
-                Clear all filters
+              <button type="button" onClick={clearFilters} className="filter-tags-clear">
+                Clear all
               </button>
             </div>
           ) : null}
@@ -2002,65 +2075,59 @@ export default function RecommendedJobsSection({
         </SheetContent>
       </Sheet>
 
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
-      <div className="jobs-main-content min-w-0">
       {(listingPipeline.length > 0 || isPageLoading || userFiltersActive) ? (
-        <div className="results-header -mx-4 sm:-mx-6 md:-mx-8">
-          <p className="results-header__count truncate" aria-live="polite">
-            <span className="font-medium text-gray-700">{totalMatched.toLocaleString()} jobs found</span>
-            {visibleJobs.length > 0 ? (
-              <>
-                {" "}
-                · {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()}
-              </>
-            ) : null}
-            {" "}
-            · Page {safePage} of {totalPages.toLocaleString()}
+        <div className="results-bar -mx-4 sm:-mx-6 md:-mx-8">
+          <div className="results-bar__meta" aria-live="polite">
+            <span className="results-bar__count">{totalMatched.toLocaleString()} jobs</span>
+            <span aria-hidden>·</span>
+            <details data-filter-dropdown="true" className="relative">
+              <summary className="results-bar__sort">
+                Sorted by {SORT_OPTIONS.find((option) => option.id === sortBy)?.label ?? "Best Match"}
+                <ChevronDown className="h-3 w-3" strokeWidth={2} aria-hidden />
+              </summary>
+              <div data-filter-menu="true" className="results-bar__sort-menu">
+                {SORT_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => setSortBy(option.id)}
+                    className={cn("results-bar__sort-option", sortBy === option.id && "active")}
+                  >
+                    {option.label}
+                    {sortBy === option.id ? <Check className="h-3 w-3" aria-hidden /> : null}
+                  </button>
+                ))}
+              </div>
+            </details>
             {isPageLoading ? (
-              <span className="ml-1.5 inline-flex items-center gap-1">
-                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-              </span>
+              <Loader2 className="h-3 w-3 animate-spin text-slate-400" aria-label="Loading jobs" />
             ) : null}
-          </p>
-          <div className="flex shrink-0 items-center gap-2">
-            <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
-              <Button
-                type="button"
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="icon-sm"
-                onClick={() => setViewMode("list")}
-                aria-label="List view"
-                aria-pressed={viewMode === "list"}
-              >
-                <LayoutList className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="icon-sm"
-                onClick={() => setViewMode("grid")}
-                aria-label="Grid view"
-                aria-pressed={viewMode === "grid"}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-            </div>
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-              <SelectTrigger className="h-8 min-w-[160px] text-xs">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="best">Best Match</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="salary_desc">Salary: High to Low</SelectItem>
-                <SelectItem value="salary_asc">Salary: Low to High</SelectItem>
-                <SelectItem value="company_asc">Company Name A-Z</SelectItem>
-              </SelectContent>
-            </Select>
+          </div>
+          <div className="view-toggle" role="group" aria-label="Choose jobs list view">
+            <button
+              type="button"
+              className={cn("view-toggle__btn", viewMode === "list" && "active")}
+              onClick={() => setViewMode("list")}
+              aria-label="List view"
+              aria-pressed={viewMode === "list"}
+            >
+              <LayoutList className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+            <button
+              type="button"
+              className={cn("view-toggle__btn", viewMode === "grid" && "active")}
+              onClick={() => setViewMode("grid")}
+              aria-label="Grid view"
+              aria-pressed={viewMode === "grid"}
+            >
+              <LayoutGrid className="h-4 w-4" strokeWidth={1.75} />
+            </button>
           </div>
         </div>
       ) : null}
 
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="jobs-main-content min-w-0">
       {showSkeleton ? (
         <div className={viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list"}>
           {Array.from({ length: skeletonCount }).map((_, idx) => (
@@ -2112,7 +2179,6 @@ export default function RecommendedJobsSection({
             { label: "AWS", status: "warn" },
             { label: "Docker", status: "miss" },
           ] as const;
-          const applyLabel = applyButtonLabel(job.source, job.source === "linkedin" && canApply);
 
           return (
             <JobCard
@@ -2122,21 +2188,20 @@ export default function RecommendedJobsSection({
                 matchPercent: score,
                 experienceLevel: meta.experienceLevel,
                 primaryJobType: meta.primaryJobType ?? meta.jobTypes[0] ?? null,
-                isEasyApply: job.source === "linkedin" && canApply,
               })}
               index={i}
               saved={isSaved}
               hasResume={hasResume}
               onSave={(id) => {
+                if (!userId) return;
+                const nowSaved = toggleSavedJobId(userId, id);
                 setSavedJobs((prev) => {
                   const next = new Set(prev);
-                  if (next.has(id)) next.delete(id);
-                  else {
-                    next.add(id);
-                    emitNavFeedback("hidden-jobs", "pulse");
-                  }
+                  if (nowSaved) next.add(id);
+                  else next.delete(id);
                   return next;
                 });
+                if (nowSaved) emitNavFeedback("hidden-jobs", "pulse");
               }}
               onClick={() => {
                 if (window.innerWidth < 768) {
@@ -2179,17 +2244,15 @@ export default function RecommendedJobsSection({
                       View company
                     </a>
                   </div>
-                  {canApply ? (
-                    <a
-                      href={applyHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="job-card__apply-btn inline-flex w-full items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-                    >
-                      {applyLabel}
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
+                  {canApply && applyHref ? (
+                    <JobApplyButton
+                      jobId={job.id}
+                      company={job.company}
+                      title={job.title}
+                      applyUrl={applyHref}
+                      source={job.source}
+                      className="w-full justify-center"
+                    />
                   ) : null}
                   <ResumeIntelligenceDialog
                     jobId={job.id}
@@ -2197,7 +2260,7 @@ export default function RecommendedJobsSection({
                     company={job.company}
                     jobDescription={job.description?.trim() || job.matchLabel || job.title}
                     hasResume={hasResume}
-                    triggerClassName="w-full"
+                    triggerClassName="analyze-btn w-full justify-center"
                   />
                 </div>
               ) : null}
@@ -2421,15 +2484,14 @@ export default function RecommendedJobsSection({
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
-                  <a
-                    href={job.applyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="job-card__apply-btn inline-flex w-full items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-                  >
-                    {applyButtonLabel(job.source, job.source === "linkedin" && Boolean(job.applyUrl?.trim()))}
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
+                  <JobApplyButton
+                    jobId={job.id}
+                    company={job.company}
+                    title={job.title}
+                    applyUrl={job.applyUrl}
+                    source={job.source}
+                    className="w-full justify-center"
+                  />
                 ) : null}
                 <ResumeIntelligenceDialog
                   jobId={job.id}
@@ -2437,7 +2499,7 @@ export default function RecommendedJobsSection({
                   company={job.company}
                   jobDescription={job.description?.trim() || job.matchLabel || job.title}
                   hasResume={hasResume}
-                  triggerClassName="w-full"
+                  triggerClassName="analyze-btn w-full justify-center"
                 />
               </div>
             );
@@ -2455,6 +2517,8 @@ export default function RecommendedJobsSection({
           <ArrowUp className="h-5 w-5" />
         </button>
       ) : null}
+
+      <ApplyFollowupPrompt onMarkApplied={markJobApplied} onSaveForLater={saveJobForLater} />
     </section>
   );
 }

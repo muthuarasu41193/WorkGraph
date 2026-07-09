@@ -1,14 +1,14 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Bookmark,
-  Brain,
-  ClipboardList,
+  BookOpen,
   EyeOff,
   FileText,
   LayoutDashboard,
   MessageSquare,
-  Route,
   Search,
+  Send,
+  TrendingUp,
 } from "lucide-react";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 
@@ -77,33 +77,33 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
     items: [
       {
         id: "resume-intelligence",
-        label: "Resume AI",
-        icon: Brain,
+        label: "Resume Intelligence",
+        icon: FileText,
         benefitHint: "Make your resume stand out",
       },
       {
         id: "applications",
         label: "My Applications",
-        icon: ClipboardList,
+        icon: Send,
         benefitHint: "Track your progress",
       },
       {
         id: "workgraph-direct",
         label: "Career Path",
-        icon: Route,
+        icon: TrendingUp,
         benefitHint: "See your growth trajectory",
       },
       {
         id: "interview-vault",
-        label: "Interview Stories",
+        label: "Interview Vault",
         icon: MessageSquare,
         href: "/interview-vault",
         benefitHint: "Learn from real interview experiences",
       },
       {
         id: "vault",
-        label: "Interview Prep",
-        icon: FileText,
+        label: "Prep Materials",
+        icon: BookOpen,
         benefitHint: "Practice and gain confidence",
       },
     ],
