@@ -4,4 +4,4 @@ job_aggregator/.env
 node_modules
 .next
 out
-node_modules
+amazon-label-cropper

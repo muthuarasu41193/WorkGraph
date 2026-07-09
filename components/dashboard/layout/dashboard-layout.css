@@ -8,8 +8,8 @@
   --dash-content-max: 1280px;
   --dash-page-bg: #fafafa;
   --dash-surface: #ffffff;
-  --dash-accent: #b91c1c;
-  --dash-accent-soft: rgba(185, 28, 28, 0.06);
+  --dash-accent: #2563eb;
+  --dash-accent-soft: #eff6ff;
   --dash-border: #ececec;
   --dash-text: #111827;
   --dash-text-secondary: #6b7280;
@@ -22,8 +22,8 @@
 [data-theme="dark"] .wg-dash-root {
   --dash-page-bg: #0b1120;
   --dash-surface: #0f172a;
-  --dash-accent: #f87171;
-  --dash-accent-soft: rgba(248, 113, 113, 0.12);
+  --dash-accent: #3b82f6;
+  --dash-accent-soft: rgb(59 130 246 / 0.12);
 }
 
 .wg-dash-main {

@@ -85,6 +85,100 @@
   color: #1d4ed8;
 }
 
+.wg-nav-item__count {
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+/* ── Nav loading shimmer — calm, not anxious ── */
+
+.wg-nav-item--loading {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.wg-nav-item--loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(239 246 255 / 0.85) 45%,
+    rgb(219 234 254 / 0.9) 55%,
+    transparent 100%
+  );
+  animation: wg-nav-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes wg-nav-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ── Nav success states — brief, hopeful feedback ── */
+
+.wg-nav-item--success-glow {
+  animation: navSuccess 1.5s ease forwards;
+}
+
+@keyframes navSuccess {
+  0% {
+    background: #ecfdf5;
+  }
+  50% {
+    background: #d1fae5;
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.wg-nav-item--success-pulse {
+  animation: wg-nav-pulse-once 0.6s ease forwards;
+}
+
+@keyframes wg-nav-pulse-once {
+  0% {
+    background: #eff6ff;
+    transform: scale(1);
+  }
+  40% {
+    background: #dbeafe;
+    transform: scale(1.02);
+  }
+  100% {
+    background: transparent;
+    transform: scale(1);
+  }
+}
+
+.wg-nav-item__success-check {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: #10b981;
+  animation: wg-check-fade-in 200ms ease forwards;
+}
+
+@keyframes wg-check-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .wg-section-label {
   padding: 16px 12px 4px;
   font-size: 10px;
@@ -119,7 +213,8 @@
   top: 50%;
   z-index: 60;
   transform: translateY(-50%);
-  white-space: nowrap;
+  max-width: 220px;
+  white-space: normal;
   border-radius: 8px;
   background: #111827;
   padding: 6px 10px;
@@ -172,7 +267,7 @@
 }
 
 .wg-intel-header--active {
-  background: #f8fafc;
+  background: #eff6ff;
 }
 
 .wg-intel-header__icon {
@@ -183,7 +278,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: #f1f5f9;
+  background: #eff6ff;
 }
 
 .wg-nav-item__unvisited {

@@ -21,9 +21,14 @@ import { cn } from "@/lib/utils";
 const HELP_URL = "mailto:support@workgraph.app?subject=WorkGraph%20Help%20%26%20Support";
 const CMDK_HINT_DAYS = 7;
 
+import NavBenefitTooltip from "./NavBenefitTooltip";
+
+const PROFILE_HINT = "Strengthen your presence";
+
 type Props = {
   collapsed?: boolean;
   onNavigate?: () => void;
+  profileSuccess?: boolean;
 };
 
 function getInitials(fullName: string | null): string {
@@ -68,6 +73,7 @@ function UtilityButton({
 export default function SidebarBottom({
   collapsed = false,
   onNavigate,
+  profileSuccess = false,
 }: Props) {
   const { profile } = useDashboardContext();
   const { navigate } = useDashboardNavigation();
@@ -109,7 +115,7 @@ export default function SidebarBottom({
       <DropdownMenuItem onClick={goSettings}>Account Settings</DropdownMenuItem>
       <DropdownMenuItem onClick={goSettings}>Billing</DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={handleSignOut} className="text-red-500 focus:text-red-500">
+      <DropdownMenuItem onClick={handleSignOut} className="text-slate-600 focus:text-slate-800">
         Sign Out
       </DropdownMenuItem>
     </DropdownMenuContent>
@@ -125,10 +131,19 @@ export default function SidebarBottom({
           {getInitials(profile.full_name)}
         </AvatarFallback>
       </Avatar>
-      <span
-        className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"
-        aria-hidden
-      />
+      {profileSuccess ? (
+        <span
+          className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50 text-[10px] font-semibold text-emerald-600 ring-2 ring-white"
+          aria-label="Profile updated"
+        >
+          ✓
+        </span>
+      ) : (
+        <span
+          className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"
+          aria-hidden
+        />
+      )}
     </span>
   );
 
@@ -167,18 +182,20 @@ export default function SidebarBottom({
   if (collapsed) {
     return (
       <div className="sidebar-bottom px-2 pb-2 pt-3">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="mx-auto flex rounded-full outline-none transition-colors duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-blue-500/40"
-              aria-label="Account menu"
-            >
-              {avatarNode}
-            </button>
-          </DropdownMenuTrigger>
-          {userMenu}
-        </DropdownMenu>
+        <NavBenefitTooltip hint={PROFILE_HINT}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="mx-auto flex rounded-full outline-none transition-colors duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                aria-label="Profile — Strengthen your presence"
+              >
+                {avatarNode}
+              </button>
+            </DropdownMenuTrigger>
+            {userMenu}
+          </DropdownMenu>
+        </NavBenefitTooltip>
         <div className="mt-2">{utilityRow}</div>
       </div>
     );
@@ -186,25 +203,28 @@ export default function SidebarBottom({
 
   return (
     <div className="sidebar-bottom px-3 pb-3 pt-3">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            className="group/user -mx-2 flex w-[calc(100%+16px)] items-center gap-2.5 rounded-lg p-2 text-left transition-colors duration-150 hover:bg-gray-50"
-          >
-            {avatarNode}
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium text-gray-800">{displayName}</span>
-              <span className="block truncate text-xs text-gray-400">{roleLabel}</span>
-            </span>
-            <MoreHorizontal
-              className="h-4 w-4 shrink-0 text-gray-400 opacity-0 transition-opacity duration-150 group-hover/user:opacity-100"
-              aria-hidden
-            />
-          </button>
-        </DropdownMenuTrigger>
-        {userMenu}
-      </DropdownMenu>
+      <NavBenefitTooltip hint={PROFILE_HINT}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="group/user -mx-2 flex w-[calc(100%+16px)] items-center gap-2.5 rounded-lg p-2 text-left transition-colors duration-150 hover:bg-slate-50"
+              aria-label="Profile — Strengthen your presence"
+            >
+              {avatarNode}
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium text-slate-800">Profile</span>
+                <span className="block truncate text-xs text-slate-400">{roleLabel}</span>
+              </span>
+              <MoreHorizontal
+                className="h-4 w-4 shrink-0 text-slate-400 opacity-0 transition-opacity duration-150 group-hover/user:opacity-100"
+                aria-hidden
+              />
+            </button>
+          </DropdownMenuTrigger>
+          {userMenu}
+        </DropdownMenu>
+      </NavBenefitTooltip>
 
       <div className="mt-2">{utilityRow}</div>
 

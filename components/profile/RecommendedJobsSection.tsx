@@ -69,6 +69,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { emitNavFeedback } from "@/lib/nav-feedback-events";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
 
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
@@ -2223,7 +2224,10 @@ export default function RecommendedJobsSection({
                       setSavedJobs((prev) => {
                         const next = new Set(prev);
                         if (next.has(job.id)) next.delete(job.id);
-                        else next.add(job.id);
+                        else {
+                          next.add(job.id);
+                          emitNavFeedback("hidden-jobs", "pulse");
+                        }
                         return next;
                       });
                     }}
@@ -2267,7 +2271,10 @@ export default function RecommendedJobsSection({
                       href={applyHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        emitNavFeedback("applications", "glow");
+                      }}
                       className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-5 text-sm font-medium text-white transition hover:scale-[1.02] hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
                     >
                       <Zap className="h-4 w-4" />

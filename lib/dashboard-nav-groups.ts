@@ -18,7 +18,7 @@ export type NavItem = {
   icon: LucideIcon;
   href?: string;
   description?: string;
-  /** Micro-copy shown on hover — reduces anxiety, builds excitement */
+  /** Supportive micro-copy on hover — coach tone, not corporate */
   benefitHint?: string;
 };
 
@@ -46,70 +46,65 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         id: "home",
         label: "Dashboard",
         icon: LayoutDashboard,
-        description: "Your career overview and momentum",
+        benefitHint: "Your job search overview",
       },
       {
         id: "jobs",
-        label: "Job Discovery",
+        label: "Find Jobs",
         icon: Search,
-        description: "Browse roles matched to your profile",
+        benefitHint: "Browse 19,000+ live opportunities",
       },
       {
         id: "hidden-jobs",
         label: "Saved Jobs",
         icon: Bookmark,
-        description: "Roles you saved for later",
+        benefitHint: "Jobs you're excited about",
       },
       {
         id: "job-discovery",
-        label: "Hidden Jobs",
+        label: "Unlisted Jobs",
         icon: EyeOff,
-        description: "Opportunities outside traditional job boards",
+        benefitHint: "Exclusive unadvertised roles",
       },
     ],
   },
   {
     id: "intelligence",
-    label: "Career Intelligence",
-    subtitle: "5 AI-powered tools",
+    label: "AI Tools",
+    subtitle: "AI-powered tools",
     collapsible: true,
     defaultCollapsedForNewUsers: true,
     items: [
       {
         id: "resume-intelligence",
-        label: "Resume Intelligence",
+        label: "Resume AI",
         icon: Brain,
-        description: "AI-powered resume analysis",
-        benefitHint: "Get 3x more callbacks",
+        benefitHint: "Make your resume stand out",
       },
       {
         id: "applications",
-        label: "Application Intelligence",
+        label: "My Applications",
         icon: ClipboardList,
-        description: "Track your application pipeline",
-        benefitHint: "Never lose track of an application",
+        benefitHint: "Track your progress",
       },
       {
         id: "workgraph-direct",
         label: "Career Path",
         icon: Route,
-        description: "AI insights for your next move",
-        benefitHint: "See your next best career move",
+        benefitHint: "See your growth trajectory",
       },
       {
         id: "interview-vault",
-        label: "Interview Vault",
+        label: "Interview Stories",
         icon: MessageSquare,
         href: "/interview-vault",
-        description: "Real interview experiences from the community",
-        benefitHint: "200+ practice questions",
+        benefitHint: "Learn from real interview experiences",
       },
       {
         id: "vault",
-        label: "Prep Materials",
+        label: "Interview Prep",
         icon: FileText,
-        description: "Your personal interview prep notes",
-        benefitHint: "Keep all your prep in one place",
+        benefitHint: "Practice and gain confidence",
       },
     ],
   },

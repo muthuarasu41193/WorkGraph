@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "services/worker",
-    "job_aggregator"
+    "job_aggregator",
+    "amazon-label-cropper"
   ]
 }

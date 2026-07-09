@@ -2,16 +2,19 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/dashboard-nav-groups";
+import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 import { dashboardHref } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
-import { useSavedJobsBadge } from "@/hooks/use-saved-jobs-badge";
+import { useNavFeedbackListener } from "@/hooks/use-nav-feedback-listener";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
+import { useNavUiStore } from "@/stores/nav-ui-store";
 import CareerIntelligenceSection from "./CareerIntelligenceSection";
 import JobSearchWellbeingCard from "./JobSearchWellbeingCard";
 import SidebarBottom from "./SidebarBottom";
@@ -26,6 +29,19 @@ type Props = {
   onNavigate?: () => void;
 };
 
+const FEEDBACK_ROUTE_IDS: Partial<Record<DashboardRouteId | string, NavFeedbackRoute>> = {
+  applications: "applications",
+  "hidden-jobs": "hidden-jobs",
+};
+
+function resolveSuccessKind(
+  itemId: string,
+  successState: Partial<Record<NavFeedbackRoute, NavFeedbackKind>>,
+): NavFeedbackKind | null {
+  const route = FEEDBACK_ROUTE_IDS[itemId];
+  return route ? (successState[route] ?? null) : null;
+}
+
 export default function SideNav({
   collapsed = false,
   onToggleCollapse,
@@ -35,11 +51,16 @@ export default function SideNav({
   const { activeRoute, navigate } = useDashboardNavigation();
   const { profile, recommendedJobs, semanticJobMatches, jobPipeline, userId } = useDashboardContext();
   const router = useRouter();
+  const pendingRoute = useNavUiStore((s) => s.pendingRoute);
+  const setPendingRoute = useNavUiStore((s) => s.setPendingRoute);
+  const successState = useNavUiStore((s) => s.successState);
+
+  useNavFeedbackListener();
 
   const completion = Math.min(100, Math.max(0, profile.profile_completeness));
 
   const matchCount = semanticJobMatches?.length ?? recommendedJobs.length;
-  const savedJobsBadge = useSavedJobsBadge(matchCount, activeRoute);
+  const savedJobsCount = jobPipeline.saved > 0 ? jobPipeline.saved : null;
   const { activity, message, visible: showWellbeing, hasActivity } = useWeeklyJobActivity({
     userId,
     jobPipeline,
@@ -47,7 +68,16 @@ export default function SideNav({
     activeRoute,
   });
 
+  useEffect(() => {
+    if (pendingRoute && pendingRoute === activeRoute) {
+      setPendingRoute(null);
+    }
+  }, [activeRoute, pendingRoute, setPendingRoute]);
+
   function handleNavClick(id: string, href?: string) {
+    if (!href) {
+      setPendingRoute(id);
+    }
     if (href) {
       router.push(href);
     } else {
@@ -61,14 +91,13 @@ export default function SideNav({
     return activeRoute === id;
   }
 
-  function getItemBadge(item: NavItem): string | null {
-    if (item.id === "hidden-jobs") return savedJobsBadge;
+  function getItemCount(item: NavItem): number | null {
+    if (item.id === "hidden-jobs") return savedJobsCount;
     return null;
   }
 
   function renderNavItem(item: NavItem) {
     const active = isActive(item.id);
-    const badge = getItemBadge(item);
     const prefetchHiddenJobs = () => {
       if (item.id === "job-discovery") {
         void fetch("/api/hidden-jobs?sort=relevant", { priority: "low" } as RequestInit);
@@ -80,7 +109,10 @@ export default function SideNav({
       icon: item.icon,
       active,
       collapsed,
-      badge,
+      countSuffix: getItemCount(item),
+      benefitHint: item.benefitHint,
+      loading: pendingRoute === item.id && !active,
+      successKind: resolveSuccessKind(item.id, successState),
       onMouseEnter: prefetchHiddenJobs,
     };
 
@@ -90,7 +122,10 @@ export default function SideNav({
           <SideNavItem
             href={item.href}
             {...common}
-            onClick={() => onNavigate?.()}
+            onClick={() => {
+              setPendingRoute(item.id);
+              onNavigate?.();
+            }}
           />
         </li>
       );
@@ -116,6 +151,8 @@ export default function SideNav({
           collapsed={collapsed}
           profileCompleteness={completion}
           appliedCount={jobPipeline.applied}
+          pendingRoute={pendingRoute}
+          successState={successState}
           onNavigate={onNavigate}
           onNavClick={handleNavClick}
         />
@@ -180,7 +217,7 @@ export default function SideNav({
             type="button"
             variant="ghost"
             size="sm"
-            className="w-full justify-center text-gray-400 hover:text-gray-600"
+            className="w-full justify-center text-slate-400 hover:text-slate-600"
             onClick={onToggleCollapse}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -192,6 +229,7 @@ export default function SideNav({
       <SidebarBottom
         collapsed={collapsed}
         onNavigate={onNavigate}
+        profileSuccess={successState.profile === "check"}
       />
     </aside>
   );

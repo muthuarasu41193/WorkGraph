@@ -27,6 +27,7 @@ import {
   type ApplicationStatus,
 } from "@/lib/applications";
 import { toast } from "@/hooks/use-toast";
+import { emitNavFeedback } from "@/lib/nav-feedback-events";
 
 type Props = {
   open: boolean;
@@ -79,6 +80,7 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
         notes: notes.trim() || null,
       });
       toast({ title: "Application added", description: `${company} · ${role}`, variant: "success" });
+      emitNavFeedback("applications", "glow");
       resetForm();
       onOpenChange(false);
     } catch (err) {

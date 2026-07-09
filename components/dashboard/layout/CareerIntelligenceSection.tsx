@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Brain, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NavGroup, NavItem } from "@/lib/dashboard-nav-groups";
+import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
 import {
   getSuggestedIntelligenceRoute,
   isCareerIntelligenceRoute,
@@ -19,7 +20,7 @@ const collapseVariants = {
     height: 0,
     opacity: 0,
     transition: {
-      height: { duration: 0.2, ease: "easeInOut" },
+      height: { duration: 0.2, ease: "easeInOut" as const },
       opacity: { duration: 0.1 },
     },
   },
@@ -27,16 +28,16 @@ const collapseVariants = {
     height: "auto",
     opacity: 1,
     transition: {
-      height: { duration: 0.2, ease: "easeInOut" },
+      height: { duration: 0.2, ease: "easeInOut" as const },
       opacity: { duration: 0.15, delay: 0.05 },
     },
   },
-};
+} satisfies Variants;
 
 const chevronVariants = {
   collapsed: { rotate: 0 },
   expanded: { rotate: 90 },
-};
+} satisfies Variants;
 
 const intelListVariants = {
   hidden: {},
@@ -46,7 +47,7 @@ const intelListVariants = {
       delayChildren: 0.05,
     },
   },
-};
+} satisfies Variants;
 
 const intelItemVariants = {
   hidden: {
@@ -57,9 +58,9 @@ const intelItemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.2, ease: "easeOut" },
+    transition: { duration: 0.2, ease: "easeOut" as const },
   },
-};
+} satisfies Variants;
 
 type Props = {
   group: NavGroup;
@@ -67,6 +68,8 @@ type Props = {
   collapsed: boolean;
   profileCompleteness: number;
   appliedCount: number;
+  pendingRoute: string | null;
+  successState: Partial<Record<NavFeedbackRoute, NavFeedbackKind>>;
   onNavigate?: () => void;
   onNavClick: (id: string, href?: string) => void;
 };
@@ -79,6 +82,8 @@ function renderIntelItem(
     hydrated: boolean;
     suggestedId: ReturnType<typeof getSuggestedIntelligenceRoute>;
     isVisited: (id: string) => boolean;
+    loading: boolean;
+    successKind: NavFeedbackKind | null;
     onClick: () => void;
   },
 ) {
@@ -90,6 +95,8 @@ function renderIntelItem(
     benefitHint: item.benefitHint,
     unvisited: opts.hydrated && !opts.isVisited(item.id),
     suggested: item.id === opts.suggestedId,
+    loading: opts.loading,
+    successKind: opts.successKind,
     onClick: opts.onClick,
   };
 
@@ -106,6 +113,8 @@ export default function CareerIntelligenceSection({
   collapsed,
   profileCompleteness,
   appliedCount,
+  pendingRoute,
+  successState,
   onNavigate,
   onNavClick,
 }: Props) {
@@ -119,6 +128,11 @@ export default function CareerIntelligenceSection({
   const suggestedId = getSuggestedIntelligenceRoute(profileCompleteness, appliedCount);
   const toolCount = group.items.length;
   const subtitle = group.subtitle ?? `${toolCount} AI-powered tools`;
+
+  function itemSuccessKind(itemId: string): NavFeedbackKind | null {
+    if (itemId === "applications") return successState.applications ?? null;
+    return null;
+  }
 
   useEffect(() => {
     if (isCareerIntelligenceRoute(activeRoute)) {
@@ -154,6 +168,8 @@ export default function CareerIntelligenceSection({
                 hydrated,
                 suggestedId,
                 isVisited,
+                loading: pendingRoute === item.id && !isActive(item.id),
+                successKind: itemSuccessKind(item.id),
                 onClick: () => handleItemClick(item),
               })}
             </li>
@@ -174,17 +190,17 @@ export default function CareerIntelligenceSection({
         aria-expanded={showItems}
       >
         <span className="wg-intel-header__icon" aria-hidden>
-          <Brain className="h-4 w-4 text-gray-600" strokeWidth={1.5} />
+          <Brain className="h-4 w-4 text-slate-500" strokeWidth={1.5} />
         </span>
         <span className="min-w-0 flex-1 text-left">
-          <span className="block text-sm font-medium text-gray-700">Career Intelligence</span>
-          <span className="block text-xs text-gray-400">{subtitle}</span>
+          <span className="block text-sm font-medium text-slate-700">{group.label || "AI Tools"}</span>
+          <span className="block text-xs text-slate-400">{subtitle}</span>
         </span>
         <motion.span
           animate={showItems ? "expanded" : "collapsed"}
           variants={chevronVariants}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="shrink-0 text-gray-400"
+          className="shrink-0 text-slate-400"
           aria-hidden
         >
           <ChevronRight className="h-4 w-4" />
@@ -211,6 +227,8 @@ export default function CareerIntelligenceSection({
                 hydrated,
                 suggestedId,
                 isVisited,
+                loading: pendingRoute === item.id && !isActive(item.id),
+                successKind: itemSuccessKind(item.id),
                 onClick: () => {
                   if (!expanded && isCareerIntelligenceRoute(item.id)) expand();
                   handleItemClick(item);

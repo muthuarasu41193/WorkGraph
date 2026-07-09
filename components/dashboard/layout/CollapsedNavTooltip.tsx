@@ -6,11 +6,12 @@ const TOOLTIP_DELAY_MS = 400;
 
 type Props = {
   label: string;
+  hint?: string;
   enabled?: boolean;
   children: ReactNode;
 };
 
-export default function CollapsedNavTooltip({ label, enabled = true, children }: Props) {
+export default function CollapsedNavTooltip({ label, hint, enabled = true, children }: Props) {
   const [visible, setVisible] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -42,7 +43,14 @@ export default function CollapsedNavTooltip({ label, enabled = true, children }:
       {children}
       {visible ? (
         <span className="wg-nav-tooltip" role="tooltip">
-          {label}
+          {hint ? (
+            <>
+              <span className="block font-medium">{label}</span>
+              <span className="mt-0.5 block text-[11px] font-normal text-slate-300">{hint}</span>
+            </>
+          ) : (
+            label
+          )}
         </span>
       ) : null}
     </div>
