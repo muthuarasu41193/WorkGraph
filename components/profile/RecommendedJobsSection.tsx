@@ -4,34 +4,24 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Building2,
   ArrowUpRight,
   ArrowRight,
-  BadgeCheck,
-  Banknote,
-  Bookmark,
-  BookmarkCheck,
-  CalendarDays,
   Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  GraduationCap,
   ExternalLink,
   LayoutGrid,
   LayoutList,
   LifeBuoy,
   MapPin,
   Loader2,
-  Sparkles,
   SearchX,
   Search,
   SlidersHorizontal,
   Star,
-  Target,
   TriangleAlert,
-  Zap,
   ArrowUp,
   UserSearch,
   X,
@@ -70,7 +60,10 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
+import JobCard from "@/components/design-system/JobCard";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
+import { applyButtonLabel, recommendedJobToCardData } from "@/lib/job-card-data";
+import "@/components/design-system/job-card.css";
 
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 
@@ -432,13 +425,6 @@ function deriveJobMeta(job: RecommendedJobCard): DerivedJobMeta {
   };
 }
 
-function formatSalaryRange(salary: SalaryMeta | null): string {
-  if (!salary) return "Salary not listed";
-  const prefix = CURRENCY_SYMBOLS[salary.currency] ?? `${salary.currency} `;
-  const unit = salary.period === "hour" ? "/hr" : "";
-  return `${prefix}${salary.minK}K - ${prefix}${salary.maxK}K${unit}`;
-}
-
 function parseEnumParam<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
   return value && allowed.includes(value as T) ? (value as T) : fallback;
 }
@@ -595,14 +581,6 @@ function getMatchScore(job: RecommendedJobCard, profile: ProfileMatchInput): num
 
 const MIN_PROFILE_RELEVANCE_SCORE = 8;
 
-function companyInitials(name: string): string {
-  const cleaned = name.trim();
-  if (!cleaned) return "CO";
-  const parts = cleaned.split(/\s+/).filter(Boolean);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
-}
-
 export default function RecommendedJobsSection({
   jobs: initialJobs,
   skillHints,
@@ -700,7 +678,6 @@ export default function RecommendedJobsSection({
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
-  const [bouncingBookmarkId, setBouncingBookmarkId] = useState<string | null>(null);
   /** When true (e.g. "Matched to your profile" dashboard card), hide jobs with no profile overlap. */
   const [showProfileMatchesOnly, setShowProfileMatchesOnly] = useState(false);
   const deferredSearchInput = useDeferredValue(searchInput);
@@ -1402,8 +1379,8 @@ export default function RecommendedJobsSection({
   const ringOffset = ringCircumference - (overallMatch / 100) * ringCircumference;
 
   return (
-    <section id="recommended-jobs" className="scroll-mt-28 space-y-5">
-      <div className="flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
+    <section id="recommended-jobs" className="scroll-mt-28">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Job board</p>
           <h2 className="mt-1 text-[18px] font-semibold text-[#2C2C2E] sm:text-[18px]">
@@ -1427,7 +1404,7 @@ export default function RecommendedJobsSection({
       </div>
 
       {!isLiveFeed && feedDemoHint ? (
-        <div className="flex gap-3 rounded-xl border border-[#DADCE0] bg-[#FEF7E0] p-4 text-sm text-[#3A3A3C] ring-1 ring-[#DADCE0] wg-section-fade" style={{ animationDelay: "100ms" }}>
+        <div className="mb-3 flex gap-3 rounded-xl border border-[#DADCE0] bg-[#FEF7E0] p-4 text-sm text-[#3A3A3C] ring-1 ring-[#DADCE0] wg-section-fade" style={{ animationDelay: "100ms" }}>
           <span className="mt-0.5 shrink-0 text-amber-700">
             <LifeBuoy className="h-5 w-5" aria-hidden />
           </span>
@@ -1449,7 +1426,7 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      <section className="rounded-xl border border-[#DADCE0] bg-white px-6 py-5 lg:hidden">
+      <section className="mb-3 rounded-xl border border-[#DADCE0] bg-white px-6 py-5 lg:hidden">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold text-[#1D1D1F]">Your Match Profile</h3>
@@ -1509,14 +1486,14 @@ export default function RecommendedJobsSection({
       </section>
 
       {fetchError ? (
-        <div className="rounded-xl border border-[#FAD2CF] bg-[#FCE8E6] p-4 text-sm text-[#3A3A3C]">
+        <div className="mb-3 rounded-xl border border-[#FAD2CF] bg-[#FCE8E6] p-4 text-sm text-[#3A3A3C]">
           <p className="font-semibold text-[#C5221F]">Could not load more jobs</p>
           <p className="mt-1 text-[#5F6368]">{fetchError}</p>
         </div>
       ) : null}
 
       {liveListings > 0 ? (
-        <p className="text-sm text-[#5F6368]">
+        <p className="mb-3 text-sm text-[#5F6368]">
           {showProfileMatchesOnly ? (
             <>
               <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs match your
@@ -1536,7 +1513,7 @@ export default function RecommendedJobsSection({
 
       {(initialJobs.length > 0 || isLiveFeed) ? (
         <>
-          <div className="md:hidden">
+          <div className="mb-2 md:hidden">
             <Button
               type="button"
               onClick={() => setIsMobileFiltersOpen(true)}
@@ -1554,7 +1531,7 @@ export default function RecommendedJobsSection({
             </Button>
           </div>
 
-          <section className="sticky top-[68px] z-[100] hidden border-b border-[#DADCE0] bg-[rgba(255,255,255,0.95)] py-3 backdrop-blur-[8px] md:block">
+          <section className="filter-bar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
             <div className="wg-no-scrollbar flex items-center gap-2 overflow-x-auto">
               <div className="relative w-full min-w-[280px] md:w-[280px] md:min-w-[280px]">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8E8E93]" aria-hidden />
@@ -1676,7 +1653,7 @@ export default function RecommendedJobsSection({
           </section>
 
           {hasActiveFilters ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 border-b border-[#F9FAFB] px-5 py-2">
               <span className="text-xs text-[#8E8E93]">Active filters:</span>
               {activeFilterChips.map((chip) => (
                 <span key={chip.key} className="inline-flex items-center gap-1 rounded-2xl bg-[#E8F0FE] px-2 py-1 pl-3 text-xs text-[#1A73E8] transition-all duration-200 wg-chip-enter">
@@ -1691,38 +1668,6 @@ export default function RecommendedJobsSection({
               </button>
             </div>
           ) : null}
-
-          <p className="mt-3 text-sm text-[#3A3A3C]" aria-live="polite">
-            {visibleJobs.length > 0 ? (
-              <>
-                Showing{" "}
-                <span className="font-semibold text-[#1A73E8]">
-                  {rangeStart.toLocaleString()}-{rangeEnd.toLocaleString()}
-                </span>{" "}
-                of <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs
-              </>
-            ) : (
-              <>
-                <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs total
-              </>
-            )}
-            {" "}
-            · Page <span className="font-semibold text-[#1A73E8]">{safePage}</span> of{" "}
-            <span className="text-[#8E8E93]">{totalPages.toLocaleString()}</span>
-            {useServerJobs ? (
-              <span className="text-[#8E8E93]">
-                {" "}
-                · {PAGE_SIZE} per page
-                {needsClientFilterPool ? ` · advanced filters on ${FILTER_POOL_CAP.toLocaleString()} loaded jobs` : ""}
-              </span>
-            ) : null}
-            {isPageLoading ? (
-              <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#8E8E93]">
-                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                Loading page…
-              </span>
-            ) : null}
-          </p>
           <p className="sr-only" aria-live="polite">
             {activeFilterCount === 0 ? "No active filters." : `${activeFilterCount} active filters applied.`}
           </p>
@@ -2057,73 +2002,83 @@ export default function RecommendedJobsSection({
         </SheetContent>
       </Sheet>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
-      <div className="min-w-0">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="jobs-main-content min-w-0">
       {(listingPipeline.length > 0 || isPageLoading || userFiltersActive) ? (
-        <div className="flex items-center justify-between gap-2">
-          <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
-            <Button
-              type="button"
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="icon-sm"
-              onClick={() => setViewMode("list")}
-              aria-label="List view"
-              aria-pressed={viewMode === "list"}
-            >
-              <LayoutList className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant={viewMode === "grid" ? "default" : "ghost"}
-              size="icon-sm"
-              onClick={() => setViewMode("grid")}
-              aria-label="Grid view"
-              aria-pressed={viewMode === "grid"}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </Button>
+        <div className="results-header -mx-4 sm:-mx-6 md:-mx-8">
+          <p className="results-header__count truncate" aria-live="polite">
+            <span className="font-medium text-gray-700">{totalMatched.toLocaleString()} jobs found</span>
+            {visibleJobs.length > 0 ? (
+              <>
+                {" "}
+                · {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()}
+              </>
+            ) : null}
+            {" "}
+            · Page {safePage} of {totalPages.toLocaleString()}
+            {isPageLoading ? (
+              <span className="ml-1.5 inline-flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+              </span>
+            ) : null}
+          </p>
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label="Choose jobs list view">
+              <Button
+                type="button"
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="icon-sm"
+                onClick={() => setViewMode("list")}
+                aria-label="List view"
+                aria-pressed={viewMode === "list"}
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="icon-sm"
+                onClick={() => setViewMode("grid")}
+                aria-label="Grid view"
+                aria-pressed={viewMode === "grid"}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            </div>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+              <SelectTrigger className="h-8 min-w-[160px] text-xs">
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="best">Best Match</SelectItem>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="salary_desc">Salary: High to Low</SelectItem>
+                <SelectItem value="salary_asc">Salary: Low to High</SelectItem>
+                <SelectItem value="company_asc">Company Name A-Z</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-            <SelectTrigger className="min-w-[220px]">
-              <SelectValue placeholder="Sort" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="best">Best Match</SelectItem>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="salary_desc">Salary: High to Low</SelectItem>
-              <SelectItem value="salary_asc">Salary: Low to High</SelectItem>
-              <SelectItem value="company_asc">Company Name A-Z</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       ) : null}
 
       {showSkeleton ? (
-        <div className={viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3"}>
+        <div className={viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list"}>
           {Array.from({ length: skeletonCount }).map((_, idx) => (
-            <article key={`skeleton-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-5">
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="flex gap-3">
-                  <div className="h-12 w-12 rounded-lg wg-skeleton-shimmer" />
-                  <div className="space-y-2">
-                    <div className="h-4 w-48 rounded wg-skeleton-shimmer" />
+            <article key={`skeleton-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white">
+              <div className="px-5 pt-[18px]">
+                <div className="flex gap-2.5">
+                  <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3.5 w-48 rounded wg-skeleton-shimmer" />
                     <div className="h-3 w-32 rounded wg-skeleton-shimmer" />
-                    <div className="h-3 w-40 rounded wg-skeleton-shimmer" />
                   </div>
                 </div>
-                <div className="h-6 w-20 rounded-2xl wg-skeleton-shimmer" />
               </div>
-              <div className="mb-3 flex flex-wrap gap-2">
-                <div className="h-6 w-28 rounded-xl wg-skeleton-shimmer" />
-                <div className="h-6 w-24 rounded-xl wg-skeleton-shimmer" />
-                <div className="h-6 w-24 rounded-xl wg-skeleton-shimmer" />
+              <div className="mx-5 my-2.5 border-t border-[#F3F4F6]" />
+              <div className="px-5 pb-4">
+                <div className="h-3 w-40 rounded wg-skeleton-shimmer" />
+                <div className="mt-2.5 h-7 w-36 rounded-lg wg-skeleton-shimmer" />
               </div>
-              <div className="mb-3 flex gap-2">
-                <div className="h-5 w-16 rounded-xl wg-skeleton-shimmer" />
-                <div className="h-5 w-16 rounded-xl wg-skeleton-shimmer" />
-                <div className="h-5 w-20 rounded-xl wg-skeleton-shimmer" />
-              </div>
-              <div className="h-9 w-36 rounded-[18px] wg-skeleton-shimmer" />
             </article>
           ))}
         </div>
@@ -2142,17 +2097,14 @@ export default function RecommendedJobsSection({
         ) : null}
       <div
         className={cn(
-          viewMode === "grid" ? "grid gap-4 md:grid-cols-2 xl:grid-cols-3" : "space-y-3",
+          viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list",
           showPageLoadingOverlay && "opacity-60 transition-opacity duration-200"
         )}
       >
         {shouldVirtualize ? null : visibleJobs.map(({ job, meta, score }, i) => {
-          const src = SOURCE_STYLES[job.source];
           const applyHref = job.applyUrl?.trim();
           const canApply = Boolean(applyHref);
           const isSaved = savedJobs.has(job.id);
-          const isNew = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000;
-          const isFresh = (new Date().getTime() - new Date(job.postedAtIso || 0).getTime()) < 86400000 * 3;
           const isExpanded = expandedJobId === job.id;
           const reqs = [
             { label: "React", status: "ok" },
@@ -2160,20 +2112,32 @@ export default function RecommendedJobsSection({
             { label: "AWS", status: "warn" },
             { label: "Docker", status: "miss" },
           ] as const;
-          const MatchIcon = score >= 90 ? Target : score >= 75 ? BadgeCheck : Zap;
-          const matchBadge =
-            score >= 90
-              ? { bg: "#E6F4EA", fg: "#1E8E3E", label: `${score}% Match` }
-              : score >= 75
-                ? { bg: "#E8F0FE", fg: "#1A73E8", label: `${score}% Match` }
-                : score >= 60
-                  ? { bg: "#FEF7E0", fg: "#F9AB00", label: `${score}% Match` }
-                  : { bg: "#F8F9FA", fg: "#8E8E93", label: `${score}% Match` };
+          const applyLabel = applyButtonLabel(job.source, job.source === "linkedin" && canApply);
 
           return (
-            <Card
+            <JobCard
               key={job.id}
-              style={{ animationDelay: `${50 * i}ms` }}
+              id={`job-card-${job.id}`}
+              job={recommendedJobToCardData(job, {
+                matchPercent: score,
+                experienceLevel: meta.experienceLevel,
+                primaryJobType: meta.primaryJobType,
+                isEasyApply: job.source === "linkedin" && canApply,
+              })}
+              index={i}
+              saved={isSaved}
+              hasResume={hasResume}
+              onSave={(id) => {
+                setSavedJobs((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(id)) next.delete(id);
+                  else {
+                    next.add(id);
+                    emitNavFeedback("hidden-jobs", "pulse");
+                  }
+                  return next;
+                });
+              }}
               onClick={() => {
                 if (window.innerWidth < 768) {
                   setMobileDetailJobId(job.id);
@@ -2181,145 +2145,39 @@ export default function RecommendedJobsSection({
                   setExpandedJobId((prev) => (prev === job.id ? null : job.id));
                 }
               }}
-              className={cn(
-                "group relative cursor-pointer border-slate-200 shadow-sm transition-all duration-200 hover:border-primary hover:shadow-lg wg-job-card-enter",
-                viewMode === "grid" && "flex min-h-[320px] flex-col"
-              )}
+              onApplyClick={() => emitNavFeedback("applications", "glow")}
+              className={cn(viewMode === "grid" && "flex min-h-0 flex-col")}
             >
-              <CardContent className="p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 gap-3">
-                  <div
-                    className={`${viewMode === "grid" ? "h-10 w-10" : "h-12 w-12"} relative shrink-0 overflow-hidden rounded-[14px] border border-border bg-muted`}
-                    aria-label={`${job.company} logo placeholder`}
-                  >
-                    <Building2 className="absolute left-1.5 top-1.5 h-3.5 w-3.5 text-[#5F6368]" aria-hidden />
-                    <span className="absolute bottom-1 right-1 text-[10px] font-semibold tracking-wide text-[#3A3A3C]">
-                      {companyInitials(job.company)}
-                    </span>
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="line-clamp-2 text-base font-semibold leading-snug text-[#1D1D1F] transition-colors group-hover:text-[#1A73E8]">{job.title}</h3>
-                    <p className="mt-1 text-sm font-medium text-[#3A3A3C]">{job.company}</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-[13px] text-[#8E8E93]">
-                      <MapPin className="h-3 w-3" /> {job.location}
-                      {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="group/score relative inline-flex items-center rounded-2xl px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: matchBadge.bg, color: matchBadge.fg }}>
-                    <MatchIcon className="mr-1 inline h-3.5 w-3.5" />
-                    {matchBadge.label}
-                    <span className="pointer-events-none absolute right-0 top-full z-20 mt-1 hidden w-48 rounded-lg border border-[#DADCE0] bg-white px-2 py-1 text-[11px] font-normal text-[#3A3A3C] shadow-lg group-hover/score:block">
-                      Skills 60% · Experience 20% · Location 20%
-                    </span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setBouncingBookmarkId(job.id);
-                      window.setTimeout(() => setBouncingBookmarkId(null), 250);
-                      setSavedJobs((prev) => {
-                        const next = new Set(prev);
-                        if (next.has(job.id)) next.delete(job.id);
-                        else {
-                          next.add(job.id);
-                          emitNavFeedback("hidden-jobs", "pulse");
-                        }
-                        return next;
-                      });
-                    }}
-                    title="Save job"
-                    className={`rounded-md p-1 text-[#8E8E93] transition hover:bg-[#E8F0FE] hover:text-[#1A73E8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-1 ${bouncingBookmarkId === job.id ? "wg-bookmark-bounce" : ""}`}
-                  >
-                    {isSaved ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><Banknote className="h-3.5 w-3.5" /> {formatSalaryRange(meta.salary)}</span>
-                {meta.experienceLevel ? (
-                  <span className="inline-flex items-center gap-1 rounded-xl border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-1 text-xs text-[#3A3A3C]"><GraduationCap className="h-3.5 w-3.5" /> {meta.experienceLevel}</span>
-                ) : null}
-                <span className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-xs ${isFresh ? "border-[#E6F4EA] bg-[#E6F4EA] text-[#1E8E3E]" : "border-[#DADCE0] bg-[#F8F9FA] text-[#8E8E93]"}`}><CalendarDays className="h-3.5 w-3.5" /> {job.postedAgo}</span>
-                <span className="rounded-xl bg-[#F0F4FF] px-2.5 py-1 text-xs text-[#1A73E8]">via {src.label}</span>
-                {meta.isEasyApply ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#E6F4EA] px-2.5 py-1 text-xs text-[#1E8E3E]"><ArrowUpRight className="h-3.5 w-3.5" /> Easy Apply</span> : null}
-                {isNew ? <span className="inline-flex items-center gap-1 rounded-xl bg-[#FCE8E6] px-2.5 py-1 text-xs text-[#D93025] wg-new-badge-pulse"><Sparkles className="h-3.5 w-3.5" /> New</span> : null}
-              </div>
-
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {job.matchedSkills.slice(0, 3).map((s) => (
-                    <span key={s} className="rounded-xl bg-[#E8F0FE] px-2.5 py-0.5 text-xs text-[#1A73E8]">{s}</span>
-                  ))}
-                  {job.matchedSkills.length > 3 ? <span className="rounded-xl bg-[#E8F0FE] px-2.5 py-0.5 text-xs text-[#1A73E8]">+{job.matchedSkills.length - 3} more</span> : null}
-                  <span className="rounded-xl bg-[#FEF7E0] px-2.5 py-0.5 text-xs text-[#F9AB00]">Missing: AWS, Docker</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ResumeIntelligenceDialog
-                    jobId={job.id}
-                    jobTitle={job.title}
-                    company={job.company}
-                    jobDescription={job.description?.trim() || job.matchLabel || job.title}
-                    hasResume={hasResume}
-                  />
-                  {canApply ? (
-                    <a
-                      href={applyHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        emitNavFeedback("applications", "glow");
-                      }}
-                      className="inline-flex h-9 items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-5 text-sm font-medium text-white transition hover:scale-[1.02] hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
-                    >
-                      <Zap className="h-4 w-4" />
-                      Quick Apply
-                    </a>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpandedJobId((prev) => (prev === job.id ? null : job.id));
-                    }}
-                    className="text-sm font-medium text-[#1A73E8] opacity-0 transition group-hover:opacity-100"
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-
               {isExpanded ? (
-                <div className="mt-4 space-y-3 border-t border-[#DADCE0] pt-4">
-                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-[#3A3A3C]">
+                <div className="space-y-3">
+                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-gray-600">
                     {job.description?.trim() ? job.description : job.matchLabel}
                   </div>
                   <ul className="space-y-1 text-sm">
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
                         {r.status === "ok" ? (
-                          <Check className="h-4 w-4 text-[#1E8E3E]" />
+                          <Check className="h-4 w-4 text-[#16A34A]" />
                         ) : r.status === "warn" ? (
-                          <TriangleAlert className="h-4 w-4 text-[#F9AB00]" />
+                          <TriangleAlert className="h-4 w-4 text-gray-400" />
                         ) : (
-                          <X className="h-4 w-4 text-[#D93025]" />
+                          <X className="h-4 w-4 text-gray-400" />
                         )}
-                        <span className="text-[#3A3A3C]">{r.label}</span>
+                        <span className="text-gray-600">{r.label}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#8E8E93]">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
                     {meta.companySize ? <span>Company size: {meta.companySize}</span> : null}
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
                     {meta.hasVisaSponsorship ? <span>Visa sponsorship available</span> : null}
-                    <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-[#F9AB00]" /> 4.2</span>
-                    <a href="#" onClick={(e) => e.preventDefault()} className="text-[#1A73E8]">View company</a>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Star className="h-3.5 w-3.5 text-gray-400" /> 4.2
+                    </span>
+                    <a href="#" onClick={(e) => e.preventDefault()} className="text-indigo-600">
+                      View company
+                    </a>
                   </div>
                   {canApply ? (
                     <a
@@ -2327,10 +2185,10 @@ export default function RecommendedJobsSection({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                      className="job-card__apply-btn inline-flex w-full items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                     >
-                      <ExternalLink className="h-4 w-4" />
-                      Apply Now
+                      {applyLabel}
+                      <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                   ) : null}
                   <ResumeIntelligenceDialog
@@ -2343,23 +2201,7 @@ export default function RecommendedJobsSection({
                   />
                 </div>
               ) : null}
-
-              {viewMode === "grid" ? (
-                <div className="mt-auto pt-4">
-                  <div className="mb-3 border-t border-[#DADCE0]" />
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#8E8E93]">Posted {job.postedAgo}</span>
-                    {canApply ? (
-                      <a href={applyHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-3 py-1.5 text-xs font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        Apply
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-              </CardContent>
-            </Card>
+            </JobCard>
           );
         })
         }
@@ -2513,7 +2355,7 @@ export default function RecommendedJobsSection({
       ) : null}
       </div>
 
-      <aside className="hidden space-y-4 lg:sticky lg:top-[132px] lg:block">
+      <aside className="hidden space-y-3 lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
         <section className="rounded-xl border border-[#DADCE0] bg-white px-4 py-4">
           <h3 className="text-base font-semibold text-[#1D1D1F]">Your Match Profile</h3>
           <p className="mt-1 text-xs text-[#8E8E93]">Based on your profile and preferences</p>
@@ -2542,7 +2384,7 @@ export default function RecommendedJobsSection({
       </aside>
       </div>
 
-      <p className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs leading-relaxed text-foreground/80">
+      <p className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-center text-xs leading-relaxed text-foreground/80">
         Ingest jobs with{" "}
         <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px] text-slate-800">job_aggregator</code> using the
         same <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">DATABASE_URL</code> as Supabase.{" "}
@@ -2579,9 +2421,14 @@ export default function RecommendedJobsSection({
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
-                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#1A73E8] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2">
+                  <a
+                    href={job.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="job-card__apply-btn inline-flex w-full items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                  >
+                    {applyButtonLabel(job.source, job.source === "linkedin" && Boolean(job.applyUrl?.trim()))}
                     <ExternalLink className="h-4 w-4" />
-                    Apply Now
                   </a>
                 ) : null}
                 <ResumeIntelligenceDialog

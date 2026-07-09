@@ -3,6 +3,7 @@ import { Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/design-system/EmptyState";
 import JobCard from "@/components/design-system/JobCard";
+import "@/components/design-system/job-card.css";
 import SectionHeader from "@/components/design-system/SectionHeader";
 import { jobCardFromMatch } from "@/lib/job-card-data";
 import type { JobMatchPreviewExt } from "@/lib/home-dashboard";
@@ -39,9 +40,9 @@ export default function HomeJobMatchesSection({
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="job-list">
           {jobs.slice(0, 5).map((job, index) => (
-            <li key={job.id}>
+            <li key={job.id} className="list-none">
               <JobCard job={jobCardFromMatch(job)} index={index} />
             </li>
           ))}

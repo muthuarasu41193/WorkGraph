@@ -1,177 +1,236 @@
 "use client";
 
+import { useState } from "react";
+import { Bookmark, ExternalLink } from "lucide-react";
+import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
 import {
-  Bookmark,
-  Building2,
-  Clock,
-  GitCompare,
-  MapPin,
-  Zap,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import type { JobCardData } from "@/lib/job-card-data";
+  applyButtonLabel,
+  type JobCardData,
+} from "@/lib/job-card-data";
 import { cn } from "@/lib/utils";
+import "./job-card.css";
 
 export type { JobCardData } from "@/lib/job-card-data";
 
 type Props = {
   job: JobCardData;
   index?: number;
-  onSave?: (id: string) => void;
-  onCompare?: (id: string) => void;
+  id?: string;
   saved?: boolean;
+  onSave?: (id: string) => void;
+  onClick?: () => void;
+  onApplyClick?: () => void;
+  hasResume?: boolean;
   className?: string;
+  children?: React.ReactNode;
 };
 
-function CompanyAvatar({ company, logo }: { company: string; logo?: string }) {
-  if (logo) {
+function companyInitials(name: string): string {
+  const cleaned = name.trim();
+  if (!cleaned) return "CO";
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+}
+
+function matchPillClass(percent: number): string {
+  if (percent > 80) return "bg-[#F0FDF4] text-[#16A34A]";
+  if (percent >= 60) return "bg-[#EFF6FF] text-[#2563EB]";
+  return "bg-[#F9FAFB] text-[#6B7280]";
+}
+
+function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (logoUrl && !failed) {
     return (
       <img
-        src={logo}
+        src={logoUrl}
         alt=""
-        className="h-10 w-10 rounded-xl object-cover ring-1 ring-[var(--dash-border)]"
+        className="h-10 w-10 shrink-0 rounded-[10px] border border-[#F1F5F9] object-cover"
+        onError={() => setFailed(true)}
       />
     );
   }
+
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-[var(--dash-text-secondary)] ring-1 ring-[var(--dash-border)]">
-      {company.charAt(0).toUpperCase()}
+    <span
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#F1F5F9] bg-gray-100 text-xs font-medium text-gray-500"
+      aria-hidden
+    >
+      {companyInitials(company)}
     </span>
   );
 }
 
-function matchColor(percent: number) {
-  if (percent >= 80) return "text-emerald-600 bg-emerald-50";
-  if (percent >= 60) return "text-[var(--dash-accent)] bg-[var(--dash-accent-soft)]";
-  return "text-amber-600 bg-amber-50";
+function MetaSeparator() {
+  return <span className="text-gray-300" aria-hidden> · </span>;
 }
 
 export default function JobCard({
   job,
   index = 0,
-  onSave,
-  onCompare,
+  id,
   saved = false,
+  onSave,
+  onClick,
+  onApplyClick,
+  hasResume = false,
   className,
+  children,
 }: Props) {
+  const applyHref = job.applyUrl?.trim();
+  const canApply = Boolean(applyHref);
+  const applyLabel = applyButtonLabel(job.source, job.isEasyApply);
+
+  const subtitleParts = [job.company, job.location, job.employmentType || job.workMode].filter(Boolean);
+
+  const metaParts: string[] = [];
+  if (job.sourceLabel) metaParts.push(`via ${job.sourceLabel}`);
+  if (job.postedAgo) metaParts.push(job.postedAgo);
+  if (job.experience) metaParts.push(job.experience);
+
+  const showSkillGaps = Boolean(job.missingSkills && job.missingSkills.length > 0);
+  const jobDescription = job.description?.trim() || job.title;
+
   return (
     <article
+      id={id}
       style={{ animationDelay: `${index * 40}ms` }}
-      className={cn(
-        "wg-dash-section-card wg-dash-card-lift wg-job-card-enter group overflow-hidden",
-        className,
-      )}
+      onClick={onClick}
+      onKeyDown={
+        onClick
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      className={cn("job-card wg-job-card-enter group", className)}
     >
-      <div className="p-4 sm:p-5">
-        <div className="flex gap-4">
-          <CompanyAvatar company={job.company} logo={job.companyLogo} />
+      {onSave ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onSave(job.id);
+          }}
+          aria-label={saved ? "Remove from saved" : "Save job"}
+          className={cn(
+            "job-card__bookmark absolute right-5 top-[18px] rounded-md p-1 text-gray-400 transition-colors hover:text-indigo-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
+            saved && "opacity-100 text-indigo-600",
+          )}
+        >
+          <Bookmark className={cn("h-4 w-4", saved && "fill-current")} />
+        </button>
+      ) : null}
 
-          <div className="min-w-0 flex-1 space-y-2">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-[var(--dash-text-secondary)]">{job.company}</p>
-                <h3 className="mt-0.5 text-sm font-semibold leading-snug text-[var(--dash-text)] sm:text-base">
-                  {job.title}
-                </h3>
-              </div>
-              {job.matchPercent !== undefined ? (
-                <span
-                  className={cn(
-                    "shrink-0 rounded-lg px-2 py-1 text-xs font-semibold tabular-nums",
-                    matchColor(job.matchPercent),
-                  )}
-                >
-                  {job.matchPercent}% match
-                </span>
+      <div className="job-card__header flex items-start gap-2.5 pr-6">
+        <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h3 className="truncate text-[15px] font-semibold leading-tight text-[#111827]">
+                {job.title}
+              </h3>
+              {subtitleParts.length > 0 ? (
+                <p className="mt-0.5 truncate text-[13px] leading-tight text-gray-500">
+                  {subtitleParts.join(" · ")}
+                </p>
               ) : null}
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--dash-text-secondary)]">
-              {job.salaryRange ? <span className="font-medium text-[var(--dash-text)]">{job.salaryRange}</span> : null}
-              <span className="inline-flex items-center gap-1">
-                <MapPin className="h-3 w-3" aria-hidden />
-                {job.location}
+            {job.matchPercent !== undefined ? (
+              <span
+                className={cn(
+                  "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium leading-tight tabular-nums",
+                  matchPillClass(job.matchPercent),
+                )}
+              >
+                {job.matchPercent}% match
               </span>
-              {job.workMode ? (
-                <Badge variant="secondary" className="h-5 rounded-md px-1.5 text-[10px] font-medium">
-                  {job.workMode}
-                </Badge>
-              ) : null}
-              {job.experience ? <span>{job.experience}</span> : null}
-              {job.employmentType ? <span>{job.employmentType}</span> : null}
-              {job.postedAgo ? (
-                <span className="inline-flex items-center gap-1">
-                  <Clock className="h-3 w-3" aria-hidden />
-                  {job.postedAgo}
-                </span>
-              ) : null}
-            </div>
-
-            {job.matchedSkills && job.matchedSkills.length > 0 ? (
-              <div className="flex flex-wrap gap-1 pt-1">
-                {job.matchedSkills.slice(0, 4).map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
-                  >
-                    {skill}
-                  </span>
-                ))}
-                {job.missingSkills?.slice(0, 2).map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-[var(--dash-text-secondary)]"
-                  >
-                    +{skill}
-                  </span>
-                ))}
-              </div>
             ) : null}
           </div>
         </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--dash-border)] pt-4">
-          {job.applyUrl ? (
-            <Button asChild size="sm" className="wg-dash-compact-btn">
-              <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
-                <Zap className="h-3.5 w-3.5" />
-                Apply
-              </a>
-            </Button>
-          ) : (
-            <Button size="sm" variant="outline" className="wg-dash-compact-btn" disabled>
-              <Building2 className="h-3.5 w-3.5" />
-              View details
-            </Button>
-          )}
-          {onSave ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              className="wg-dash-compact-btn"
-              onClick={() => onSave(job.id)}
-              aria-label={saved ? "Remove from saved" : "Save job"}
-            >
-              <Bookmark className={cn("h-3.5 w-3.5", saved && "fill-current text-[var(--dash-accent)]")} />
-              {saved ? "Saved" : "Save"}
-            </Button>
-          ) : null}
-          {onCompare ? (
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              className="wg-dash-compact-btn ml-auto"
-              onClick={() => onCompare(job.id)}
-            >
-              <GitCompare className="h-3.5 w-3.5" />
-              Compare
-            </Button>
-          ) : null}
-        </div>
       </div>
+
+      <hr className="job-card__divider" />
+
+      {metaParts.length > 0 ? (
+        <p className="job-card__meta">
+          {metaParts.map((part, i) => (
+            <span key={part}>
+              {i > 0 ? <MetaSeparator /> : null}
+              {i === 0 && job.sourceLabel ? (
+                <span className="font-medium text-gray-600">{part}</span>
+              ) : (
+                part
+              )}
+            </span>
+          ))}
+        </p>
+      ) : null}
+
+      {showSkillGaps ? (
+        <div className="job-card__skill-gaps">
+          <p className="text-[11px] leading-tight text-gray-400">Skill gaps</p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {job.missingSkills!.map((skill) => (
+              <span
+                key={skill}
+                className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[11px] leading-tight text-gray-500"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div
+        className={cn(
+          "job-card__footer flex flex-wrap items-center gap-2",
+          hasResume && canApply ? "justify-between" : "justify-end",
+        )}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
+      >
+        {hasResume ? (
+          <ResumeIntelligenceDialog
+            jobId={job.id}
+            jobTitle={job.title}
+            company={job.company}
+            jobDescription={jobDescription}
+            hasResume={hasResume}
+            variant="ghost"
+            size="sm"
+            triggerClassName="!min-h-0 h-auto gap-1 px-0 py-0 text-[13px] font-normal leading-tight text-gray-500 shadow-none hover:bg-transparent hover:text-indigo-600"
+          />
+        ) : null}
+
+        {canApply ? (
+          <a
+            href={applyHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => {
+              event.stopPropagation();
+              onApplyClick?.();
+            }}
+            className="job-card__apply-btn inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+          >
+            {applyLabel}
+            <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          </a>
+        ) : null}
+      </div>
+
+      {children ? <div className="job-card__expanded">{children}</div> : null}
     </article>
   );
 }
