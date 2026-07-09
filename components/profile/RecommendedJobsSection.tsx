@@ -21,6 +21,7 @@ import {
   Star,
   TriangleAlert,
   ArrowUp,
+  Bell,
   UserSearch,
   X,
 } from "lucide-react";
@@ -66,6 +67,7 @@ import { recommendedJobToCardData } from "@/lib/job-card-data";
 import { readSavedJobIds, saveJobId, toggleSavedJobId } from "@/lib/saved-jobs-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import "@/components/design-system/job-card.css";
+import "@/components/profile/right-sidebar.css";
 
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 
@@ -1433,7 +1435,13 @@ export default function RecommendedJobsSection({
     { label: "Salary", score: 78, color: "#1A73E8", detail: "$120K-$180K range" },
     { label: "Industry", score: 85, color: "#1E8E3E", detail: "Tech, SaaS, FinTech" },
   ];
+  const jobAlerts = [
+    { title: "Senior React Engineer", frequency: "Daily digest", active: true },
+    { title: "Remote TypeScript", frequency: "Weekly", active: false },
+  ];
   const overallMatch = Math.round(matchBreakdown.reduce((acc, item) => acc + item.score, 0) / matchBreakdown.length);
+  const overallMatchLabel =
+    overallMatch >= 90 ? "Excellent Match" : overallMatch >= 80 ? "Strong Match" : overallMatch >= 65 ? "Good Match" : "Fair Match";
   const ringRadius = 34;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const ringOffset = ringCircumference - (overallMatch / 100) * ringCircumference;
@@ -2126,7 +2134,7 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
       <div className="jobs-main-content min-w-0">
       {showSkeleton ? (
         <div className={viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list"}>
@@ -2418,31 +2426,45 @@ export default function RecommendedJobsSection({
       ) : null}
       </div>
 
-      <aside className="hidden space-y-3 lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
-        <section className="rounded-xl border border-[#DADCE0] bg-white px-4 py-4">
-          <h3 className="text-base font-semibold text-[#1D1D1F]">Your Match Profile</h3>
-          <p className="mt-1 text-xs text-[#8E8E93]">Based on your profile and preferences</p>
-          <div className="mt-3 space-y-2">
-            {matchBreakdown.map((item) => (
-              <div key={`side-${item.label}`}>
-                <div className="mb-1 flex items-center justify-between text-xs text-[#3A3A3C]">
-                  <span>{item.label}</span>
-                  <span>{item.score}%</span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[#E8F0FE]">
-                  <div className="h-full rounded-full" style={{ width: `${item.score}%`, backgroundColor: item.color }} />
+      <aside className="right-sidebar hidden lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
+        <section className="sidebar-card">
+          <h3 className="card-title">Your Profile Match</h3>
+          {matchBreakdown.map((item) => (
+            <div key={`side-${item.label}`} className="match-bar-container">
+              <div className="match-label-row">
+                <span>{item.label}</span>
+                <span>{item.score}%</span>
+              </div>
+              <div className="match-bar-track">
+                <div className="match-bar-fill" style={{ width: `${item.score}%` }} />
+              </div>
+            </div>
+          ))}
+          <p className="match-overall">Overall: {overallMatchLabel}</p>
+        </section>
+
+        <section className="sidebar-card">
+          <h3 className="card-title">Job Alerts</h3>
+          {jobAlerts.map((alert) => (
+            <div key={alert.title} className="alert-row">
+              <span className="alert-icon" aria-hidden>
+                <Bell />
+              </span>
+              <div className="alert-body">
+                <p className="alert-title">{alert.title}</p>
+                <div className="alert-meta">
+                  <span>{alert.frequency}</span>
+                  <span aria-hidden>·</span>
+                  <span className="alert-toggle" data-active={alert.active ? "true" : "false"}>
+                    ●──
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-        <section className="rounded-xl border border-[#DADCE0] bg-white px-4 py-4">
-          <h3 className="text-sm font-semibold text-[#1D1D1F]">Job Alerts</h3>
-          <p className="mt-1 text-xs text-[#8E8E93]">Active Alerts</p>
-          <div className="mt-3 space-y-2 text-xs">
-            <div className="rounded-lg bg-[#F8F9FA] px-3 py-2 text-[#3A3A3C]">Senior React Engineer - Daily digest</div>
-            <div className="rounded-lg bg-[#F8F9FA] px-3 py-2 text-[#3A3A3C]">Remote TypeScript Roles - Weekly</div>
-          </div>
+            </div>
+          ))}
+          <button type="button" className="create-alert-btn">
+            + Create alert
+          </button>
         </section>
       </aside>
       </div>
