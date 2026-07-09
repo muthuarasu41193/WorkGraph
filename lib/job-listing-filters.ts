@@ -55,6 +55,12 @@ export type EnrichedJobRow = {
   score: number;
 };
 
+export type JobListingFilterOptions = {
+  profile?: ProfileMatchInput;
+  requireProfileOverlap?: boolean;
+  minProfileScore?: number;
+};
+
 const JOB_TYPE_KEYWORDS: Record<string, string[]> = {
   "Full-time": ["full-time", "full time", "fulltime", "permanent", "salaried", "fte"],
   "Part-time": ["part-time", "part time", "parttime"],
@@ -86,12 +92,58 @@ const REMOTE_RE =
 const HYBRID_RE = /\bhybrid\b|partially remote|flexible location|remote[-\s]?friendly|flexible work/i;
 const ONSITE_RE = /\bon[- ]?site\b|\bin[- ]?office\b|\bin person\b|\bin-person\b/i;
 
+const EXPERIENCE_KEYWORDS: Record<string, string[]> = {
+  "Entry (0-2yr)": ["entry level", "entry-level", "junior", "graduate", "intern", "new grad"],
+  "Mid (2-5yr)": ["mid level", "mid-level", "intermediate", "2-5 year", "3 years"],
+  "Senior (5-8yr)": ["senior", "sr.", "5+ years", "5-8 year"],
+  "Lead (8-12yr)": ["lead", "principal", "staff", "8+ years", "manager"],
+  "Executive (12yr+)": ["executive", "director", "vp", "head of", "chief"],
+};
+
+const COMPANY_SIZE_HINTS: Record<string, string[]> = {
+  "Startup (1-50)": ["startup", "early stage", "seed", "series a"],
+  "Small (51-200)": ["small team", "51-200", "growing team"],
+  "Medium (201-1000)": ["midsize", "mid-size", "201-1000"],
+  "Large (1000+)": ["large company", "1000+"],
+  "Enterprise (10K+)": ["enterprise", "10k+", "global company"],
+};
+
+const INDUSTRY_KEYWORDS: Record<string, string[]> = {
+  Technology: ["software", "engineer", "developer", "saas", "ai", "platform", "data", "cloud"],
+  Finance: ["finance", "fintech", "bank", "payments", "trading", "risk"],
+  Healthcare: ["health", "clinical", "med", "biotech", "hospital", "pharma"],
+  Marketing: ["marketing", "growth", "seo", "brand", "content", "demand gen"],
+  Design: ["design", "ux", "ui", "product design", "figma"],
+  Legal: ["legal", "law", "compliance", "counsel", "contract law"],
+  Education: ["education", "edtech", "curriculum", "teacher", "learning"],
+  Retail: ["retail", "commerce", "ecommerce", "merchant", "shopper"],
+};
+
+const BENEFIT_KEYWORDS: Record<string, string[]> = {
+  Health: ["health insurance", "medical", "dental", "vision"],
+  "401k": ["401k", "retirement plan"],
+  Equity: ["equity", "stock option", "rsu"],
+  "Remote-first": ["remote-first", "distributed team", "remote first"],
+};
+
+function safeString(value: string | null | undefined, fallback = ""): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function safeSkills(job: RecommendedJobCard): string[] {
+  return Array.isArray(job.matchedSkills) ? job.matchedSkills : [];
+}
+
 function jobHaystack(job: RecommendedJobCard): string {
-  return `${job.title} ${job.company} ${job.location} ${job.description} ${job.matchLabel} ${job.matchedSkills.join(" ")}`.toLowerCase();
+  return `${safeString(job.title)} ${safeString(job.company)} ${safeString(job.location)} ${safeString(job.description)} ${safeString(job.matchLabel)} ${safeSkills(job).join(" ")}`.toLowerCase();
 }
 
 function locationBlob(job: RecommendedJobCard): string {
-  return `${job.location} ${job.title} ${job.company}`.toLowerCase();
+  return `${safeString(job.location)} ${safeString(job.title)} ${safeString(job.company)}`.toLowerCase();
+}
+
+function skillBlob(job: RecommendedJobCard): string {
+  return `${safeString(job.title)} ${safeString(job.description)} ${safeSkills(job).join(" ")}`.toLowerCase();
 }
 
 function matchesLocationMode(
@@ -100,7 +152,7 @@ function matchesLocationMode(
   mode: "remote" | "hybrid" | "onsite"
 ): boolean {
   const hay = jobHaystack(job);
-  const loc = job.location.trim().toLowerCase();
+  const loc = safeString(job.location).trim().toLowerCase();
   const locBlob = locationBlob(job);
 
   if (mode === "remote") {
@@ -109,9 +161,11 @@ function matchesLocationMode(
     return meta.locationMode === "remote" || REMOTE_RE.test(hay) || REMOTE_RE.test(loc) || REMOTE_RE.test(locBlob);
   }
   if (mode === "hybrid") {
+    if (REMOTE_FEED_SOURCES.has(job.source)) return false;
     return meta.locationMode === "hybrid" || HYBRID_RE.test(hay) || HYBRID_RE.test(locBlob);
   }
   if (meta.locationMode === "onsite") return true;
+  if (REMOTE_FEED_SOURCES.has(job.source)) return false;
   const hasRemoteSignal = REMOTE_RE.test(hay) || REMOTE_RE.test(loc);
   return (
     ONSITE_RE.test(hay) ||
@@ -122,7 +176,7 @@ function matchesLocationMode(
 function matchesLocationQuery(job: RecommendedJobCard, needle: string): boolean {
   const n = needle.trim().toLowerCase();
   if (!n) return true;
-  const loc = job.location.toLowerCase();
+  const loc = safeString(job.location).toLowerCase();
   if (loc.includes(n)) return true;
   return jobHaystack(job).includes(n);
 }
@@ -130,7 +184,7 @@ function matchesLocationQuery(job: RecommendedJobCard, needle: string): boolean 
 function matchesJobTypes(job: RecommendedJobCard, meta: DerivedJobMeta, selected: Set<string>): boolean {
   if (selected.size === 0) return true;
   const hay = jobHaystack(job);
-  const title = job.title;
+  const title = safeString(job.title);
 
   if (meta.jobTypes.some((type) => selected.has(type))) return true;
 
@@ -139,6 +193,126 @@ function matchesJobTypes(job: RecommendedJobCard, meta: DerivedJobMeta, selected
     if (titleHint?.test(title)) return true;
     return (JOB_TYPE_KEYWORDS[type] ?? [type.toLowerCase()]).some((kw) => hay.includes(kw));
   });
+}
+
+function matchesDateWindow(postedAtIso: string | null, dateWindow: JobListingFilterState["dateWindow"]): boolean {
+  if (dateWindow === "any") return true;
+  if (!postedAtIso) return false;
+  const postedAt = new Date(postedAtIso).getTime();
+  if (Number.isNaN(postedAt)) return false;
+  const days = Number(dateWindow);
+  if (!Number.isFinite(days) || days <= 0) return true;
+  const cutoff = Date.now() - days * 86400000;
+  return postedAt >= cutoff;
+}
+
+function matchesExperienceLevel(meta: DerivedJobMeta, level: string): boolean {
+  if (meta.experienceLevel === level) return true;
+  const keywords = EXPERIENCE_KEYWORDS[level] ?? [];
+  return keywords.some((kw) => meta.searchBlob.includes(kw));
+}
+
+function matchesCompanySize(meta: DerivedJobMeta, companySize: string): boolean {
+  if (meta.companySize === companySize) return true;
+  const hints = COMPANY_SIZE_HINTS[companySize] ?? [];
+  return hints.some((hint) => meta.searchBlob.includes(hint));
+}
+
+function matchesIndustries(meta: DerivedJobMeta, selected: Set<string>): boolean {
+  if (selected.size === 0) return true;
+  if (meta.industries.some((industry) => selected.has(industry))) return true;
+  return [...selected].some((industry) =>
+    (INDUSTRY_KEYWORDS[industry] ?? []).some((kw) => meta.searchBlob.includes(kw))
+  );
+}
+
+function matchesBenefits(meta: DerivedJobMeta, selected: Set<string>, blob: string): boolean {
+  if (selected.size === 0) return true;
+  return Array.from(selected).every((benefit) => {
+    if (meta.benefits.includes(benefit)) return true;
+    return (BENEFIT_KEYWORDS[benefit] ?? []).some((kw) => blob.includes(kw));
+  });
+}
+
+function matchesProfileOverlap(
+  job: RecommendedJobCard,
+  options?: JobListingFilterOptions
+): boolean {
+  if (!options?.requireProfileOverlap) return true;
+  const skills = options.profile?.skills ?? [];
+  if (skills.length === 0) return true;
+  const relevance = scoreJobCard(job, options.profile ?? { skills: [] });
+  const minScore = options.minProfileScore ?? 8;
+  return relevance.matchedSkills.length > 0 || relevance.score >= minScore;
+}
+
+function passesClientOnlyFilters(
+  job: RecommendedJobCard,
+  meta: DerivedJobMeta,
+  score: number,
+  state: JobListingFilterState,
+  options?: JobListingFilterOptions
+): boolean {
+  if (state.matchScore !== "any" && score < Number(state.matchScore)) return false;
+
+  if (state.skillsPick.size > 0) {
+    const blob = skillBlob(job);
+    const hasAny = [...state.skillsPick].some((sk) => blob.includes(sk.toLowerCase()));
+    if (!hasAny) return false;
+  }
+
+  if (state.experienceLevel !== "any" && !matchesExperienceLevel(meta, state.experienceLevel)) {
+    return false;
+  }
+
+  if (state.salaryFilterActive) {
+    if (!meta.salary) return false;
+    if (meta.salary.currency !== state.currency) return false;
+    if (meta.salary.period !== state.salaryPeriod) return false;
+    if (meta.salary.maxK < state.salaryMin || meta.salary.minK > state.salaryMax) return false;
+  }
+
+  if (state.companySize !== "any" && !matchesCompanySize(meta, state.companySize)) {
+    return false;
+  }
+
+  if (!matchesIndustries(meta, state.industries)) return false;
+
+  if (state.normalizedRequiredSkills.length > 0) {
+    const blob = skillBlob(job);
+    if (!state.normalizedRequiredSkills.every((skill) => blob.includes(skill))) return false;
+  }
+
+  if (!matchesBenefits(meta, state.benefits, meta.searchBlob)) return false;
+  if (state.visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
+  if (state.easyApplyOnly && !meta.isEasyApply) return false;
+
+  return matchesProfileOverlap(job, options);
+}
+
+function passesCatalogFilters(
+  job: RecommendedJobCard,
+  meta: DerivedJobMeta,
+  state: JobListingFilterState
+): boolean {
+  const q = state.q.trim().toLowerCase();
+  if (q) {
+    const terms = q.split(/\s+/).filter(Boolean);
+    if (!terms.every((term) => meta.searchBlob.includes(term))) return false;
+  }
+
+  if (!matchesDateWindow(job.postedAtIso, state.dateWindow)) return false;
+  if (state.sources.size > 0 && !state.sources.has(job.source)) return false;
+  if (!matchesLocationQuery(job, state.locationQuery)) return false;
+  if (state.locationMode !== "any" && !matchesLocationMode(job, meta, state.locationMode)) return false;
+
+  const normalizedCompanyQuery = state.companyQuery.trim().toLowerCase();
+  if (normalizedCompanyQuery && !safeString(job.company).toLowerCase().includes(normalizedCompanyQuery)) {
+    return false;
+  }
+
+  if (!matchesJobTypes(job, meta, state.jobTypes)) return false;
+  return true;
 }
 
 export function hasClientOnlyJobFilters(state: JobListingFilterState): boolean {
@@ -156,6 +330,14 @@ export function hasClientOnlyJobFilters(state: JobListingFilterState): boolean {
   );
 }
 
+/** True when the Jobs tab must load a bulk catalog pool and filter in the browser. */
+export function needsJobClientFilterPool(
+  state: JobListingFilterState,
+  options?: { profileMatchesOnly?: boolean }
+): boolean {
+  return Boolean(hasClientOnlyJobFilters(state) || options?.profileMatchesOnly);
+}
+
 export function hasAnyUserJobFilters(
   catalogFilters: {
     q?: string;
@@ -166,7 +348,8 @@ export function hasAnyUserJobFilters(
     company?: string;
     jobTypes?: string[];
   },
-  clientState: JobListingFilterState
+  clientState: JobListingFilterState,
+  options?: { profileMatchesOnly?: boolean }
 ): boolean {
   return Boolean(
     catalogFilters.q?.trim() ||
@@ -176,7 +359,8 @@ export function hasAnyUserJobFilters(
       catalogFilters.locationQuery?.trim() ||
       catalogFilters.company?.trim() ||
       (catalogFilters.jobTypes && catalogFilters.jobTypes.length > 0) ||
-      hasClientOnlyJobFilters(clientState)
+      hasClientOnlyJobFilters(clientState) ||
+      options?.profileMatchesOnly
   );
 }
 
@@ -184,204 +368,28 @@ export function hasAnyUserJobFilters(
 export function applyClientOnlyJobListingFilters(
   rows: EnrichedJobRow[],
   state: JobListingFilterState,
-  options?: {
-    profile?: ProfileMatchInput;
-    requireProfileOverlap?: boolean;
-    minProfileScore?: number;
-  }
+  options?: JobListingFilterOptions
 ): EnrichedJobRow[] {
   return rows.filter(({ job, meta, score }) => {
-    if (state.matchScore !== "any" && score < Number(state.matchScore)) return false;
-
-    if (state.skillsPick.size > 0) {
-      const skillBlob = `${job.title} ${job.description} ${job.matchedSkills.join(" ")}`.toLowerCase();
-      const hasAny = [...state.skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
-      if (!hasAny) return false;
-    }
-
-    const blob = meta.searchBlob;
-    if (state.experienceLevel !== "any" && meta.experienceLevel !== state.experienceLevel) {
-      const expKeywords: Record<string, string[]> = {
-        "Entry (0-2yr)": ["entry level", "entry-level", "junior", "graduate", "intern"],
-        "Mid (2-5yr)": ["mid level", "mid-level", "intermediate"],
-        "Senior (5-8yr)": ["senior", "sr."],
-        "Lead (8-12yr)": ["lead", "principal", "staff", "manager"],
-        "Executive (12yr+)": ["executive", "director", "vp", "head of", "chief"],
-      };
-      const keywords = expKeywords[state.experienceLevel] ?? [];
-      if (!keywords.some((kw) => blob.includes(kw)) && meta.experienceLevel !== state.experienceLevel) return false;
-    }
-
-    if (state.salaryFilterActive) {
-      if (!meta.salary) return false;
-      if (meta.salary.currency !== state.currency) return false;
-      if (meta.salary.period !== state.salaryPeriod) return false;
-      if (meta.salary.maxK < state.salaryMin || meta.salary.minK > state.salaryMax) return false;
-    }
-
-    if (state.companySize !== "any" && meta.companySize !== state.companySize) {
-      const sizeHint =
-        state.companySize === "Startup (1-50)"
-          ? ["startup", "early stage", "seed"]
-          : state.companySize === "Small (51-200)"
-            ? ["small team", "51-200"]
-            : state.companySize === "Medium (201-1000)"
-              ? ["midsize", "201-1000"]
-              : state.companySize === "Large (1000+)"
-                ? ["large company", "1000+"]
-                : ["enterprise", "10k+"];
-      if (!sizeHint.some((h) => blob.includes(h))) return false;
-    }
-
-    if (state.industries.size > 0 && !meta.industries.some((industry) => state.industries.has(industry))) {
-      const industryKeywords: Record<string, string[]> = {
-        Technology: ["software", "engineer", "developer", "saas", "ai"],
-        Finance: ["finance", "fintech", "bank"],
-        Healthcare: ["health", "clinical", "med", "biotech"],
-        Marketing: ["marketing", "growth", "seo"],
-        Design: ["design", "ux", "ui"],
-        Legal: ["legal", "law", "compliance"],
-        Education: ["education", "edtech", "learning"],
-        Retail: ["retail", "commerce", "ecommerce"],
-      };
-      const industryHit = [...state.industries].some((industry) =>
-        (industryKeywords[industry] ?? []).some((kw) => blob.includes(kw))
-      );
-      if (!industryHit) return false;
-    }
-
-    if (state.normalizedRequiredSkills.length > 0) {
-      const skillBlob = `${job.title} ${job.description} ${job.matchedSkills.join(" ")}`.toLowerCase();
-      if (!state.normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
-    }
-
-    if (state.benefits.size > 0 && !Array.from(state.benefits).every((benefit) => meta.benefits.includes(benefit))) {
+    try {
+      return passesClientOnlyFilters(job, meta, score, state, options);
+    } catch {
       return false;
     }
-    if (state.visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
-    if (state.easyApplyOnly && !meta.isEasyApply) return false;
-
-    if (options?.requireProfileOverlap && options.profile?.skills.length) {
-      const relevance = scoreJobCard(job, options.profile);
-      const minScore = options.minProfileScore ?? 8;
-      if (relevance.matchedSkills.length === 0 && relevance.score < minScore) return false;
-    }
-
-    return true;
   });
 }
 
 export function applyJobListingFilters(
   rows: EnrichedJobRow[],
   state: JobListingFilterState,
-  options?: {
-    profile?: ProfileMatchInput;
-    requireProfileOverlap?: boolean;
-    minProfileScore?: number;
-  }
+  options?: JobListingFilterOptions
 ): EnrichedJobRow[] {
-  const q = state.q.trim().toLowerCase();
-  const normalizedCompanyQuery = state.companyQuery.trim().toLowerCase();
-
   return rows.filter(({ job, meta, score }) => {
-    if (q) {
-      const terms = q.split(/\s+/).filter(Boolean);
-      if (!terms.every((term) => meta.searchBlob.includes(term))) return false;
-    }
-    if (state.dateWindow !== "any") {
-      if (!job.postedAtIso) return false;
-      const days = Number(state.dateWindow);
-      const cutoff = Date.now() - days * 86400000;
-      if (new Date(job.postedAtIso).getTime() < cutoff) return false;
-    }
-    if (state.sources.size > 0 && !state.sources.has(job.source)) return false;
-
-    if (!matchesLocationQuery(job, state.locationQuery)) return false;
-    if (state.locationMode !== "any" && !matchesLocationMode(job, meta, state.locationMode)) {
+    try {
+      if (!passesCatalogFilters(job, meta, state)) return false;
+      return passesClientOnlyFilters(job, meta, score, state, options);
+    } catch {
       return false;
     }
-
-    if (normalizedCompanyQuery && !job.company.toLowerCase().includes(normalizedCompanyQuery)) return false;
-
-    if (!matchesJobTypes(job, meta, state.jobTypes)) return false;
-
-    if (state.matchScore !== "any" && score < Number(state.matchScore)) return false;
-
-    if (state.skillsPick.size > 0) {
-      const skillBlob = `${job.title} ${job.description} ${job.matchedSkills.join(" ")}`.toLowerCase();
-      const hasAny = [...state.skillsPick].some((sk) => skillBlob.includes(sk.toLowerCase()));
-      if (!hasAny) return false;
-    }
-
-    const blob = meta.searchBlob;
-    if (state.experienceLevel !== "any" && meta.experienceLevel !== state.experienceLevel) {
-      const expKeywords: Record<string, string[]> = {
-        "Entry (0-2yr)": ["entry level", "entry-level", "junior", "graduate", "intern"],
-        "Mid (2-5yr)": ["mid level", "mid-level", "intermediate"],
-        "Senior (5-8yr)": ["senior", "sr."],
-        "Lead (8-12yr)": ["lead", "principal", "staff", "manager"],
-        "Executive (12yr+)": ["executive", "director", "vp", "head of", "chief"],
-      };
-      const keywords = expKeywords[state.experienceLevel] ?? [];
-      if (!keywords.some((kw) => blob.includes(kw)) && meta.experienceLevel !== state.experienceLevel) return false;
-    }
-
-    if (state.salaryFilterActive) {
-      if (!meta.salary) return false;
-      if (meta.salary.currency !== state.currency) return false;
-      if (meta.salary.period !== state.salaryPeriod) return false;
-      if (meta.salary.maxK < state.salaryMin || meta.salary.minK > state.salaryMax) return false;
-    }
-
-    if (state.companySize !== "any" && meta.companySize !== state.companySize) {
-      const sizeHint =
-        state.companySize === "Startup (1-50)"
-          ? ["startup", "early stage", "seed"]
-          : state.companySize === "Small (51-200)"
-            ? ["small team", "51-200"]
-            : state.companySize === "Medium (201-1000)"
-              ? ["midsize", "201-1000"]
-              : state.companySize === "Large (1000+)"
-                ? ["large company", "1000+"]
-                : ["enterprise", "10k+"];
-      if (!sizeHint.some((h) => blob.includes(h))) return false;
-    }
-
-    if (state.industries.size > 0 && !meta.industries.some((industry) => state.industries.has(industry))) {
-      const industryKeywords: Record<string, string[]> = {
-        Technology: ["software", "engineer", "developer", "saas", "ai"],
-        Finance: ["finance", "fintech", "bank"],
-        Healthcare: ["health", "clinical", "med", "biotech"],
-        Marketing: ["marketing", "growth", "seo"],
-        Design: ["design", "ux", "ui"],
-        Legal: ["legal", "law", "compliance"],
-        Education: ["education", "edtech", "learning"],
-        Retail: ["retail", "commerce", "ecommerce"],
-      };
-      const industryHit = [...state.industries].some((industry) =>
-        (industryKeywords[industry] ?? []).some((kw) => blob.includes(kw))
-      );
-      if (!industryHit) return false;
-    }
-
-    if (state.normalizedRequiredSkills.length > 0) {
-      const skillBlob = `${job.title} ${job.description} ${job.matchedSkills.join(" ")}`.toLowerCase();
-      if (!state.normalizedRequiredSkills.every((skill) => skillBlob.includes(skill))) return false;
-    }
-
-    if (state.benefits.size > 0 && !Array.from(state.benefits).every((benefit) => meta.benefits.includes(benefit))) {
-      return false;
-    }
-    if (state.visaSponsorshipOnly && !meta.hasVisaSponsorship) return false;
-    if (state.easyApplyOnly && !meta.isEasyApply) return false;
-
-    if (options?.requireProfileOverlap && options.profile?.skills.length) {
-      const relevance = scoreJobCard(job, options.profile);
-      const minScore = options.minProfileScore ?? 8;
-      if (relevance.matchedSkills.length === 0 && relevance.score < minScore) return false;
-    }
-
-    return true;
   });
 }
-

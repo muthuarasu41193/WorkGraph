@@ -13,7 +13,7 @@
     "verify:prepush": "node scripts/pre-push-verify.mjs",
     "verify:deploy": "npm run verify:vercel-config && npm run typecheck && npm run build",
     "prepare": "node scripts/setup-githooks.mjs",
-    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts lib/talent-intelligence/__tests__/*.test.ts"
+    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts lib/talent-intelligence/__tests__/*.test.ts lib/__tests__/*.test.ts"
   },
   "repository": {
     "type": "git",

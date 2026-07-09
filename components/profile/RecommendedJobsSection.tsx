@@ -34,9 +34,10 @@ import {
   applyClientOnlyJobListingFilters,
   applyJobListingFilters,
   hasAnyUserJobFilters,
-  hasClientOnlyJobFilters,
+  needsJobClientFilterPool,
   type JobListingFilterState,
 } from "../../lib/job-listing-filters";
+import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
 import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -191,8 +192,6 @@ const VIEW_MODE_OPTIONS = ["list", "grid"] as const;
 const CURRENCY_OPTIONS = ["USD", "EUR", "GBP", "INR"] as const;
 
 const PAGE_SIZE = 50;
-/** Rows loaded when advanced (client-only) filters need a local pool to paginate. */
-const FILTER_POOL_CAP = 2500;
 const MAX_PAGINATION_TOKENS = 7;
 
 type PaginationToken = number | "ellipsis";
@@ -817,51 +816,60 @@ export default function RecommendedJobsSection({
   );
 
   const userFiltersActive = useMemo(
-    () => hasAnyUserJobFilters(catalogFilters, clientFilterState),
-    [catalogFilters, clientFilterState]
+    () =>
+      hasAnyUserJobFilters(catalogFilters, clientFilterState, {
+        profileMatchesOnly: showProfileMatchesOnly,
+      }),
+    [catalogFilters, clientFilterState, showProfileMatchesOnly]
   );
 
   const useServerJobs = isLiveFeed;
-  const needsClientFilterPool = useServerJobs && hasClientOnlyJobFilters(clientFilterState);
+  const needsClientFilterPool =
+    useServerJobs &&
+    needsJobClientFilterPool(clientFilterState, { profileMatchesOnly: showProfileMatchesOnly });
 
   const profileOverlapOptions = useMemo(
     () => ({
       profile: profileMatch,
-      requireProfileOverlap:
-        showProfileMatchesOnly && profileMatchActive && isLiveFeed && !userFiltersActive,
+      requireProfileOverlap: showProfileMatchesOnly && profileMatchActive && isLiveFeed,
       minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
     }),
-    [profileMatch, showProfileMatchesOnly, profileMatchActive, isLiveFeed, userFiltersActive]
+    [profileMatch, showProfileMatchesOnly, profileMatchActive, isLiveFeed]
   );
 
   const listingPipeline = useMemo(() => {
-    const sourceJobs = useServerJobs
-      ? needsClientFilterPool
-        ? filterPoolJobs
-        : pageJobs
-      : initialJobs;
-    const enriched = sourceJobs.map((job) => ({
-      job,
-      meta: deriveJobMeta(job),
-      score: getMatchScore(job, profileMatch),
-    }));
+    try {
+      const sourceJobs = useServerJobs
+        ? needsClientFilterPool
+          ? filterPoolJobs
+          : pageJobs
+        : initialJobs;
+      const enriched = sourceJobs.map((job) => ({
+        job,
+        meta: deriveJobMeta(job),
+        score: getMatchScore(job, profileMatch),
+      }));
 
-    const filtered =
-      useServerJobs && !needsClientFilterPool
-        ? applyClientOnlyJobListingFilters(enriched, clientFilterState, profileOverlapOptions)
-        : applyJobListingFilters(enriched, clientFilterState, profileOverlapOptions);
+      const filtered =
+        useServerJobs && !needsClientFilterPool
+          ? applyClientOnlyJobListingFilters(enriched, clientFilterState, profileOverlapOptions)
+          : applyJobListingFilters(enriched, clientFilterState, profileOverlapOptions);
 
-    const rows = [...filtered];
-    rows.sort((a, b) => {
-      if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
-      if (sortBy === "newest") {
-        return (new Date(b.job.postedAtIso || 0).getTime() || 0) - (new Date(a.job.postedAtIso || 0).getTime() || 0);
-      }
-      if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
-      if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
-      return b.score - a.score;
-    });
-    return rows;
+      const rows = [...filtered];
+      rows.sort((a, b) => {
+        if (sortBy === "company_asc") return a.job.company.localeCompare(b.job.company);
+        if (sortBy === "newest") {
+          return (new Date(b.job.postedAtIso || 0).getTime() || 0) - (new Date(a.job.postedAtIso || 0).getTime() || 0);
+        }
+        if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
+        if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
+        return b.score - a.score;
+      });
+      return rows;
+    } catch (error) {
+      console.error("[RecommendedJobsSection] listing filter pipeline failed:", error);
+      return [];
+    }
   }, [
     useServerJobs,
     needsClientFilterPool,
@@ -974,7 +982,7 @@ export default function RecommendedJobsSection({
 
     const controller = new AbortController();
     const fetchPage = needsClientFilterPool ? 1 : currentPage;
-    const fetchSize = needsClientFilterPool ? FILTER_POOL_CAP : PAGE_SIZE;
+    const fetchSize = needsClientFilterPool ? LIVE_JOBS_CLIENT_FILTER_CAP : PAGE_SIZE;
 
     void (async () => {
       setIsPageLoading(true);
@@ -1238,6 +1246,11 @@ export default function RecommendedJobsSection({
         visaSponsorshipOnly,
         easyApplyOnly,
         showProfileMatchesOnly,
+        requiredSkills: normalizedRequiredSkills.join(","),
+        salaryMin,
+        salaryMax,
+        currency,
+        salaryPeriod,
       }),
     [
       query,
@@ -1257,6 +1270,11 @@ export default function RecommendedJobsSection({
       visaSponsorshipOnly,
       easyApplyOnly,
       showProfileMatchesOnly,
+      normalizedRequiredSkills,
+      salaryMin,
+      salaryMax,
+      currency,
+      salaryPeriod,
     ]
   );
 
@@ -1297,10 +1315,8 @@ export default function RecommendedJobsSection({
         setSearchInput("");
         setDateWindow("any");
         setSources(new Set());
+        setSkillsPick(new Set());
         setCurrentPage(1);
-        if (skillHints.length > 0) {
-          setSkillsPick(new Set([skillHints[0]]));
-        }
         return;
       }
       // Applied/saved cards currently route users into the jobs list view.

@@ -184,6 +184,13 @@ const JOB_TYPE_DB_KEYWORDS: Record<string, string[]> = {
   Temporary: ["temporary", "temp-to-hire"],
 };
 
+/** Job boards that are exclusively or predominantly remote listings. */
+const REMOTE_FEED_SOURCES = ["remoteok", "remotejobs", "jobicy", "arbeitnow"] as const;
+
+function remoteSourceNotInFilter(): string {
+  return `(${REMOTE_FEED_SOURCES.map((source) => `"${source}"`).join(",")})`;
+}
+
 export type LiveJobsPageResult = {
   rows: JobRow[] | null;
   total: number;
@@ -236,17 +243,27 @@ function applyJobsCatalogFilters(builder: any, filters?: JobsCatalogFilters) {
 
   if (filters.locationMode && filters.locationMode !== "any") {
     if (filters.locationMode === "remote") {
+      const remoteSourceParts = REMOTE_FEED_SOURCES.map((source) => `source.eq.${source}`);
       builder = builder.or(
-        'location.ilike."%remote%",description.ilike."%remote%",description.ilike."%wfh%",description.ilike."%distributed%"'
+        [
+          'location.ilike."%remote%"',
+          'description.ilike."%remote%"',
+          'description.ilike."%wfh%"',
+          'description.ilike."%distributed%"',
+          'description.ilike."%work from home%"',
+          ...remoteSourceParts,
+        ].join(",")
       );
     } else if (filters.locationMode === "hybrid") {
       builder = builder.or('location.ilike."%hybrid%",description.ilike."%hybrid%"');
+      builder = builder.not("source", "in", remoteSourceNotInFilter());
     } else if (filters.locationMode === "onsite") {
       builder = builder
         .not("location", "ilike", "%remote%")
         .not("description", "ilike", "%remote%")
         .not("description", "ilike", "%wfh%")
         .not("description", "ilike", "%hybrid%")
+        .not("source", "in", remoteSourceNotInFilter())
         .neq("location", "")
         .neq("location", "Location TBD");
     }
