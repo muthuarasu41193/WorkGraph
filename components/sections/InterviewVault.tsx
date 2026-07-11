@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import type { CompanyBrand } from "@/lib/brands";
+import { COMPANY_LABELS } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
 type Difficulty = "Easy" | "Medium" | "Hard";
 
 type Company = {
-  name: string;
-  initial: string;
-  color: string;
+  brand: CompanyBrand;
   interviews: number;
   commonRole: string;
   difficulty: Difficulty;
@@ -18,65 +19,49 @@ type Company = {
 
 const COMPANIES: Company[] = [
   {
-    name: "Google",
-    initial: "G",
-    color: "bg-[#4285F4]",
+    brand: "google",
     interviews: 247,
     commonRole: "Senior Software Engineer",
     difficulty: "Hard",
   },
   {
-    name: "Meta",
-    initial: "M",
-    color: "bg-[#0668E1]",
+    brand: "meta",
     interviews: 189,
     commonRole: "Software Engineer",
     difficulty: "Medium",
   },
   {
-    name: "Amazon",
-    initial: "A",
-    color: "bg-[#FF9900]",
+    brand: "amazon",
     interviews: 312,
     commonRole: "SDE II",
     difficulty: "Hard",
   },
   {
-    name: "Microsoft",
-    initial: "Ms",
-    color: "bg-[#00A4EF]",
+    brand: "microsoft",
     interviews: 198,
     commonRole: "Software Engineer",
     difficulty: "Medium",
   },
   {
-    name: "Apple",
-    initial: "A",
-    color: "bg-[#555555]",
+    brand: "apple",
     interviews: 156,
     commonRole: "iOS Engineer",
     difficulty: "Medium",
   },
   {
-    name: "Stripe",
-    initial: "S",
-    color: "bg-[#635BFF]",
+    brand: "stripe",
     interviews: 89,
     commonRole: "Backend Engineer",
     difficulty: "Hard",
   },
   {
-    name: "Airbnb",
-    initial: "Ab",
-    color: "bg-[#FF5A5F]",
+    brand: "airbnb",
     interviews: 134,
     commonRole: "Product Manager",
     difficulty: "Medium",
   },
   {
-    name: "Netflix",
-    initial: "N",
-    color: "bg-[#E50914]",
+    brand: "netflix",
     interviews: 67,
     commonRole: "Senior Engineer",
     difficulty: "Hard",
@@ -90,6 +75,7 @@ const DIFFICULTY_STYLES: Record<Difficulty, string> = {
 };
 
 function CompanyCard({ company, active }: { company: Company; active?: boolean }) {
+  const name = COMPANY_LABELS[company.brand];
   return (
     <div
       className={cn(
@@ -97,18 +83,10 @@ function CompanyCard({ company, active }: { company: Company; active?: boolean }
         active && "border-[#C41E3A]/80 ring-1 ring-[#C41E3A]/30",
       )}
     >
-      <div
-        className={cn(
-          "flex size-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white",
-          company.color,
-        )}
-        aria-hidden
-      >
-        {company.initial}
-      </div>
+      <BrandLogo brand={company.brand} size="md" onDark />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate font-semibold text-white">{company.name}</p>
+          <p className="truncate font-semibold text-white">{name}</p>
           <span
             className={cn(
               "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
@@ -156,7 +134,7 @@ export default function InterviewVault() {
             >
               <div className="space-y-2.5">
                 {COMPANIES.map((company, index) => (
-                  <CompanyCard key={company.name} company={company} active={index === 0} />
+                  <CompanyCard key={company.brand} company={company} active={index === 0} />
                 ))}
               </div>
             </div>
@@ -167,9 +145,7 @@ export default function InterviewVault() {
             <div className="overflow-hidden rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A]">
               <div className="border-b border-[#2A2A2A] px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#4285F4] text-sm font-bold text-white">
-                    G
-                  </div>
+                  <BrandLogo brand="google" size="md" onDark />
                   <div>
                     <p className="font-semibold text-white">Google</p>
                     <p className="text-sm text-[#8A8A8A]">Senior Software Engineer</p>

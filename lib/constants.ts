@@ -18,7 +18,7 @@ export const NAV_ITEMS = [
 export const NAV_ANNOUNCEMENT = {
   message: "Early access · 247 of 500 spots left",
   cta: "Join waitlist →",
-  href: "/signup",
+  href: "/waitlist",
 } as const;
 
 export const ANNOUNCEMENT = {
@@ -144,18 +144,63 @@ export const CTA = {
 export const FOOTER_LINKS = {
   product: [
     { label: "Features", href: "#features" },
-    { label: "Interview Vault", href: "/interview-vault" },
-    { label: "Hidden Discovery", href: "/discovery" },
-    { label: "Pricing", href: "#" },
+    { label: "How it Works", href: "#how-it-works" },
+    { label: "Interview Vault", href: "#interview-vault" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Changelog", href: "#" },
+    { label: "Roadmap", href: "#" },
+  ],
+  resources: [
+    { label: "Blog", href: "#" },
+    { label: "Career Tips", href: "#" },
+    { label: "Resume Templates", href: "#" },
+    { label: "Salary Guide", href: "#" },
+    { label: "Interview Questions", href: "#" },
+    { label: "API Docs", href: "#" },
   ],
   company: [
     { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Contact", href: `mailto:${SITE.email}` },
-  ],
-  legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "Contact", href: "#contact" },
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Service", href: "#" },
+    { label: "Cookie Policy", href: "#" },
+    { label: "Status", href: "#" },
   ],
 } as const;
+
+export const SOCIAL_LINKS = [
+  { label: "Twitter", href: "https://twitter.com/workgraph" },
+  { label: "LinkedIn", href: "https://linkedin.com/company/workgraph" },
+  { label: "GitHub", href: "https://github.com/workgraph" },
+  { label: "Discord", href: "https://discord.gg/workgraph" },
+] as const;
+
+export const CONTACT_INFO = [
+  {
+    icon: "mail" as const,
+    label: "General Inquiries",
+    value: "hello@workgraph.ai",
+    href: "mailto:hello@workgraph.ai",
+  },
+  {
+    icon: "message" as const,
+    label: "Support",
+    value: "support@workgraph.ai",
+    href: "mailto:support@workgraph.ai",
+  },
+  {
+    icon: "handshake" as const,
+    label: "Partnerships & Enterprise",
+    value: "partners@workgraph.ai",
+    href: "mailto:partners@workgraph.ai",
+  },
+] as const;
+
+export const CONTACT_SUBJECTS = [
+  { value: "general", label: "General Question" },
+  { value: "support", label: "Technical Support" },
+  { value: "partnership", label: "Partnership" },
+  { value: "enterprise", label: "Enterprise Plan" },
+  { value: "press", label: "Press / Media" },
+  { value: "other", label: "Other" },
+] as const;

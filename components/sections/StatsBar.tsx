@@ -1,8 +1,10 @@
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+
 const STATS = [
-  { value: "50+", label: "Job Sources" },
-  { value: "92%", label: "Match Accuracy" },
-  { value: "10,000+", label: "Interview Q&As" },
-  { value: "2,400+", label: "Active Users" },
+  { value: 50, suffix: "+", label: "Job Sources" },
+  { value: 92, suffix: "%", label: "Match Accuracy" },
+  { value: 10000, suffix: "+", label: "Interview Q&As" },
+  { value: 2400, suffix: "+", label: "Active Users" },
 ] as const;
 
 export default function StatsBar() {
@@ -14,7 +16,7 @@ export default function StatsBar() {
             <div key={stat.label} className="text-center lg:text-left">
               <dt className="sr-only">{stat.label}</dt>
               <dd className="font-heading text-3xl font-extrabold text-[#C41E3A] sm:text-4xl">
-                {stat.value}
+                <AnimatedNumber value={stat.value} suffix={stat.suffix} />
               </dd>
               <dd className="mt-1 text-sm font-medium text-white/70 sm:text-base">
                 {stat.label}

@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   motion,
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { ArrowRight, ChevronDown, CirclePlay, Star } from "lucide-react";
+import { ArrowRight, ChevronDown, CirclePlay, Radar, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { SourceBadge } from "@/components/brand/SourceBadge";
+import type { CompanyBrand } from "@/lib/brands";
+import type { SourceBrand } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
 const AVATARS = [
@@ -26,35 +30,39 @@ const DASHBOARD_STATS = [
   { label: "Interviews", value: 3, suffix: "" },
 ] as const;
 
-const JOB_CARDS = [
+const JOB_CARDS: {
+  brand: CompanyBrand;
+  role: string;
+  salary: string;
+  source: SourceBrand;
+  timeAgo: string;
+  match: number;
+}[] = [
   {
-    company: "S",
-    companyColor: "bg-[#0A0A0A]",
+    brand: "stripe",
     role: "Staff Engineer",
     salary: "$185k–$220k",
-    source: "Discord",
+    source: "discord",
     timeAgo: "2h ago",
     match: 96,
   },
   {
-    company: "F",
-    companyColor: "bg-[#2563EB]",
+    brand: "airbnb",
     role: "Senior Product Manager",
     salary: "$150k–$175k",
-    source: "Reddit",
+    source: "reddit",
     timeAgo: "5h ago",
     match: 91,
   },
   {
-    company: "H",
-    companyColor: "bg-[#16A34A]",
+    brand: "databricks",
     role: "ML Engineer",
     salary: "$160k–$195k",
-    source: "Twitter",
+    source: "x",
     timeAgo: "1d ago",
     match: 84,
   },
-] as const;
+];
 
 const TRUST_BADGES = ["No credit card", "500 spot limit", "Cancel anytime"] as const;
 
@@ -74,48 +82,6 @@ const leftItem: Variants = {
     transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   },
 };
-
-function CountUp({
-  end,
-  suffix = "",
-  duration = 1.6,
-  className,
-}: {
-  end: number;
-  suffix?: string;
-  duration?: number;
-  className?: string;
-}) {
-  const prefersReducedMotion = useReducedMotion();
-  const [value, setValue] = useState(prefersReducedMotion ? end : 0);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setValue(end);
-      return;
-    }
-
-    const startTime = performance.now();
-    let frame = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startTime) / (duration * 1000), 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setValue(Math.round(eased * end));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [end, duration, prefersReducedMotion]);
-
-  return (
-    <span className={className}>
-      {value}
-      {suffix}
-    </span>
-  );
-}
 
 function MatchRing({ match }: { match: number }) {
   const isHigh = match >= 90;
@@ -200,7 +166,12 @@ function DashboardMockup() {
                   {stat.label}
                 </p>
                 <p className="mt-0.5 font-heading text-lg font-bold text-[#0A0A0A]">
-                  <CountUp end={stat.value} suffix={stat.suffix} />
+                  <AnimatedNumber
+                    value={stat.value}
+                    suffix={stat.suffix}
+                    immediate
+                    duration={1.4}
+                  />
                 </p>
               </motion.div>
             ))}
@@ -216,29 +187,13 @@ function DashboardMockup() {
                 transition={{ delay: 0.55 + index * 0.12, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="flex items-center gap-3 rounded-xl border border-[#E5E5E5] bg-white p-3 transition-shadow hover:shadow-sm"
               >
-                <div
-                  className={cn(
-                    "flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white",
-                    job.companyColor,
-                  )}
-                  aria-hidden
-                >
-                  {job.company}
-                </div>
+                <BrandLogo brand={job.brand} size="md" />
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-[#0A0A0A]">{job.role}</p>
                   <p className="truncate text-xs text-[#8A8A8A]">{job.salary}</p>
                   <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                    <span
-                      className={cn(
-                        "rounded-full bg-[#FFF5F5] px-2 py-0.5 text-[10px] font-semibold text-[#C41E3A]",
-                        !prefersReducedMotion && "animate-[hero-badge-pulse_3s_ease-in-out_infinite]",
-                      )}
-                      style={{ animationDelay: `${index * 0.4}s` }}
-                    >
-                      {job.source}
-                    </span>
+                    <SourceBadge source={job.source} compact />
                     <span className="text-[10px] text-[#8A8A8A]">{job.timeAgo}</span>
                   </div>
                 </div>
@@ -290,7 +245,7 @@ export default function Hero() {
           >
             <motion.div variants={leftItem}>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E5E5] bg-white/80 px-4 py-1.5 text-sm font-medium text-[#0A0A0A] shadow-sm backdrop-blur-sm">
-                <span aria-hidden>🚀</span>
+                <Radar className="size-4 text-[#C41E3A]" aria-hidden />
                 AI-Powered Job Intelligence
               </span>
             </motion.div>

@@ -6,44 +6,10 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
-import { NAV_ITEMS, NAV_ANNOUNCEMENT } from "@/lib/constants";
+import { NAV_ITEMS } from "@/lib/constants";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { useLandingHeader } from "./LandingHeaderContext";
 import { cn } from "@/lib/utils";
-
-const ANNOUNCEMENT_STORAGE_KEY = "wg-announcement-dismissed";
-const NAV_HEIGHT = 64;
-
-function AnnouncementBar({ onDismiss }: { onDismiss: () => void }) {
-  return (
-    <div
-      role="region"
-      aria-label="Announcement"
-      className="border-b border-[#FECACA] bg-[#FFF5F5] px-4 py-2.5"
-    >
-      <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-2 text-sm text-[#4A4A4A]">
-        <span
-          className="inline-block size-2 shrink-0 animate-pulse-soft rounded-full bg-[#C41E3A]"
-          aria-hidden
-        />
-        <span>{NAV_ANNOUNCEMENT.message}</span>
-        <Link
-          href={NAV_ANNOUNCEMENT.href}
-          className="font-semibold text-[#C41E3A] underline-offset-4 transition-colors hover:underline"
-        >
-          {NAV_ANNOUNCEMENT.cta}
-        </Link>
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="ml-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-[#8A8A8A] transition-colors hover:bg-[#FECACA]/40 hover:text-[#0A0A0A]"
-          aria-label="Dismiss announcement"
-        >
-          <X className="size-4" aria-hidden />
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
@@ -122,14 +88,9 @@ function NavLink({
 export default function Navbar() {
   const { scrolled } = useScrollPosition({ threshold: 12 });
   const prefersReducedMotion = useReducedMotion();
+  const { headerOffset } = useLandingHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [announcementVisible, setAnnouncementVisible] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-
-  useEffect(() => {
-    const dismissed = localStorage.getItem(ANNOUNCEMENT_STORAGE_KEY);
-    setAnnouncementVisible(dismissed !== "true");
-  }, []);
 
   useEffect(() => {
     const sectionIds = NAV_ITEMS.filter((item) => item.href.startsWith("#")).map((item) =>
@@ -163,11 +124,6 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  const dismissAnnouncement = useCallback(() => {
-    setAnnouncementVisible(false);
-    localStorage.setItem(ANNOUNCEMENT_STORAGE_KEY, "true");
-  }, []);
-
   const handleNavigate = useCallback((href: string) => {
     if (href.startsWith("#")) {
       const target = document.querySelector(href);
@@ -177,26 +133,8 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [prefersReducedMotion]);
 
-  const headerOffset = NAV_HEIGHT + (announcementVisible ? 44 : 0);
-
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
-        <AnimatePresence initial={false}>
-          {announcementVisible && (
-            <motion.div
-              key="announcement"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
-              <AnnouncementBar onDismiss={dismissAnnouncement} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <nav
           aria-label="Main navigation"
           className={cn(
@@ -324,9 +262,6 @@ export default function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
-      </header>
-
-      <div aria-hidden style={{ height: headerOffset }} />
     </>
   );
 }

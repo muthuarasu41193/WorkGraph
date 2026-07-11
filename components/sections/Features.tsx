@@ -13,6 +13,8 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
+import { SourceBrandIcon } from "@/components/brand/brand-icons";
+import type { SourceBrand } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
 type Feature = {
@@ -23,6 +25,7 @@ type Feature = {
   badgeClass: string;
   href: string;
   anchorId?: string;
+  sources?: SourceBrand[];
 };
 
 const FEATURES: Feature[] = [
@@ -34,6 +37,7 @@ const FEATURES: Feature[] = [
     badge: "50+ Sources",
     badgeClass: "bg-[#EFF6FF] text-[#2563EB]",
     href: "#how-it-works",
+    sources: ["reddit", "x", "discord", "slack"],
   },
   {
     icon: Target,
@@ -61,6 +65,7 @@ const FEATURES: Feature[] = [
     badge: "Public Profile",
     badgeClass: "bg-[#F3F2EF] text-[#4A4A4A]",
     href: "/profile",
+    sources: ["linkedin", "github"],
   },
   {
     icon: Bot,
@@ -118,6 +123,20 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       <p className="mt-3 flex-1 text-[15px] leading-relaxed text-[#4A4A4A]">
         {feature.description}
       </p>
+
+      {feature.sources && (
+        <div className="mt-4 flex items-center gap-2">
+          {feature.sources.map((source) => (
+            <span
+              key={source}
+              className="flex size-7 items-center justify-center rounded-md border border-[#E5E5E5] bg-[#FAFAFA]"
+              title={source}
+            >
+              <SourceBrandIcon brand={source} className="size-3.5" />
+            </span>
+          ))}
+        </div>
+      )}
 
       <Link
         href={feature.href}

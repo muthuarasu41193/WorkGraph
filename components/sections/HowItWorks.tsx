@@ -3,6 +3,10 @@
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Check, MapPin, Briefcase, DollarSign, TrendingUp } from "lucide-react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { SourceBadge } from "@/components/brand/SourceBadge";
+import type { CompanyBrand } from "@/lib/brands";
+import type { SourceBrand } from "@/lib/brands";
 import { cn } from "@/lib/utils";
 
 type Step = {
@@ -107,10 +111,16 @@ function ProfileMockup() {
 }
 
 function JobFeedMockup() {
-  const jobs = [
-    { role: "Staff Engineer", company: "Stealth AI", source: "Discord", match: 96 },
-    { role: "Lead Designer", company: "Series B", source: "Reddit", match: 89 },
-    { role: "VP Product", company: "Fintech", source: "Twitter", match: 84 },
+  const jobs: {
+    role: string;
+    company: string;
+    brand?: CompanyBrand;
+    source: SourceBrand;
+    match: number;
+  }[] = [
+    { role: "Staff Engineer", company: "Stealth AI", source: "discord", match: 96 },
+    { role: "Lead Designer", company: "Series B startup", brand: "notion", source: "reddit", match: 89 },
+    { role: "VP Product", company: "Fintech", source: "x", match: 84 },
   ];
 
   return (
@@ -119,16 +129,25 @@ function JobFeedMockup() {
       {jobs.map((job) => (
         <div
           key={job.role}
-          className="flex items-center justify-between rounded-xl border border-[#E5E5E5] bg-white p-3"
+          className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E5E5] bg-white p-3"
         >
-          <div>
-            <p className="text-sm font-semibold text-[#0A0A0A]">{job.role}</p>
-            <p className="text-xs text-[#8A8A8A]">{job.company}</p>
-            <span className="mt-1.5 inline-block rounded-full bg-[#FFF0F0] px-2 py-0.5 text-[10px] font-semibold text-[#C41E3A]">
-              {job.source}
-            </span>
+          <div className="flex min-w-0 items-center gap-3">
+            {job.brand ? (
+              <BrandLogo brand={job.brand} size="sm" />
+            ) : (
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F2EF] text-[10px] font-bold text-[#6B6B6B]">
+                AI
+              </span>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[#0A0A0A]">{job.role}</p>
+              <p className="truncate text-xs text-[#8A8A8A]">{job.company}</p>
+              <div className="mt-1.5">
+                <SourceBadge source={job.source} compact />
+              </div>
+            </div>
           </div>
-          <span className="font-heading text-sm font-bold text-[#16A34A]">{job.match}%</span>
+          <span className="shrink-0 font-heading text-sm font-bold text-[#16A34A]">{job.match}%</span>
         </div>
       ))}
     </div>
@@ -142,7 +161,10 @@ function InterviewMockup() {
         <p className="text-xs font-semibold uppercase tracking-widest text-[#C41E3A]">
           Interview Vault
         </p>
-        <p className="mt-0.5 font-heading text-base font-bold text-[#0A0A0A]">Google — L5 PM</p>
+        <div className="mt-1 flex items-center gap-2">
+          <BrandLogo brand="google" size="sm" />
+          <p className="font-heading text-base font-bold text-[#0A0A0A]">Google — L5 PM</p>
+        </div>
       </div>
       <div className="space-y-2 p-4">
         {[

@@ -7,7 +7,7 @@ import { SectionContainer } from "./SectionContainer";
 
 export function CtaSection() {
   return (
-    <SectionContainer id="pricing" ariaLabel="Call to action">
+    <SectionContainer ariaLabel="Call to action">
       <FadeIn>
         <div className="relative overflow-hidden rounded-3xl border border-wg-primary/20 bg-gradient-to-br from-wg-primary/5 via-surface to-wg-accent-blue/5 px-8 py-16 text-center sm:px-12 sm:py-20">
           <div

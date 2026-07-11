@@ -87,6 +87,48 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: #c41e3a20;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--wg-bg-secondary, #f3f2ef);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c41e3a;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a01830;
+}
+
+*:focus-visible {
+  outline: 2px solid #c41e3a;
+  outline-offset: 2px;
+}
+
+section[id] {
+  scroll-margin-top: 7rem;
+}
+
 html,
 body {
   margin: 0;
