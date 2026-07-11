@@ -4,7 +4,7 @@ export const SITE = {
   description:
     "Discover hidden roles, sharpen your resume, and make smarter career moves — before everyone else sees the opportunity.",
   url: "https://workgraph.ai",
-  email: "hello@workgraph.ai",
+  email: "hello@getworkgraph.com",
 } as const;
 
 export const NAV_ITEMS = [
@@ -179,20 +179,26 @@ export const CONTACT_INFO = [
   {
     icon: "mail" as const,
     label: "General Inquiries",
-    value: "hello@workgraph.ai",
-    href: "mailto:hello@workgraph.ai",
+    value: "hello@getworkgraph.com",
+    href: "mailto:hello@getworkgraph.com",
   },
   {
     icon: "message" as const,
     label: "Support",
-    value: "support@workgraph.ai",
-    href: "mailto:support@workgraph.ai",
+    value: "support@getworkgraph.com",
+    href: "mailto:support@getworkgraph.com",
+  },
+  {
+    icon: "contact" as const,
+    label: "Contact",
+    value: "contact@getworkgraph.com",
+    href: "mailto:contact@getworkgraph.com",
   },
   {
     icon: "handshake" as const,
     label: "Partnerships & Enterprise",
-    value: "partners@workgraph.ai",
-    href: "mailto:partners@workgraph.ai",
+    value: "partners@getworkgraph.com",
+    href: "mailto:partners@getworkgraph.com",
   },
 ] as const;
 

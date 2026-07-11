@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
 import { motion, useReducedMotion } from "framer-motion";
 import {
+  AtSign,
   CheckCircle2,
   Handshake,
   Loader2,
@@ -37,6 +38,7 @@ function ContactInfoIcon({ type }: { type: (typeof CONTACT_INFO)[number]["icon"]
   const className = "size-5 text-[#C41E3A]";
   if (type === "mail") return <Mail className={className} aria-hidden />;
   if (type === "message") return <MessageCircle className={className} aria-hidden />;
+  if (type === "contact") return <AtSign className={className} aria-hidden />;
   return <Handshake className={className} aria-hidden />;
 }
 

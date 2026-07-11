@@ -19,7 +19,7 @@ import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 
-const HELP_URL = "mailto:support@workgraph.app?subject=WorkGraph%20Help%20%26%20Support";
+const HELP_URL = "mailto:support@getworkgraph.com?subject=WorkGraph%20Help%20%26%20Support";
 const CMDK_HINT_DAYS = 7;
 
 import NavBenefitTooltip from "./NavBenefitTooltip";
