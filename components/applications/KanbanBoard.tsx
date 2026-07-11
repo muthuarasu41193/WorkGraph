@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/core";
 import { useDroppable } from "@dnd-kit/core";
 import { Plus } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import ApplicationCard from "@/components/applications/ApplicationCard";
 import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
 import ApplicationDetailDrawer from "@/components/applications/ApplicationDetailDrawer";
@@ -169,7 +170,7 @@ export default function KanbanBoard({
           </p>
         </div>
         <Button type="button" onClick={() => setAddOpen(true)}>
-          <Plus className="h-4 w-4" />
+          <Plus className={iconClass()} />
           Add Application
         </Button>
       </div>

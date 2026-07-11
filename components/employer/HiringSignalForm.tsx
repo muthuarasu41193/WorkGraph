@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus, Trash2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { FitSignal, HiringIntent, HiringSignal, WorkMode } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
@@ -318,7 +319,7 @@ export default function HiringSignalForm({ initial }: Props) {
                 onClick={() => setFitSignals((p) => p.filter((_, j) => j !== i))}
                 aria-label="Remove fit signal"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className={iconClass()} />
               </Button>
             </li>
           ))}

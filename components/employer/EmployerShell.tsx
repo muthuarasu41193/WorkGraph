@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Building2, LayoutDashboard, Plus, Radio, Users } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
@@ -38,7 +39,7 @@ export default function EmployerShell({ companyName, children }: Props) {
           <div className="flex items-center gap-2">
             {companyName ? (
               <span className="hidden items-center gap-1.5 text-sm text-muted-foreground sm:flex">
-                <Building2 className="h-4 w-4" aria-hidden />
+                <Building2 className={iconClass()} aria-hidden />
                 {companyName}
               </span>
             ) : null}
@@ -69,7 +70,7 @@ export default function EmployerShell({ companyName, children }: Props) {
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                  <Icon className={iconClass("inline", "shrink-0")} aria-hidden />
                   {item.label}
                 </Link>
               );

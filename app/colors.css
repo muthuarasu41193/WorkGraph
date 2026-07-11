@@ -1,28 +1,36 @@
-/* WorkGraph color palette */
+/* WorkGraph design system — color tokens */
 
 :root {
   /* Brand */
-  --wg-primary: #dc2626;
-  --wg-primary-hover: #c62222;
+  --wg-primary: #c41e3a;
+  --wg-primary-dark: #a01830;
+  --wg-primary-light: #ff2d4a;
+  --wg-primary-hover: #a01830;
 
   /* Text */
-  --wg-text-primary: #1a1a1a;
+  --wg-text-primary: #0a0a0a;
   --wg-text-primary-hover: #171717;
-  --wg-text-secondary: #4a5568;
-  --wg-text-secondary-hover: #434d5e;
-  --wg-text-muted: #718096;
-  --wg-text-muted-hover: #667387;
+  --wg-text-secondary: #4a4a4a;
+  --wg-text-secondary-hover: #3a3a3a;
+  --wg-text-muted: #8a8a8a;
+  --wg-text-muted-hover: #6a6a6a;
 
   /* Surfaces */
-  --wg-bg: #ffffff;
-  --wg-bg-hover: #e6e6e6;
-  --wg-bg-secondary: #f7fafc;
-  --wg-bg-secondary-hover: #dee2e3;
+  --wg-bg: #f8f7f4;
+  --wg-bg-hover: #eceae5;
+  --wg-surface: #ffffff;
+  --wg-bg-secondary: #f3f2ef;
+  --wg-bg-secondary-hover: #e8e6e1;
 
   /* Border */
-  --wg-border: #e2e8f0;
-  --wg-border-hover: #cbd1d8;
-  --wg-placeholder: #a0aec0;
+  --wg-border: #e5e5e5;
+  --wg-border-hover: #d4d4d4;
+  --wg-placeholder: #a3a3a3;
+
+  /* Semantic */
+  --wg-success: #16a34a;
+  --wg-warning: #d97706;
+  --wg-accent-blue: #2563eb;
 
   /* Typography aliases */
   --wg-text-heading: var(--wg-text-primary);
@@ -51,22 +59,52 @@
   }
 }
 
-[data-theme="dark"],
 .dark {
-  --wg-primary: #f87171;
-  --wg-primary-hover: #ef4444;
-  --wg-text-primary: #f1f5f9;
-  --wg-text-primary-hover: #e2e8f0;
-  --wg-text-secondary: #cbd5e1;
-  --wg-text-secondary-hover: #94a3b8;
-  --wg-text-muted: #94a3b8;
-  --wg-text-muted-hover: #64748b;
-  --wg-bg: #0f172a;
-  --wg-bg-hover: #1e293b;
-  --wg-bg-secondary: #1e293b;
-  --wg-bg-secondary-hover: #334155;
-  --wg-border: #334155;
-  --wg-border-hover: #475569;
+  --wg-primary: #ff2d4a;
+  --wg-primary-dark: #c41e3a;
+  --wg-primary-light: #ff5c72;
+  --wg-primary-hover: #ff5c72;
+  --wg-text-primary: #fafafa;
+  --wg-text-primary-hover: #ffffff;
+  --wg-text-secondary: #a3a3a3;
+  --wg-text-secondary-hover: #d4d4d4;
+  --wg-text-muted: #737373;
+  --wg-text-muted-hover: #8a8a8a;
+  --wg-bg: #0a0a0a;
+  --wg-bg-hover: #141414;
+  --wg-surface: #141414;
+  --wg-bg-secondary: #1a1a1a;
+  --wg-bg-secondary-hover: #262626;
+  --wg-border: #2a2a2a;
+  --wg-border-hover: #3a3a3a;
+  --wg-success: #22c55e;
+  --wg-warning: #f59e0b;
+  --wg-accent-blue: #3b82f6;
+  --wg-text-heading: var(--wg-text-primary);
+  --wg-text-body: var(--wg-text-secondary);
+}
+
+[data-theme="dark"] {
+  --wg-primary: #ff2d4a;
+  --wg-primary-dark: #c41e3a;
+  --wg-primary-light: #ff5c72;
+  --wg-primary-hover: #ff5c72;
+  --wg-text-primary: #fafafa;
+  --wg-text-primary-hover: #ffffff;
+  --wg-text-secondary: #a3a3a3;
+  --wg-text-secondary-hover: #d4d4d4;
+  --wg-text-muted: #737373;
+  --wg-text-muted-hover: #8a8a8a;
+  --wg-bg: #0a0a0a;
+  --wg-bg-hover: #141414;
+  --wg-surface: #141414;
+  --wg-bg-secondary: #1a1a1a;
+  --wg-bg-secondary-hover: #262626;
+  --wg-border: #2a2a2a;
+  --wg-border-hover: #3a3a3a;
+  --wg-success: #22c55e;
+  --wg-warning: #f59e0b;
+  --wg-accent-blue: #3b82f6;
   --wg-text-heading: var(--wg-text-primary);
   --wg-text-body: var(--wg-text-secondary);
 }

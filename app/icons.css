@@ -1,0 +1,74 @@
+/* WorkGraph icon system — Lucide, 20px inline / 24px standalone */
+
+:root {
+  --wg-icon-inline: 20px;
+  --wg-icon-standalone: 24px;
+  --wg-icon-stroke: 2;
+}
+
+.wg-icon,
+svg.lucide {
+  flex-shrink: 0;
+  color: currentColor;
+  stroke: currentColor;
+  stroke-width: var(--wg-icon-stroke);
+  transition: color var(--wg-duration) var(--wg-ease);
+}
+
+.wg-icon--inline {
+  width: var(--wg-icon-inline);
+  height: var(--wg-icon-inline);
+}
+
+.wg-icon--standalone {
+  width: var(--wg-icon-standalone);
+  height: var(--wg-icon-standalone);
+}
+
+/* Default Lucide icons without explicit size → inline (20px) */
+svg.lucide:not([class*="wg-icon--"]):not([class*="size-"]):not([class*="h-"]):not([class*="w-"]) {
+  width: var(--wg-icon-inline);
+  height: var(--wg-icon-inline);
+}
+
+/* Icons inherit parent color on hover/focus/active */
+:where(a, button, [role="button"], label, .wg-nav-item, .wg-interactive):hover svg.lucide,
+:where(a, button, [role="button"], label, .wg-nav-item, .wg-interactive):focus-visible svg.lucide,
+:where(a, button, [role="button"], label, .wg-nav-item, .wg-interactive):active svg.lucide,
+.group:hover svg.lucide:not([class*="text-"]),
+.group\/button:hover svg.lucide:not([class*="text-"]) {
+  color: inherit;
+}
+
+a .wg-icon,
+button .wg-icon,
+.wg-nav-item .wg-icon,
+[role="button"] .wg-icon {
+  color: inherit;
+}
+
+/* Standalone icon tiles */
+.wg-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.wg-icon-tile--sm {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+}
+
+.wg-icon-tile--md {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+.wg-icon-tile--lg {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+}

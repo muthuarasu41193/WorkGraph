@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Camera, MapPin, Pencil, X } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import Image from "next/image";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
@@ -155,7 +156,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
 
           <div className="absolute inset-0 hidden items-center justify-center bg-black/35 text-center text-xs font-medium text-white group-hover:flex">
             <div className="flex flex-col items-center gap-1">
-              <Camera className="h-4 w-4" />
+              <Camera className={iconClass()} />
               <span>{isUploading ? "Uploading..." : "Change Photo"}</span>
             </div>
           </div>
@@ -190,7 +191,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                 onClick={() => setIsEditing(true)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-[#DADCE0] px-3 py-1.5 text-xs font-medium text-[#3A3A3C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <Pencil className={iconClass()} />
                 Edit
               </button>
             ) : (
@@ -207,7 +208,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                 }}
                 className="inline-flex items-center gap-1.5 rounded-md border border-[#DADCE0] px-3 py-1.5 text-xs font-medium text-[#8E8E93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className={iconClass()} />
                 Cancel
               </button>
             )}
@@ -233,7 +234,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
             />
           ) : (
             <p className="mt-2 inline-flex items-center gap-1 text-sm font-normal text-[#3A3A3C]">
-              <MapPin className="h-4 w-4" />
+              <MapPin className={iconClass()} />
               {form.location || "Location not set"}
             </p>
           )}

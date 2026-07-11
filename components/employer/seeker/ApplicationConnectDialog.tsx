@@ -11,6 +11,7 @@ import {
   Loader2,
   Upload,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { HiringSignal } from "@/lib/employer/types";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -150,25 +151,25 @@ export default function ApplicationConnectDialog({
       key: "linkedinUrl",
       label: "LinkedIn",
       placeholder: "https://linkedin.com/in/yourname",
-      icon: <Link2 className="h-4 w-4 text-muted-foreground" />,
+      icon: <Link2 className={iconClass("inline", "text-muted-foreground")} />,
     },
     {
       key: "githubUrl",
       label: "GitHub",
       placeholder: "https://github.com/yourname",
-      icon: <GitBranch className="h-4 w-4 text-muted-foreground" />,
+      icon: <GitBranch className={iconClass("inline", "text-muted-foreground")} />,
     },
     {
       key: "websiteUrl",
       label: "Personal website",
       placeholder: "https://yourwebsite.com",
-      icon: <Globe className="h-4 w-4 text-muted-foreground" />,
+      icon: <Globe className={iconClass("inline", "text-muted-foreground")} />,
     },
     {
       key: "stackoverflowUrl",
       label: "Stack Overflow",
       placeholder: "https://stackoverflow.com/users/…",
-      icon: <StackOverflowIcon className="h-4 w-4 text-muted-foreground" />,
+      icon: <StackOverflowIcon className={iconClass("inline", "text-muted-foreground")} />,
     },
   ];
 
@@ -188,7 +189,7 @@ export default function ApplicationConnectDialog({
             <Label>Resume</Label>
             {values.resumeUrl ? (
               <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-sm">
-                <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <FileText className={iconClass("inline", "shrink-0 text-muted-foreground")} />
                 <span className="min-w-0 flex-1 truncate">{resumeFileName || "Resume attached"}</span>
                 <a
                   href={values.resumeUrl}
@@ -196,7 +197,7 @@ export default function ApplicationConnectDialog({
                   rel="noopener noreferrer"
                   className="shrink-0 text-[var(--wg-red)] hover:underline"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className={iconClass()} />
                 </a>
               </div>
             ) : null}

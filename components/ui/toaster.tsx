@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 import { useToastStore, type ToastVariant } from "@/hooks/use-toast";
 
@@ -42,7 +43,7 @@ export function Toaster() {
               className="shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100"
               aria-label="Dismiss notification"
             >
-              <X className="h-4 w-4" />
+              <X className={iconClass()} />
             </button>
           </div>
         </div>

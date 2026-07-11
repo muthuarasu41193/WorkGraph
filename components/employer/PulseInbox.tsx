@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ExternalLink, FileText, Loader2, Sparkles } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { ConnectionStage, SignalConnection } from "@/lib/employer/types";
 import {
   CONNECTION_STAGE_LABELS,
@@ -114,7 +115,7 @@ export default function PulseInbox({ signalId }: Props) {
                       </CardHeader>
                       <CardContent className="space-y-2 p-3 pt-0">
                         <div className="flex items-center gap-1.5">
-                          <Sparkles className="h-3.5 w-3.5 text-[var(--wg-red)]" aria-hidden />
+                          <Sparkles className={iconClass("inline", "text-[var(--wg-red)]")} aria-hidden />
                           <span className="text-sm font-semibold tabular-nums">
                             {c.fit_snapshot?.matchPercent ?? "—"}% fit
                           </span>
@@ -141,9 +142,9 @@ export default function PulseInbox({ signalId }: Props) {
                             onClick={(e) => e.stopPropagation()}
                             className="inline-flex items-center gap-1 text-xs font-medium text-[var(--wg-red)] hover:underline"
                           >
-                            <FileText className="h-3 w-3" />
+                            <FileText className={iconClass()} />
                             Resume
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className={iconClass()} />
                           </a>
                         ) : null}
                         <div className="flex flex-wrap gap-1 pt-1" onClick={(e) => e.stopPropagation()}>

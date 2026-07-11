@@ -11,6 +11,7 @@ import {
   Loader2,
   Upload,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import {
   MAX_RESUME_UPLOAD_BYTES,
@@ -221,7 +222,7 @@ export default function ResumeUploader() {
     return (
       <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
         <div className="flex items-center gap-3">
-          <FileText className="h-6 w-6 text-muted-foreground" />
+          <FileText className={iconClass("standalone", "text-muted-foreground")} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">{selectedFile.name}</p>
             <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>

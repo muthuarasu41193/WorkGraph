@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye, ShoppingBag, Wallet } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import VaultEarningsChart from "@/components/vault/VaultEarningsChart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,7 +94,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg">Your experiences</CardTitle>
           <Button onClick={() => void requestWithdrawal()} disabled={withdrawing || dashboard.total_earnings_inr < 500}>
-            <Wallet className="h-4 w-4" />
+            <Wallet className={iconClass()} />
             {withdrawing ? "Submitting…" : "Request withdrawal"}
           </Button>
         </CardHeader>

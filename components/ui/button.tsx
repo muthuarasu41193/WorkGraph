@@ -3,11 +3,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { WG_ICON } from "@/lib/icon-styles"
 
 const premiumFocus =
   "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500 focus-visible:outline-none"
 const premiumMotion =
-  "transition-all duration-200 enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+  "transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
 
 const buttonVariants = cva(
   cn(
@@ -15,27 +16,27 @@ const buttonVariants = cva(
     premiumMotion,
     premiumFocus,
     "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20",
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    WG_ICON.childInline,
   ),
   {
     variants: {
       variant: {
         default: cn(
           "border-transparent bg-red-600 text-white shadow-sm",
-          "enabled:hover:bg-[var(--wg-primary-hover)] enabled:hover:shadow-md",
+          "enabled:hover:bg-[var(--wg-primary-hover)] enabled:hover:shadow",
         ),
         secondary: cn(
           "border-gray-300 bg-white text-gray-700 shadow-none",
-          "enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow-md",
+          "enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow",
           "dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
         ),
         outline:
-          "border-gray-300 bg-white text-gray-700 shadow-none enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow-md aria-expanded:bg-[var(--wg-bg-secondary)] aria-expanded:text-gray-700 dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
+          "border-gray-300 bg-white text-gray-700 shadow-none enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow aria-expanded:bg-[var(--wg-bg-secondary)] aria-expanded:text-gray-700 dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
         ghost:
           "border-transparent bg-transparent text-gray-700 enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow-sm aria-expanded:bg-[var(--wg-bg-secondary)] dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
         destructive:
           "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm",
-        link: "border-transparent bg-transparent text-red-600 shadow-none enabled:hover:scale-100 enabled:hover:underline underline-offset-4",
+        link: "border-transparent bg-transparent text-red-600 shadow-none transition-all duration-200 ease-in-out enabled:hover:scale-100 enabled:hover:underline underline-offset-4",
       },
       size: {
         default:

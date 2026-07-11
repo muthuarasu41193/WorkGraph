@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import {
   SOCIAL_PLATFORM_TABS,
   filterPostsByPlatform,
@@ -99,7 +100,7 @@ export default function JobNewsSection() {
                   {post.applyUrl ? (
                     <Button asChild size="sm" className="mt-3" variant="outline">
                       <a href={post.applyUrl} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
+                        <ExternalLink className={iconClass()} />
                         Open post
                       </a>
                     </Button>

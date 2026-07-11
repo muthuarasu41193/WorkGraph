@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
 import { ChevronRight, Sparkles } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 import type { NavGroup, NavItem } from "@/lib/dashboard-nav-groups";
 import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
@@ -189,7 +190,7 @@ export default function CareerIntelligenceSection({
         )}
         aria-expanded={showItems}
       >
-        <Sparkles className="nav-icon" aria-hidden strokeWidth={1.5} />
+        <Sparkles className={cn("nav-icon", iconClass("inline"))} aria-hidden />
         <span className="min-w-0 flex-1 truncate text-left">{group.label || "AI Tools"}</span>
         <motion.span
           animate={showItems ? "expanded" : "collapsed"}
@@ -198,7 +199,7 @@ export default function CareerIntelligenceSection({
           className="shrink-0"
           aria-hidden
         >
-          <ChevronRight className="nav-icon" strokeWidth={1.5} />
+          <ChevronRight className={cn("nav-icon", iconClass("inline"))} />
         </motion.span>
       </button>
 

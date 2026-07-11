@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon as WgIcon } from "@/components/ui/icon";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -41,7 +42,7 @@ export default function InsightCard({
     >
       <div className="flex items-start justify-between gap-4">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-          <Icon className="h-[17px] w-[17px]" aria-hidden />
+          <WgIcon icon={Icon} size="standalone" />
         </span>
         {badge ? (
           <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dash-text-secondary)]">

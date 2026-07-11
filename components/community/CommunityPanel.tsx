@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { CommunityPostType } from "../../packages/shared/types/phase3";
 import { useCommunityPosts, useCreateCommunityPost, useVoteCommunityPost } from "../../hooks/use-community";
 import { Badge } from "../ui/badge";
@@ -149,7 +150,7 @@ export default function CommunityPanel() {
                     onClick={() => vote.mutate({ postId: post.id, vote: 1 })}
                     className={post.user_vote === 1 ? "text-emerald-700" : ""}
                   >
-                    <ThumbsUp className="h-4 w-4" />
+                    <ThumbsUp className={iconClass()} />
                     {post.upvotes}
                   </Button>
                   <Button
@@ -158,7 +159,7 @@ export default function CommunityPanel() {
                     onClick={() => vote.mutate({ postId: post.id, vote: -1 })}
                     className={post.user_vote === -1 ? "text-red-600" : ""}
                   >
-                    <ThumbsDown className="h-4 w-4" />
+                    <ThumbsDown className={iconClass()} />
                     {post.downvotes}
                   </Button>
                 </div>

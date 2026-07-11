@@ -7,7 +7,7 @@
     justify-content: center;
     border-radius: 0.5rem;
     font-weight: 500;
-    transition: all 200ms ease;
+    transition: all var(--wg-duration) var(--wg-ease);
     outline: none;
     user-select: none;
   }
@@ -31,15 +31,13 @@
     background-color: var(--wg-primary);
     color: #ffffff;
     padding: 0.625rem 1.5rem;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    box-shadow: var(--wg-shadow-sm);
     border: 1px solid transparent;
   }
 
   .wg-btn-primary:not(:disabled):hover {
     background-color: var(--wg-primary-hover);
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: var(--wg-shadow);
   }
 
   .wg-btn-secondary {
@@ -53,8 +51,6 @@
   .wg-btn-secondary:not(:disabled):hover {
     background-color: var(--wg-bg-secondary);
     border-color: var(--wg-border-hover);
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: var(--wg-shadow);
   }
 }

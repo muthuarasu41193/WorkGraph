@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Bell, Command, Menu, Plus } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,7 +108,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
               className="hidden h-8 gap-1.5 px-2 text-xs text-[var(--dash-text-secondary)] lg:inline-flex"
               onClick={() => setCmdOpen(true)}
             >
-              <Command className="h-3.5 w-3.5" />
+              <Command className={iconClass()} />
               <kbd className="rounded border bg-muted px-1 py-0.5 text-[10px] font-medium">⌘K</kbd>
             </Button>
 
@@ -119,7 +120,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
               onClick={() => navigate("jobs")}
               aria-label="Quick action: explore jobs"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className={iconClass()} />
             </Button>
 
             <Button
@@ -129,7 +130,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
               className="relative h-9 w-9"
               aria-label="Notifications"
             >
-              <Bell className="h-4 w-4" />
+              <Bell className={iconClass()} />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[var(--dash-accent)] ring-2 ring-white" />
             </Button>
 

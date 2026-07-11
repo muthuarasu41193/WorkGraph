@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Radar } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +14,7 @@ export default function HiddenDiscoveryPromoCard() {
       <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-primary text-primary-foreground shadow-sm">
-            <Radar className="h-6 w-6" aria-hidden />
+            <Radar className={iconClass("standalone")} aria-hidden />
           </div>
           <div>
             <h2 className="text-base font-semibold text-foreground">
@@ -27,7 +28,7 @@ export default function HiddenDiscoveryPromoCard() {
         </div>
         <Button type="button" className="shrink-0 gap-2" onClick={() => navigate("job-discovery")}>
           Open discovery
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className={iconClass()} />
         </Button>
       </CardContent>
     </Card>

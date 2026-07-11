@@ -5,6 +5,7 @@ import { Bookmark } from "lucide-react";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
 import { type JobCardData } from "@/lib/job-card-data";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 import "./job-card.css";
 
@@ -122,7 +123,7 @@ export default function JobCard({
             saved && "opacity-100 text-indigo-600",
           )}
         >
-          <Bookmark className={cn("h-4 w-4", saved && "fill-current")} strokeWidth={1.75} />
+          <Bookmark className={cn(iconClass("inline"), saved && "fill-current")} />
         </button>
       ) : null}
 

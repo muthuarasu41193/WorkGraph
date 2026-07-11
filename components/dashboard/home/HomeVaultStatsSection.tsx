@@ -1,4 +1,5 @@
 import { Eye, Star, Wallet } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,14 +47,14 @@ export default async function HomeVaultStatsSection() {
           <dl className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Eye className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Eye className={iconClass("inline", "text-[var(--dash-accent)]")} />
                 Views
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums">{vault.views.toLocaleString("en-IN")}</dd>
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Wallet className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Wallet className={iconClass("inline", "text-[var(--dash-accent)]")} />
                 Earnings
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums text-[var(--dash-accent)]">
@@ -62,7 +63,7 @@ export default async function HomeVaultStatsSection() {
             </div>
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Star className="h-4 w-4 text-[var(--dash-accent)]" />
+                <Star className={iconClass("inline", "text-[var(--dash-accent)]")} />
                 Ratings
               </dt>
               <dd className="mt-2 text-2xl font-bold tabular-nums">

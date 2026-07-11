@@ -3,6 +3,7 @@
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import OverallMatchScoreSection from "./sections/OverallMatchScoreSection";
 import StrengthsSection from "./sections/StrengthsSection";
 import MissingSkillsSection from "./sections/MissingSkillsSection";
@@ -25,7 +26,7 @@ export default function ResumeIntelligenceDashboard({ report, cached }: Props) {
   return (
     <div className="space-y-4">
       <Alert className="border-primary/20 bg-primary/5">
-        <Shield className="h-4 w-4" />
+        <Shield className={iconClass()} />
         <AlertDescription className="text-sm">
           {report.philosophyReminder}
           {cached ? " (Loaded from your saved analysis.)" : null}

@@ -30,7 +30,7 @@ export default function ProfileCard({
     <Card
       id={id}
       className={cn(
-        "wg-profile-card border-slate-200 shadow-sm transition-shadow hover:shadow-md",
+        "wg-profile-card border-slate-200",
         neutral ? "wg-profile-card--neutral border-l-slate-200" : "border-l-primary border-l-[3px]",
         className
       )}

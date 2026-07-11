@@ -9,6 +9,7 @@ import {
   Mail,
   MapPin,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { ApplicationSnapshot, SignalConnection } from "@/lib/employer/types";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,7 +52,7 @@ function LinkRow({
     >
       {icon}
       <span className="min-w-0 flex-1 truncate">{label}</span>
-      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      <ExternalLink className={iconClass("inline", "shrink-0 text-muted-foreground")} />
     </a>
   );
 }
@@ -113,7 +114,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
             <div className="space-y-1.5 text-muted-foreground">
               {app.email ? (
                 <p className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 shrink-0" />
+                  <Mail className={iconClass("inline", "shrink-0")} />
                   <a href={`mailto:${app.email}`} className="text-foreground hover:underline">
                     {app.email}
                   </a>
@@ -121,7 +122,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
               ) : null}
               {app.location ? (
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 shrink-0" />
+                  <MapPin className={iconClass("inline", "shrink-0")} />
                   {app.location}
                 </p>
               ) : null}
@@ -137,20 +138,20 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg bg-[var(--wg-red)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--wg-red)]/90"
               >
-                <FileText className="h-4 w-4" />
+                <FileText className={iconClass()} />
                 View resume
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className={iconClass()} />
               </a>
             ) : null}
 
             <div className="grid gap-2">
-              <LinkRow href={app.linkedin_url} label="LinkedIn" icon={<Link2 className="h-4 w-4" />} />
-              <LinkRow href={app.github_url} label="GitHub" icon={<GitBranch className="h-4 w-4" />} />
-              <LinkRow href={app.website_url} label="Website" icon={<Globe className="h-4 w-4" />} />
+              <LinkRow href={app.linkedin_url} label="LinkedIn" icon={<Link2 className={iconClass()} />} />
+              <LinkRow href={app.github_url} label="GitHub" icon={<GitBranch className={iconClass()} />} />
+              <LinkRow href={app.website_url} label="Website" icon={<Globe className={iconClass()} />} />
               <LinkRow
                 href={app.stackoverflow_url}
                 label="Stack Overflow"
-                icon={<StackOverflowIcon className="h-4 w-4" />}
+                icon={<StackOverflowIcon className={iconClass()} />}
               />
             </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,7 +109,7 @@ export default function InterviewVaultSection() {
             rows={4}
           />
           <Button type="button" onClick={addEntry}>
-            <Plus className="h-4 w-4" />
+            <Plus className={iconClass()} />
             Save to vault
           </Button>
         </CardContent>
@@ -149,7 +150,7 @@ export default function InterviewVaultSection() {
                       onClick={() => removeEntry(entry.id)}
                       aria-label={`Delete ${entry.company} entry`}
                     >
-                      <Trash2 className="h-4 w-4 text-muted-foreground" />
+                      <Trash2 className={iconClass("inline", "text-muted-foreground")} />
                     </Button>
                   </div>
                   {entry.notes ? (

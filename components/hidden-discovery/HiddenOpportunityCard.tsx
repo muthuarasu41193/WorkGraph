@@ -2,6 +2,7 @@
 
 import { Bookmark, Github } from "lucide-react";
 import { RedditLogo } from "@/components/icons/RedditLogo";
+import { iconClass } from "@/lib/icon-styles";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import "./hidden-opportunity-card.css";
 
@@ -13,13 +14,13 @@ const SOURCE_LABELS: Record<string, string> = {
 
 function SourceIcon({ source }: { source: string }) {
   if (source === "reddit") {
-    return <RedditLogo className="h-6 w-6" />;
+    return <RedditLogo className={iconClass("standalone")} />;
   }
   if (source === "hackernews") {
     return <span aria-hidden>Y</span>;
   }
   if (source === "github") {
-    return <Github className="h-5 w-5" strokeWidth={2} />;
+    return <Github className={iconClass("standalone")} />;
   }
   return <span className="text-xs font-semibold uppercase">{source.slice(0, 2)}</span>;
 }
@@ -81,7 +82,7 @@ export default function HiddenOpportunityCard({
           aria-pressed={saved}
           aria-label={saved ? "Remove from saved" : "Save opportunity"}
         >
-          <Bookmark className="h-3.5 w-3.5" fill={saved ? "currentColor" : "none"} />
+          <Bookmark className={iconClass()} fill={saved ? "currentColor" : "none"} />
         </button>
         <button type="button" className="hidden-opp-card__open" onClick={onViewSource}>
           Open source

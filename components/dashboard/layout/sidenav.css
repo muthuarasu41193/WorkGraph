@@ -1,10 +1,11 @@
 /* WorkGraph sidebar — premium navigation */
 
 .nav-icon {
-  width: 20px;
-  height: 20px;
   flex-shrink: 0;
   color: inherit;
+  width: var(--wg-icon-inline);
+  height: var(--wg-icon-inline);
+  stroke-width: var(--wg-icon-stroke);
 }
 
 .wg-nav-item {

@@ -1,4 +1,5 @@
 import { ExternalLink, Radio } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export default async function HomeHiddenJobsFeed() {
           <h2 id="home-hidden-heading" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
             Hidden Jobs Feed
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
-              <Radio className="h-3 w-3 animate-pulse" aria-hidden />
+              <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
               Live
             </span>
           </h2>
@@ -77,7 +78,7 @@ export default async function HomeHiddenJobsFeed() {
                   <Button asChild size="sm" variant="outline" className="mt-3">
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
                       Open post
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ExternalLink className={iconClass()} />
                     </a>
                   </Button>
                 </CardContent>

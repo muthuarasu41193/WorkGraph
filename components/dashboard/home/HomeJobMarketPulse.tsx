@@ -1,4 +1,5 @@
 import { TrendingUp } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { JobMarketPulse } from "@/lib/home-dashboard";
@@ -15,7 +16,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
         <Card className="wg-dash-section-card">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <TrendingUp className="h-4 w-4 text-[var(--dash-accent)]" />
+              <TrendingUp className={iconClass("inline", "text-[var(--dash-accent)]")} />
               Trending roles
             </CardTitle>
             <CardDescription>Highest momentum titles in your matched catalog.</CardDescription>

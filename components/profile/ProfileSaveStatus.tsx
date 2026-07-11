@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import {
   onProfileSaved,
   onProfileSaveError,
@@ -111,11 +112,11 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <Loader2 className="h-4 w-4 animate-spin text-emerald-700" aria-hidden />
+      <Loader2 className={iconClass("inline", "animate-spin text-emerald-700")} aria-hidden />
     ) : state === "error" ? (
-      <AlertCircle className="h-4 w-4 text-red-600" aria-hidden />
+      <AlertCircle className={iconClass("inline", "text-red-600")} aria-hidden />
     ) : (
-      <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden />
+      <CheckCircle2 className={iconClass("inline", "text-emerald-600")} aria-hidden />
     );
 
   return (

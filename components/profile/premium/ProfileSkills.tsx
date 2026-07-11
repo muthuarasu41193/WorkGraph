@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Sparkles, X } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useEffect, useMemo, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
 import type { SkillCategory } from "../../../lib/profile-mock-data";
@@ -98,7 +99,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
             onClick={() => setShowAdd((v) => !v)}
             aria-label="Add skill"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className={iconClass()} />
           </Button>
         }
       />
@@ -147,7 +148,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                       className="opacity-0 transition group-hover:opacity-100"
                       aria-label={`Remove ${skill.name}`}
                     >
-                      <X className="h-3 w-3" />
+                      <X className={iconClass()} />
                     </button>
                   ) : null}
                   {skill.top ? (

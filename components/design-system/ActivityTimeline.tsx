@@ -1,6 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import {
   Briefcase,
   CheckCircle2,
@@ -70,7 +71,7 @@ export default function ActivityTimeline({ events, className }: Props) {
                 EVENT_COLORS[event.type],
               )}
             >
-              <Icon className="h-4 w-4" aria-hidden />
+              <Icon className={iconClass()} aria-hidden />
             </span>
             <div className="min-w-0 flex-1 pt-0.5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">

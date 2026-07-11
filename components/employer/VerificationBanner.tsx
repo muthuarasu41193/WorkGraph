@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BadgeCheck, Loader2, Shield } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { EmployerProfile } from "@/lib/employer/types";
 import { VERIFICATION_STATUS_LABELS } from "@/lib/employer/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -40,7 +41,7 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
   if (local.verification_status === "verified") {
     return (
       <Alert className="border-emerald-200 bg-emerald-50/80 dark:bg-emerald-950/30">
-        <BadgeCheck className="h-4 w-4 text-emerald-700" />
+        <BadgeCheck className={iconClass("inline", "text-emerald-700")} />
         <AlertTitle className="text-emerald-900 dark:text-emerald-100">
           {VERIFICATION_STATUS_LABELS.verified}
         </AlertTitle>
@@ -75,7 +76,7 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
   if (local.verification_status === "pending") {
     return (
       <Alert>
-        <Shield className="h-4 w-4" />
+        <Shield className={iconClass()} />
         <AlertTitle>{VERIFICATION_STATUS_LABELS.pending}</AlertTitle>
         <AlertDescription>
           We are reviewing your employer profile. You can still post signals; your public company page
@@ -87,7 +88,7 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
 
   return (
     <Alert className="border-[var(--wg-red)]/20 bg-[var(--wg-red)]/[0.04]">
-      <Shield className="h-4 w-4 text-[var(--wg-red)]" />
+      <Shield className={iconClass("inline", "text-[var(--wg-red)]")} />
       <AlertTitle>Verify your company</AlertTitle>
       <AlertDescription className="space-y-3">
         <p>

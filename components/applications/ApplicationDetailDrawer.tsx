@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { ExternalLink, Trash2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -135,7 +136,7 @@ export default function ApplicationDetailDrawer({
             <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
               <a href={application.job_url} target="_blank" rel="noopener noreferrer">
                 View posting
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className={iconClass()} />
               </a>
             </Button>
           ) : null}
@@ -232,7 +233,7 @@ export default function ApplicationDetailDrawer({
           </section>
 
           <Button type="button" variant="destructive" className="w-full" onClick={() => void handleDelete()}>
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className={iconClass()} />
             Delete application
           </Button>
         </div>

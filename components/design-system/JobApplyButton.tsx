@@ -5,8 +5,8 @@ import type { JobFeedSource } from "@/lib/job-dashboard";
 import { trackEvent } from "@/lib/analytics";
 import { getApplyLabel } from "@/lib/job-apply";
 import { useApplyFollowupStore } from "@/stores/apply-followup-store";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
-
 type Props = {
   jobId: string;
   company: string;
@@ -65,7 +65,7 @@ export default function JobApplyButton({
       className={cn("apply-btn", className)}
     >
       <span>{label}</span>
-      <ExternalLink size={13} strokeWidth={2} aria-hidden />
+      <ExternalLink className={iconClass("inline")} aria-hidden />
     </button>
   );
 }

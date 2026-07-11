@@ -4,6 +4,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { format, parseISO } from "date-fns";
 import { GripVertical } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -52,7 +53,7 @@ export default function ApplicationCard({ application, onOpen }: Props) {
             {...listeners}
             {...attributes}
           >
-            <GripVertical className="h-4 w-4" />
+            <GripVertical className={iconClass()} />
           </button>
           <Avatar className="h-9 w-9 shrink-0 rounded-md">
             {logo ? <AvatarImage src={logo} alt="" /> : null}

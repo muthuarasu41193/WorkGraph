@@ -11,6 +11,7 @@ import {
   Pencil,
   Mail,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
@@ -135,7 +136,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               </AvatarFallback>
             </Avatar>
             <span className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Camera className="h-4 w-4 text-white" />
+              <Camera className={iconClass("inline", "text-white")} />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
           </button>
@@ -178,7 +179,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               />
             ) : (
               <p className="mt-1 flex items-center justify-center gap-2 text-[15px] text-muted-foreground sm:justify-start">
-                <Briefcase className="h-4 w-4 shrink-0 opacity-60" />
+                <Briefcase className={iconClass("inline", "shrink-0 opacity-60")} />
                 {form.headline || "Add your current role"}
               </p>
             )}
@@ -191,7 +192,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
               />
             ) : (
               <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-muted-foreground sm:justify-start">
-                <MapPin className="h-3.5 w-3.5 opacity-70" />
+                <MapPin className={iconClass("inline", "opacity-70")} />
                 {form.location || "Add location"}
               </p>
             )}
@@ -210,19 +211,19 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
             </>
           ) : (
             <>
-              <ProfileButton variant="primary" icon={<Pencil className="h-4 w-4" />} onClick={() => setIsEditing(true)}>
+              <ProfileButton variant="primary" icon={<Pencil className={iconClass()} />} onClick={() => setIsEditing(true)}>
                 Edit profile
               </ProfileButton>
               {profile.resume_url ? (
                 <ProfileButton
                   variant="outline"
-                  icon={<Download className="h-4 w-4" />}
+                  icon={<Download className={iconClass()} />}
                   onClick={() => window.open(profile.resume_url!, "_blank")}
                 >
                   Resume
                 </ProfileButton>
               ) : (
-                <ProfileButton variant="outline" icon={<Download className="h-4 w-4" />} disabled>
+                <ProfileButton variant="outline" icon={<Download className={iconClass()} />} disabled>
                   Resume
                 </ProfileButton>
               )}
@@ -261,7 +262,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-md border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] px-2.5 py-1.5 text-xs font-semibold text-[var(--wg-color-text-secondary)] hover:border-[var(--wg-color-primary)] hover:text-[var(--wg-color-primary)]"
               >
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className={iconClass()} />
                 {label}
               </Link>
             ))}

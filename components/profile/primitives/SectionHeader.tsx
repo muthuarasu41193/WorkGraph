@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon as WgIcon } from "@/components/ui/icon";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -27,7 +28,7 @@ export default function SectionHeader({
         <div className="flex items-center gap-2.5">
           {Icon ? (
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--wg-color-border)] bg-[var(--wg-color-surface-variant)] text-[var(--wg-color-text-secondary)]">
-              <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+              <WgIcon icon={Icon} size="inline" />
             </span>
           ) : null}
           <h2 className="text-base font-semibold tracking-tight text-[var(--wg-color-text-primary)] sm:text-[1.0625rem]">

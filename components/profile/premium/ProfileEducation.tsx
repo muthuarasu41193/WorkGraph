@@ -1,6 +1,7 @@
 "use client";
 
 import { Award, GraduationCap, Plus, Trash2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useEffect, useState } from "react";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
 import type { Education } from "../../../lib/types";
@@ -80,7 +81,7 @@ export default function ProfileEducation({ userId, education, certifications }: 
         description="Degrees, institutions, and credentials that validate your expertise."
         action={
           <Button type="button" variant="outline" size="sm" onClick={() => void addItem()}>
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className={iconClass()} />
             Add
           </Button>
         }
@@ -116,7 +117,7 @@ export default function ProfileEducation({ userId, education, certifications }: 
               />
             </div>
             <Button type="button" variant="ghost" size="icon-sm" onClick={() => void removeItem(i)} aria-label="Remove">
-              <Trash2 className="h-4 w-4 text-muted-foreground" />
+              <Trash2 className={iconClass("inline", "text-muted-foreground")} />
             </Button>
           </div>
         ))}
@@ -125,7 +126,7 @@ export default function ProfileEducation({ userId, education, certifications }: 
       {certifications.length > 0 ? (
         <div className="mt-8 border-t border-border pt-6">
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            <Award className="h-4 w-4" />
+            <Award className={iconClass()} />
             Certifications
           </p>
           <div className="flex flex-wrap gap-2">

@@ -12,6 +12,7 @@ import {
   Send,
   Sparkles,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { HiringSignal, SignalConnection } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS, WORK_MODE_LABELS } from "@/lib/employer/types";
 import { scoreFitSignals } from "@/lib/employer/fit-signals";
@@ -150,7 +151,7 @@ export default function WorkgraphDirectSection({
     <div className="space-y-5">
       <header>
         <div className="flex items-center gap-2">
-          <Radio className="h-6 w-6 text-[var(--wg-red)]" aria-hidden />
+          <Radio className={iconClass("standalone", "text-[var(--wg-red)]")} aria-hidden />
           <h1 className="text-2xl font-bold tracking-tight">WorkGraph Direct</h1>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -204,7 +205,7 @@ export default function WorkgraphDirectSection({
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-xs font-medium text-muted-foreground flex flex-wrap items-center gap-1.5">
-                          <Building2 className="h-3.5 w-3.5 shrink-0" />
+                          <Building2 className={iconClass("inline", "shrink-0")} />
                           {signal.employer?.verification_status === "verified" &&
                           signal.employer.company_slug ? (
                             <Link
@@ -221,7 +222,7 @@ export default function WorkgraphDirectSection({
                               variant="outline"
                               className="h-5 gap-0.5 border-emerald-600/40 px-1.5 text-[10px] text-emerald-700"
                             >
-                              <BadgeCheck className="h-3 w-3" />
+                              <BadgeCheck className={iconClass()} />
                               Verified
                             </Badge>
                           ) : null}
@@ -238,7 +239,7 @@ export default function WorkgraphDirectSection({
                     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                       {signal.location ? (
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
+                          <MapPin className={iconClass()} />
                           {signal.location}
                         </span>
                       ) : null}

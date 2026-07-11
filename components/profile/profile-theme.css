@@ -16,7 +16,7 @@
   --wg-color-text-secondary: var(--wg-text-muted);
   --wg-color-text-tertiary: var(--wg-text-muted);
   --wg-profile-radius: 14px;
-  --wg-profile-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --wg-profile-shadow: var(--wg-shadow-sm);
   min-height: 100dvh;
   background: var(--wg-color-page);
   color: var(--wg-text-secondary);
@@ -43,11 +43,15 @@
   border: 1px solid var(--wg-color-border);
   border-radius: var(--wg-profile-radius);
   box-shadow: var(--wg-profile-shadow);
-  transition: box-shadow 0.2s ease;
+  transition:
+    box-shadow var(--wg-duration) var(--wg-ease),
+    border-color var(--wg-duration) var(--wg-ease),
+    transform var(--wg-duration) var(--wg-ease);
 }
 
 .wg-profile-app .wg-profile-hero:hover {
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--wg-shadow-md);
+  transform: translateY(-2px);
 }
 
 .wg-profile-app .wg-profile-card {

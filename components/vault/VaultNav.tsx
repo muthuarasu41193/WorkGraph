@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, PlusCircle, Store } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ export default function VaultNav() {
             return (
               <Button key={href} variant={active ? "secondary" : "ghost"} size="sm" asChild>
                 <Link href={href} className={cn("gap-1.5", active && "font-medium")}>
-                  <Icon className="h-4 w-4" />
+                  <Icon className={iconClass()} />
                   <span className="hidden md:inline">{label}</span>
                 </Link>
               </Button>

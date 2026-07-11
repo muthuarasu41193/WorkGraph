@@ -40,10 +40,10 @@
   position: absolute;
   left: 12px;
   top: 50%;
-  width: 14px;
-  height: 14px;
+  width: var(--wg-icon-inline);
+  height: var(--wg-icon-inline);
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: currentColor;
   pointer-events: none;
 }
 
@@ -327,19 +327,19 @@
   border-radius: 0.75rem;
   margin: 0;
   padding: 0;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: var(--wg-shadow-sm);
   transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease;
+    transform var(--wg-duration) var(--wg-ease),
+    border-color var(--wg-duration) var(--wg-ease),
+    box-shadow var(--wg-duration) var(--wg-ease);
   cursor: pointer;
   position: relative;
 }
 
 .job-card:hover {
   border-color: var(--wg-border-hover);
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--wg-shadow-md);
+  transform: translateY(-2px);
 }
 
 .job-card__header {

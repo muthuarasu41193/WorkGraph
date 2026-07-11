@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LogOut } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { signOutClient } from "../../lib/auth/client";
@@ -29,7 +30,7 @@ export default function SignOutButton() {
       onClick={handleSignOut}
       disabled={isLoading}
     >
-      <LogOut className="h-4 w-4" aria-hidden />
+      <LogOut className={iconClass()} aria-hidden />
       {isLoading ? "Signing out…" : "Sign out"}
     </Button>
   );

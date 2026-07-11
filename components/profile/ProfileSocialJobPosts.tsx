@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, Briefcase, ExternalLink, MapPin, RefreshCw } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, type JSX } from "react";
 import { RedditLogo } from "@/components/icons/RedditLogo";
@@ -349,11 +350,11 @@ export default function ProfileSocialJobPosts({
                 <h4 className="text-base font-semibold leading-snug text-[#1D1D1F]">{post.title}</h4>
                 <div className="mt-2 flex flex-wrap gap-3 text-sm text-[#5F6368]">
                   <span className="inline-flex items-center gap-1">
-                    <Briefcase className="h-3.5 w-3.5" aria-hidden />
+                    <Briefcase className={iconClass()} aria-hidden />
                     {post.company}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden />
+                    <MapPin className={iconClass()} aria-hidden />
                     {post.location}
                   </span>
                 </div>
@@ -379,7 +380,7 @@ export default function ProfileSocialJobPosts({
                     className="inline-flex items-center gap-1.5 rounded-[18px] bg-[#1A73E8] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
                   >
                     {meta.ctaLabel}
-                    {isLive ? <ExternalLink className="h-4 w-4" aria-hidden /> : <ArrowUpRight className="h-4 w-4" aria-hidden />}
+                    {isLive ? <ExternalLink className={iconClass()} aria-hidden /> : <ArrowUpRight className={iconClass()} aria-hidden />}
                   </a>
                 </div>
               </div>

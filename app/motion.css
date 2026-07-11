@@ -1,0 +1,89 @@
+/* WorkGraph motion system — smooth transitions & micro-interactions */
+
+:root {
+  --wg-duration: 200ms;
+  --wg-ease: ease-in-out;
+  --wg-skeleton-base: #f0f0f0;
+  --wg-skeleton-highlight: #e8e8e8;
+}
+
+[data-theme="dark"],
+.dark {
+  --wg-skeleton-base: #303134;
+  --wg-skeleton-highlight: #3c4043;
+}
+
+@keyframes wg-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@layer components {
+  /* Base interactive transition */
+  .wg-interactive {
+    transition: all var(--wg-duration) var(--wg-ease);
+  }
+
+  /* Buttons: subtle scale on hover */
+  .wg-motion-button {
+    transition: all var(--wg-duration) var(--wg-ease);
+  }
+
+  .wg-motion-button:not(:disabled):hover {
+    transform: scale(1.02);
+  }
+
+  /* Cards: lift on hover */
+  .wg-motion-card {
+    transition:
+      transform var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease);
+  }
+
+  .wg-motion-card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Links: subtle underline on hover */
+  .wg-motion-link {
+    text-decoration-line: none;
+    text-underline-offset: 4px;
+    transition:
+      color var(--wg-duration) var(--wg-ease),
+      text-decoration-color var(--wg-duration) var(--wg-ease);
+  }
+
+  .wg-motion-link:hover {
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+  }
+
+  /* Smooth skeleton loading */
+  .wg-skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--wg-skeleton-base) 0%,
+      var(--wg-skeleton-highlight) 45%,
+      var(--wg-skeleton-base) 90%
+    );
+    background-size: 200% 100%;
+    animation: wg-shimmer 1.8s var(--wg-ease) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-motion-button:not(:disabled):hover,
+  .wg-motion-card:hover {
+    transform: none;
+  }
+
+  .wg-skeleton-shimmer {
+    animation: none;
+    background: var(--wg-skeleton-base);
+  }
+}

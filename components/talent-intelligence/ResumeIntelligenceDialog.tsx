@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Brain, Loader2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
+import { cn } from "@/lib/utils";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
@@ -104,7 +106,7 @@ export default function ResumeIntelligenceDialog({
             className={triggerClassName}
             onClick={(e) => e.stopPropagation()}
           >
-            <Brain className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+            <Brain className={iconClass("inline")} aria-hidden />
             Analyze Resume
           </button>
         ) : (
@@ -115,7 +117,7 @@ export default function ResumeIntelligenceDialog({
             className={triggerClassName}
             onClick={(e) => e.stopPropagation()}
           >
-            <Brain className="mr-1.5 h-4 w-4" />
+            <Brain className={cn(iconClass("inline"), "mr-1.5")} />
             Analyze Resume
           </Button>
         )}

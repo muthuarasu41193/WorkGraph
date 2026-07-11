@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -36,7 +37,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
               <Badge variant="secondary">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
-              <Lock className="h-4 w-4 text-muted-foreground" aria-hidden />
+              <Lock className={iconClass("inline", "text-muted-foreground")} aria-hidden />
             </div>
           </div>
 
@@ -62,7 +63,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             <span className="flex items-center gap-1">
               {rating != null ? (
                 <>
-                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  <Star className={iconClass("inline", "fill-amber-400 text-amber-400")} />
                   {rating.toFixed(1)}
                 </>
               ) : (

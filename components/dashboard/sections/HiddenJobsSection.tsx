@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, Eye, RotateCcw } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { RecommendedJobCard } from "@/lib/job-dashboard";
 import { readHiddenJobIds, restoreJob } from "@/lib/hidden-jobs-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
@@ -66,13 +67,13 @@ export default function HiddenJobsSection() {
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => handleRestore(job)}>
-                      <RotateCcw className="h-4 w-4" />
+                      <RotateCcw className={iconClass()} />
                       Restore
                     </Button>
                     {job.applyUrl ? (
                       <Button asChild size="sm" variant="secondary">
                         <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4" />
+                          <ExternalLink className={iconClass()} />
                           View
                         </a>
                       </Button>

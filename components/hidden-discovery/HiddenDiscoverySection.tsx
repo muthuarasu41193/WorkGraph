@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
 import { useHiddenJobs } from "@/hooks/use-hidden-jobs";
@@ -78,7 +79,7 @@ export default function HiddenDiscoverySection() {
             Saved ({savedIds.size})
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            {loading ? <Loader2 className={iconClass("inline", "animate-spin")} /> : <RefreshCw className={iconClass()} />}
             Refresh
           </Button>
         </div>

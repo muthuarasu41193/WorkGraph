@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Moon, Shield, User } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import PageHero from "@/components/design-system/PageHero";
 import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ export default function SettingsSection() {
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <User className="h-4 w-4" />
+              <User className={iconClass()} />
             </span>
             <div>
               <h2 className="text-sm font-semibold text-[var(--dash-text)]">Appearance</h2>
@@ -32,7 +33,7 @@ export default function SettingsSection() {
           <Separator className="my-4" />
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Moon className="h-4 w-4 text-[var(--dash-text-secondary)]" />
+              <Moon className={iconClass("inline", "text-[var(--dash-text-secondary)]")} />
               <div>
                 <Label htmlFor="dark-mode" className="text-sm font-medium">
                   Dark mode
@@ -53,7 +54,7 @@ export default function SettingsSection() {
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <Bell className="h-4 w-4" />
+              <Bell className={iconClass()} />
             </span>
             <div>
               <h2 className="text-sm font-semibold text-[var(--dash-text)]">Notifications</h2>
@@ -85,7 +86,7 @@ export default function SettingsSection() {
         <section className="wg-dash-section-card p-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <Shield className="h-4 w-4" />
+              <Shield className={iconClass()} />
             </span>
             <div>
               <h2 className="text-sm font-semibold text-[var(--dash-text)]">Privacy & Data</h2>

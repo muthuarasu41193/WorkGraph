@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/dashboard-nav-groups";
@@ -195,7 +196,7 @@ export default function SideNav({
             onClick={onToggleCollapse}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            {collapsed ? <ChevronRight className={iconClass()} /> : <ChevronLeft className={iconClass()} />}
           </Button>
         </div>
       ) : null}

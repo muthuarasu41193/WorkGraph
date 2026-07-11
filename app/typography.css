@@ -2,9 +2,10 @@
 
 :root {
   --wg-font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --wg-leading-body: 1.5;
-  --wg-leading-heading: 1.2;
-  --wg-tracking-heading: -0.01em;
+  --wg-font-heading: var(--font-heading), var(--font-inter), system-ui, sans-serif;
+  --wg-leading-body: 1.6;
+  --wg-leading-heading: 1.15;
+  --wg-tracking-heading: -0.02em;
 }
 
 @layer base {
@@ -24,7 +25,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--wg-font-sans);
+    font-family: var(--wg-font-heading);
     color: var(--wg-text-heading);
     line-height: var(--wg-leading-heading);
     letter-spacing: var(--wg-tracking-heading);

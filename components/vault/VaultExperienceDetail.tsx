@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -150,7 +151,7 @@ export default function VaultExperienceDetail({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             Preview
-            {!unlocked ? <Lock className="h-4 w-4 text-muted-foreground" /> : <Unlock className="h-4 w-4 text-green-600" />}
+            {!unlocked ? <Lock className={iconClass("inline", "text-muted-foreground")} /> : <Unlock className={iconClass("inline", "text-green-600")} />}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -191,7 +192,7 @@ export default function VaultExperienceDetail({
           </h2>
           {avgRating != null ? (
             <span className="flex items-center gap-1 text-sm">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              <Star className={iconClass("inline", "fill-amber-400 text-amber-400")} />
               {avgRating.toFixed(1)} ({reviews.length})
             </span>
           ) : null}

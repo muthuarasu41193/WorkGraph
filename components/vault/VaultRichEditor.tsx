@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Bold, Italic, List, ListOrdered, Heading2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -60,7 +61,7 @@ export default function VaultRichEditor({
           onClick={() => editor.chain().focus().toggleBold().run()}
           aria-label="Bold"
         >
-          <Bold className="h-4 w-4" />
+          <Bold className={iconClass()} />
         </Button>
         <Button
           type="button"
@@ -69,7 +70,7 @@ export default function VaultRichEditor({
           onClick={() => editor.chain().focus().toggleItalic().run()}
           aria-label="Italic"
         >
-          <Italic className="h-4 w-4" />
+          <Italic className={iconClass()} />
         </Button>
         <Button
           type="button"
@@ -78,7 +79,7 @@ export default function VaultRichEditor({
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           aria-label="Heading"
         >
-          <Heading2 className="h-4 w-4" />
+          <Heading2 className={iconClass()} />
         </Button>
         <Button
           type="button"
@@ -87,7 +88,7 @@ export default function VaultRichEditor({
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           aria-label="Bullet list"
         >
-          <List className="h-4 w-4" />
+          <List className={iconClass()} />
         </Button>
         <Button
           type="button"
@@ -96,7 +97,7 @@ export default function VaultRichEditor({
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           aria-label="Numbered list"
         >
-          <ListOrdered className="h-4 w-4" />
+          <ListOrdered className={iconClass()} />
         </Button>
       </div>
       <EditorContent editor={editor} style={{ minHeight }} />

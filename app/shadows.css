@@ -1,0 +1,65 @@
+/* WorkGraph shadow system — soft, layered, realistic elevation */
+
+:root {
+  /* Subtle ambient + contact shadows (low spread, low opacity) */
+  --wg-shadow-sm:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 1px 3px rgba(17, 24, 39, 0.02);
+  --wg-shadow:
+    0 2px 4px rgba(17, 24, 39, 0.05),
+    0 1px 2px rgba(17, 24, 39, 0.03);
+  --wg-shadow-md:
+    0 4px 12px rgba(17, 24, 39, 0.06),
+    0 2px 4px rgba(17, 24, 39, 0.03);
+  --wg-shadow-lg:
+    0 8px 24px rgba(17, 24, 39, 0.08),
+    0 4px 8px rgba(17, 24, 39, 0.04);
+  --wg-shadow-none: 0 0 #0000;
+}
+
+[data-theme="dark"],
+.dark {
+  --wg-shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.24),
+    0 1px 3px rgba(0, 0, 0, 0.12);
+  --wg-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.16);
+  --wg-shadow-md:
+    0 4px 12px rgba(0, 0, 0, 0.32),
+    0 2px 4px rgba(0, 0, 0, 0.18);
+  --wg-shadow-lg:
+    0 8px 24px rgba(0, 0, 0, 0.36),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@layer components {
+  /* Cards: sm default → md on hover */
+  .wg-shadow-card {
+    box-shadow: var(--wg-shadow-sm);
+    transition:
+      transform var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease);
+  }
+
+  .wg-shadow-card:hover {
+    box-shadow: var(--wg-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  /* Buttons: sm default → base shadow on hover */
+  .wg-shadow-button {
+    box-shadow: var(--wg-shadow-sm);
+    transition: all var(--wg-duration) var(--wg-ease);
+  }
+
+  .wg-shadow-button:not(:disabled):hover {
+    box-shadow: var(--wg-shadow);
+  }
+
+  /* Dropdowns, modals, popovers */
+  .wg-shadow-overlay {
+    box-shadow: var(--wg-shadow-lg);
+  }
+}

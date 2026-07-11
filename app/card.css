@@ -6,17 +6,17 @@
     border: 1px solid var(--wg-border);
     border-radius: 0.75rem;
     padding: 1.5rem;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    box-shadow: var(--wg-shadow-sm);
     transition:
-      box-shadow 200ms ease,
-      border-color 200ms ease;
+      transform var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease);
   }
 
   .wg-card:hover {
     border-color: var(--wg-border-hover);
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: var(--wg-shadow-md);
+    transform: translateY(-2px);
   }
 
   .wg-card__title {
@@ -25,6 +25,12 @@
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: var(--wg-text-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wg-card:hover {
+    transform: none;
   }
 }
 

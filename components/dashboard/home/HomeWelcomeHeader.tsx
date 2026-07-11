@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import PageHero from "@/components/design-system/PageHero";
 import { Button } from "@/components/ui/button";
 import { dashboardHref } from "@/lib/dashboard-routes";
@@ -47,7 +48,7 @@ export default function HomeWelcomeHeader({
         <Button asChild size="default" className="gap-2">
           <Link href={dashboardHref("jobs")}>
             View Recommended Jobs
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className={iconClass()} />
           </Link>
         </Button>
       }

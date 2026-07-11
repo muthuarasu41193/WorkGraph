@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { GitBranch, Globe, Link2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { createBrowserSupabaseClient } from "../../lib/supabase";
 import type { Profile } from "../../lib/types";
 import {
@@ -82,25 +83,25 @@ export default function LinksSection({ profile, userId }: Props) {
     {
       key: "linkedin_url",
       label: "LinkedIn",
-      icon: <Link2 className="h-4 w-4 text-[#8E8E93]" />,
+      icon: <Link2 className={iconClass("inline", "text-[#8E8E93]")} />,
       placeholder: "https://linkedin.com/in/yourname",
     },
     {
       key: "github_url",
       label: "GitHub",
-      icon: <GitBranch className="h-4 w-4 text-[#8E8E93]" />,
+      icon: <GitBranch className={iconClass("inline", "text-[#8E8E93]")} />,
       placeholder: "https://github.com/yourname",
     },
     {
       key: "website_url",
       label: "Website",
-      icon: <Globe className="h-4 w-4 text-[#8E8E93]" />,
+      icon: <Globe className={iconClass("inline", "text-[#8E8E93]")} />,
       placeholder: "https://yourwebsite.com",
     },
     {
       key: "stackoverflow_url",
       label: "Stack Overflow",
-      icon: <StackOverflowIcon className="h-4 w-4 text-[#8E8E93]" />,
+      icon: <StackOverflowIcon className={iconClass("inline", "text-[#8E8E93]")} />,
       placeholder: "https://stackoverflow.com/users/…",
     },
   ];

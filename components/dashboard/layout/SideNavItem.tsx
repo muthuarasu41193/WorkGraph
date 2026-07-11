@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { Icon as WgIcon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { NavFeedbackKind } from "@/lib/nav-feedback-events";
 import CollapsedNavTooltip from "./CollapsedNavTooltip";
@@ -36,7 +37,7 @@ export type SideNavItemProps = LinkProps | ButtonProps;
 
 function NavItemContent({
   label,
-  icon: Icon,
+  icon: IconComponent,
   active,
   collapsed,
   badge,
@@ -66,7 +67,7 @@ function NavItemContent({
           suggested && "wg-nav-item__icon-wrap--suggested",
         )}
       >
-        <Icon className="nav-icon size-5" strokeWidth={1.75} aria-hidden />
+        <WgIcon icon={IconComponent} className="nav-icon" />
       </span>
       {!collapsed ? (
         <>

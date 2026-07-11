@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon as WgIcon } from "@/components/ui/icon";
+import { iconClass } from "@/lib/icon-styles";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowUpRight,
@@ -9,6 +11,7 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { MOCK_AI_INSIGHTS } from "../../../lib/profile-mock-data";
 import ProfileCard from "../primitives/ProfileCard";
 import ProfileBadge from "../primitives/ProfileBadge";
@@ -73,13 +76,13 @@ function InsightBlock({
   return (
     <div className="rounded-lg border border-[var(--wg-color-border)] p-4">
       <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--wg-color-text-primary)]">
-        <Icon className="h-4 w-4 text-[var(--wg-color-text-tertiary)]" strokeWidth={1.75} />
+        <WgIcon icon={Icon} size="inline" className="text-[var(--wg-color-text-tertiary)]" />
         {title}
       </p>
       <ul className="space-y-1.5">
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2 text-sm font-medium text-[var(--wg-color-text-primary)]">
-            <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--wg-color-primary)]" />
+            <ArrowUpRight className={cn(iconClass("inline"), "mt-0.5 shrink-0 text-[var(--wg-color-primary)]")} />
             {item}
           </li>
         ))}

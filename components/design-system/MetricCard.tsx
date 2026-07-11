@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon as WgIcon } from "@/components/ui/icon";
 import type { LucideIcon } from "lucide-react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -55,9 +56,9 @@ export default function MetricCard({
                 )}
               >
                 {trendUp ? (
-                  <TrendingUp className="h-3 w-3" aria-hidden />
+                  <WgIcon icon={TrendingUp} aria-hidden />
                 ) : (
-                  <TrendingDown className="h-3 w-3" aria-hidden />
+                  <WgIcon icon={TrendingDown} aria-hidden />
                 )}
                 {trend > 0 ? "+" : ""}
                 {trend}%
@@ -72,7 +73,7 @@ export default function MetricCard({
           ) : null}
         </div>
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)] transition-transform group-hover:scale-105">
-          <Icon className="h-[18px] w-[18px]" aria-hidden />
+          <WgIcon icon={Icon} size="standalone" />
         </span>
       </div>
       {chartData && chartData.length > 1 ? (

@@ -11,6 +11,7 @@ import {
   Sparkles,
   XCircle,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { JobPipelineCounts } from "../../lib/job-dashboard";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -97,7 +98,7 @@ export default function ProfileJobDashboard({
                 className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-[#DADCE0] px-5 text-sm font-medium text-[#5F6368] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
               >
                 {syncStatus === "error" ? (
-                  <XCircle className="h-4 w-4 text-[#D93025] wg-shake" aria-hidden />
+                  <XCircle className={iconClass("inline", "text-[#D93025] wg-shake")} aria-hidden />
                 ) : (
                   <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
                 )}
@@ -175,7 +176,7 @@ export default function ProfileJobDashboard({
                       <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
                       {stats.interview > 0 ? (
                         <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
-                          <LoaderCircle className="h-3.5 w-3.5" />
+                          <LoaderCircle className={iconClass()} />
                           {stats.interview} in interview
                         </span>
                       ) : null}

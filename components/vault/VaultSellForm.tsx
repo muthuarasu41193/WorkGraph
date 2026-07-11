@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ChevronLeft, ChevronRight, Loader2, Save } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import VaultRichEditor from "@/components/vault/VaultRichEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -173,11 +174,11 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           {saving ? (
             <>
-              <Loader2 className="h-3 w-3 animate-spin" /> Saving…
+              <Loader2 className={iconClass("inline", "animate-spin")} /> Saving…
             </>
           ) : lastSaved ? (
             <>
-              <Save className="h-3 w-3" /> Saved {lastSaved.toLocaleTimeString()}
+              <Save className={iconClass()} /> Saved {lastSaved.toLocaleTimeString()}
             </>
           ) : (
             "Draft will auto-save as you type"
@@ -197,7 +198,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
                 step > s.id && "border-green-500/50 text-green-700 dark:text-green-400",
               )}
             >
-              {step > s.id ? <Check className="h-3 w-3" /> : null}
+              {step > s.id ? <Check className={iconClass()} /> : null}
               {s.label}
             </button>
           </li>
@@ -351,13 +352,13 @@ export default function VaultSellForm({ initialDraft }: Props) {
 
       <div className="flex justify-between">
         <Button type="button" variant="outline" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className={iconClass()} />
           Back
         </Button>
         {step < VAULT_SELL_STEPS.length - 1 ? (
           <Button type="button" onClick={() => setStep((s) => s + 1)}>
             Next
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className={iconClass()} />
           </Button>
         ) : null}
       </div>

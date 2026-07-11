@@ -57,6 +57,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { iconClass } from "@/lib/icon-styles";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
 import JobCard from "@/components/design-system/JobCard";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
@@ -1509,7 +1510,7 @@ export default function RecommendedJobsSection({
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#DADCE0] text-[#5F6368]"
             aria-label={isMatchProfileExpanded ? "Collapse profile analysis" : "Expand profile analysis"}
           >
-            {isMatchProfileExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {isMatchProfileExpanded ? <ChevronUp className={iconClass()} /> : <ChevronDown className={iconClass()} />}
           </button>
         </div>
 
@@ -1573,14 +1574,14 @@ export default function RecommendedJobsSection({
               className="rounded-full"
               aria-label="Open filters panel"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className={iconClass()} />
               Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
             </Button>
           </div>
 
           <section className="filter-bar wg-no-scrollbar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
             <div className="filter-search-wrap">
-              <Search className="filter-search-icon" aria-hidden strokeWidth={1.75} />
+              <Search className="filter-search-icon text-[#94a3b8]" aria-hidden />
               <input
                 type="search"
                 value={searchInput}
@@ -1595,7 +1596,7 @@ export default function RecommendedJobsSection({
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   aria-label="Clear search"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className={iconClass()} />
                 </button>
               ) : null}
               {isSearching ? (
@@ -1606,7 +1607,7 @@ export default function RecommendedJobsSection({
             <details data-filter-dropdown="true" className="relative shrink-0">
               <summary className={cn("filter-dropdown-btn", jobTypes.size > 0 && "active")}>
                 {jobTypes.size > 0 ? `Job Type · ${jobTypes.size}` : "Job Type"}
-                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                <ChevronDown className={iconClass("inline")} aria-hidden />
               </summary>
               <div data-filter-menu="true" className="filter-menu w-52">
                 {JOB_TYPE_OPTIONS.map((type) => (
@@ -1638,7 +1639,7 @@ export default function RecommendedJobsSection({
                 )}
               >
                 Location
-                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                <ChevronDown className={iconClass("inline")} aria-hidden />
               </summary>
               <div data-filter-menu="true" className="filter-menu filter-menu--wide">
                 <input
@@ -1674,7 +1675,7 @@ export default function RecommendedJobsSection({
             <details data-filter-dropdown="true" className="relative shrink-0">
               <summary className={cn("filter-dropdown-btn", dateWindow !== "any" && "active")}>
                 Date posted
-                <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+                <ChevronDown className={iconClass("inline")} aria-hidden />
               </summary>
               <div data-filter-menu="true" className="filter-menu w-48">
                 {DATE_OPTIONS.map((d) => (
@@ -1691,7 +1692,7 @@ export default function RecommendedJobsSection({
                     )}
                   >
                     {d.label}
-                    {dateWindow === d.id ? <Check className="h-3.5 w-3.5" aria-hidden /> : null}
+                    {dateWindow === d.id ? <Check className={iconClass()} aria-hidden /> : null}
                   </button>
                 ))}
               </div>
@@ -1703,7 +1704,7 @@ export default function RecommendedJobsSection({
               className={cn("filter-dropdown-btn", advancedFilterCount > 0 && "active")}
             >
               Filters{advancedFilterCount > 0 ? ` (${advancedFilterCount})` : ""}
-              <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              <ChevronDown className={iconClass("inline")} aria-hidden />
             </button>
           </section>
 
@@ -1724,7 +1725,7 @@ export default function RecommendedJobsSection({
                     className="filter-tag__remove"
                     aria-label={`Remove ${chip.label}`}
                   >
-                    <X className="h-3 w-3" />
+                    <X className={iconClass()} />
                   </button>
                 </span>
               ))}
@@ -2075,7 +2076,7 @@ export default function RecommendedJobsSection({
             <details data-filter-dropdown="true" className="relative">
               <summary className="results-bar__sort">
                 Sorted by {SORT_OPTIONS.find((option) => option.id === sortBy)?.label ?? "Best Match"}
-                <ChevronDown className="h-3 w-3" strokeWidth={2} aria-hidden />
+                <ChevronDown className={iconClass()} aria-hidden />
               </summary>
               <div data-filter-menu="true" className="results-bar__sort-menu">
                 {SORT_OPTIONS.map((option) => (
@@ -2086,13 +2087,13 @@ export default function RecommendedJobsSection({
                     className={cn("results-bar__sort-option", sortBy === option.id && "active")}
                   >
                     {option.label}
-                    {sortBy === option.id ? <Check className="h-3 w-3" aria-hidden /> : null}
+                    {sortBy === option.id ? <Check className={iconClass()} aria-hidden /> : null}
                   </button>
                 ))}
               </div>
             </details>
             {isPageLoading ? (
-              <Loader2 className="h-3 w-3 animate-spin text-slate-400" aria-label="Loading jobs" />
+              <Loader2 className={iconClass("inline", "animate-spin text-slate-400")} aria-label="Loading jobs" />
             ) : null}
           </div>
           <div className="view-toggle" role="group" aria-label="Choose jobs list view">
@@ -2103,7 +2104,7 @@ export default function RecommendedJobsSection({
               aria-label="List view"
               aria-pressed={viewMode === "list"}
             >
-              <LayoutList className="h-4 w-4" strokeWidth={1.75} />
+              <LayoutList className={iconClass("inline")} />
             </button>
             <button
               type="button"
@@ -2112,7 +2113,7 @@ export default function RecommendedJobsSection({
               aria-label="Grid view"
               aria-pressed={viewMode === "grid"}
             >
-              <LayoutGrid className="h-4 w-4" strokeWidth={1.75} />
+              <LayoutGrid className={iconClass("inline")} />
             </button>
           </div>
         </div>
@@ -2149,7 +2150,7 @@ export default function RecommendedJobsSection({
             aria-hidden
           >
             <span className="inline-flex items-center gap-2 rounded-full border border-[#DADCE0] bg-white px-4 py-2 text-sm text-[#3A3A3C] shadow-sm">
-              <Loader2 className="h-4 w-4 animate-spin text-[#1A73E8]" />
+              <Loader2 className={iconClass("inline", "animate-spin text-[#1A73E8]")} />
               Loading page {safePage}…
             </span>
           </div>
@@ -2212,11 +2213,11 @@ export default function RecommendedJobsSection({
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
                         {r.status === "ok" ? (
-                          <Check className="h-4 w-4 text-[#16A34A]" />
+                          <Check className={iconClass("inline", "text-[#16A34A]")} />
                         ) : r.status === "warn" ? (
-                          <TriangleAlert className="h-4 w-4 text-gray-400" />
+                          <TriangleAlert className={iconClass("inline", "text-gray-400")} />
                         ) : (
-                          <X className="h-4 w-4 text-gray-400" />
+                          <X className={iconClass("inline", "text-gray-400")} />
                         )}
                         <span className="text-gray-600">{r.label}</span>
                       </li>
@@ -2273,7 +2274,7 @@ export default function RecommendedJobsSection({
                 aria-label="Previous page"
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className={iconClass()} />
               </button>
               {paginationTokens.map((token, index) =>
                 token === "ellipsis" ? (
@@ -2306,7 +2307,7 @@ export default function RecommendedJobsSection({
                 aria-label="Next page"
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className={iconClass()} />
               </button>
             </div>
           ) : null}
@@ -2399,9 +2400,9 @@ export default function RecommendedJobsSection({
           <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
           <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Complete your profile to see matches</h3>
           <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
-            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[#1A73E8]">Add your skills <ArrowRight className="h-3.5 w-3.5" /></Link>
-            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[#1A73E8]">Add expected salary <ArrowRight className="h-3.5 w-3.5" /></Link>
-            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-[#1A73E8]">Add location preference <ArrowRight className="h-3.5 w-3.5" /></Link>
+            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[#1A73E8]">Add your skills <ArrowRight className={iconClass()} /></Link>
+            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[#1A73E8]">Add expected salary <ArrowRight className={iconClass()} /></Link>
+            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-[#1A73E8]">Add location preference <ArrowRight className={iconClass()} /></Link>
           </div>
           <Link
             href="/create-profile"

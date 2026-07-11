@@ -2,6 +2,7 @@
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { Briefcase, Building2, Loader2, Search, Sparkles } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -97,7 +98,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
         <div
           id="global-search-listbox"
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-slate-200 bg-background shadow-xl dark:border-slate-700"
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-slate-200 bg-background shadow-lg dark:border-slate-700"
         >
           <div className="flex flex-wrap gap-1 border-b border-border p-2">
             {FILTERS.map((f) => (
@@ -133,12 +134,12 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                     onClick={() => selectJob(job.id, job.title)}
                   >
                     <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Briefcase className="h-4 w-4" />
+                      <Briefcase className={iconClass()} />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{job.title}</span>
                       <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-                        <Building2 className="h-3 w-3" />
+                        <Building2 className={iconClass()} />
                         {job.company}
                         <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
                           {job.source}

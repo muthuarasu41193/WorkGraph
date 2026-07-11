@@ -16,6 +16,7 @@ import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider
 import { signOutClient } from "@/lib/auth/client";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 
 const HELP_URL = "mailto:support@workgraph.app?subject=WorkGraph%20Help%20%26%20Support";
@@ -150,13 +151,13 @@ export default function SidebarBottom({
   const utilityRow = (
     <div className={cn("flex items-center", collapsed ? "flex-col gap-1" : "justify-center gap-2")}>
       <UtilityButton label="Settings" onClick={goSettings}>
-        <Settings2 className="nav-icon" strokeWidth={1.5} />
+        <Settings2 className={cn("nav-icon", iconClass("inline"))} />
       </UtilityButton>
       <UtilityButton
         label="Help & Support"
         onClick={() => window.open(HELP_URL, "_blank", "noopener,noreferrer")}
       >
-        <HelpCircle className="nav-icon" strokeWidth={1.5} />
+        <HelpCircle className={cn("nav-icon", iconClass("inline"))} />
       </UtilityButton>
       <UtilityButton
         label={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -170,9 +171,9 @@ export default function SidebarBottom({
           className="inline-flex"
         >
           {isDark ? (
-            <Sun className="nav-icon" strokeWidth={1.5} />
+            <Sun className={cn("nav-icon", iconClass("inline"))} />
           ) : (
-            <Moon className="nav-icon" strokeWidth={1.5} />
+            <Moon className={cn("nav-icon", iconClass("inline"))} />
           )}
         </motion.span>
       </UtilityButton>
@@ -217,7 +218,7 @@ export default function SidebarBottom({
                 <span className="block truncate text-xs text-slate-400">{roleLabel}</span>
               </span>
               <MoreHorizontal
-                className="h-4 w-4 shrink-0 text-slate-400 opacity-0 transition-opacity duration-150 group-hover/user:opacity-100"
+                className={iconClass("inline", "shrink-0 text-slate-400 opacity-0 transition-opacity duration-150 group-hover/user:opacity-100")}
                 aria-hidden
               />
             </button>

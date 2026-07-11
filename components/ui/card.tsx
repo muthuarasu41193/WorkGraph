@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const cardBase =
-  "group/card flex flex-col gap-4 overflow-hidden rounded-xl border border-[var(--wg-border)] bg-white p-6 text-sm shadow-sm transition-all duration-200 hover:border-[var(--wg-border-hover)] hover:shadow-md dark:bg-[var(--wg-bg)]"
+  "group/card flex flex-col gap-4 overflow-hidden rounded-xl border border-[var(--wg-border)] bg-white p-6 text-sm shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-[var(--wg-border-hover)] hover:shadow-md dark:bg-[var(--wg-bg)]"
 
 function Card({
   className,

@@ -57,18 +57,17 @@
   border-radius: 0.75rem;
   background: var(--wg-bg);
   border: 1px solid var(--wg-border);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  box-shadow: var(--wg-shadow-sm);
   transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease,
-    transform 200ms ease;
+    transform var(--wg-duration) var(--wg-ease),
+    box-shadow var(--wg-duration) var(--wg-ease),
+    border-color var(--wg-duration) var(--wg-ease);
 }
 
 .wg-dash-section-card:hover {
   border-color: var(--wg-border-hover);
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--wg-shadow-md);
+  transform: translateY(-2px);
 }
 
 .wg-dash-card-lift:hover {

@@ -14,13 +14,14 @@
   border: 1px solid #f1f5f9;
   border-radius: 10px;
   transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease;
+    border-color var(--wg-duration) var(--wg-ease),
+    box-shadow var(--wg-duration) var(--wg-ease),
+    transform var(--wg-duration) var(--wg-ease);
 }
 
 .hidden-opp-card:hover {
   border-color: #e2e8f0;
-  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+  box-shadow: var(--wg-shadow-sm);
 }
 
 .hidden-opp-card__source {

@@ -13,6 +13,7 @@ import {
   Sparkles,
   User,
 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import {
   Dialog,
   DialogContent,
@@ -190,7 +191,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
                         "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
                       )}
                     >
-                      <Icon className="h-4 w-4 shrink-0 text-[var(--dash-text-secondary)]" />
+                      <Icon className={iconClass("inline", "shrink-0 text-[var(--dash-text-secondary)]")} />
                       <div className="min-w-0">
                         <p className="font-medium text-[var(--dash-text)]">{item.label}</p>
                         {item.description ? (

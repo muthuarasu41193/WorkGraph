@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Brain, Loader2, Sparkles } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
@@ -128,7 +129,7 @@ export default function ResumeIntelligenceSection({
     <section className="space-y-8" aria-labelledby="resume-intelligence-heading">
       <header>
         <div className="flex items-center gap-2">
-          <Brain className="h-6 w-6 text-primary" />
+          <Brain className={iconClass("standalone", "text-primary")} />
           <h1 id="resume-intelligence-heading" className="text-2xl font-bold tracking-tight">
             Resume Intelligence
           </h1>

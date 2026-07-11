@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileUp, Radar, Search } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 
 export default function ProfileQuickActions({ userFirstName }: { userFirstName: string }) {
   const name = userFirstName.trim() || "there";
@@ -23,22 +24,22 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
               href="/create-profile"
               className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1A73E8] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
-              <FileUp className="h-4 w-4 shrink-0" aria-hidden />
+              <FileUp className={iconClass("inline", "shrink-0")} aria-hidden />
               Upload new resume
-              <ArrowRight className="h-4 w-4 shrink-0 opacity-70 transition group-hover:translate-x-0.5" aria-hidden />
+              <ArrowRight className={iconClass("inline", "shrink-0 opacity-70 transition group-hover:translate-x-0.5")} aria-hidden />
             </Link>
             <a
               href="#ats-score"
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] px-4 py-3 text-sm font-medium text-[#3A3A3C] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
-              <Radar className="h-4 w-4 shrink-0 text-[#1A73E8]" aria-hidden />
+              <Radar className={iconClass("inline", "shrink-0 text-[#1A73E8]")} aria-hidden />
               Improve ATS score
             </a>
             <a
               href="#recommended-jobs"
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-[#E8F0FE] px-4 py-3 text-sm font-medium text-[#1557B0] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2 sm:w-auto"
             >
-              <Search className="h-4 w-4 shrink-0 text-[#1A73E8]" aria-hidden />
+              <Search className={iconClass("inline", "shrink-0 text-[#1A73E8]")} aria-hidden />
               Browse matches
             </a>
           </nav>
