@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { WG_COLORS } from "@/lib/design-tokens";
 import { convertInrToCurrency, formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
 import type { VaultDashboardStats } from "@/lib/vault";
 
@@ -48,8 +49,8 @@ export default function VaultEarningsChart({ salesByDay, currency }: Props) {
               name === "earnings_display" ? "Earnings" : "Sales",
             ]}
           />
-          <Line yAxisId="sales" type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-          <Line yAxisId="earnings" type="monotone" dataKey="earnings_display" stroke="#22c55e" strokeWidth={2} dot={false} />
+          <Line yAxisId="sales" type="monotone" dataKey="sales" stroke={WG_COLORS.primary} strokeWidth={2} dot={false} />
+          <Line yAxisId="earnings" type="monotone" dataKey="earnings_display" stroke={WG_COLORS.success} strokeWidth={2} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

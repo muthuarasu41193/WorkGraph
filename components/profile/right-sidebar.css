@@ -9,7 +9,7 @@
 
 .sidebar-card {
   background: white;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--wg-border-default);
   border-radius: 12px;
   padding: 16px;
 }
@@ -39,19 +39,19 @@
 
 .match-label-row span:last-child {
   font-weight: 500;
-  color: #374151;
+  color: var(--wg-text-secondary);
 }
 
 .match-bar-track {
   height: 4px;
-  background: #f1f5f9;
+  background: var(--wg-border-default);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .match-bar-fill {
   height: 4px;
-  background: #6366f1;
+  background: var(--wg-primary);
   border-radius: 2px;
   transition: width 600ms ease-out;
 }
@@ -59,10 +59,10 @@
 .match-overall {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--wg-border-default);
   font-size: 12px;
   font-weight: 500;
-  color: #374151;
+  color: var(--wg-text-secondary);
 }
 
 .alert-row {
@@ -70,7 +70,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid #f9fafb;
+  border-bottom: 1px solid var(--wg-surface-hover);
 }
 
 .alert-row:last-of-type {
@@ -80,11 +80,11 @@
 .alert-icon {
   width: 30px;
   height: 30px;
-  background: #f8fafc;
+  background: var(--wg-surface-hover);
   border-radius: 8px;
   display: grid;
   place-items: center;
-  color: #94a3b8;
+  color: var(--wg-text-tertiary);
   flex-shrink: 0;
 }
 
@@ -111,7 +111,7 @@
   gap: 6px;
   margin-top: 2px;
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--wg-text-tertiary);
 }
 
 .alert-toggle {
@@ -124,21 +124,21 @@
 }
 
 .alert-toggle[data-active="true"] {
-  color: #6366f1;
+  color: var(--wg-primary);
 }
 
 .alert-toggle[data-active="false"] {
-  color: #d1d5db;
+  color: var(--wg-border-strong);
 }
 
 .create-alert-btn {
   width: 100%;
   padding: 8px;
   margin-top: 10px;
-  border: 1px dashed #e2e8f0;
+  border: 1px dashed var(--wg-border);
   border-radius: 8px;
   font-size: 12px;
-  color: #6366f1;
+  color: var(--wg-primary);
   background: transparent;
   cursor: pointer;
   text-align: center;
@@ -146,6 +146,6 @@
 }
 
 .create-alert-btn:hover {
-  background: #eef2ff;
-  border-color: #a5b4fc;
+  background: var(--wg-brand-50);
+  border-color: var(--wg-brand-300);
 }

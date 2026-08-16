@@ -74,18 +74,18 @@ export default function EducationSection({ userId, education }: Props) {
   };
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-[#FAFAF9] shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+    <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-surface-hover shadow-[0_1px_0_rgba(15,23,42,0.04)]">
       {toast ? (
         <p className="border-b border-amber-200/80 bg-amber-50 px-6 py-2.5 text-sm text-amber-900">{toast}</p>
       ) : null}
 
-      <header className="flex flex-col gap-4 border-b border-slate-200/80 bg-white px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
+      <header className="flex flex-col gap-4 border-b border-slate-200/80 bg-surface px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-800">
             <GraduationCap className={iconClass("inline")} />
           </span>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Credentials</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Credentials</p>
             <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground">Education</h2>
             <p className="mt-1 max-w-md text-xs leading-relaxed text-foreground/85">
               Degree first, school second — year sits in its own lane so scanners and humans parse it fast.
@@ -109,14 +109,14 @@ export default function EducationSection({ userId, education }: Props) {
               <li key={`edu-${idx}`} className="group relative py-4 sm:py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
                   <div className="flex shrink-0 items-baseline gap-3 sm:w-28 sm:flex-col sm:gap-1">
-                    <span className="font-mono text-[11px] font-medium tabular-nums text-slate-400">
+                    <span className="font-mono text-xs font-medium tabular-nums text-slate-400">
                       {(idx + 1).toString().padStart(2, "0")}
                     </span>
                     <input
                       value={item.year}
                       onChange={(e) => void updateField(idx, "year", e.target.value)}
                       placeholder="Year"
-                      className={`${inputReset} w-full max-w-[8rem] rounded border border-dashed border-slate-300 bg-white px-2 py-1 font-mono text-[11px] text-slate-800 sm:max-w-none`}
+                      className={`${inputReset} w-full max-w-[8rem] rounded border border-dashed border-slate-300 bg-surface px-2 py-1 font-mono text-xs text-slate-800 sm:max-w-none`}
                     />
                   </div>
 
@@ -124,7 +124,7 @@ export default function EducationSection({ userId, education }: Props) {
                     <button
                       type="button"
                       onClick={() => void removeItem(idx)}
-                      className="absolute -top-1 right-0 rounded p-1.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-red-600 group-hover:opacity-100 sm:top-0"
+                      className="absolute -top-1 right-0 rounded p-1.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-brand group-hover:opacity-100 sm:top-0"
                       aria-label="Remove education"
                     >
                       <Trash2 className={iconClass("inline")} />

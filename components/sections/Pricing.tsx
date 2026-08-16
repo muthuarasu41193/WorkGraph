@@ -138,12 +138,12 @@ function BillingToggle({
   return (
     <div className="flex flex-col items-center gap-3">
       <div
-        className="relative inline-flex rounded-full border border-[#E5E5E5] bg-[#F3F2EF] p-1"
+        className="relative inline-flex rounded-full border border-border-default bg-surface-active p-1"
         role="group"
         aria-label="Billing period"
       >
         <motion.div
-          className="absolute inset-y-1 rounded-full bg-white shadow-sm"
+          className="absolute inset-y-1 rounded-full bg-surface shadow-sm"
           layout
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           style={{
@@ -156,7 +156,7 @@ function BillingToggle({
           onClick={() => onChange("monthly")}
           className={cn(
             "relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors",
-            !isAnnual ? "text-[#0A0A0A]" : "text-[#8A8A8A]",
+            !isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={!isAnnual}
         >
@@ -167,7 +167,7 @@ function BillingToggle({
           onClick={() => onChange("annual")}
           className={cn(
             "relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors",
-            isAnnual ? "text-[#0A0A0A]" : "text-[#8A8A8A]",
+            isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={isAnnual}
         >
@@ -182,7 +182,7 @@ function BillingToggle({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="rounded-full bg-[#F0FDF4] px-3 py-1 text-xs font-bold text-[#16A34A]"
+            className="rounded-full bg-success-50 px-3 py-1 text-xs font-bold text-success"
           >
             Save 40%
           </motion.span>
@@ -196,14 +196,14 @@ function FeatureItem({ feature }: { feature: PricingFeature }) {
   return (
     <li
       className={cn(
-        "flex items-start gap-3 text-[15px] leading-snug",
-        feature.included ? "text-[#4A4A4A]" : "text-[#8A8A8A]",
+        "flex items-start gap-3 text-md leading-snug",
+        feature.included ? "text-fg-secondary" : "text-fg-tertiary",
       )}
     >
       {feature.included ? (
-        <Check className="mt-0.5 size-4 shrink-0 text-[#16A34A]" aria-hidden />
+        <Check className="mt-0.5 size-4 shrink-0 text-success" aria-hidden />
       ) : (
-        <X className="mt-0.5 size-4 shrink-0 text-[#C41E3A]/70" aria-hidden />
+        <X className="mt-0.5 size-4 shrink-0 text-brand/70" aria-hidden />
       )}
       <span className={cn(!feature.included && "opacity-70")}>{feature.text}</span>
     </li>
@@ -235,15 +235,15 @@ function PricingCard({
       className={cn(
         "relative flex flex-col rounded-[20px] border p-10",
         tier.highlighted
-          ? "z-10 border-[#C41E3A] bg-[#FFF8F8] shadow-[0_20px_60px_-20px_rgba(196,30,58,0.25)] lg:scale-105"
-          : "border-[#E5E5E5] bg-white shadow-sm",
+          ? "z-10 border-brand bg-brand-50 shadow-[0_20px_60px_-20px_rgba(225, 29, 46,0.25)] lg:scale-105"
+          : "border-border-default bg-surface shadow-sm",
       )}
     >
       {tier.badge && (
         <span
           className={cn(
-            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-[10px] font-bold uppercase tracking-wider text-white",
-            tier.badgeVariant === "popular" ? "bg-[#C41E3A]" : "bg-[#0A0A0A]",
+            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider text-white",
+            tier.badgeVariant === "popular" ? "bg-brand" : "bg-slate-950",
           )}
         >
           {tier.badge}
@@ -251,8 +251,8 @@ function PricingCard({
       )}
 
       <div className="text-center">
-        <h3 className="font-heading text-xl font-bold text-[#0A0A0A]">{tier.name}</h3>
-        <p className="mt-1 text-sm text-[#8A8A8A]">{tier.tagline}</p>
+        <h3 className="font-heading text-xl font-bold text-fg-primary">{tier.name}</h3>
+        <p className="mt-1 text-sm text-fg-tertiary">{tier.tagline}</p>
 
         <div className="mt-6 flex flex-col items-center">
           <div className="flex items-baseline justify-center gap-1">
@@ -263,12 +263,12 @@ function PricingCard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="font-heading text-5xl font-extrabold tracking-tight text-[#0A0A0A]"
+                className="font-numeric text-5xl font-bold tracking-heading text-fg-primary"
               >
                 ${displayPrice}
               </motion.span>
             </AnimatePresence>
-            <span className="text-[#8A8A8A]">/month</span>
+            <span className="text-fg-tertiary">/month</span>
           </div>
           {showBillingNote && (
             <AnimatePresence mode="wait">
@@ -278,7 +278,7 @@ function PricingCard({
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.25 }}
-                className="mt-1 text-xs text-[#8A8A8A]"
+                className="mt-1 text-xs text-fg-tertiary"
               >
                 billed ${tier.annualBilled}/yr
               </motion.p>
@@ -292,11 +292,11 @@ function PricingCard({
         className={cn(
           "mt-8 inline-flex w-full items-center justify-center rounded-full font-semibold transition-all duration-200 ease-in-out hover:scale-[1.02]",
           tier.cta.style === "outline" &&
-            "border-2 border-[#C41E3A] bg-transparent py-3 text-[#C41E3A] hover:bg-[#FFF5F5]",
+            "border-2 border-brand bg-transparent py-3 text-brand hover:bg-brand-50",
           tier.cta.style === "primary" &&
-            "bg-[#C41E3A] py-3.5 text-base text-white shadow-md hover:bg-[#A01830] hover:shadow-lg",
+            "bg-brand py-3.5 text-base text-white shadow-md hover:bg-brand-700 hover:shadow-lg",
           tier.cta.style === "dark" &&
-            "bg-[#0A0A0A] py-3 text-white hover:bg-[#1A1A1A]",
+            "bg-slate-950 py-3 text-white hover:bg-slate-900",
         )}
       >
         {tier.cta.label}
@@ -317,10 +317,10 @@ function FaqAccordion() {
 
   return (
     <div className="mx-auto mt-16 max-w-3xl">
-      <h3 className="text-center font-heading text-2xl font-bold text-[#0A0A0A] sm:text-3xl">
+      <h3 className="text-center font-heading text-2xl font-bold text-fg-primary sm:text-3xl">
         Frequently asked questions
       </h3>
-      <div className="mt-8 divide-y divide-[#E5E5E5] rounded-2xl border border-[#E5E5E5] bg-white">
+      <div className="mt-8 divide-y divide-border-default rounded-2xl border border-border-default bg-surface">
         {FAQ_ITEMS.map((item, index) => {
           const isOpen = openIndex === index;
           return (
@@ -328,13 +328,13 @@ function FaqAccordion() {
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-[#F8F7F4]/60"
+                className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-background/60"
                 aria-expanded={isOpen}
               >
-                <span className="font-semibold text-[#0A0A0A]">{item.question}</span>
+                <span className="font-semibold text-fg-primary">{item.question}</span>
                 <ChevronDown
                   className={cn(
-                    "size-5 shrink-0 text-[#8A8A8A] transition-transform duration-300",
+                    "size-5 shrink-0 text-fg-tertiary transition-transform duration-300",
                     isOpen && "rotate-180",
                   )}
                   aria-hidden
@@ -353,7 +353,7 @@ function FaqAccordion() {
                 }
                 className="overflow-hidden"
               >
-                <p className="px-6 pb-5 text-[15px] leading-relaxed text-[#4A4A4A]">
+                <p className="px-6 pb-5 text-md leading-relaxed text-fg-secondary">
                   {item.answer}
                 </p>
               </motion.div>
@@ -376,18 +376,18 @@ function EnterpriseCta() {
       initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-16 rounded-[20px] bg-[#0A0A0A] px-8 py-12 text-center sm:px-12"
+      className="mt-16 rounded-[20px] bg-slate-950 px-8 py-12 text-center sm:px-12"
     >
       <p className="font-heading text-xl font-bold text-white sm:text-2xl">
         Need a custom plan for your company or bootcamp?
       </p>
       <Link
         href="#contact"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-base font-semibold text-[#0A0A0A] transition-all duration-200 hover:scale-[1.02] hover:bg-[#F3F2EF]"
+        className="mt-6 inline-flex items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-all duration-200 hover:scale-[1.02] hover:bg-surface-active"
       >
         Contact Sales →
       </Link>
-      <p className="mt-4 text-sm text-[#8A8A8A]">
+      <p className="mt-4 text-sm text-fg-tertiary">
         We work with recruiting firms, coding bootcamps, and universities
       </p>
     </motion.div>
@@ -398,16 +398,16 @@ export default function Pricing() {
   const [period, setPeriod] = useState<BillingPeriod>("monthly");
 
   return (
-    <section id="pricing" aria-label="Pricing" className="bg-white py-20 sm:py-24 lg:py-28">
+    <section id="pricing" aria-label="Pricing" className="bg-surface py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C41E3A]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             SIMPLE PRICING
           </p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-[#0A0A0A] sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
             Start free. Upgrade when you&apos;re ready.
           </h2>
-          <p className="mt-4 text-lg text-[#4A4A4A]">
+          <p className="mt-4 text-lg text-fg-secondary">
             No hidden fees. No long-term contracts. Cancel anytime.
           </p>
         </header>

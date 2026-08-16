@@ -69,7 +69,7 @@ import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import "@/components/design-system/job-card.css";
 import "@/components/profile/right-sidebar.css";
 
-import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
+import { WG_COLORS, WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 
 const SOURCE_LABELS: Record<RecommendedJobCard["source"], string> = {
   greenhouse: "Greenhouse",
@@ -1445,7 +1445,7 @@ export default function RecommendedJobsSection({
     return skillHints.slice(0, 6).map((skill) => ({
       label: skill,
       score: 100,
-      color: "#1A73E8",
+      color: WG_COLORS.info,
       detail: "Listed on your profile",
     }));
   }, [skillHints]);
@@ -1454,21 +1454,21 @@ export default function RecommendedJobsSection({
     <section id="recommended-jobs" className="scroll-mt-28">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#8E8E93]">Job board</p>
-          <h2 className="mt-1 text-[18px] font-semibold text-[#2C2C2E] sm:text-[18px]">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-fg-tertiary">Job board</p>
+          <h2 className="mt-1 text-[18px] font-semibold text-fg-primary sm:text-[18px]">
             {isLiveFeed
               ? profileMatchActive
                 ? "Jobs matching your profile"
                 : "Browse live job listings"
               : "No live jobs indexed yet"}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-[#3A3A3C]">{hint}</p>
+          <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-fg-secondary">{hint}</p>
         </div>
         <span
           className={`rounded-[20px] px-3 py-1 text-xs font-medium uppercase tracking-wide ring-1 ${
             isLiveFeed
-              ? "border-0 bg-[#E8F0FE] text-[#1557B0] ring-[#DADCE0]"
-              : "border-[#DADCE0] bg-[#FEF7E0] text-[#5F6368] ring-[#DADCE0]"
+              ? "border-0 bg-info-50 text-info-foreground ring-border-default"
+              : "border-border-default bg-warning-50 text-fg-secondary ring-border-default"
           }`}
         >
           {isLiveFeed ? "Live feed" : "No data"}
@@ -1476,7 +1476,7 @@ export default function RecommendedJobsSection({
       </div>
 
       {!isLiveFeed && feedDemoHint ? (
-        <div className="mb-3 flex gap-3 rounded-xl border border-[#DADCE0] bg-[#FEF7E0] p-4 text-sm text-[#3A3A3C] ring-1 ring-[#DADCE0] wg-section-fade" style={{ animationDelay: "100ms" }}>
+        <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-sm text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "100ms" }}>
           <span className="mt-0.5 shrink-0 text-amber-700">
             <LifeBuoy className="h-5 w-5" aria-hidden />
           </span>
@@ -1486,7 +1486,7 @@ export default function RecommendedJobsSection({
             <p className="text-xs text-amber-800/90">
               <Link
                 href="/api/jobs-health"
-                className="font-medium underline decoration-[#F9AB00] underline-offset-2 hover:text-[#1D1D1F]"
+                className="font-medium underline decoration-warning underline-offset-2 hover:text-fg-primary"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -1498,16 +1498,16 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      <section className="mb-3 rounded-xl border border-[#DADCE0] bg-white px-6 py-5 lg:hidden">
+      <section className="mb-3 rounded-xl border border-border-default bg-surface px-6 py-5 lg:hidden">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-[#1D1D1F]">Your Match Profile</h3>
-            <p className="mt-1 text-[13px] text-[#8E8E93]">Based on your profile, we match jobs by:</p>
+            <h3 className="text-base font-semibold text-fg-primary">Your Match Profile</h3>
+            <p className="mt-1 text-sm text-fg-tertiary">Based on your profile, we match jobs by:</p>
           </div>
           <button
             type="button"
             onClick={() => setIsMatchProfileExpanded((v) => !v)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#DADCE0] text-[#5F6368]"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border-default text-fg-secondary"
             aria-label={isMatchProfileExpanded ? "Collapse profile analysis" : "Expand profile analysis"}
           >
             {isMatchProfileExpanded ? <ChevronUp className={iconClass()} /> : <ChevronDown className={iconClass()} />}
@@ -1519,19 +1519,19 @@ export default function RecommendedJobsSection({
             {matchBreakdown.map((item) => (
               <span
                 key={item.label}
-                className="inline-flex items-center rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-3 py-1 text-xs font-medium text-[#3A3A3C]"
+                className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-3 py-1 text-xs font-medium text-fg-secondary"
               >
                 {item.label}
               </span>
             ))}
-            <Link href="/profile?view=profile" className="text-[13px] font-medium text-[#1A73E8] hover:underline">
+            <Link href="/profile?view=profile" className="text-sm font-medium text-info hover:underline">
               Update profile skills
             </Link>
           </div>
         ) : isMatchProfileExpanded ? (
-          <p className="mt-4 text-sm text-[#8E8E93]">
+          <p className="mt-4 text-sm text-fg-tertiary">
             Add skills to your profile to enable job matching.{" "}
-            <Link href="/profile?view=profile" className="font-medium text-[#1A73E8] hover:underline">
+            <Link href="/profile?view=profile" className="font-medium text-info hover:underline">
               Edit profile
             </Link>
           </p>
@@ -1539,23 +1539,23 @@ export default function RecommendedJobsSection({
       </section>
 
       {fetchError ? (
-        <div className="mb-3 rounded-xl border border-[#FAD2CF] bg-[#FCE8E6] p-4 text-sm text-[#3A3A3C]">
-          <p className="font-semibold text-[#C5221F]">Could not load more jobs</p>
-          <p className="mt-1 text-[#5F6368]">{fetchError}</p>
+        <div className="mb-3 rounded-xl border border-brand-200 bg-brand-50 p-4 text-sm text-fg-secondary">
+          <p className="font-semibold text-brand">Could not load more jobs</p>
+          <p className="mt-1 text-fg-secondary">{fetchError}</p>
         </div>
       ) : null}
 
       {liveListings > 0 ? (
-        <p className="mb-3 text-sm text-[#5F6368]">
+        <p className="mb-3 text-sm text-fg-secondary">
           {showProfileMatchesOnly ? (
             <>
-              <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs match your
+              <span className="font-semibold text-info">{totalMatched.toLocaleString()}</span> jobs match your
               profile
               {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}.
             </>
           ) : (
             <>
-              <span className="font-semibold text-[#1A73E8]">{totalMatched.toLocaleString()}</span> jobs in catalog
+              <span className="font-semibold text-info">{totalMatched.toLocaleString()}</span> jobs in catalog
               {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""} — ranked by
               profile fit when skills are set.
             </>
@@ -1581,7 +1581,7 @@ export default function RecommendedJobsSection({
 
           <section className="filter-bar wg-no-scrollbar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
             <div className="filter-search-wrap">
-              <Search className="filter-search-icon text-[#94a3b8]" aria-hidden />
+              <Search className="filter-search-icon text-fg-tertiary" aria-hidden />
               <input
                 type="search"
                 value={searchInput}
@@ -1951,7 +1951,7 @@ export default function RecommendedJobsSection({
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])}
-                  className="h-9 rounded-lg border border-[#DADCE0] px-2 text-sm"
+                  className="h-9 rounded-lg border border-border-default px-2 text-sm"
                 >
                   {CURRENCY_OPTIONS.map((c) => (
                     <option key={c} value={c}>
@@ -2124,7 +2124,7 @@ export default function RecommendedJobsSection({
       {showSkeleton ? (
         <div className={viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list"}>
           {Array.from({ length: skeletonCount }).map((_, idx) => (
-            <article key={`skeleton-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white">
+            <article key={`skeleton-${idx}`} className="rounded-xl border border-border-default bg-surface">
               <div className="px-5 pt-[18px]">
                 <div className="flex gap-2.5">
                   <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
@@ -2134,7 +2134,7 @@ export default function RecommendedJobsSection({
                   </div>
                 </div>
               </div>
-              <div className="mx-5 my-2.5 border-t border-[#F3F4F6]" />
+              <div className="mx-5 my-2.5 border-t border-border-default" />
               <div className="px-5 pb-4">
                 <div className="h-3 w-40 rounded wg-skeleton-shimmer" />
                 <div className="mt-2.5 h-7 w-36 rounded-lg wg-skeleton-shimmer" />
@@ -2146,11 +2146,11 @@ export default function RecommendedJobsSection({
       <div className="relative">
         {showPageLoadingOverlay ? (
           <div
-            className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-white/60 pt-8 backdrop-blur-[1px]"
+            className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-surface/60 pt-8 backdrop-blur-[1px]"
             aria-hidden
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#DADCE0] bg-white px-4 py-2 text-sm text-[#3A3A3C] shadow-sm">
-              <Loader2 className={iconClass("inline", "animate-spin text-[#1A73E8]")} />
+            <span className="inline-flex items-center gap-2 rounded-full border border-border-default bg-surface px-4 py-2 text-sm text-fg-secondary shadow-sm">
+              <Loader2 className={iconClass("inline", "animate-spin text-info")} />
               Loading page {safePage}…
             </span>
           </div>
@@ -2213,17 +2213,17 @@ export default function RecommendedJobsSection({
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
                         {r.status === "ok" ? (
-                          <Check className={iconClass("inline", "text-[#16A34A]")} />
+                          <Check className={iconClass("inline", "text-success")} />
                         ) : r.status === "warn" ? (
-                          <TriangleAlert className={iconClass("inline", "text-gray-400")} />
+                          <TriangleAlert className={iconClass("inline", "text-fg-tertiary")} />
                         ) : (
-                          <X className={iconClass("inline", "text-gray-400")} />
+                          <X className={iconClass("inline", "text-fg-tertiary")} />
                         )}
                         <span className="text-gray-600">{r.label}</span>
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-fg-tertiary">
                     {meta.companySize ? <span>Company size: {meta.companySize}</span> : null}
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
@@ -2259,10 +2259,10 @@ export default function RecommendedJobsSection({
 
       {totalMatched > 0 ? (
         <nav
-          className="mt-6 flex flex-col items-center gap-3 border-t border-[#DADCE0] pt-5"
+          className="mt-6 flex flex-col items-center gap-3 border-t border-border-default pt-5"
           aria-label="Job results pagination"
         >
-          <p className="text-[13px] text-[#8E8E93]">
+          <p className="text-sm text-fg-tertiary">
             Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} jobs
           </p>
           {totalPages > 1 ? (
@@ -2272,13 +2272,13 @@ export default function RecommendedJobsSection({
                 onClick={() => goToPage(safePage - 1)}
                 disabled={safePage <= 1 || isPageLoading}
                 aria-label="Previous page"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:border-info hover:bg-info-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronLeft className={iconClass()} />
               </button>
               {paginationTokens.map((token, index) =>
                 token === "ellipsis" ? (
-                  <span key={`ellipsis-${index}`} className="px-1 text-sm text-[#8E8E93]">
+                  <span key={`ellipsis-${index}`} className="px-1 text-sm text-fg-tertiary">
                     …
                   </span>
                 ) : (
@@ -2292,8 +2292,8 @@ export default function RecommendedJobsSection({
                     className={cn(
                       "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-medium transition",
                       token === safePage
-                        ? "bg-[#1A73E8] text-white shadow-sm"
-                        : "border border-[#DADCE0] bg-white text-[#3A3A3C] hover:border-[#1A73E8] hover:bg-[#E8F0FE]"
+                        ? "bg-info text-white shadow-sm"
+                        : "border border-border-default bg-surface text-fg-secondary hover:border-info hover:bg-info-50"
                     )}
                   >
                     {token}
@@ -2305,7 +2305,7 @@ export default function RecommendedJobsSection({
                 onClick={() => goToPage(safePage + 1)}
                 disabled={safePage >= totalPages || isPageLoading}
                 aria-label="Next page"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#3A3A3C] transition hover:border-[#1A73E8] hover:bg-[#E8F0FE] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:border-info hover:bg-info-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronRight className={iconClass()} />
               </button>
@@ -2318,10 +2318,10 @@ export default function RecommendedJobsSection({
       listingPipeline.length === 0 &&
       showProfileMatchesOnly &&
       (liveListings > 0 || pageJobs.length > 0) ? (
-        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
-          <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No profile matches found</h3>
-          <p className="mt-2 text-sm text-[#8E8E93]">
+        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
+          <UserSearch className="mx-auto h-20 w-20 text-info" />
+          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No profile matches found</h3>
+          <p className="mt-2 text-sm text-fg-tertiary">
             {matchedListings > 0
               ? `${matchedListings.toLocaleString()} jobs match your profile in the index. Try browsing all jobs or updating your skills.`
               : `${liveListings.toLocaleString()} jobs are indexed, but none overlap your current skills. Browse the full catalog or update your profile.`}
@@ -2334,13 +2334,13 @@ export default function RecommendedJobsSection({
                 setSkillsPick(new Set());
                 setCurrentPage(1);
               }}
-              className="inline-flex h-10 items-center rounded-[20px] bg-[#1A73E8] px-5 text-sm font-medium text-white hover:bg-[#1557B0]"
+              className="inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-white hover:bg-info-foreground"
             >
               Browse all {liveListings.toLocaleString()} jobs
             </button>
             <Link
               href="/profile?view=profile"
-              className="inline-flex h-10 items-center rounded-[20px] border border-[#1A73E8] px-5 text-sm font-medium text-[#1A73E8]"
+              className="inline-flex h-10 items-center rounded-[20px] border border-info px-5 text-sm font-medium text-info"
             >
               Update profile skills
             </Link>
@@ -2349,35 +2349,35 @@ export default function RecommendedJobsSection({
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings === 0 && !isPageLoading ? (
-        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
-          <SearchX className="mx-auto h-20 w-20 text-[#DADCE0]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No jobs indexed yet</h3>
-          <p className="mt-2 text-sm text-[#8E8E93]">
+        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
+          <SearchX className="mx-auto h-20 w-20 text-border-default" />
+          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No jobs indexed yet</h3>
+          <p className="mt-2 text-sm text-fg-tertiary">
             Run the job ingest pipeline to populate live listings from ATS sources.
           </p>
         </div>
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings > 0 && !showProfileMatchesOnly && !isPageLoading ? (
-        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-[#1A73E8]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Loading jobs…</h3>
-          <p className="mt-2 text-sm text-[#8E8E93]">
+        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-info" />
+          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">Loading jobs…</h3>
+          <p className="mt-2 text-sm text-fg-tertiary">
             {liveListings.toLocaleString()} jobs are indexed. Fetching listings now.
           </p>
         </div>
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 && !showProfileMatchesOnly ? (
-        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
-          <SearchX className="mx-auto h-20 w-20 text-[#DADCE0]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">No jobs found</h3>
-          <p className="mt-2 text-sm text-[#8E8E93]">Try adjusting your filters or search terms</p>
+        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
+          <SearchX className="mx-auto h-20 w-20 text-border-default" />
+          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No jobs found</h3>
+          <p className="mt-2 text-sm text-fg-tertiary">Try adjusting your filters or search terms</p>
           <div className="mt-4 flex items-center justify-center gap-4">
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex h-10 items-center rounded-[20px] border border-[#1A73E8] px-5 text-sm font-medium text-[#1A73E8]"
+              className="inline-flex h-10 items-center rounded-[20px] border border-info px-5 text-sm font-medium text-info"
             >
               Clear all filters
             </button>
@@ -2387,7 +2387,7 @@ export default function RecommendedJobsSection({
                 clearFilters();
                 setCurrentPage(1);
               }}
-              className="text-sm font-medium text-[#1A73E8] underline underline-offset-2"
+              className="text-sm font-medium text-info underline underline-offset-2"
             >
               Browse all jobs
             </button>
@@ -2396,17 +2396,17 @@ export default function RecommendedJobsSection({
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length === 0 ? (
-        <div className="rounded-xl border border-[#DADCE0] bg-white px-6 py-10 text-center">
-          <UserSearch className="mx-auto h-20 w-20 text-[#1A73E8]" />
-          <h3 className="mt-4 text-[20px] font-semibold text-[#1D1D1F]">Complete your profile to see matches</h3>
+        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
+          <UserSearch className="mx-auto h-20 w-20 text-info" />
+          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">Complete your profile to see matches</h3>
           <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
-            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-[#1A73E8]">Add your skills <ArrowRight className={iconClass()} /></Link>
-            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-[#1A73E8]">Add expected salary <ArrowRight className={iconClass()} /></Link>
-            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-[#1A73E8]">Add location preference <ArrowRight className={iconClass()} /></Link>
+            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-info">Add your skills <ArrowRight className={iconClass()} /></Link>
+            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-info">Add expected salary <ArrowRight className={iconClass()} /></Link>
+            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-info">Add location preference <ArrowRight className={iconClass()} /></Link>
           </div>
           <Link
             href="/create-profile"
-            className="mt-5 inline-flex h-10 items-center rounded-[20px] bg-[#1A73E8] px-5 text-sm font-medium text-white hover:bg-[#1557B0]"
+            className="mt-5 inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-white hover:bg-info-foreground"
           >
             Complete Profile
           </Link>
@@ -2422,7 +2422,7 @@ export default function RecommendedJobsSection({
               {skillHints.map((skill) => (
                 <span
                   key={skill}
-                  className="inline-flex items-center rounded-full border border-[#DADCE0] bg-[#F8F9FA] px-2.5 py-0.5 text-xs text-[#3A3A3C]"
+                  className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-2.5 py-0.5 text-xs text-fg-secondary"
                 >
                   {skill}
                 </span>
@@ -2433,7 +2433,7 @@ export default function RecommendedJobsSection({
                 {matchedListings.toLocaleString()} jobs match your profile
               </p>
             ) : null}
-            <Link href="/profile?view=profile" className="mt-2 inline-block text-xs font-medium text-[#1A73E8] hover:underline">
+            <Link href="/profile?view=profile" className="mt-2 inline-block text-xs font-medium text-info hover:underline">
               Update profile
             </Link>
           </section>
@@ -2442,26 +2442,26 @@ export default function RecommendedJobsSection({
       </div>
 
       {mobileDetailJobId ? (
-        <div className="fixed inset-0 z-[125] bg-white p-4 md:hidden">
+        <div className="fixed inset-0 z-[125] bg-surface p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-[#1D1D1F]">Job Details</h3>
+            <h3 className="text-base font-semibold text-fg-primary">Job Details</h3>
             <button type="button" onClick={() => setMobileDetailJobId(null)}>
-              <X className="h-5 w-5 text-[#5F6368]" />
+              <X className="h-5 w-5 text-fg-secondary" />
             </button>
           </div>
           {(() => {
             const jobEntry = listingPipeline.find(({ job }) => job.id === mobileDetailJobId);
-            if (!jobEntry) return <p className="text-sm text-[#8E8E93]">Job not available.</p>;
+            if (!jobEntry) return <p className="text-sm text-fg-tertiary">Job not available.</p>;
             const { job, meta } = jobEntry;
             return (
               <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-[#1D1D1F]">{job.title}</h4>
-                <p className="text-sm text-[#3A3A3C]">{job.company}</p>
-                <p className="text-sm text-[#8E8E93]">
+                <h4 className="text-lg font-semibold text-fg-primary">{job.title}</h4>
+                <p className="text-sm text-fg-secondary">{job.company}</p>
+                <p className="text-sm text-fg-tertiary">
                   {job.location}
                   {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                 </p>
-                <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-[#3A3A3C]">
+                <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-fg-secondary">
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (
@@ -2492,7 +2492,7 @@ export default function RecommendedJobsSection({
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-[110] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#DADCE0] bg-white text-[#5F6368] transition hover:bg-[#F8F9FA] hover:shadow-md"
+          className="fixed bottom-6 right-6 z-[110] inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:bg-surface-hover hover:shadow-md"
           aria-label="Scroll to top"
         >
           <ArrowUp className="h-5 w-5" />

@@ -203,7 +203,7 @@ export default function ResumeUploader() {
 
   if (status === "error") {
     return (
-      <div className="rounded-2xl border border-[#FECACA] bg-white p-8 text-center shadow-sm">
+      <div className="rounded-2xl border border-brand-200 bg-surface p-8 text-center shadow-sm">
         <AlertCircle className="mx-auto h-10 w-10 text-rose-600" />
         <p className="mt-4 text-base font-semibold text-foreground">Upload failed</p>
         <p className="mt-1 text-sm text-muted-foreground">{errorMessage}</p>

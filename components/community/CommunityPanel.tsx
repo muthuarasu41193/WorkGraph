@@ -95,7 +95,7 @@ export default function CommunityPanel() {
               {createPost.isPending ? "Publishing…" : "Publish"}
             </Button>
             {createPost.isError ? (
-              <p className="text-sm text-red-600">{(createPost.error as Error).message}</p>
+              <p className="text-sm text-brand">{(createPost.error as Error).message}</p>
             ) : null}
           </form>
         </CardContent>
@@ -125,7 +125,7 @@ export default function CommunityPanel() {
       ) : null}
 
       {error ? (
-        <p className="text-sm text-red-600">Could not load community feed. Is WORKGRAPH_API_URL configured?</p>
+        <p className="text-sm text-brand">Could not load community feed. Is WORKGRAPH_API_URL configured?</p>
       ) : null}
 
       <ul className="space-y-3">
@@ -157,7 +157,7 @@ export default function CommunityPanel() {
                     variant="ghost"
                     size="sm"
                     onClick={() => vote.mutate({ postId: post.id, vote: -1 })}
-                    className={post.user_vote === -1 ? "text-red-600" : ""}
+                    className={post.user_vote === -1 ? "text-brand" : ""}
                   >
                     <ThumbsDown className={iconClass()} />
                     {post.downvotes}

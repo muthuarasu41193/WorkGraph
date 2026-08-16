@@ -2,27 +2,27 @@ import { cn } from "@/lib/utils"
 
 /** Shared premium form control styles for inputs, textareas, and selects. */
 export const formFieldClasses = cn(
-  "w-full min-w-0 rounded-lg border border-[var(--wg-border)] bg-white px-4 py-2.5 font-sans text-sm font-normal",
+  "w-full min-w-0 rounded-md border border-border-default bg-surface px-4 py-2.5 font-sans text-sm font-normal tracking-body",
   "transition-all duration-200 ease-in-out outline-none",
-  "placeholder:text-[var(--wg-placeholder)]",
-  "focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100 focus-visible:outline-none",
-  "disabled:cursor-not-allowed disabled:bg-[var(--wg-bg-secondary)] disabled:opacity-50",
-  "aria-invalid:border-red-500 aria-invalid:ring-2 aria-invalid:ring-red-100",
-  "dark:border-[var(--wg-border)] dark:bg-[var(--wg-bg)] dark:disabled:bg-[var(--wg-bg-secondary)]",
-  "dark:focus-visible:border-red-400 dark:focus-visible:ring-red-500/20",
+  "placeholder:text-fg-tertiary",
+  "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand-100 focus-visible:outline-none",
+  "disabled:cursor-not-allowed disabled:bg-surface-active disabled:opacity-50",
+  "aria-invalid:border-brand aria-invalid:ring-2 aria-invalid:ring-brand-100",
+  "dark:border-border-default dark:bg-surface dark:disabled:bg-surface-active",
+  "dark:focus-visible:border-brand-400 dark:focus-visible:ring-brand/20",
 )
 
 export const formSelectTriggerClasses = cn(
   formFieldClasses,
   "flex items-center justify-between gap-2 whitespace-nowrap",
-  "data-placeholder:text-[var(--wg-placeholder)]",
+  "data-placeholder:text-fg-tertiary",
 )
 
 export const formCheckboxClasses = cn(
-  "peer relative flex size-4 shrink-0 items-center justify-center rounded-[4px]",
-  "border border-[var(--wg-border)] bg-white transition-all duration-200 ease-in-out outline-none",
-  "focus-visible:border-red-500 focus-visible:ring-2 focus-visible:ring-red-100",
+  "peer relative flex size-4 shrink-0 items-center justify-center rounded-sm",
+  "border border-border-default bg-surface transition-all duration-200 ease-in-out outline-none",
+  "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand-100",
   "disabled:cursor-not-allowed disabled:opacity-50",
-  "data-checked:border-red-600 data-checked:bg-red-600 data-checked:text-white",
-  "dark:border-[var(--wg-border)] dark:bg-[var(--wg-bg)]",
+  "data-checked:border-brand data-checked:bg-brand data-checked:text-white",
+  "dark:border-border-default dark:bg-surface",
 )

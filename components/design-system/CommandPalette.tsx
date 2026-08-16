@@ -166,7 +166,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
               className="border-0 bg-transparent pl-7 shadow-none focus-visible:ring-0"
               autoFocus
             />
-            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 text-[10px] font-medium sm:inline">
+            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 text-xs font-medium sm:inline">
               ESC
             </kbd>
           </div>
@@ -174,7 +174,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
         <div className="max-h-80 overflow-y-auto p-2">
           {groups.map((group) => (
             <div key={group} className="mb-2">
-              <p className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--dash-text-secondary)]">
+              <p className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--dash-text-secondary)]">
                 {group}
               </p>
               {filtered

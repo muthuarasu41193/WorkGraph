@@ -52,7 +52,7 @@ export default function PageHero({
                 "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
                 m.accent
                   ? "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
-                  : "bg-white ring-1 ring-[var(--dash-border)]",
+                  : "bg-surface ring-1 ring-[var(--dash-border)]",
               )}
             >
               <span className="font-semibold tabular-nums">{m.value}</span>

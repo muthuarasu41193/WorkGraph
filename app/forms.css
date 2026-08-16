@@ -4,15 +4,17 @@
   .wg-field {
     width: 100%;
     min-width: 0;
-    border-radius: 0.5rem;
-    border: 1px solid var(--wg-border);
-    background-color: #ffffff;
-    padding: 0.625rem 1rem;
+    border-radius: var(--wg-radius-md);
+    border: 1px solid var(--wg-border-default);
+    background-color: var(--wg-surface);
+    padding: var(--wg-pad-button-y) var(--wg-pad-button-x);
     font-family: var(--wg-font-sans);
-    font-size: 0.875rem;
+    font-size: var(--wg-text-base);
     font-weight: 400;
-    line-height: 1.5;
-    transition: all 200ms ease;
+    line-height: var(--wg-leading-body);
+    letter-spacing: var(--wg-tracking-body);
+    color: var(--wg-text-primary);
+    transition: all var(--wg-duration) var(--wg-ease);
     outline: none;
   }
 
@@ -21,25 +23,25 @@
   }
 
   .wg-field:focus-visible {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 2px #fee2e2;
+    border-color: var(--wg-primary);
+    box-shadow: 0 0 0 2px var(--wg-brand-100);
   }
 
   .wg-field:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-    background-color: var(--wg-bg-secondary);
+    background-color: var(--wg-surface-active);
   }
 }
 
-[data-theme="dark"] .wg-field,
-.dark .wg-field {
-  background-color: var(--wg-bg);
-  border-color: var(--wg-border);
+.dark .wg-field,
+[data-theme="dark"] .wg-field {
+  background-color: var(--wg-surface);
+  border-color: var(--wg-border-default);
 }
 
-[data-theme="dark"] .wg-field:focus-visible,
-.dark .wg-field:focus-visible {
-  border-color: #f87171;
-  box-shadow: 0 0 0 2px rgb(248 113 113 / 0.2);
+.dark .wg-field:focus-visible,
+[data-theme="dark"] .wg-field:focus-visible {
+  border-color: var(--wg-primary);
+  box-shadow: 0 0 0 2px var(--wg-error-100);
 }

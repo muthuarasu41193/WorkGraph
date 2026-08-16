@@ -37,7 +37,7 @@ export default function WalletPanel() {
               <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Available</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold tabular-nums">{formatUsd(balance)}</p>
+              <p className="text-2xl font-bold font-numeric">{formatUsd(balance)}</p>
             </CardContent>
           </Card>
           <Card>
@@ -45,7 +45,7 @@ export default function WalletPanel() {
               <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Pending payout</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold tabular-nums">{formatUsd(pending)}</p>
+              <p className="text-2xl font-bold font-numeric">{formatUsd(pending)}</p>
             </CardContent>
           </Card>
           <Card>
@@ -53,7 +53,7 @@ export default function WalletPanel() {
               <CardTitle className="text-sm font-medium text-[var(--wg-color-text-tertiary)]">Lifetime earned</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold tabular-nums">{formatUsd(lifetime)}</p>
+              <p className="text-2xl font-bold font-numeric">{formatUsd(lifetime)}</p>
             </CardContent>
           </Card>
         </div>
@@ -87,7 +87,7 @@ export default function WalletPanel() {
               {payout.isPending ? "Submitting…" : "Request payout"}
             </Button>
           </form>
-          {payout.isError ? <p className="mt-2 text-sm text-red-600">{(payout.error as Error).message}</p> : null}
+          {payout.isError ? <p className="mt-2 text-sm text-brand">{(payout.error as Error).message}</p> : null}
           {payout.isSuccess ? (
             <p className="mt-2 text-sm text-emerald-700">Payout request submitted.</p>
           ) : null}
@@ -99,7 +99,7 @@ export default function WalletPanel() {
           <CardTitle>Recent transactions</CardTitle>
         </CardHeader>
         <CardContent>
-          {error ? <p className="text-sm text-red-600">Could not load wallet.</p> : null}
+          {error ? <p className="text-sm text-brand">Could not load wallet.</p> : null}
           <ul className="divide-y divide-[var(--wg-color-border)]">
             {(data?.transactions ?? []).map((tx) => (
               <li key={tx.id} className="flex items-center justify-between py-2.5 text-sm first:pt-0 last:pb-0">

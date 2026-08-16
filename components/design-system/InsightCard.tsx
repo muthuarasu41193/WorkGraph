@@ -17,7 +17,7 @@ type Props = {
 };
 
 const variantStyles = {
-  default: "bg-white",
+  default: "bg-surface",
   accent: "bg-gradient-to-br from-white to-red-50/40",
   success: "bg-gradient-to-br from-white to-emerald-50/40",
 };
@@ -45,7 +45,7 @@ export default function InsightCard({
           <WgIcon icon={Icon} size="standalone" />
         </span>
         {badge ? (
-          <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--dash-text-secondary)]">
+          <span className="rounded-md bg-surface-active px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-secondary)]">
             {badge}
           </span>
         ) : null}

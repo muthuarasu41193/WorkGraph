@@ -1,54 +1,64 @@
-/* WorkGraph spacing system — 4px increment scale */
+/* WorkGraph spacing & radius — 4px increment scale */
+
+:root {
+  --wg-radius-sm: 6px;
+  --wg-radius-md: 8px;
+  --wg-radius-lg: 12px;
+  --wg-radius-xl: 16px;
+  --wg-pad-button-x: 1rem; /* px-4 */
+  --wg-pad-button-y: 0.625rem; /* py-2.5 */
+  --wg-pad-card: 1.25rem; /* p-5 */
+}
 
 @layer components {
   .wg-page {
     display: flex;
     flex-direction: column;
-    gap: 2rem; /* 32px / space-y-8 */
+    gap: 2rem;
   }
 
   .wg-page-lg {
     display: flex;
     flex-direction: column;
-    gap: 3rem; /* 48px / space-y-12 */
+    gap: 3rem;
   }
 
   .wg-section {
-    margin-bottom: 2rem; /* mb-8 */
+    margin-bottom: 2rem;
   }
 
   .wg-section-lg {
-    margin-bottom: 3rem; /* mb-12 */
+    margin-bottom: 3rem;
   }
 
   .wg-section-stack {
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* gap-4 / space-y-4 */
+    gap: 1rem;
   }
 
   .wg-section-stack-lg {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* gap-6 / space-y-6 */
+    gap: 1.5rem;
   }
 
   .wg-grid {
     display: grid;
-    gap: 1rem; /* gap-4 */
+    gap: 1rem;
   }
 
   .wg-flex-gap {
     display: flex;
-    gap: 1rem; /* gap-4 */
+    gap: 1rem;
   }
 
   .wg-flex-gap-lg {
     display: flex;
-    gap: 1.5rem; /* gap-6 */
+    gap: 1.5rem;
   }
 
   .wg-card-pad {
-    padding: 1.5rem; /* p-6 */
+    padding: var(--wg-pad-card);
   }
 }

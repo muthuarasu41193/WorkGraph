@@ -24,7 +24,7 @@ export function IntelligenceSection() {
             {INTELLIGENCE_STATS.map((stat, index) => (
               <FadeIn key={stat.label} delay={index * 0.1}>
                 <div className="flex flex-col justify-center p-8 sm:p-10">
-                  <p className="font-heading text-4xl font-extrabold text-wg-primary-light sm:text-5xl">
+                  <p className="font-numeric text-4xl font-bold text-wg-primary-light sm:text-5xl">
                     {stat.value}
                   </p>
                   <p className="mt-1 font-semibold text-white">{stat.label}</p>

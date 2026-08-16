@@ -38,7 +38,7 @@ const EVENT_ICONS: Record<TimelineEvent["type"], LucideIcon> = {
 const EVENT_COLORS: Record<TimelineEvent["type"], string> = {
   resume_improved: "bg-blue-50 text-blue-600",
   jobs_matched: "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]",
-  application_submitted: "bg-gray-100 text-gray-600",
+  application_submitted: "bg-surface-active text-gray-600",
   recruiter_viewed: "bg-purple-50 text-purple-600",
   interview_invitation: "bg-amber-50 text-amber-600",
   offer_received: "bg-emerald-50 text-emerald-600",

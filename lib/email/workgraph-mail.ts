@@ -3,6 +3,8 @@
  * Set RESEND_API_KEY and WORKGRAPH_EMAIL_FROM in the environment.
  */
 
+import { WG_COLORS } from "@/lib/design-tokens";
+
 export type SendEmailInput = {
   to: string;
   subject: string;
@@ -73,13 +75,13 @@ export function buildConnectionNotifyEmployerEmail(params: {
     : "(No note)";
 
   const html = `
-    <div style="font-family:system-ui,sans-serif;max-width:520px;color:#1c1917">
-      <p style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#dc2626">WorkGraph Direct</p>
+    <div style="font-family:Inter,system-ui,sans-serif;max-width:520px;color:${WG_COLORS.textPrimary}">
+      <p style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:${WG_COLORS.primary}">WorkGraph Direct</p>
       <h1 style="font-size:20px;margin:0 0 12px">New connection on <em>${escapeHtml(params.signalTitle)}</em></h1>
       <p><strong>${escapeHtml(params.seekerName)}</strong> connected with <strong>${params.matchPercent}%</strong> fit alignment.</p>
-      <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid #dc2626;background:#f7fafc">${escapeHtml(preview)}</blockquote>
-      <p><a href="${params.inboxUrl}" style="display:inline-block;background:#dc2626;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Open Pulse inbox</a></p>
-      <p style="font-size:12px;color:#78716c;margin-top:24px">${escapeHtml(params.companyName)} · WorkGraph hiring signals</p>
+      <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid ${WG_COLORS.primary};background:${WG_COLORS.surfaceHover}">${escapeHtml(preview)}</blockquote>
+      <p><a href="${params.inboxUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Open Pulse inbox</a></p>
+      <p style="font-size:12px;color:${WG_COLORS.textTertiary};margin-top:24px">${escapeHtml(params.companyName)} · WorkGraph hiring signals</p>
     </div>
   `;
 
@@ -104,12 +106,12 @@ export function buildStageUpdateSeekerEmail(params: {
     : "";
 
   const html = `
-    <div style="font-family:system-ui,sans-serif;max-width:520px;color:#1c1917">
-      <p style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#dc2626">WorkGraph Direct</p>
+    <div style="font-family:Inter,system-ui,sans-serif;max-width:520px;color:${WG_COLORS.textPrimary}">
+      <p style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:${WG_COLORS.primary}">WorkGraph Direct</p>
       <h1 style="font-size:20px;margin:0 0 12px">Update on your connection</h1>
       <p><strong>${escapeHtml(params.companyName)}</strong> moved your connection to <strong>${escapeHtml(params.stageLabel)}</strong> for <em>${escapeHtml(params.signalTitle)}</em>.</p>
       ${replyBlock}
-      <p><a href="${params.directUrl}" style="display:inline-block;background:#dc2626;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View in WorkGraph Direct</a></p>
+      <p><a href="${params.directUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View in WorkGraph Direct</a></p>
     </div>
   `;
 

@@ -33,7 +33,7 @@ export function ScrollProgress() {
       aria-hidden
     >
       <div
-        className="h-full origin-left bg-[#C41E3A] transition-[width] duration-150 ease-out"
+        className="h-full origin-left bg-brand transition-[width] duration-150 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

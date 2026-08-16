@@ -149,7 +149,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
               Professional profile
             </p>
 
@@ -178,7 +178,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-2 text-sm`}
               />
             ) : (
-              <p className="mt-1 flex items-center justify-center gap-2 text-[15px] text-muted-foreground sm:justify-start">
+              <p className="mt-1 flex items-center justify-center gap-2 text-md text-muted-foreground sm:justify-start">
                 <Briefcase className={iconClass("inline", "shrink-0 opacity-60")} />
                 {form.headline || "Add your current role"}
               </p>
@@ -233,7 +233,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
       </div>
 
       <div className="mt-6 border-t border-[var(--wg-color-border)] pt-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
           Summary
         </p>
         {isEditing ? (
@@ -245,7 +245,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
             className={`${inputClass} mt-2 text-sm leading-relaxed`}
           />
         ) : form.summary ? (
-          <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-muted-foreground">{form.summary}</p>
+          <p className="mt-2 max-w-3xl text-md leading-relaxed text-muted-foreground">{form.summary}</p>
         ) : (
           <p className="mt-2 text-sm text-muted-foreground">
             Add a concise summary for recruiters and hiring managers.

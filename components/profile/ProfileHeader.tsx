@@ -125,9 +125,9 @@ export default function ProfileHeader({ profile, userId }: Props) {
   }, [isEditing]);
 
   return (
-    <section className="rounded-xl border border-[#DADCE0] bg-[#FFFFFF] p-6">
+    <section className="rounded-xl border border-border-default bg-surface p-6">
       {toast ? (
-        <div className="fixed right-6 top-6 z-50 rounded-lg border border-wg-border bg-white px-4 py-2 text-sm text-wg-heading shadow-md">
+        <div className="fixed right-6 top-6 z-50 rounded-lg border border-wg-border bg-surface px-4 py-2 text-sm text-wg-heading shadow-md">
           {toast}
         </div>
       ) : null}
@@ -181,7 +181,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
                 />
               ) : (
-                <h1 className="text-3xl font-bold tracking-tight text-[#1D1D1F]">{form.full_name || "Your Name"}</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-fg-primary">{form.full_name || "Your Name"}</h1>
               )}
             </div>
 
@@ -189,7 +189,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#DADCE0] px-3 py-1.5 text-xs font-medium text-[#3A3A3C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs font-medium text-fg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 <Pencil className={iconClass()} />
                 Edit
@@ -206,7 +206,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   });
                   setIsEditing(false);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#DADCE0] px-3 py-1.5 text-xs font-medium text-[#8E8E93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs font-medium text-fg-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 <X className={iconClass()} />
                 Cancel
@@ -222,7 +222,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
-            <p className="mt-1 text-base font-semibold text-[#1D1D1F]">{form.headline || "Add a professional headline"}</p>
+            <p className="mt-1 text-base font-semibold text-fg-primary">{form.headline || "Add a professional headline"}</p>
           )}
 
           {isEditing ? (
@@ -233,7 +233,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
-            <p className="mt-2 inline-flex items-center gap-1 text-sm font-normal text-[#3A3A3C]">
+            <p className="mt-2 inline-flex items-center gap-1 text-sm font-normal text-fg-secondary">
               <MapPin className={iconClass()} />
               {form.location || "Location not set"}
             </p>
@@ -248,7 +248,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : form.summary ? (
-            <p className="mt-3 text-sm font-normal leading-6 text-[#3A3A3C]">{form.summary}</p>
+            <p className="mt-3 text-sm font-normal leading-6 text-fg-secondary">{form.summary}</p>
           ) : null}
 
           {isEditing ? (
@@ -257,7 +257,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                 type="button"
                 onClick={() => void saveProfileBasics()}
                 disabled={isSaving}
-                className="rounded-md bg-[#1A73E8] px-3 py-2 text-xs font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                className="rounded-md bg-info px-3 py-2 text-xs font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 {isSaving ? "Saving..." : "Save changes"}
               </button>
@@ -265,11 +265,11 @@ export default function ProfileHeader({ profile, userId }: Props) {
           ) : null}
 
           <div className="mt-4">
-            <p className="mb-2 text-sm font-medium text-[#3A3A3C]">Profile {completeness}% Complete</p>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#DADCE0]">
-              <div className="h-full rounded-full bg-[#1A73E8]" style={{ width: `${completeness}%` }} />
+            <p className="mb-2 text-sm font-medium text-fg-secondary">Profile {completeness}% Complete</p>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-border-default">
+              <div className="h-full rounded-full bg-info" style={{ width: `${completeness}%` }} />
             </div>
-            <p className="mt-2 text-xs font-normal text-[#8E8E93]">{getMissingItems(profile)}</p>
+            <p className="mt-2 text-xs font-normal text-fg-tertiary">{getMissingItems(profile)}</p>
           </div>
         </div>
       </div>

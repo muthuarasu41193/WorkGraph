@@ -20,10 +20,10 @@
 
 .dark .wg-dash-root,
 [data-theme="dark"] .wg-dash-root {
-  --dash-page-bg: #0b1120;
-  --dash-surface: #0f172a;
-  --dash-accent: #3b82f6;
-  --dash-accent-soft: rgb(59 130 246 / 0.12);
+  --dash-page-bg: var(--wg-slate-950);
+  --dash-surface: var(--wg-surface);
+  --dash-accent: var(--wg-primary);
+  --dash-accent-soft: color-mix(in srgb, var(--wg-primary) 12%, transparent);
 }
 
 .wg-dash-main {
@@ -80,7 +80,7 @@
 }
 
 .wg-dash-sidenav {
-  background: #ffffff !important;
+  background: var(--wg-surface) !important;
   border-right: 1px solid var(--wg-border) !important;
   box-shadow: none !important;
 }
@@ -98,9 +98,9 @@
 }
 
 .wg-dash-nav-active {
-  background: #fef2f2 !important;
-  color: #dc2626 !important;
-  border-left: 4px solid #dc2626 !important;
+  background: var(--wg-brand-50) !important;
+  color: var(--wg-primary) !important;
+  border-left: 4px solid var(--wg-primary) !important;
   box-shadow: none !important;
   border-radius: 0.5rem !important;
 }

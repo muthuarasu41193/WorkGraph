@@ -64,7 +64,7 @@ export default function ApplicationCard({ application, onOpen }: Props) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-snug">{application.role}</p>
             <p className="truncate text-xs text-muted-foreground">{application.company}</p>
-            <dl className="mt-2 space-y-0.5 text-[11px] text-muted-foreground">
+            <dl className="mt-2 space-y-0.5 text-xs text-muted-foreground">
               <div className="flex justify-between gap-2">
                 <dt>Applied</dt>
                 <dd className="tabular-nums text-foreground/80">

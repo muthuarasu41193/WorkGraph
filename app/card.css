@@ -2,10 +2,10 @@
 
 @layer components {
   .wg-card {
-    background-color: #ffffff;
-    border: 1px solid var(--wg-border);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
+    background-color: var(--wg-surface);
+    border: 1px solid var(--wg-border-default);
+    border-radius: var(--wg-radius-lg);
+    padding: var(--wg-pad-card);
     box-shadow: var(--wg-shadow-sm);
     transition:
       transform var(--wg-duration) var(--wg-ease),
@@ -14,16 +14,16 @@
   }
 
   .wg-card:hover {
-    border-color: var(--wg-border-hover);
+    border-color: var(--wg-border-strong);
     box-shadow: var(--wg-shadow-md);
     transform: translateY(-2px);
   }
 
   .wg-card__title {
-    font-size: 1.125rem;
+    font-size: var(--wg-text-lg);
     font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    line-height: var(--wg-leading-heading);
+    letter-spacing: var(--wg-tracking-heading);
     color: var(--wg-text-primary);
   }
 }
@@ -34,13 +34,13 @@
   }
 }
 
-[data-theme="dark"] .wg-card,
-.dark .wg-card {
-  background-color: var(--wg-bg);
-  border-color: var(--wg-border);
+.dark .wg-card,
+[data-theme="dark"] .wg-card {
+  background-color: var(--wg-surface);
+  border-color: var(--wg-border-default);
 }
 
-[data-theme="dark"] .wg-card:hover,
-.dark .wg-card:hover {
-  border-color: var(--wg-border-hover);
+.dark .wg-card:hover,
+[data-theme="dark"] .wg-card:hover {
+  border-color: var(--wg-border-strong);
 }

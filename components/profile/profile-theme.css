@@ -4,8 +4,8 @@
   --wg-color-primary: var(--wg-primary);
   --wg-color-primary-dark: var(--wg-primary-hover);
   --wg-color-accent: var(--wg-primary);
-  --wg-color-success: #15803d;
-  --wg-color-warning: #b45309;
+  --wg-color-success: var(--wg-success);
+  --wg-color-warning: var(--wg-warning);
   --wg-color-error: var(--wg-primary);
   --wg-color-surface: var(--wg-bg);
   --wg-color-surface-variant: var(--wg-bg-secondary);
@@ -27,8 +27,8 @@
 
 [data-theme="dark"] .wg-profile-root,
 [data-theme="dark"] .wg-profile-app {
-  --wg-color-success: #4ade80;
-  --wg-color-warning: #fbbf24;
+  --wg-color-success: var(--wg-success);
+  --wg-color-warning: var(--wg-warning);
 }
 
 .wg-profile-app .wg-profile-nav {
@@ -91,7 +91,7 @@
 }
 
 .wg-profile-app .wg-profile-kpi dt {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--wg-font-mono);
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.08em;

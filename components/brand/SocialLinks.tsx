@@ -28,7 +28,7 @@ export function SocialLinks({ className, iconClassName }: SocialLinksProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.label}
-            className="text-[#8A8A8A] transition-all duration-200 hover:scale-110 hover:text-[#C41E3A]"
+            className="text-fg-tertiary transition-all duration-200 hover:scale-110 hover:text-brand"
           >
             <SocialBrandIcon brand={brand} className={cn("size-5", iconClassName)} />
           </a>
@@ -50,7 +50,7 @@ export function SocialLinksAsButtons({ className }: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.label}
-            className="flex size-9 items-center justify-center rounded-lg border border-[#E5E5E5] bg-white text-[#6B6B6B] transition-all hover:border-[#C41E3A]/30 hover:text-[#C41E3A]"
+            className="flex size-9 items-center justify-center rounded-lg border border-border-default bg-surface text-fg-secondary transition-all hover:border-brand/30 hover:text-brand"
           >
             <SocialBrandIcon brand={brand} className="size-4" />
           </Link>

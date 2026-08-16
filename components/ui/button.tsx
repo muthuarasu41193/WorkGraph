@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils"
 import { WG_ICON } from "@/lib/icon-styles"
 
 const premiumFocus =
-  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500 focus-visible:outline-none"
+  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand focus-visible:outline-none"
 const premiumMotion =
   "transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
 
 const buttonVariants = cva(
   cn(
-    "group/button inline-flex shrink-0 items-center justify-center rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none",
+    "group/button inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-sm font-medium tracking-body whitespace-nowrap outline-none select-none",
     premiumMotion,
     premiumFocus,
     "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20",
@@ -22,26 +22,26 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "border-transparent bg-red-600 text-white shadow-sm",
-          "enabled:hover:bg-[var(--wg-primary-hover)] enabled:hover:shadow",
+          "border-transparent bg-brand text-white shadow-brand",
+          "enabled:hover:bg-brand-700 enabled:hover:shadow-md",
         ),
         secondary: cn(
-          "border-gray-300 bg-white text-gray-700 shadow-none",
-          "enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow",
-          "dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
+          "border-border-default bg-surface text-fg-secondary shadow-none",
+          "enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm",
+          "dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
         ),
         outline:
-          "border-gray-300 bg-white text-gray-700 shadow-none enabled:hover:border-[var(--wg-border-hover)] enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow aria-expanded:bg-[var(--wg-bg-secondary)] aria-expanded:text-gray-700 dark:border-gray-600 dark:bg-transparent dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
+          "border-border-default bg-surface text-fg-secondary shadow-none enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm aria-expanded:bg-surface-active aria-expanded:text-fg-secondary dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
         ghost:
-          "border-transparent bg-transparent text-gray-700 enabled:hover:bg-[var(--wg-bg-secondary)] enabled:hover:shadow-sm aria-expanded:bg-[var(--wg-bg-secondary)] dark:text-gray-200 dark:enabled:hover:bg-gray-800/60",
+          "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs aria-expanded:bg-surface-active dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
         destructive:
           "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm",
-        link: "border-transparent bg-transparent text-red-600 shadow-none transition-all duration-200 ease-in-out enabled:hover:scale-100 enabled:hover:underline underline-offset-4",
+        link: "border-transparent bg-transparent text-brand shadow-none transition-all duration-200 ease-in-out enabled:hover:scale-100 enabled:hover:underline underline-offset-4",
       },
       size: {
         default:
           "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        premium: "h-auto gap-2 px-6 py-2.5 has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5",
+        premium: "h-auto gap-2 px-4 py-2.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",

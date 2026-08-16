@@ -28,9 +28,9 @@ export function CookieBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-2xl rounded-2xl border border-[#E5E5E5] bg-white p-5 shadow-xl sm:inset-x-6"
+          className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-2xl rounded-2xl border border-border-default bg-surface p-5 shadow-xl sm:inset-x-6"
         >
-          <p className="text-sm leading-relaxed text-[#4A4A4A]">
+          <p className="text-sm leading-relaxed text-fg-secondary">
             We use cookies to improve your experience and analyze site traffic. By continuing, you
             agree to our use of cookies.
           </p>
@@ -38,14 +38,14 @@ export function CookieBanner() {
             <button
               type="button"
               onClick={() => save("declined")}
-              className="rounded-full border border-[#E5E5E5] px-5 py-2.5 text-sm font-semibold text-[#4A4A4A] transition-colors hover:bg-[#F3F2EF]"
+              className="rounded-full border border-border-default px-5 py-2.5 text-sm font-semibold text-fg-secondary transition-colors hover:bg-surface-active"
             >
               Decline
             </button>
             <button
               type="button"
               onClick={() => save("accepted")}
-              className="rounded-full bg-[#C41E3A] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#A01830]"
+              className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
             >
               Accept
             </button>

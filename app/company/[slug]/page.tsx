@@ -128,7 +128,7 @@ export default async function PublicCompanyPage({ params }: Props) {
                       {signal.fit_signals.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {signal.fit_signals.map((f) => (
-                            <Badge key={f.label} variant="secondary" className="text-[10px]">
+                            <Badge key={f.label} variant="secondary" className="text-xs">
                               {f.label}
                             </Badge>
                           ))}

@@ -35,7 +35,7 @@ type ContactFormData = {
 };
 
 function ContactInfoIcon({ type }: { type: (typeof CONTACT_INFO)[number]["icon"] }) {
-  const className = "size-5 text-[#C41E3A]";
+  const className = "size-5 text-brand";
   if (type === "mail") return <Mail className={className} aria-hidden />;
   if (type === "message") return <MessageCircle className={className} aria-hidden />;
   if (type === "contact") return <AtSign className={className} aria-hidden />;
@@ -43,7 +43,7 @@ function ContactInfoIcon({ type }: { type: (typeof CONTACT_INFO)[number]["icon"]
 }
 
 function RequiredMark() {
-  return <span className="text-[#C41E3A]">*</span>;
+  return <span className="text-brand">*</span>;
 }
 
 function ContactForm() {
@@ -95,15 +95,15 @@ function ContactForm() {
 
   if (submitState === "success") {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[20px] border border-[#E5E5E5] bg-white p-10 text-center shadow-lg">
-        <CheckCircle2 className="size-14 text-[#16A34A]" aria-hidden />
-        <p className="mt-4 font-heading text-xl font-bold text-[#0A0A0A]">
+      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[20px] border border-border-default bg-surface p-10 text-center shadow-lg">
+        <CheckCircle2 className="size-14 text-success" aria-hidden />
+        <p className="mt-4 font-heading text-xl font-bold text-fg-primary">
           Message sent! We&apos;ll reply within 24 hours.
         </p>
         <button
           type="button"
           onClick={() => setSubmitState("idle")}
-          className="mt-6 text-sm font-semibold text-[#C41E3A] transition-colors hover:text-[#A01830]"
+          className="mt-6 text-sm font-semibold text-brand transition-colors hover:text-brand-700"
         >
           Send another message
         </button>
@@ -114,12 +114,12 @@ function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="rounded-[20px] border border-[#E5E5E5] bg-white p-10 shadow-lg"
+      className="rounded-[20px] border border-border-default bg-surface p-10 shadow-lg"
       noValidate
     >
       <div className="space-y-5">
         <div>
-          <Label htmlFor="contact-name" className="mb-2 block text-[#0A0A0A]">
+          <Label htmlFor="contact-name" className="mb-2 block text-fg-primary">
             Name <RequiredMark />
           </Label>
           <Input
@@ -131,14 +131,14 @@ function ContactForm() {
             {...register("name", { required: "Name is required" })}
           />
           {errors.name && (
-            <p className="mt-1.5 text-sm text-[#C41E3A]" role="alert">
+            <p className="mt-1.5 text-sm text-brand" role="alert">
               {errors.name.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="contact-email" className="mb-2 block text-[#0A0A0A]">
+          <Label htmlFor="contact-email" className="mb-2 block text-fg-primary">
             Email <RequiredMark />
           </Label>
           <Input
@@ -156,14 +156,14 @@ function ContactForm() {
             })}
           />
           {errors.email && (
-            <p className="mt-1.5 text-sm text-[#C41E3A]" role="alert">
+            <p className="mt-1.5 text-sm text-brand" role="alert">
               {errors.email.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="contact-subject" className="mb-2 block text-[#0A0A0A]">
+          <Label htmlFor="contact-subject" className="mb-2 block text-fg-primary">
             Subject <RequiredMark />
           </Label>
           <Controller
@@ -190,14 +190,14 @@ function ContactForm() {
             )}
           />
           {errors.subject && (
-            <p className="mt-1.5 text-sm text-[#C41E3A]" role="alert">
+            <p className="mt-1.5 text-sm text-brand" role="alert">
               {errors.subject.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="contact-message" className="mb-2 block text-[#0A0A0A]">
+          <Label htmlFor="contact-message" className="mb-2 block text-fg-primary">
             Message <RequiredMark />
           </Label>
           <Textarea
@@ -212,7 +212,7 @@ function ContactForm() {
             })}
           />
           {errors.message && (
-            <p className="mt-1.5 text-sm text-[#C41E3A]" role="alert">
+            <p className="mt-1.5 text-sm text-brand" role="alert">
               {errors.message.message}
             </p>
           )}
@@ -232,7 +232,7 @@ function ContactForm() {
           />
           <Label
             htmlFor="contact-waitlist"
-            className="cursor-pointer text-sm font-normal leading-snug text-[#4A4A4A]"
+            className="cursor-pointer text-sm font-normal leading-snug text-fg-secondary"
           >
             I&apos;d also like to join the waitlist
           </Label>
@@ -240,7 +240,7 @@ function ContactForm() {
       </div>
 
       {submitState === "error" && serverError && (
-        <p className="mt-4 text-sm text-[#C41E3A]" role="alert">
+        <p className="mt-4 text-sm text-brand" role="alert">
           {serverError}
         </p>
       )}
@@ -248,7 +248,7 @@ function ContactForm() {
       <button
         type="submit"
         disabled={submitState === "loading"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#C41E3A] py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-[#A01830] hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-brand-700 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {submitState === "loading" ? (
           <>
@@ -267,7 +267,7 @@ export default function Contact() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section id="contact" aria-label="Contact" className="bg-[#F8F7F4] py-20 sm:py-24 lg:py-28">
+    <section id="contact" aria-label="Contact" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div
@@ -276,13 +276,13 @@ export default function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C41E3A]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
               GET IN TOUCH
             </p>
-            <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-[#0A0A0A] sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+            <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
               Let&apos;s talk about your job search
             </h2>
-            <p className="mt-4 text-lg leading-relaxed text-[#4A4A4A]">
+            <p className="mt-4 text-lg leading-relaxed text-fg-secondary">
               Have questions about WorkGraph? Want to partner with us? Or just want to say hi? We
               respond within 24 hours.
             </p>
@@ -292,14 +292,14 @@ export default function Contact() {
                 <a
                   key={card.label}
                   href={card.href}
-                  className="group flex items-center gap-4 rounded-xl border border-[#E5E5E5] bg-white p-5 transition-all duration-200 hover:border-[#C41E3A]/30 hover:shadow-md"
+                  className="group flex items-center gap-4 rounded-xl border border-border-default bg-surface p-5 transition-all duration-200 hover:border-brand/30 hover:shadow-md"
                 >
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#FFF5F5]">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-brand-50">
                     <ContactInfoIcon type={card.icon} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[#0A0A0A]">{card.label}</p>
-                    <p className="mt-0.5 text-sm text-[#4A4A4A] transition-colors group-hover:text-[#C41E3A]">
+                    <p className="text-sm font-semibold text-fg-primary">{card.label}</p>
+                    <p className="mt-0.5 text-sm text-fg-secondary transition-colors group-hover:text-brand">
                       {card.value}
                     </p>
                   </div>

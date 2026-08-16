@@ -67,8 +67,8 @@ function NavLink({
         className={cn(
           "relative text-sm font-medium transition-colors",
           active
-            ? "text-[#0A0A0A] dark:text-white"
-            : "text-[#4A4A4A] hover:text-[#0A0A0A] dark:text-[#a3a3a3] dark:hover:text-white",
+            ? "text-fg-primary dark:text-white"
+            : "text-fg-secondary hover:text-fg-primary dark:text-slate-400 dark:hover:text-white",
         )}
         aria-current={active ? "page" : undefined}
       >
@@ -76,7 +76,7 @@ function NavLink({
         {active && (
           <motion.span
             layoutId="nav-active-indicator"
-            className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-[#C41E3A]"
+            className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-brand"
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
           />
         )}
@@ -140,7 +140,7 @@ export default function Navbar() {
           className={cn(
             "h-16 transition-all duration-300 ease-in-out",
             scrolled
-              ? "border-b border-[#E5E5E5]/80 bg-white/90 shadow-sm backdrop-blur-sm dark:border-[#2a2a2a] dark:bg-[#0a0a0a]/90"
+              ? "border-b border-border-default/80 bg-surface/90 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/90"
               : "border-b border-transparent bg-transparent",
           )}
         >
@@ -168,14 +168,14 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[#4A4A4A] hover:text-[#0A0A0A]"
+                className="text-fg-secondary hover:text-fg-primary"
                 asChild
               >
                 <Link href="/login">Sign in</Link>
               </Button>
               <Button
                 size="sm"
-                className="h-10 rounded-full bg-[#C41E3A] px-5 text-white hover:bg-[#A01830]"
+                className="h-10 rounded-full bg-brand px-5 text-white hover:bg-brand-700"
                 asChild
               >
                 <Link href="/signup">Get early access</Link>
@@ -184,7 +184,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="inline-flex size-10 items-center justify-center rounded-lg text-[#0A0A0A] transition-colors hover:bg-black/5 md:hidden dark:text-white dark:hover:bg-white/10"
+              className="inline-flex size-10 items-center justify-center rounded-lg text-fg-primary transition-colors hover:bg-black/5 md:hidden dark:text-white dark:hover:bg-surface/10"
               onClick={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
@@ -208,7 +208,7 @@ export default function Navbar() {
               }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-[#E5E5E5] bg-white md:hidden dark:border-[#2a2a2a] dark:bg-[#0a0a0a]"
+              className="overflow-hidden border-t border-border-default bg-surface md:hidden dark:border-slate-800 dark:bg-slate-950"
             >
               <div className="flex h-full flex-col px-4 py-6 sm:px-6">
                 <ul className="flex flex-col gap-1" role="list">
@@ -232,8 +232,8 @@ export default function Navbar() {
                         className={cn(
                           "block rounded-xl px-4 py-3.5 text-lg font-medium transition-colors",
                           item.href.startsWith("#") && activeSection === item.href.slice(1)
-                            ? "bg-[#FFF5F5] text-[#C41E3A]"
-                            : "text-[#0A0A0A] hover:bg-[#F3F2EF] dark:text-white dark:hover:bg-[#1a1a1a]",
+                            ? "bg-brand-50 text-brand"
+                            : "text-fg-primary hover:bg-surface-active dark:text-white dark:hover:bg-slate-900",
                         )}
                       >
                         {item.label}
@@ -242,7 +242,7 @@ export default function Navbar() {
                   ))}
                 </ul>
 
-                <div className="mt-auto flex flex-col gap-3 border-t border-[#E5E5E5] pt-6 dark:border-[#2a2a2a]">
+                <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6 dark:border-slate-800">
                   <Button variant="outline" size="lg" className="h-12 w-full rounded-full" asChild>
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       Sign in
@@ -250,7 +250,7 @@ export default function Navbar() {
                   </Button>
                   <Button
                     size="lg"
-                    className="h-12 w-full rounded-full bg-[#C41E3A] text-white hover:bg-[#A01830]"
+                    className="h-12 w-full rounded-full bg-brand text-white hover:bg-brand-700"
                     asChild
                   >
                     <Link href="/signup" onClick={() => setMobileOpen(false)}>

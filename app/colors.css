@@ -1,45 +1,138 @@
 /* WorkGraph design system — color tokens */
 
 :root {
-  /* Brand */
-  --wg-primary: #c41e3a;
-  --wg-primary-dark: #a01830;
-  --wg-primary-light: #ff2d4a;
-  --wg-primary-hover: #a01830;
+  /* Brand red — logo #E11D2E as 600 */
+  --wg-brand-50: #fef2f3;
+  --wg-brand-100: #fde3e5;
+  --wg-brand-200: #fbcbd0;
+  --wg-brand-300: #f8a3ab;
+  --wg-brand-400: #f2707c;
+  --wg-brand-500: #e83d4d;
+  --wg-brand-600: #e11d2e;
+  --wg-brand-700: #be1528;
+  --wg-brand-800: #9d1626;
+  --wg-brand-900: #821822;
+  --wg-brand-950: #480a12;
 
-  /* Text */
-  --wg-text-primary: #0a0a0a;
-  --wg-text-primary-hover: #171717;
-  --wg-text-secondary: #4a4a4a;
-  --wg-text-secondary-hover: #3a3a3a;
-  --wg-text-muted: #8a8a8a;
-  --wg-text-muted-hover: #6a6a6a;
+  --wg-primary: var(--wg-brand-600);
+  --wg-primary-dark: var(--wg-brand-700);
+  --wg-primary-light: var(--wg-brand-500);
+  --wg-primary-hover: var(--wg-brand-700);
+  --wg-primary-foreground: #ffffff;
 
-  /* Surfaces */
-  --wg-bg: #f8f7f4;
-  --wg-bg-hover: #eceae5;
-  --wg-surface: #ffffff;
-  --wg-bg-secondary: #f3f2ef;
-  --wg-bg-secondary-hover: #e8e6e1;
+  /* Neutral slate */
+  --wg-slate-50: #f8fafc;
+  --wg-slate-100: #f1f5f9;
+  --wg-slate-200: #e2e8f0;
+  --wg-slate-300: #cbd5e1;
+  --wg-slate-400: #94a3b8;
+  --wg-slate-500: #64748b;
+  --wg-slate-600: #475569;
+  --wg-slate-700: #334155;
+  --wg-slate-800: #1e293b;
+  --wg-slate-900: #0f172a;
+  --wg-slate-950: #020617;
 
-  /* Border */
-  --wg-border: #e5e5e5;
-  --wg-border-hover: #d4d4d4;
-  --wg-placeholder: #a3a3a3;
-
-  /* Semantic */
-  --wg-success: #16a34a;
-  --wg-warning: #d97706;
-  --wg-accent-blue: #2563eb;
-
-  /* Typography aliases */
+  /* Text hierarchy */
+  --wg-text-primary: var(--wg-slate-900);
+  --wg-text-secondary: var(--wg-slate-600);
+  --wg-text-tertiary: var(--wg-slate-400);
+  --wg-text-muted: var(--wg-text-tertiary);
+  --wg-text-inverse: #ffffff;
+  --wg-text-primary-hover: var(--wg-slate-800);
+  --wg-text-secondary-hover: var(--wg-slate-700);
+  --wg-text-muted-hover: var(--wg-slate-500);
   --wg-text-heading: var(--wg-text-primary);
   --wg-text-body: var(--wg-text-secondary);
+
+  /* Surfaces */
+  --wg-bg: var(--wg-slate-50);
+  --wg-bg-hover: var(--wg-slate-100);
+  --wg-surface: #ffffff;
+  --wg-surface-hover: var(--wg-slate-50);
+  --wg-surface-active: var(--wg-slate-100);
+  --wg-bg-secondary: var(--wg-slate-100);
+  --wg-bg-secondary-hover: var(--wg-slate-200);
+
+  /* Borders */
+  --wg-border: var(--wg-slate-200);
+  --wg-border-default: var(--wg-slate-200);
+  --wg-border-strong: var(--wg-slate-300);
+  --wg-border-hover: var(--wg-slate-300);
+  --wg-placeholder: var(--wg-slate-400);
+
+  /* Semantic */
+  --wg-success: #10b981;
+  --wg-success-50: #ecfdf5;
+  --wg-success-100: #d1fae5;
+  --wg-success-foreground: #065f46;
+  --wg-warning: #f59e0b;
+  --wg-warning-50: #fffbeb;
+  --wg-warning-100: #fef3c7;
+  --wg-warning-foreground: #92400e;
+  --wg-info: #3b82f6;
+  --wg-info-50: #eff6ff;
+  --wg-info-100: #dbeafe;
+  --wg-info-foreground: #1e40af;
+  --wg-accent-blue: var(--wg-info);
+  --wg-error: var(--wg-brand-600);
+  --wg-error-50: var(--wg-brand-50);
+  --wg-error-100: var(--wg-brand-100);
+}
+
+.dark,
+[data-theme="dark"] {
+  --wg-primary: var(--wg-brand-500);
+  --wg-primary-dark: var(--wg-brand-600);
+  --wg-primary-light: var(--wg-brand-400);
+  --wg-primary-hover: var(--wg-brand-400);
+
+  --wg-text-primary: var(--wg-slate-50);
+  --wg-text-secondary: var(--wg-slate-400);
+  --wg-text-tertiary: var(--wg-slate-500);
+  --wg-text-muted: var(--wg-text-tertiary);
+  --wg-text-inverse: var(--wg-slate-950);
+  --wg-text-primary-hover: #ffffff;
+  --wg-text-secondary-hover: var(--wg-slate-300);
+  --wg-text-muted-hover: var(--wg-slate-400);
+  --wg-text-heading: var(--wg-text-primary);
+  --wg-text-body: var(--wg-text-secondary);
+
+  --wg-bg: var(--wg-slate-950);
+  --wg-bg-hover: var(--wg-slate-900);
+  --wg-surface: var(--wg-slate-900);
+  --wg-surface-hover: var(--wg-slate-800);
+  --wg-surface-active: var(--wg-slate-800);
+  --wg-bg-secondary: var(--wg-slate-900);
+  --wg-bg-secondary-hover: var(--wg-slate-800);
+
+  --wg-border: var(--wg-slate-800);
+  --wg-border-default: var(--wg-slate-800);
+  --wg-border-strong: var(--wg-slate-700);
+  --wg-border-hover: var(--wg-slate-700);
+  --wg-placeholder: var(--wg-slate-500);
+
+  --wg-success: #34d399;
+  --wg-success-50: rgb(16 185 129 / 0.12);
+  --wg-success-100: rgb(16 185 129 / 0.2);
+  --wg-success-foreground: #a7f3d0;
+  --wg-warning: #fbbf24;
+  --wg-warning-50: rgb(245 158 11 / 0.12);
+  --wg-warning-100: rgb(245 158 11 / 0.2);
+  --wg-warning-foreground: #fde68a;
+  --wg-info: #60a5fa;
+  --wg-info-50: rgb(59 130 246 / 0.12);
+  --wg-info-100: rgb(59 130 246 / 0.2);
+  --wg-info-foreground: #bfdbfe;
+  --wg-accent-blue: var(--wg-info);
+  --wg-error: var(--wg-brand-400);
+  --wg-error-50: rgb(225 29 46 / 0.12);
+  --wg-error-100: rgb(225 29 46 / 0.2);
 }
 
 @layer utilities {
   .hover\:bg-wg-surface:hover {
-    background-color: var(--wg-bg-hover);
+    background-color: var(--wg-surface-hover);
   }
 
   .hover\:bg-wg-surface-secondary:hover {
@@ -57,54 +150,4 @@
   .hover\:bg-wg-primary:hover {
     background-color: var(--wg-primary-hover);
   }
-}
-
-.dark {
-  --wg-primary: #ff2d4a;
-  --wg-primary-dark: #c41e3a;
-  --wg-primary-light: #ff5c72;
-  --wg-primary-hover: #ff5c72;
-  --wg-text-primary: #fafafa;
-  --wg-text-primary-hover: #ffffff;
-  --wg-text-secondary: #a3a3a3;
-  --wg-text-secondary-hover: #d4d4d4;
-  --wg-text-muted: #737373;
-  --wg-text-muted-hover: #8a8a8a;
-  --wg-bg: #0a0a0a;
-  --wg-bg-hover: #141414;
-  --wg-surface: #141414;
-  --wg-bg-secondary: #1a1a1a;
-  --wg-bg-secondary-hover: #262626;
-  --wg-border: #2a2a2a;
-  --wg-border-hover: #3a3a3a;
-  --wg-success: #22c55e;
-  --wg-warning: #f59e0b;
-  --wg-accent-blue: #3b82f6;
-  --wg-text-heading: var(--wg-text-primary);
-  --wg-text-body: var(--wg-text-secondary);
-}
-
-[data-theme="dark"] {
-  --wg-primary: #ff2d4a;
-  --wg-primary-dark: #c41e3a;
-  --wg-primary-light: #ff5c72;
-  --wg-primary-hover: #ff5c72;
-  --wg-text-primary: #fafafa;
-  --wg-text-primary-hover: #ffffff;
-  --wg-text-secondary: #a3a3a3;
-  --wg-text-secondary-hover: #d4d4d4;
-  --wg-text-muted: #737373;
-  --wg-text-muted-hover: #8a8a8a;
-  --wg-bg: #0a0a0a;
-  --wg-bg-hover: #141414;
-  --wg-surface: #141414;
-  --wg-bg-secondary: #1a1a1a;
-  --wg-bg-secondary-hover: #262626;
-  --wg-border: #2a2a2a;
-  --wg-border-hover: #3a3a3a;
-  --wg-success: #22c55e;
-  --wg-warning: #f59e0b;
-  --wg-accent-blue: #3b82f6;
-  --wg-text-heading: var(--wg-text-primary);
-  --wg-text-body: var(--wg-text-secondary);
 }

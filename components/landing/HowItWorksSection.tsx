@@ -32,7 +32,7 @@ export function HowItWorksSection() {
                 />
               )}
               <span
-                className="font-heading text-5xl font-extrabold text-wg-primary/15"
+                className="font-heading text-5xl font-bold text-wg-primary/15"
                 aria-hidden
               >
                 {step.step}

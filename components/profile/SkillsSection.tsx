@@ -65,7 +65,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
   };
 
   return (
-    <section className="rounded-3xl border border-emerald-200/90 bg-white p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-emerald-200/90 bg-surface p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Skills</h2>
@@ -93,7 +93,7 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
               }
             }}
             placeholder="Add a skill"
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm outline-none transition focus:border-emerald-800 focus:bg-white focus:ring-4 focus:ring-emerald-900/12"
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm outline-none transition focus:border-emerald-800 focus:bg-surface focus:ring-4 focus:ring-emerald-900/12"
           />
           <button
             type="button"

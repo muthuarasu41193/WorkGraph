@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
@@ -15,10 +15,10 @@ const inter = Inter({
   preload: true,
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-heading",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains",
   display: "swap",
   preload: true,
 });
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(inter.variable, plusJakarta.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn(inter.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <JsonLd />
         <PageTransition>

@@ -137,7 +137,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                 >
                   {skill.name}
                   {skill.endorsements > 0 ? (
-                    <span className="text-[10px] tabular-nums text-muted-foreground">
+                    <span className="text-xs tabular-nums text-muted-foreground">
                       {skill.endorsements}
                     </span>
                   ) : null}
@@ -152,7 +152,7 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
                     </button>
                   ) : null}
                   {skill.top ? (
-                    <span className="rounded px-1 text-[10px] font-semibold">Top</span>
+                    <span className="rounded px-1 text-xs font-semibold">Top</span>
                   ) : null}
                 </Badge>
               ))}

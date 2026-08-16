@@ -141,7 +141,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
                       <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                         <Building2 className={iconClass()} />
                         {job.company}
-                        <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                        <Badge variant="outline" className="h-5 px-1.5 text-xs">
                           {job.source}
                         </Badge>
                       </span>

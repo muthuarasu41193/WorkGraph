@@ -94,7 +94,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
             {liveListings > 0 ? (
               <Badge
                 variant="secondary"
-                className="hidden rounded-md border-0 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 lg:inline-flex"
+                className="hidden rounded-md border-0 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 lg:inline-flex"
               >
                 <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 {liveListings.toLocaleString()} live
@@ -109,7 +109,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
               onClick={() => setCmdOpen(true)}
             >
               <Command className={iconClass()} />
-              <kbd className="rounded border bg-muted px-1 py-0.5 text-[10px] font-medium">⌘K</kbd>
+              <kbd className="rounded border bg-muted px-1 py-0.5 text-xs font-medium">⌘K</kbd>
             </Button>
 
             <Button

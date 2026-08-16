@@ -66,7 +66,7 @@ export default async function HomeHiddenJobsFeed() {
                     </Badge>
                     <span className="text-xs text-muted-foreground">{formatPostedAt(item.postedAt)}</span>
                     {item.tags.includes("remote") ? (
-                      <Badge variant="secondary" className="text-[10px]">
+                      <Badge variant="secondary" className="text-xs">
                         Remote
                       </Badge>
                     ) : null}

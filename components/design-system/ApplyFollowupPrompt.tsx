@@ -36,7 +36,7 @@ export default function ApplyFollowupPrompt({ onMarkApplied, onSaveForLater }: P
       aria-labelledby="apply-followup-title"
       aria-describedby="apply-followup-desc"
     >
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
+      <div className="rounded-xl border border-slate-200 bg-surface p-4 shadow-lg">
         <p id="apply-followup-title" className="text-sm font-semibold text-slate-900">
           Did you apply to this role?
         </p>

@@ -22,10 +22,10 @@ const BRAND_ICON_COLORS: Partial<Record<CompanyBrand, string>> = {
   amazon: "text-[#FF9900]",
   stripe: "text-[#635BFF]",
   netflix: "text-[#E50914]",
-  apple: "text-[#0A0A0A]",
+  apple: "text-fg-primary",
   airbnb: "text-[#FF5A5F]",
   databricks: "text-[#FF3621]",
-  notion: "text-[#0A0A0A]",
+  notion: "text-fg-primary",
 };
 
 export function BrandLogo({ brand, size = "md", className, onDark }: BrandLogoProps) {
@@ -39,8 +39,8 @@ export function BrandLogo({ brand, size = "md", className, onDark }: BrandLogoPr
         "inline-flex shrink-0 items-center justify-center rounded-lg border",
         dims.box,
         onDark
-          ? "border-[#2A2A2A] bg-white"
-          : "border-[#E8E8E8] bg-white shadow-sm",
+          ? "border-slate-800 bg-surface"
+          : "border-border-default bg-surface shadow-sm",
         className,
       )}
       title={label}

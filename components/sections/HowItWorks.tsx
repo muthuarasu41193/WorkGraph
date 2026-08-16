@@ -63,9 +63,9 @@ function HighlightPills({ items }: { items: string[] }) {
       {items.map((item) => (
         <li
           key={item}
-          className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E5E5] bg-white px-3 py-1.5 text-xs font-medium text-[#4A4A4A]"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border-default bg-surface px-3 py-1.5 text-xs font-medium text-fg-secondary"
         >
-          <Check className="size-3.5 text-[#16A34A]" aria-hidden />
+          <Check className="size-3.5 text-success" aria-hidden />
           {item}
         </li>
       ))}
@@ -75,19 +75,19 @@ function HighlightPills({ items }: { items: string[] }) {
 
 function ProfileMockup() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
-      <div className="h-20 bg-gradient-to-r from-[#C41E3A]/20 to-[#2563EB]/10" />
+    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+      <div className="h-20 bg-gradient-to-r from-brand/20 to-info/10" />
       <div className="px-5 pb-5">
         <div className="-mt-8 flex items-end gap-3">
-          <div className="flex size-16 items-center justify-center rounded-2xl border-4 border-white bg-[#0A0A0A] text-lg font-bold text-white shadow-md">
+          <div className="flex size-16 items-center justify-center rounded-2xl border-4 border-white bg-slate-950 text-lg font-bold text-white shadow-md">
             RK
           </div>
           <div className="mb-1">
-            <p className="font-heading text-lg font-bold text-[#0A0A0A]">Ronaldo K.</p>
-            <p className="text-sm text-[#8A8A8A]">Senior Product Designer</p>
+            <p className="font-heading text-lg font-bold text-fg-primary">Ronaldo K.</p>
+            <p className="text-sm text-fg-tertiary">Senior Product Designer</p>
           </div>
         </div>
-        <div className="mt-4 flex items-center gap-2 text-xs text-[#8A8A8A]">
+        <div className="mt-4 flex items-center gap-2 text-xs text-fg-tertiary">
           <MapPin className="size-3.5" aria-hidden />
           San Francisco · Open to remote
         </div>
@@ -95,15 +95,15 @@ function ProfileMockup() {
           {["Figma", "React", "Design Systems", "User Research"].map((skill) => (
             <span
               key={skill}
-              className="rounded-lg bg-[#F3F2EF] px-2.5 py-1.5 text-center text-xs font-medium text-[#4A4A4A]"
+              className="rounded-lg bg-surface-active px-2.5 py-1.5 text-center text-xs font-medium text-fg-secondary"
             >
               {skill}
             </span>
           ))}
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F8F7F4] px-3 py-2.5 text-sm">
-          <span className="text-[#8A8A8A]">Salary range</span>
-          <span className="font-semibold text-[#0A0A0A]">$140k – $175k</span>
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-background px-3 py-2.5 text-sm">
+          <span className="text-fg-tertiary">Salary range</span>
+          <span className="font-semibold text-fg-primary">$140k – $175k</span>
         </div>
       </div>
     </div>
@@ -124,30 +124,30 @@ function JobFeedMockup() {
   ];
 
   return (
-    <div className="space-y-2.5 rounded-2xl border border-[#E5E5E5] bg-[#F8F7F4] p-4 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
-      <p className="text-xs font-semibold uppercase tracking-widest text-[#8A8A8A]">Live feed</p>
+    <div className="space-y-2.5 rounded-2xl border border-border-default bg-background p-4 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+      <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">Live feed</p>
       {jobs.map((job) => (
         <div
           key={job.role}
-          className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E5E5] bg-white p-3"
+          className="flex items-center justify-between gap-3 rounded-xl border border-border-default bg-surface p-3"
         >
           <div className="flex min-w-0 items-center gap-3">
             {job.brand ? (
               <BrandLogo brand={job.brand} size="sm" />
             ) : (
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#F3F2EF] text-[10px] font-bold text-[#6B6B6B]">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-active text-xs font-bold text-fg-secondary">
                 AI
               </span>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-[#0A0A0A]">{job.role}</p>
-              <p className="truncate text-xs text-[#8A8A8A]">{job.company}</p>
+              <p className="truncate text-sm font-semibold text-fg-primary">{job.role}</p>
+              <p className="truncate text-xs text-fg-tertiary">{job.company}</p>
               <div className="mt-1.5">
                 <SourceBadge source={job.source} compact />
               </div>
             </div>
           </div>
-          <span className="shrink-0 font-heading text-sm font-bold text-[#16A34A]">{job.match}%</span>
+          <span className="shrink-0 font-heading text-sm font-bold text-success">{job.match}%</span>
         </div>
       ))}
     </div>
@@ -156,14 +156,14 @@ function JobFeedMockup() {
 
 function InterviewMockup() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
-      <div className="border-b border-[#E5E5E5] bg-[#FFF0F0] px-4 py-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#C41E3A]">
+    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+      <div className="border-b border-border-default bg-brand-50 px-4 py-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand">
           Interview Vault
         </p>
         <div className="mt-1 flex items-center gap-2">
           <BrandLogo brand="google" size="sm" />
-          <p className="font-heading text-base font-bold text-[#0A0A0A]">Google — L5 PM</p>
+          <p className="font-heading text-base font-bold text-fg-primary">Google — L5 PM</p>
         </div>
       </div>
       <div className="space-y-2 p-4">
@@ -172,12 +172,12 @@ function InterviewMockup() {
           "How do you prioritize a crowded roadmap?",
           "Design a metrics dashboard for creators",
         ].map((q, i) => (
-          <div key={q} className="rounded-lg bg-[#F8F7F4] px-3 py-2.5 text-sm text-[#4A4A4A]">
-            <span className="mr-2 font-bold text-[#C41E3A]">Q{i + 1}.</span>
+          <div key={q} className="rounded-lg bg-background px-3 py-2.5 text-sm text-fg-secondary">
+            <span className="mr-2 font-bold text-brand">Q{i + 1}.</span>
             {q}
           </div>
         ))}
-        <div className="mt-2 rounded-lg border border-dashed border-[#C41E3A]/30 bg-[#FFF5F5] px-3 py-2 text-center text-xs font-semibold text-[#C41E3A]">
+        <div className="mt-2 rounded-lg border border-dashed border-brand/30 bg-brand-50 px-3 py-2 text-center text-xs font-semibold text-brand">
           + AI-generated prep guide available
         </div>
       </div>
@@ -187,16 +187,16 @@ function InterviewMockup() {
 
 function EarningsMockup() {
   return (
-    <div className="rounded-2xl border border-[#E5E5E5] bg-white p-5 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+    <div className="rounded-2xl border border-border-default bg-surface p-5 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#8A8A8A]">
+          <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
             Guide earnings
           </p>
-          <p className="mt-1 font-heading text-3xl font-extrabold text-[#0A0A0A]">$1,248</p>
-          <p className="text-xs text-[#16A34A]">+18% this month</p>
+          <p className="mt-1 font-numeric text-3xl font-bold text-fg-primary">$1,248</p>
+          <p className="text-xs text-success">+18% this month</p>
         </div>
-        <div className="flex size-12 items-center justify-center rounded-xl bg-[#F0FDF4] text-[#16A34A]">
+        <div className="flex size-12 items-center justify-center rounded-xl bg-success-50 text-success">
           <TrendingUp className="size-6" aria-hidden />
         </div>
       </div>
@@ -207,13 +207,13 @@ function EarningsMockup() {
         ].map(({ label, value, icon: Icon }) => (
           <div
             key={label}
-            className="flex items-center justify-between rounded-xl bg-[#F8F7F4] px-3 py-2.5"
+            className="flex items-center justify-between rounded-xl bg-background px-3 py-2.5"
           >
-            <span className="flex items-center gap-2 text-sm text-[#4A4A4A]">
-              <Icon className="size-4 text-[#8A8A8A]" aria-hidden />
+            <span className="flex items-center gap-2 text-sm text-fg-secondary">
+              <Icon className="size-4 text-fg-tertiary" aria-hidden />
               {label}
             </span>
-            <span className="font-semibold text-[#0A0A0A]">{value}</span>
+            <span className="font-semibold text-fg-primary">{value}</span>
           </div>
         ))}
       </div>
@@ -248,8 +248,8 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
           className={cn(
             "absolute z-0 hidden lg:block",
             isEven
-              ? "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-[#FECACA] to-transparent"
-              : "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-[#FECACA] to-transparent",
+              ? "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-brand-200 to-transparent"
+              : "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-brand-200 to-transparent",
           )}
           aria-hidden
         />
@@ -267,17 +267,17 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
         {/* Content */}
         <div className="relative">
           <span
-            className="pointer-events-none absolute -left-2 -top-6 select-none font-heading text-[120px] font-extrabold leading-none text-[#FFF0F0] sm:text-[140px] lg:-left-4 lg:-top-10 lg:text-[160px]"
+            className="pointer-events-none absolute -left-2 -top-6 select-none font-heading text-[120px] font-bold leading-none text-brand-50 sm:text-[140px] lg:-left-4 lg:-top-10 lg:text-[160px]"
             aria-hidden
           >
             {step.number}
           </span>
           <div className="relative">
-            <p className="text-sm font-bold text-[#C41E3A]">Step {step.number}</p>
-            <h3 className="mt-2 font-heading text-2xl font-bold text-[#0A0A0A] sm:text-3xl">
+            <p className="text-sm font-bold text-brand">Step {step.number}</p>
+            <h3 className="mt-2 font-heading text-2xl font-bold text-fg-primary sm:text-3xl">
               {step.title}
             </h3>
-            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-[#4A4A4A]">
+            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-fg-secondary">
               {step.description}
             </p>
             <HighlightPills items={step.highlights} />
@@ -287,7 +287,7 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
         {/* Visual */}
         <div className="relative">
           <div
-            className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[#C41E3A]/5 to-transparent"
+            className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-brand/5 to-transparent"
             aria-hidden
           />
           <div className="relative">
@@ -299,7 +299,7 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
       {/* Mobile connector */}
       {!isLast && (
         <div
-          className="mx-auto my-10 h-12 w-px bg-gradient-to-b from-[#FECACA] to-transparent lg:hidden"
+          className="mx-auto my-10 h-12 w-px bg-gradient-to-b from-brand-200 to-transparent lg:hidden"
           aria-hidden
         />
       )}
@@ -312,12 +312,12 @@ export default function HowItWorks() {
     <section
       id="how-it-works"
       aria-label="How it works"
-      className="bg-[#F8F7F4] py-20 sm:py-24 lg:py-28"
+      className="bg-background py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C41E3A]">The process</p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-[#0A0A0A] sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">The process</p>
+          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
             From hidden job to hired — in 4 steps
           </h2>
         </header>
@@ -325,7 +325,7 @@ export default function HowItWorks() {
         <div className="relative mt-16 lg:mt-20">
           {/* Desktop zigzag line */}
           <div
-            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-[#FECACA]/60 to-transparent lg:block"
+            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-brand-200/60 to-transparent lg:block"
             aria-hidden
           />
 

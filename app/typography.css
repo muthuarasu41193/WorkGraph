@@ -1,21 +1,33 @@
-/* WorkGraph typography system */
+/* WorkGraph typography system — Inter + JetBrains Mono */
 
 :root {
-  --wg-font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --wg-font-heading: var(--font-heading), var(--font-inter), system-ui, sans-serif;
-  --wg-leading-body: 1.6;
-  --wg-leading-heading: 1.15;
-  --wg-tracking-heading: -0.02em;
+  --wg-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --wg-font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --wg-font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+  --wg-leading-body: 1.5;
+  --wg-leading-heading: 1.2;
+  --wg-tracking-body: -0.005em;
+  --wg-tracking-heading: -0.01em;
+  --wg-text-xs: 0.75rem; /* 12 */
+  --wg-text-sm: 0.8125rem; /* 13 */
+  --wg-text-base: 0.875rem; /* 14 */
+  --wg-text-md: 0.9375rem; /* 15 */
+  --wg-text-lg: 1.0625rem; /* 17 */
+  --wg-text-xl: 1.25rem; /* 20 */
+  --wg-text-2xl: 1.5rem; /* 24 */
+  --wg-text-3xl: 1.875rem; /* 30 */
 }
 
 @layer base {
   html {
     font-family: var(--wg-font-sans);
+    letter-spacing: var(--wg-tracking-body);
   }
 
   body {
     font-weight: 400;
     line-height: var(--wg-leading-body);
+    letter-spacing: var(--wg-tracking-body);
     color: var(--wg-text-body);
   }
 
@@ -49,6 +61,7 @@
   dt {
     font-weight: 400;
     line-height: var(--wg-leading-body);
+    letter-spacing: var(--wg-tracking-body);
     color: var(--wg-text-body);
   }
 
@@ -71,18 +84,31 @@
     color: var(--wg-text-heading);
   }
 
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--wg-font-mono);
+  }
+
   [data-slot="card-title"] {
-    font-size: 1.125rem;
+    font-size: var(--wg-text-lg);
     font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
+    line-height: var(--wg-leading-heading);
+    letter-spacing: var(--wg-tracking-heading);
     color: var(--wg-text-primary);
   }
 }
 
 @layer utilities {
+  .font-numeric {
+    font-family: var(--wg-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
   .wg-text-heading {
-    font-family: var(--wg-font-sans);
+    font-family: var(--wg-font-heading);
     font-weight: 600;
     line-height: var(--wg-leading-heading);
     letter-spacing: var(--wg-tracking-heading);
@@ -90,7 +116,7 @@
   }
 
   .wg-text-heading-bold {
-    font-family: var(--wg-font-sans);
+    font-family: var(--wg-font-heading);
     font-weight: 700;
     line-height: var(--wg-leading-heading);
     letter-spacing: var(--wg-tracking-heading);
@@ -100,12 +126,13 @@
   .wg-text-body {
     font-weight: 400;
     line-height: var(--wg-leading-body);
+    letter-spacing: var(--wg-tracking-body);
     color: var(--wg-text-body);
   }
 
   .wg-text-secondary {
     font-weight: 400;
     line-height: var(--wg-leading-body);
-    color: var(--wg-text-muted);
+    color: var(--wg-text-secondary);
   }
 }

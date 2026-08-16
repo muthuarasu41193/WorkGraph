@@ -8,7 +8,7 @@ import { useToastStore, type ToastVariant } from "@/hooks/use-toast";
 const VARIANT_STYLES: Record<ToastVariant, string> = {
   default: "border-border bg-background text-foreground",
   success: "border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100",
-  error: "border-red-200 bg-red-50 text-red-950 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100",
+  error: "border-red-200 bg-brand-50 text-red-950 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100",
 };
 
 export function Toaster() {

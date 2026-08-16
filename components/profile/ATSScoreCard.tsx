@@ -6,6 +6,7 @@ import { iconClass } from "@/lib/icon-styles";
 import type { ATSFeedback } from "../../lib/types";
 import { apiErrorMessage, readApiJson } from "../../lib/api-fetch";
 import { atsScorePath } from "../../lib/workgraph-api-routes";
+import { WG_COLORS } from "@/lib/design-tokens";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,9 +34,9 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
   const grade = localFeedback?.grade ?? gradeFromScore(currentScore);
 
   const ringColor = useMemo(() => {
-    if (currentScore >= 80) return "#16a34a";
-    if (currentScore >= 60) return "#f59e0b";
-    return "#ef4444";
+    if (currentScore >= 80) return WG_COLORS.success;
+    if (currentScore >= 60) return WG_COLORS.warning;
+    return WG_COLORS.primary;
   }, [currentScore]);
 
   const analyze = async () => {

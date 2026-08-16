@@ -220,7 +220,7 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-emerald-600/40 px-1.5 text-[10px] text-emerald-700"
+                              className="h-5 gap-0.5 border-emerald-600/40 px-1.5 text-xs text-emerald-700"
                             >
                               <BadgeCheck className={iconClass()} />
                               Verified
@@ -254,7 +254,7 @@ export default function WorkgraphDirectSection({
                     {preview.matchedSignals.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {preview.matchedSignals.map((s) => (
-                          <Badge key={s} variant="secondary" className="text-[10px]">
+                          <Badge key={s} variant="secondary" className="text-xs">
                             {s}
                           </Badge>
                         ))}

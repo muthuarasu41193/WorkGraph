@@ -15,13 +15,18 @@ import {
 import SectionHeader from "@/components/design-system/SectionHeader";
 import { WG_COLORS } from "@/lib/design-tokens";
 
-const CHART_RED_SCALE = ["#DC2626", "#EF4444", "#F87171", "#FECACA"] as const;
+const CHART_RED_SCALE = [
+  WG_COLORS.brand[600],
+  WG_COLORS.brand[500],
+  WG_COLORS.brand[400],
+  WG_COLORS.brand[200],
+] as const;
 
 const FUNNEL_DATA = [
   { stage: "Applied", count: 24, fill: WG_COLORS.primary },
-  { stage: "Screening", count: 12, fill: "#EF4444" },
-  { stage: "Interview", count: 6, fill: "#EF4444" },
-  { stage: "Offer", count: 2, fill: "#10B981" },
+  { stage: "Screening", count: 12, fill: WG_COLORS.brand[500] },
+  { stage: "Interview", count: 6, fill: WG_COLORS.brand[400] },
+  { stage: "Offer", count: 2, fill: WG_COLORS.success },
 ];
 
 const WEEKLY_DATA = [
@@ -55,7 +60,7 @@ export default function HomeChartsSection() {
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={FUNNEL_DATA} layout="vertical" margin={{ left: 0, right: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#ECECEC" />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={WG_COLORS.border} />
                 <XAxis type="number" hide />
                 <YAxis
                   type="category"
@@ -88,7 +93,7 @@ export default function HomeChartsSection() {
           <div className="mt-4 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={WEEKLY_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ECECEC" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={WG_COLORS.border} />
                 <XAxis
                   dataKey="day"
                   tick={{ fontSize: 11, fill: "#6B7280" }}
@@ -148,7 +153,7 @@ export default function HomeChartsSection() {
           </div>
           <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1">
             {SKILLS_DATA.map((s, i) => (
-              <span key={s.name} className="inline-flex items-center gap-1 text-[10px] text-[var(--dash-text-secondary)]">
+              <span key={s.name} className="inline-flex items-center gap-1 text-xs text-[var(--dash-text-secondary)]">
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{ background: CHART_RED_SCALE[i % CHART_RED_SCALE.length] }}

@@ -33,9 +33,9 @@ function companyInitials(name: string): string {
 }
 
 function matchPillClass(percent: number): string {
-  if (percent > 80) return "bg-[#F0FDF4] text-[#16A34A]";
-  if (percent >= 60) return "bg-[#EFF6FF] text-[#2563EB]";
-  return "bg-[#F9FAFB] text-[#6B7280]";
+  if (percent > 80) return "bg-success-50 text-success";
+  if (percent >= 60) return "bg-info-50 text-info";
+  return "bg-surface-hover text-fg-tertiary";
 }
 
 function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }) {
@@ -46,7 +46,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
       <img
         src={logoUrl}
         alt=""
-        className="h-10 w-10 shrink-0 rounded-[10px] border border-[#F1F5F9] object-cover"
+        className="h-10 w-10 shrink-0 rounded-[10px] border border-border-default object-cover"
         onError={() => setFailed(true)}
       />
     );
@@ -54,7 +54,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#F1F5F9] bg-gray-100 text-xs font-medium text-gray-500"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-border-default bg-surface-active text-xs font-medium text-fg-tertiary"
       aria-hidden
     >
       {companyInitials(company)}
@@ -119,7 +119,7 @@ export default function JobCard({
           }}
           aria-label={saved ? "Remove from saved" : "Save job"}
           className={cn(
-            "job-card__bookmark absolute right-5 top-[18px] rounded-md p-1 text-gray-400 transition-colors hover:text-indigo-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
+            "job-card__bookmark absolute right-5 top-[18px] rounded-md p-1 text-fg-tertiary transition-colors hover:text-indigo-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
             saved && "opacity-100 text-indigo-600",
           )}
         >
@@ -133,11 +133,11 @@ export default function JobCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="truncate text-[15px] font-semibold leading-tight text-wg-heading">
+              <h3 className="truncate text-md font-semibold leading-tight text-wg-heading">
                 {job.title}
               </h3>
               {subtitleParts.length > 0 ? (
-                <p className="mt-0.5 truncate text-[13px] leading-tight text-gray-500">
+                <p className="mt-0.5 truncate text-sm leading-tight text-fg-tertiary">
                   {subtitleParts.join(" · ")}
                 </p>
               ) : null}
@@ -146,7 +146,7 @@ export default function JobCard({
             {job.matchPercent !== undefined ? (
               <span
                 className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium leading-tight tabular-nums",
+                  "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium leading-tight tabular-nums",
                   matchPillClass(job.matchPercent),
                 )}
               >
@@ -176,12 +176,12 @@ export default function JobCard({
 
       {showSkillGaps ? (
         <div className="job-card__skill-gaps">
-          <p className="text-[11px] leading-tight text-gray-400">Skill gaps</p>
+          <p className="text-xs leading-tight text-fg-tertiary">Skill gaps</p>
           <div className="mt-1 flex flex-wrap gap-1">
             {job.missingSkills!.map((skill) => (
               <span
                 key={skill}
-                className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[11px] leading-tight text-gray-500"
+                className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-xs leading-tight text-fg-tertiary"
               >
                 {skill}
               </span>

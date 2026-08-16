@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const cardBase =
-  "group/card flex flex-col gap-4 overflow-hidden rounded-xl border border-[var(--wg-border)] bg-white p-6 text-sm shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-[var(--wg-border-hover)] hover:shadow-md dark:bg-[var(--wg-bg)]"
+  "group/card flex flex-col gap-4 overflow-hidden rounded-lg border border-border-default bg-surface p-5 text-sm shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md dark:bg-surface"
 
 function Card({
   className,
@@ -29,7 +29,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1.5 rounded-t-xl has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:border-[var(--wg-border)] [.border-b]:pb-4",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1.5 rounded-t-lg has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:border-border-default [.border-b]:pb-4",
         className
       )}
       {...props}
@@ -42,7 +42,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "text-lg font-semibold leading-[1.2] tracking-[-0.01em] text-[var(--wg-text-primary)] group-data-[size=sm]/card:text-base",
+        "text-lg font-semibold leading-heading tracking-heading text-fg-primary group-data-[size=sm]/card:text-base",
         className
       )}
       {...props}
@@ -54,7 +54,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-[var(--wg-text-muted)]", className)}
+        className={cn("text-sm text-fg-tertiary", className)}
       {...props}
     />
   )
@@ -88,7 +88,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center border-t border-[var(--wg-border)] pt-4",
+        "flex items-center border-t border-border-default pt-4",
         className
       )}
       {...props}

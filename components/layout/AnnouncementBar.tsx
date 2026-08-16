@@ -23,24 +23,24 @@ export default function AnnouncementBar() {
           <div
             role="region"
             aria-label="Announcement"
-            className="border-b border-[#FECACA] bg-[#FFF5F5] px-4 py-2.5"
+            className="border-b border-brand-200 bg-brand-50 px-4 py-2.5"
           >
-            <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-2 text-sm text-[#4A4A4A]">
+            <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-2 text-sm text-fg-secondary">
               <span
-                className="inline-block size-2 shrink-0 animate-pulse-soft rounded-full bg-[#C41E3A]"
+                className="inline-block size-2 shrink-0 animate-pulse-soft rounded-full bg-brand"
                 aria-hidden
               />
               <span>{NAV_ANNOUNCEMENT.message}</span>
               <Link
                 href={NAV_ANNOUNCEMENT.href}
-                className="font-semibold text-[#C41E3A] underline-offset-4 transition-colors hover:underline"
+                className="font-semibold text-brand underline-offset-4 transition-colors hover:underline"
               >
                 {NAV_ANNOUNCEMENT.cta}
               </Link>
               <button
                 type="button"
                 onClick={dismissAnnouncement}
-                className="ml-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-[#8A8A8A] transition-colors hover:bg-[#FECACA]/40 hover:text-[#0A0A0A]"
+                className="ml-2 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-fg-tertiary transition-colors hover:bg-brand-200/40 hover:text-fg-primary"
                 aria-label="Dismiss announcement"
               >
                 <X className="size-4" aria-hidden />

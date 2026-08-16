@@ -2,7 +2,7 @@ import ResumeUploader from "../../components/resume/ResumeUploader";
 
 export default function UploadPage() {
   return (
-    <main className="min-h-screen bg-[#FFFFFF] px-6 py-14">
+    <main className="min-h-screen bg-surface px-6 py-14">
       <div className="mx-auto w-full max-w-[600px]">
         <div className="mb-8 text-center">
           <p className="text-sm font-semibold tracking-wide text-wg-heading">WorkGraph</p>

@@ -134,7 +134,7 @@ export default function SidebarBottom({
       </Avatar>
       {profileSuccess ? (
         <span
-          className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50 text-[10px] font-semibold text-emerald-600 ring-2 ring-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50 text-xs font-semibold text-emerald-600 ring-2 ring-white"
           aria-label="Profile updated"
         >
           ✓
@@ -230,7 +230,7 @@ export default function SidebarBottom({
       <div className="mt-2">{utilityRow}</div>
 
       {showCmdKHint ? (
-        <p className="mt-2 text-center text-[10px] text-gray-300">
+        <p className="mt-2 text-center text-xs text-gray-300">
           Press {isMac ? "⌘K" : "Ctrl+K"} to search
         </p>
       ) : null}

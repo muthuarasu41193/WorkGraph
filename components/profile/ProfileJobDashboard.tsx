@@ -83,10 +83,10 @@ export default function ProfileJobDashboard({
         <section aria-labelledby="job-dashboard-heading">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
             <div className="min-w-0 flex-1">
-              <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-[#1D1D1F]">
+              <h2 id="job-dashboard-heading" className="text-2xl font-bold leading-8 text-fg-primary">
                 Job Dashboard
               </h2>
-              <p className="mt-1 text-sm font-normal text-[#8E8E93]">
+              <p className="mt-1 text-sm font-normal text-fg-tertiary">
                 Live ATS jobs matched to your profile
               </p>
             </div>
@@ -95,17 +95,17 @@ export default function ProfileJobDashboard({
                 type="button"
                 onClick={refreshListings}
                 disabled={isRefreshing}
-                className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-[#DADCE0] px-5 text-sm font-medium text-[#5F6368] transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A73E8] focus-visible:ring-offset-2"
+                className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-border-default px-5 text-sm font-medium text-fg-secondary transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 {syncStatus === "error" ? (
-                  <XCircle className={iconClass("inline", "text-[#D93025] wg-shake")} aria-hidden />
+                  <XCircle className={iconClass("inline", "text-brand wg-shake")} aria-hidden />
                 ) : (
                   <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden />
                 )}
                 <span className="hidden sm:inline">{isRefreshing ? "Syncing…" : "Sync Jobs"}</span>
               </button>
               {profileCompleteness < 100 ? (
-                <span className="inline-flex items-center gap-1.5 rounded-2xl bg-[#FEF7E0] px-3 py-1.5 text-xs font-medium text-[#F9AB00]">
+                <span className="inline-flex items-center gap-1.5 rounded-2xl bg-warning-50 px-3 py-1.5 text-xs font-medium text-warning">
                   Profile {profileCompleteness}% complete
                 </span>
               ) : null}
@@ -115,7 +115,7 @@ export default function ProfileJobDashboard({
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
             {isSectionLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
-                <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-[#DADCE0] bg-white p-4 md:px-6 md:py-5">
+                <article key={`dashboard-skel-${idx}`} className="rounded-xl border border-border-default bg-surface p-4 md:px-6 md:py-5">
                   <div className="mb-3 flex items-start gap-3">
                     <div className="h-10 w-10 rounded-[10px] wg-skeleton-shimmer" />
                     <div className="space-y-2">
@@ -129,53 +129,53 @@ export default function ProfileJobDashboard({
               <>
                 <article
                   onClick={() => triggerFilter("all")}
-                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E8F0FE] text-[#1A73E8]">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-info-50 text-info">
                       <Briefcase className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                      <p className="text-[32px] font-bold leading-none text-fg-primary">
                         <AnimatedCount value={liveListings} />
                       </p>
-                      <p className="mt-2 text-[13px] text-[#8E8E93]">Live Jobs Available</p>
+                      <p className="mt-2 text-sm text-fg-tertiary">Live Jobs Available</p>
                     </div>
                   </div>
                 </article>
 
                 <article
                   onClick={() => triggerFilter("matched")}
-                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 shadow-[0_0_0_2px_#1E8E3E20] transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] wg-matched-live-pulse"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 shadow-[0_0_0_2px_color-mix(in_srgb,var(--wg-success)_20%,transparent)] transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md wg-matched-live-pulse"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#E6F4EA] text-[#1E8E3E]">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-success-50 text-success">
                       <Sparkles className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                      <p className="text-[32px] font-bold leading-none text-fg-primary">
                         <AnimatedCount value={matchedListings} />
                       </p>
-                      <p className="mt-2 text-[13px] text-[#8E8E93]">Matched to Your Profile</p>
+                      <p className="mt-2 text-sm text-fg-tertiary">Matched to Your Profile</p>
                     </div>
                   </div>
                 </article>
 
                 <article
                   onClick={() => triggerFilter("applied")}
-                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FEF7E0] text-[#F9AB00]">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-warning-50 text-warning">
                       <CheckCircle2 className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                      <p className="text-[32px] font-bold leading-none text-fg-primary">
                         <AnimatedCount value={stats.applied} />
                       </p>
-                      <p className="mt-2 text-[13px] text-[#8E8E93]">Applications Sent</p>
+                      <p className="mt-2 text-sm text-fg-tertiary">Applications Sent</p>
                       {stats.interview > 0 ? (
-                        <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-[#FEF7E0] px-2 py-1 text-xs font-medium text-[#F9AB00]">
+                        <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-warning-50 px-2 py-1 text-xs font-medium text-warning">
                           <LoaderCircle className={iconClass()} />
                           {stats.interview} in interview
                         </span>
@@ -186,17 +186,17 @@ export default function ProfileJobDashboard({
 
                 <article
                   onClick={() => triggerFilter("saved")}
-                  className="cursor-pointer rounded-xl border border-[#DADCE0] bg-white p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-[#C4C7CC] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-6 md:py-5 hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FCE8E6] text-[#D93025]">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-50 text-brand">
                       <Bookmark className="h-5 w-5" aria-hidden />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[32px] font-bold leading-none text-[#1D1D1F]">
+                      <p className="text-[32px] font-bold leading-none text-fg-primary">
                         <AnimatedCount value={stats.saved} />
                       </p>
-                      <p className="mt-2 text-[13px] text-[#8E8E93]">Jobs Saved</p>
+                      <p className="mt-2 text-sm text-fg-tertiary">Jobs Saved</p>
                     </div>
                   </div>
                 </article>

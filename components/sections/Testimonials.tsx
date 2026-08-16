@@ -29,7 +29,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Software Engineer",
     hiredAt: "google",
     avatar: "S",
-    avatarColor: "bg-[#C41E3A]",
+    avatarColor: "bg-brand",
     text: "WorkGraph showed me a Google role posted in a Discord server 3 hours before it hit LinkedIn. I applied first, prepped with the Interview Vault, and got the offer.",
     tall: true,
     source: "discord",
@@ -39,7 +39,7 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Marcus T.",
     role: "Product Manager",
     avatar: "M",
-    avatarColor: "bg-[#2563EB]",
+    avatarColor: "bg-info",
     text: "The match score is scary accurate. It told me I had 89% fit for a role — I got an interview within 48 hours. Skipped 50+ applications that weren't worth my time.",
   },
   {
@@ -47,7 +47,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Data Scientist",
     hiredAt: "netflix",
     avatar: "P",
-    avatarColor: "bg-[#7C3AED]",
+    avatarColor: "bg-slate-700",
     text: "I wrote a guide about my Netflix interview and made $340 in the first month. WorkGraph literally paid for itself 10x over.",
     earningsBadge: "Earned $340",
   },
@@ -56,7 +56,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "DevOps Engineer",
     hiredAt: "stripe",
     avatar: "J",
-    avatarColor: "bg-[#16A34A]",
+    avatarColor: "bg-success",
     text: "Found a Stripe role through a Reddit thread WorkGraph surfaced. The Interview Vault had exactly the questions they asked — felt like I had the answers before walking in.",
     source: "reddit",
   },
@@ -64,7 +64,7 @@ const TESTIMONIALS: Testimonial[] = [
     name: "Aisha M.",
     role: "Frontend Developer",
     avatar: "A",
-    avatarColor: "bg-[#D97706]",
+    avatarColor: "bg-warning",
     text: "Applied to 8 jobs in one morning using the cover letter tool. Got 3 callbacks. Previously I'd spend 2 hours per application.",
   },
   {
@@ -72,7 +72,7 @@ const TESTIMONIALS: Testimonial[] = [
     role: "Full Stack Engineer",
     hiredAt: "netflix",
     avatar: "D",
-    avatarColor: "bg-[#0A0A0A]",
+    avatarColor: "bg-slate-950",
     text: "The hidden job discovery is real. 4 out of my last 5 interviews came from sources I'd never have found manually. Landed a $210K role at Netflix.",
     salaryBump: "$210K offer",
   },
@@ -80,7 +80,7 @@ const TESTIMONIALS: Testimonial[] = [
 
 function StarRating() {
   return (
-    <div className="flex gap-0.5 text-[#F59E0B]" aria-label="5 out of 5 stars">
+    <div className="flex gap-0.5 text-warning" aria-label="5 out of 5 stars">
       {Array.from({ length: 5 }).map((_, i) => (
         <Star key={i} className="size-3.5 fill-current" aria-hidden />
       ))}
@@ -100,7 +100,7 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "group break-inside-avoid rounded-2xl border border-[#E5E5E5] bg-white p-6 shadow-sm transition-all duration-200 hover:border-[#C41E3A]/20 hover:shadow-[0_12px_40px_-12px_rgba(196,30,58,0.12)]",
+        "group break-inside-avoid rounded-2xl border border-border-default bg-surface p-6 shadow-sm transition-all duration-200 hover:border-brand/20 hover:shadow-[0_12px_40px_-12px_rgba(225, 29, 46,0.12)]",
         item.tall && "lg:min-h-[280px]",
       )}
     >
@@ -116,9 +116,9 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
             {item.avatar}
           </div>
           <div>
-            <p className="font-semibold text-[#0A0A0A]">{item.name}</p>
+            <p className="font-semibold text-fg-primary">{item.name}</p>
             <div className="mt-0.5 flex items-center gap-2">
-              <p className="text-xs text-[#8A8A8A]">{item.role}</p>
+              <p className="text-xs text-fg-tertiary">{item.role}</p>
               {item.hiredAt && <BrandLogo brand={item.hiredAt} size="sm" />}
             </div>
           </div>
@@ -130,19 +130,19 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
         <div className="mt-4 flex flex-wrap gap-2">
           {item.source && <SourceBadge source={item.source} compact />}
           {item.earningsBadge && (
-            <span className="rounded-full bg-[#F0FDF4] px-2.5 py-1 text-[10px] font-bold text-[#16A34A]">
+            <span className="rounded-full bg-success-50 px-2.5 py-1 text-xs font-bold text-success">
               {item.earningsBadge}
             </span>
           )}
           {item.salaryBump && (
-            <span className="rounded-full bg-[#FFF0F0] px-2.5 py-1 text-[10px] font-bold text-[#C41E3A]">
+            <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand">
               {item.salaryBump}
             </span>
           )}
         </div>
       )}
 
-      <blockquote className="mt-4 text-[15px] leading-relaxed text-[#4A4A4A]">
+      <blockquote className="mt-4 text-md leading-relaxed text-fg-secondary">
         &ldquo;{item.text}&rdquo;
       </blockquote>
     </motion.article>
@@ -151,10 +151,10 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
 
 export default function Testimonials() {
   return (
-    <section aria-label="Testimonials" className="bg-[#F8F7F4] py-20 sm:py-24 lg:py-28">
+    <section aria-label="Testimonials" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#8A8A8A]">
+          <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
             Trusted by people hired at
           </p>
           <div className="mt-6">
@@ -163,10 +163,10 @@ export default function Testimonials() {
         </div>
 
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C41E3A]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             Loved by job seekers
           </p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-[#0A0A0A] sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
             People are landing jobs they never knew existed
           </h2>
         </header>

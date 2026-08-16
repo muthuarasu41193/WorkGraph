@@ -120,7 +120,7 @@ export default function LoginPage() {
       <div className="wg-auth-enter space-y-8">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">Sign in</h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-md leading-relaxed text-muted-foreground">
             Enter your email and password to continue.
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-[15px]">
+          <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full text-md">
             {isSubmitting ? "Signing in…" : "Continue"}
           </Button>
         </form>
@@ -216,14 +216,14 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-base text-muted-foreground">
           New to WorkGraph?{" "}
           <Link href="/signup" className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">
             Sign up
           </Link>
         </p>
 
-        <p className="text-center text-[14px] text-muted-foreground">
+        <p className="text-center text-base text-muted-foreground">
           Hiring?{" "}
           <Link
             href="/employer/signup"

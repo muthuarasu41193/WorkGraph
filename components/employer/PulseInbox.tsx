@@ -123,7 +123,7 @@ export default function PulseInbox({ signalId }: Props) {
                         {c.fit_snapshot?.matchedSignals?.length ? (
                           <div className="flex flex-wrap gap-1">
                             {c.fit_snapshot.matchedSignals.slice(0, 4).map((s) => (
-                              <Badge key={s} variant="secondary" className="text-[10px]">
+                              <Badge key={s} variant="secondary" className="text-xs">
                                 {s}
                               </Badge>
                             ))}
@@ -154,7 +154,7 @@ export default function PulseInbox({ signalId }: Props) {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className={cn("h-7 px-2 text-[10px]")}
+                              className={cn("h-7 px-2 text-xs")}
                               onClick={() => void moveStage(c.id, s)}
                             >
                               → {CONNECTION_STAGE_LABELS[s]}

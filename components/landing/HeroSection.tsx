@@ -42,7 +42,7 @@ function HeroVisual() {
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {job.new && (
-                  <span className="rounded-full bg-wg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-wg-primary">
+                  <span className="rounded-full bg-wg-primary/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-wg-primary">
                     New
                   </span>
                 )}
@@ -64,7 +64,7 @@ export function HeroSection() {
       className="relative overflow-hidden pb-12 pt-8 sm:pb-16 sm:pt-12 lg:pb-20 lg:pt-16"
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(196,30,58,0.12),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(225, 29, 46,0.12),transparent)]"
         aria-hidden
       />
 
@@ -81,7 +81,7 @@ export function HeroSection() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <h1 className="font-heading text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="font-heading text-4xl font-bold tracking-heading text-foreground sm:text-5xl lg:text-6xl">
               {HERO.headline.split(" ").map((word, i) =>
                 word === "LinkedIn" ? (
                   <span key={i} className="text-wg-primary">

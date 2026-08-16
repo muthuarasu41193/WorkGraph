@@ -167,7 +167,7 @@ export default function SideNav({
   return (
     <aside
       className={cn(
-        "wg-dash-sidenav flex h-full flex-col bg-white",
+        "wg-dash-sidenav flex h-full flex-col bg-surface",
         !mobile &&
           "sticky top-[var(--dash-topnav-h)] hidden h-[calc(100dvh-var(--dash-topnav-h))] border-r border-[var(--wg-border)] md:flex",
         collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",

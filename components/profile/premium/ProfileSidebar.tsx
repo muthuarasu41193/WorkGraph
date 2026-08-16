@@ -97,7 +97,7 @@ export default function ProfileSidebar() {
                 <p className="truncate text-xs text-[var(--wg-color-text-tertiary)]">
                   {c.role} · {c.company}
                 </p>
-                <p className="text-[11px] text-[var(--wg-color-text-tertiary)]">{c.mutual} mutual connections</p>
+                <p className="text-xs text-[var(--wg-color-text-tertiary)]">{c.mutual} mutual connections</p>
               </div>
             </li>
           ))}

@@ -22,14 +22,14 @@ export function Logo({ className, href = "/" }: LogoProps) {
         aria-hidden
         className="shrink-0 transition-transform duration-200 group-hover:scale-105"
       >
-        <path d="M14 3L25 23H3L14 3Z" fill="#0A0A0A" className="dark:fill-white" />
+        <path d="M14 3L25 23H3L14 3Z" fill="var(--wg-text-primary)" className="dark:fill-white" />
         <path
           d="M14 8L20.5 20H7.5L14 8Z"
-          fill="#C41E3A"
+          fill="var(--wg-primary)"
           className="opacity-90"
         />
       </svg>
-      <span className="font-heading text-xl font-bold tracking-tight text-[#0A0A0A] lowercase dark:text-white">
+      <span className="font-heading text-xl font-bold tracking-tight text-fg-primary lowercase dark:text-white">
         workgraph
       </span>
     </Link>

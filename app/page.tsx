@@ -16,11 +16,11 @@ const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"), {
 });
 
 const InterviewVault = dynamic(() => import("@/components/sections/InterviewVault"), {
-  loading: () => <SectionSkeleton className="bg-[#0A0A0A]" />,
+  loading: () => <SectionSkeleton className="bg-slate-950" />,
 });
 
 const Testimonials = dynamic(() => import("@/components/sections/Testimonials"), {
-  loading: () => <SectionSkeleton className="bg-[#F8F7F4]" />,
+  loading: () => <SectionSkeleton className="bg-background" />,
 });
 
 const Pricing = dynamic(() => import("@/components/sections/Pricing"), {
@@ -28,7 +28,7 @@ const Pricing = dynamic(() => import("@/components/sections/Pricing"), {
 });
 
 const Contact = dynamic(() => import("@/components/sections/Contact"), {
-  loading: () => <SectionSkeleton className="bg-[#F8F7F4]" />,
+  loading: () => <SectionSkeleton className="bg-background" />,
 });
 
 export default function HomePage() {

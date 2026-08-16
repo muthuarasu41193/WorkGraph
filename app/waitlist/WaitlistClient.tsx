@@ -38,40 +38,40 @@ export default function WaitlistClient() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#F8F7F4] px-4 py-16">
-      <div className="w-full max-w-md rounded-[20px] border border-[#E5E5E5] bg-white p-10 shadow-lg">
+    <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-16">
+      <div className="w-full max-w-md rounded-[20px] border border-border-default bg-surface p-10 shadow-lg">
         <div className="flex justify-center">
           <Logo />
         </div>
 
         {isSuccess ? (
           <div className="mt-8 text-center">
-            <CheckCircle2 className="mx-auto size-14 text-[#16A34A]" aria-hidden />
-            <h1 className="mt-4 font-heading text-2xl font-bold text-[#0A0A0A]">
+            <CheckCircle2 className="mx-auto size-14 text-success" aria-hidden />
+            <h1 className="mt-4 font-heading text-2xl font-bold text-fg-primary">
               You&apos;re on the list!
             </h1>
-            <p className="mt-3 text-[#4A4A4A]">
+            <p className="mt-3 text-fg-secondary">
               We&apos;ll email you when your spot opens. Check your inbox for a confirmation.
             </p>
             <Link
               href="/"
-              className="mt-6 inline-block text-sm font-semibold text-[#C41E3A] hover:text-[#A01830]"
+              className="mt-6 inline-block text-sm font-semibold text-brand hover:text-brand-700"
             >
               ← Back to home
             </Link>
           </div>
         ) : (
           <>
-            <h1 className="mt-8 text-center font-heading text-2xl font-bold text-[#0A0A0A]">
+            <h1 className="mt-8 text-center font-heading text-2xl font-bold text-fg-primary">
               Join the waitlist
             </h1>
-            <p className="mt-2 text-center text-sm text-[#8A8A8A]">
+            <p className="mt-2 text-center text-sm text-fg-tertiary">
               247 people ahead of you
             </p>
 
             <form onSubmit={onSubmit} className="mt-8 space-y-4">
               <div>
-                <Label htmlFor="waitlist-email" className="mb-2 block text-[#0A0A0A]">
+                <Label htmlFor="waitlist-email" className="mb-2 block text-fg-primary">
                   Email address
                 </Label>
                 <Input
@@ -86,7 +86,7 @@ export default function WaitlistClient() {
               </div>
 
               {error && (
-                <p className="text-sm text-[#C41E3A]" role="alert">
+                <p className="text-sm text-brand" role="alert">
                   {error}
                 </p>
               )}
@@ -94,7 +94,7 @@ export default function WaitlistClient() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#C41E3A] py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#A01830] disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-70"
               >
                 {loading ? (
                   <>
@@ -107,12 +107,12 @@ export default function WaitlistClient() {
               </button>
             </form>
 
-            <div className="mt-8 border-t border-[#E5E5E5] pt-6">
-              <p className="text-sm font-semibold text-[#0A0A0A]">What to expect while waiting</p>
+            <div className="mt-8 border-t border-border-default pt-6">
+              <p className="text-sm font-semibold text-fg-primary">What to expect while waiting</p>
               <ul className="mt-3 space-y-2" role="list">
                 {WAITLIST_EXPECTATIONS.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-[#4A4A4A]">
-                    <span className="text-[#C41E3A]" aria-hidden>
+                  <li key={item} className="flex gap-2 text-sm text-fg-secondary">
+                    <span className="text-brand" aria-hidden>
                       •
                     </span>
                     {item}

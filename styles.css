@@ -7,10 +7,10 @@
 :root {
   --purple: #7C3AED;
   --purple-l: #A78BFA;
-  --blue: #2563EB;
+  --blue: var(--wg-info);
   --blue-l: #60A5FA;
-  --green: #10B981;
-  --orange: #F59E0B;
+  --green: var(--wg-success);
+  --orange: var(--wg-warning);
   --pink: #EC4899;
   --teal: #14B8A6;
   --bg: #030712;
@@ -24,7 +24,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--wg-font-sans);
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
@@ -351,7 +351,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text); font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--wg-font-sans);
   outline: none;
   transition: all .2s;
 }
@@ -384,7 +384,7 @@ body {
   justify-content: center; gap: 10px;
   position: relative; overflow: hidden;
   transition: all .3s;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--wg-font-sans);
 }
 
 .cta-button:hover {
@@ -445,7 +445,7 @@ body {
   padding: 9px 18px; border-radius: 8px;
   font-size: 13px; font-weight: 600;
   text-decoration: none; cursor: pointer;
-  border: none; font-family: 'Inter', sans-serif;
+  border: none; font-family: var(--wg-font-sans);
   transition: all .2s;
 }
 
@@ -1230,7 +1230,7 @@ body {
 }
 
 .stars {
-  color: #F59E0B; font-size: 16px;
+  color: var(--wg-warning); font-size: 16px;
   letter-spacing: 2px; margin-bottom: 14px;
 }
 

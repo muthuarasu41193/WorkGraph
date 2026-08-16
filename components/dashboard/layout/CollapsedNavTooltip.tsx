@@ -46,7 +46,7 @@ export default function CollapsedNavTooltip({ label, hint, enabled = true, child
           {hint ? (
             <>
               <span className="block font-medium">{label}</span>
-              <span className="mt-0.5 block text-[11px] font-normal text-slate-300">{hint}</span>
+              <span className="mt-0.5 block text-xs font-normal text-slate-300">{hint}</span>
             </>
           ) : (
             label

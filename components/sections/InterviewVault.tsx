@@ -69,9 +69,9 @@ const COMPANIES: Company[] = [
 ];
 
 const DIFFICULTY_STYLES: Record<Difficulty, string> = {
-  Easy: "bg-[#F0FDF4] text-[#16A34A]",
-  Medium: "bg-[#FFF7ED] text-[#D97706]",
-  Hard: "bg-[#FFF0F0] text-[#C41E3A]",
+  Easy: "bg-success-50 text-success",
+  Medium: "bg-warning-50 text-warning",
+  Hard: "bg-brand-50 text-brand",
 };
 
 function CompanyCard({ company, active }: { company: Company; active?: boolean }) {
@@ -79,8 +79,8 @@ function CompanyCard({ company, active }: { company: Company; active?: boolean }
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-3.5 transition-all duration-200 hover:border-[#C41E3A]/60",
-        active && "border-[#C41E3A]/80 ring-1 ring-[#C41E3A]/30",
+        "flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-3.5 transition-all duration-200 hover:border-brand/60",
+        active && "border-brand/80 ring-1 ring-brand/30",
       )}
     >
       <BrandLogo brand={company.brand} size="md" onDark />
@@ -89,14 +89,14 @@ function CompanyCard({ company, active }: { company: Company; active?: boolean }
           <p className="truncate font-semibold text-white">{name}</p>
           <span
             className={cn(
-              "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
+              "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold uppercase",
               DIFFICULTY_STYLES[company.difficulty],
             )}
           >
             {company.difficulty}
           </span>
         </div>
-        <p className="mt-0.5 text-xs text-[#8A8A8A]">
+        <p className="mt-0.5 text-xs text-fg-tertiary">
           {company.interviews} interviews · {company.commonRole}
         </p>
       </div>
@@ -109,17 +109,17 @@ export default function InterviewVault() {
     <section
       id="interview-vault"
       aria-label="Interview Vault"
-      className="bg-[#0A0A0A] py-20 sm:py-24 lg:py-28"
+      className="bg-slate-950 py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#C41E3A]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             Interview Vault
           </p>
           <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
             Know exactly what to expect. Before you walk in.
           </h2>
-          <p className="mt-4 text-lg text-[#8A8A8A]">
+          <p className="mt-4 text-lg text-fg-tertiary">
             10,000+ real interview experiences from candidates at top companies
           </p>
         </header>
@@ -128,7 +128,7 @@ export default function InterviewVault() {
           {/* Company list */}
           <div className="relative">
             <div
-              className="h-[400px] overflow-y-auto rounded-2xl border border-[#2A2A2A] bg-[#141414] p-3 [mask-image:linear-gradient(to_bottom,transparent,black_24px,black_calc(100%-24px),transparent)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="h-[400px] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900 p-3 [mask-image:linear-gradient(to_bottom,transparent,black_24px,black_calc(100%-24px),transparent)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               role="list"
               aria-label="Companies in Interview Vault"
             >
@@ -142,22 +142,22 @@ export default function InterviewVault() {
 
           {/* Question preview */}
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A]">
-              <div className="border-b border-[#2A2A2A] px-5 py-4">
+            <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+              <div className="border-b border-slate-800 px-5 py-4">
                 <div className="flex items-center gap-3">
                   <BrandLogo brand="google" size="md" onDark />
                   <div>
                     <p className="font-semibold text-white">Google</p>
-                    <p className="text-sm text-[#8A8A8A]">Senior Software Engineer</p>
+                    <p className="text-sm text-fg-tertiary">Senior Software Engineer</p>
                   </div>
-                  <span className="ml-auto rounded-full bg-[#2A2A2A] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#8A8A8A]">
+                  <span className="ml-auto rounded-full bg-slate-800 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
                     System Design
                   </span>
                 </div>
               </div>
 
               <div className="relative px-5 py-5">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#8A8A8A]">
+                <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
                   Interview question
                 </p>
                 <p className="mt-3 text-lg font-medium leading-relaxed text-white">
@@ -165,13 +165,13 @@ export default function InterviewVault() {
                 </p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#FFF0F0] px-2.5 py-1 text-[11px] font-semibold text-[#C41E3A]">
+                  <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand">
                     Hard
                   </span>
                   {["System Design", "Scalability", "Database"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-[#2A2A2A] bg-[#141414] px-2.5 py-1 text-[11px] text-[#8A8A8A]"
+                      className="rounded-full border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs text-fg-tertiary"
                     >
                       {tag}
                     </span>
@@ -179,7 +179,7 @@ export default function InterviewVault() {
                 </div>
 
                 <Button
-                  className="mt-6 w-full rounded-full bg-[#C41E3A] text-white hover:bg-[#A01830] sm:w-auto"
+                  className="mt-6 w-full rounded-full bg-brand text-white hover:bg-brand-700 sm:w-auto"
                   asChild
                 >
                   <Link href="/signup">
@@ -189,20 +189,20 @@ export default function InterviewVault() {
                 </Button>
 
                 {/* Blurred teaser */}
-                <div className="relative mt-6 overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#141414]">
+                <div className="relative mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
                   <div className="space-y-2 p-4 blur-sm select-none" aria-hidden>
-                    <p className="text-sm text-[#8A8A8A]">
+                    <p className="text-sm text-fg-tertiary">
                       Sample answer outline: API design, base62 encoding, database sharding...
                     </p>
-                    <p className="text-sm text-[#8A8A8A]">
+                    <p className="text-sm text-fg-tertiary">
                       Follow-up questions: How would you handle hot keys? Cache strategy?
                     </p>
-                    <p className="text-sm text-[#8A8A8A]">
+                    <p className="text-sm text-fg-tertiary">
                       Insider tip: They care deeply about trade-off articulation...
                     </p>
                   </div>
-                  <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-[#1A1A1A] via-[#1A1A1A]/80 to-transparent pb-4">
-                    <p className="px-4 text-center text-sm font-medium text-[#8A8A8A]">
+                  <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent pb-4">
+                    <p className="px-4 text-center text-sm font-medium text-fg-tertiary">
                       Join to see the answer +{" "}
                       <span className="text-white">246 more Google questions</span> →
                     </p>
@@ -217,7 +217,7 @@ export default function InterviewVault() {
         <div className="mt-12 flex flex-col items-center gap-2 text-center">
           <Button
             size="lg"
-            className="h-12 rounded-full bg-[#C41E3A] px-8 text-base font-semibold text-white hover:bg-[#A01830]"
+            className="h-12 rounded-full bg-brand px-8 text-base font-semibold text-white hover:bg-brand-700"
             asChild
           >
             <Link href="/signup">
@@ -225,7 +225,7 @@ export default function InterviewVault() {
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </Button>
-          <p className="text-sm text-[#8A8A8A]">No credit card required</p>
+          <p className="text-sm text-fg-tertiary">No credit card required</p>
         </div>
       </div>
     </section>

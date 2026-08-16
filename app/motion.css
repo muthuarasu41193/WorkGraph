@@ -3,14 +3,14 @@
 :root {
   --wg-duration: 200ms;
   --wg-ease: ease-in-out;
-  --wg-skeleton-base: #f0f0f0;
-  --wg-skeleton-highlight: #e8e8e8;
+  --wg-skeleton-base: var(--wg-slate-100);
+  --wg-skeleton-highlight: var(--wg-slate-200);
 }
 
 [data-theme="dark"],
 .dark {
-  --wg-skeleton-base: #303134;
-  --wg-skeleton-highlight: #3c4043;
+  --wg-skeleton-base: var(--wg-slate-800);
+  --wg-skeleton-highlight: var(--wg-slate-700);
 }
 
 @keyframes wg-shimmer {
