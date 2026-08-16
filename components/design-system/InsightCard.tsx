@@ -31,16 +31,14 @@ export default function InsightCard({
 
   const content = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
-          <Icon className={iconClass("standalone")} />
-        </span>
-        {score !== undefined ? (
-          <span className="text-2xl font-bold tabular-nums leading-none text-slate-900">
-            {score}
-          </span>
-        ) : null}
-      </div>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-red-600 to-red-400"
+      />
+
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+        <Icon className={iconClass("standalone")} />
+      </span>
 
       <div className="mt-3 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -54,15 +52,19 @@ export default function InsightCard({
         <p className="text-[13px] leading-relaxed text-slate-500">{description}</p>
       </div>
 
+      {score !== undefined ? (
+        <p className="mt-3 text-2xl font-bold tabular-nums leading-none text-slate-900">{score}</p>
+      ) : null}
+
       {action ? <div className="mt-4">{action}</div> : null}
     </>
   );
 
   const classes = cn(
-    "flex flex-col rounded-[12px] border border-slate-200 bg-white p-5 shadow-none",
+    "relative flex flex-col overflow-hidden rounded-[12px] border border-slate-200 bg-white p-5 shadow-none",
     "transition-[border-color,box-shadow] duration-200",
     "hover:border-slate-300 hover:shadow-sm",
-    actionable && "cursor-pointer",
+    actionable && "cursor-pointer no-underline",
     className,
   );
 

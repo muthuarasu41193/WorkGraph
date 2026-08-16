@@ -15,7 +15,7 @@ export function CtaSection() {
             aria-hidden
           />
           <div className="relative">
-            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="wg-section-heading font-heading font-bold tracking-tight text-foreground">
               {CTA.headline}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-foreground-secondary">

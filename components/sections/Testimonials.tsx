@@ -152,7 +152,7 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
 export default function Testimonials() {
   return (
     <section aria-label="Testimonials" className="bg-background py-20 sm:py-24 lg:py-28">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="mb-12 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
             Trusted by people hired at
@@ -166,7 +166,7 @@ export default function Testimonials() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             Loved by job seekers
           </p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
             People are landing jobs they never knew existed
           </h2>
         </header>

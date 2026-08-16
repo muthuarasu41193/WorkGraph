@@ -10,7 +10,7 @@ const STATS = [
 export default function StatsBar() {
   return (
     <section aria-label="Platform statistics" className="bg-slate-950 py-10 sm:py-12">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <dl className="grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-6">
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center lg:text-left">

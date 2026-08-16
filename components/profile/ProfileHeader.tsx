@@ -181,7 +181,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
                 />
               ) : (
-                <h1 className="text-3xl font-bold tracking-tight text-fg-primary">{form.full_name || "Your Name"}</h1>
+                <h1 className="font-bold tracking-tight text-fg-primary text-[clamp(1.5rem,4vw,1.875rem)]">{form.full_name || "Your Name"}</h1>
               )}
             </div>
 

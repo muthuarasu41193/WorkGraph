@@ -376,7 +376,7 @@ function EnterpriseCta() {
       initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-16 rounded-[20px] bg-slate-950 px-8 py-12 text-center sm:px-12"
+      className="mt-16 rounded-[20px] bg-slate-950 px-4 py-12 text-center sm:px-8 min-[1025px]:px-12"
     >
       <p className="font-heading text-xl font-bold text-white sm:text-2xl">
         Need a custom plan for your company or bootcamp?
@@ -399,12 +399,12 @@ export default function Pricing() {
 
   return (
     <section id="pricing" aria-label="Pricing" className="bg-surface py-20 sm:py-24 lg:py-28">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             SIMPLE PRICING
           </p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
             Start free. Upgrade when you&apos;re ready.
           </h2>
           <p className="mt-4 text-lg text-fg-secondary">

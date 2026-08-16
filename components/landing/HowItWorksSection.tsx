@@ -13,7 +13,7 @@ export function HowItWorksSection() {
         <p className="text-sm font-semibold uppercase tracking-widest text-wg-primary">
           How it works
         </p>
-        <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="wg-section-heading mt-3 font-heading font-bold tracking-tight text-foreground">
           From hidden signal to offer letter
         </h2>
         <p className="mt-4 text-lg text-foreground-secondary">

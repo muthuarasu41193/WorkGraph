@@ -22,6 +22,7 @@ import "./sidenav.css";
 
 type Props = {
   collapsed?: boolean;
+  userCollapsed?: boolean | null;
   onToggleCollapse?: () => void;
   mobile?: boolean;
   onNavigate?: () => void;
@@ -42,6 +43,7 @@ function resolveSuccessKind(
 
 export default function SideNav({
   collapsed = false,
+  userCollapsed = null,
   onToggleCollapse,
   mobile,
   onNavigate,
@@ -169,10 +171,11 @@ export default function SideNav({
       className={cn(
         "wg-dash-sidenav flex flex-col bg-white",
         mobile
-          ? "h-full w-full"
+          ? "wg-dash-sidenav--mobile h-full w-full"
           : cn(
               "sticky top-0 z-40 hidden h-dvh shrink-0 border-r border-slate-200 md:flex",
-              collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",
+              userCollapsed === true && "wg-dash-sidenav--collapsed",
+              userCollapsed === false && "wg-dash-sidenav--expanded",
             ),
       )}
       aria-label="Dashboard navigation"

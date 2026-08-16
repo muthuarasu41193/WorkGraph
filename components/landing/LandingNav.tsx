@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS, SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
 
 function Logo() {
   return (
@@ -28,11 +30,23 @@ function Logo() {
 
 export function LandingNav() {
   const [open, setOpen] = useState(false);
+  const isMdUp = useMediaQuery(DASHBOARD_MQ.mdUp);
+
+  useEffect(() => {
+    if (isMdUp) setOpen(false);
+  }, [isMdUp]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-md">
       <nav
-        className="mx-auto flex max-w-landing items-center justify-between px-4 py-3 sm:px-6 lg:px-8"
+        className="mx-auto flex max-w-landing items-center justify-between px-4 py-3 md:px-6 min-[1025px]:px-8"
         aria-label="Main navigation"
       >
         <Logo />
@@ -65,6 +79,7 @@ export function LandingNav() {
           <Button
             variant="ghost"
             size="icon"
+            className="wg-touch-target"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-nav"
@@ -89,7 +104,7 @@ export function LandingNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="block rounded-lg px-3 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-2 hover:text-foreground"
+                className="flex min-h-10 items-center rounded-lg px-3 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-2 hover:text-foreground"
                 onClick={() => setOpen(false)}
               >
                 {item.label}

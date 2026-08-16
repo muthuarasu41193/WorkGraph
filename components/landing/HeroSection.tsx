@@ -81,7 +81,7 @@ export function HeroSection() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <h1 className="font-heading font-bold tracking-heading text-foreground text-[clamp(1.875rem,5vw,3.75rem)]">
+            <h1 className="wg-hero-heading font-heading font-bold tracking-heading text-foreground">
               {HERO.headline.split(" ").map((word, i) =>
                 word === "LinkedIn" ? (
                   <span key={i} className="text-wg-primary">

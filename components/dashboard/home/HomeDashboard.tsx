@@ -33,15 +33,14 @@ function StatCardsSkeleton() {
       {Array.from({ length: 2 }).map((_, i) => (
         <div
           key={i}
-          className="rounded-[12px] border border-slate-200 bg-white p-5"
+          className="relative overflow-hidden rounded-[12px] border border-slate-200 bg-white p-5"
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
-            <div className="h-8 w-12 rounded wg-skeleton-shimmer" />
-          </div>
+          <span className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-red-600 to-red-400" />
+          <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
           <div className="mt-3 space-y-2">
             <div className="h-4 w-36 rounded wg-skeleton-shimmer" />
             <div className="h-3.5 w-48 max-w-full rounded wg-skeleton-shimmer" />
+            <div className="h-7 w-12 rounded wg-skeleton-shimmer" />
           </div>
         </div>
       ))}

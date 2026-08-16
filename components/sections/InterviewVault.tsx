@@ -111,12 +111,12 @@ export default function InterviewVault() {
       aria-label="Interview Vault"
       className="bg-slate-950 py-20 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             Interview Vault
           </p>
-          <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+          <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-white">
             Know exactly what to expect. Before you walk in.
           </h2>
           <p className="mt-4 text-lg text-fg-tertiary">

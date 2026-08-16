@@ -21,7 +21,9 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
-import { useState } from "react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
+import { useEffect, useState } from "react";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { dashboardHref } from "@/lib/dashboard-routes";
 
@@ -33,8 +35,13 @@ export default function TopNav() {
   const { navigate } = useDashboardNavigation();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isMdUp = useMediaQuery(DASHBOARD_MQ.mdUp);
   const hasUnread = true;
   const { open: cmdOpen, setOpen: setCmdOpen } = useCommandPalette();
+
+  useEffect(() => {
+    if (isMdUp) setMenuOpen(false);
+  }, [isMdUp]);
 
   const initials =
     profile.full_name
@@ -45,7 +52,7 @@ export default function TopNav() {
 
   return (
     <>
-      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] shrink-0 border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
+      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] shrink-0 overflow-x-clip border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
         <div className="flex h-full items-center gap-2 px-3 md:gap-3 md:px-5">
           <div className="flex shrink-0 items-center gap-2 md:hidden">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -89,7 +96,10 @@ export default function TopNav() {
               <GlobalSearch compact onOpenCommandPalette={() => setCmdOpen(true)} />
             </div>
             {liveListings > 0 ? (
-              <span className="inline-flex h-7 max-w-full items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2">
+              <span
+                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2"
+                aria-label={`${liveListings.toLocaleString()} live listings`}
+              >
                 <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
                 <span className="text-[12.5px] font-medium tabular-nums text-emerald-700">
                   {liveListings.toLocaleString()}

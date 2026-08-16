@@ -11,7 +11,7 @@ export function TestimonialsSection() {
         <p className="text-sm font-semibold uppercase tracking-widest text-wg-primary">
           Testimonials
         </p>
-        <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="wg-section-heading mt-3 font-heading font-bold tracking-tight text-foreground">
           Trusted by ambitious professionals
         </h2>
       </FadeIn>

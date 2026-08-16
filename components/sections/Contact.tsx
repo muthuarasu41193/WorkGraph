@@ -268,7 +268,7 @@ export default function Contact() {
 
   return (
     <section id="contact" aria-label="Contact" className="bg-background py-20 sm:py-24 lg:py-28">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
@@ -279,7 +279,7 @@ export default function Contact() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
               GET IN TOUCH
             </p>
-            <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+            <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
               Let&apos;s talk about your job search
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-fg-secondary">

@@ -234,7 +234,7 @@ export default function Hero() {
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-[3fr_2fr] lg:gap-10 xl:gap-16">
           {/* Left — 60% */}
           <motion.div

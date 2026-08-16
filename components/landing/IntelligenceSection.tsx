@@ -11,7 +11,7 @@ export function IntelligenceSection() {
             <p className="text-sm font-semibold uppercase tracking-widest text-wg-primary-light">
               Career intelligence
             </p>
-            <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="wg-section-heading mt-3 font-heading font-bold tracking-tight">
               Data-driven decisions at every step
             </h2>
             <p className="mt-4 text-lg text-white/70">

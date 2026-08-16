@@ -10,6 +10,8 @@ import { NAV_ITEMS } from "@/lib/constants";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useLandingHeader } from "./LandingHeaderContext";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
 
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
@@ -91,6 +93,7 @@ export default function Navbar() {
   const { headerOffset } = useLandingHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const isMdUp = useMediaQuery(DASHBOARD_MQ.mdUp);
 
   useEffect(() => {
     const sectionIds = NAV_ITEMS.filter((item) => item.href.startsWith("#")).map((item) =>
@@ -124,6 +127,10 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (isMdUp) setMobileOpen(false);
+  }, [isMdUp]);
+
   const handleNavigate = useCallback((href: string) => {
     if (href.startsWith("#")) {
       const target = document.querySelector(href);
@@ -144,7 +151,7 @@ export default function Navbar() {
               : "border-b border-transparent bg-transparent",
           )}
         >
-          <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-4 md:px-6 min-[1025px]:px-8">
             <Logo />
 
             <ul className="hidden items-center gap-8 md:flex" role="list">

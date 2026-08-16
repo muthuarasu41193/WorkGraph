@@ -58,7 +58,7 @@ function NewsletterStrip() {
   };
 
   return (
-    <div className="bg-brand px-4 py-10 sm:px-6 lg:px-8">
+    <div className="bg-brand px-4 py-10 md:px-6 min-[1025px]:px-8">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="font-heading text-xl font-bold text-white sm:text-2xl">
@@ -96,7 +96,7 @@ export default function Footer() {
     <footer aria-label="Site footer">
       <NewsletterStrip />
 
-      <div className="bg-slate-950 px-4 py-14 sm:px-6 lg:px-8">
+      <div className="bg-slate-950 px-4 py-14 md:px-6 min-[1025px]:px-8">
         <div className="mx-auto max-w-[1280px]">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>

@@ -45,7 +45,24 @@
 
 .wg-dash-content {
   max-width: var(--dash-content-max);
+  min-width: 0;
   animation: wg-dash-fade-in 0.28s ease-out;
+}
+
+.wg-dash-sidenav:not(.wg-dash-sidenav--mobile) {
+  width: var(--dash-sidebar-w);
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .wg-dash-sidenav:not(.wg-dash-sidenav--mobile):not(.wg-dash-sidenav--expanded) {
+    width: var(--dash-sidebar-collapsed-w);
+  }
+}
+
+@media (min-width: 1025px) {
+  .wg-dash-sidenav.wg-dash-sidenav--collapsed:not(.wg-dash-sidenav--mobile) {
+    width: var(--dash-sidebar-collapsed-w);
+  }
 }
 
 @keyframes wg-dash-fade-in {
