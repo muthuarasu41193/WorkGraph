@@ -59,7 +59,7 @@ import {
 import { cn } from "@/lib/utils";
 import { iconClass } from "@/lib/icon-styles";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
-import JobCard from "@/components/design-system/JobCard";
+import JobCard, { JobCardSkeleton } from "@/components/design-system/JobCard";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
 import ApplyFollowupPrompt from "@/components/design-system/ApplyFollowupPrompt";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
@@ -2124,22 +2124,7 @@ export default function RecommendedJobsSection({
       {showSkeleton ? (
         <div className={viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list"}>
           {Array.from({ length: skeletonCount }).map((_, idx) => (
-            <article key={`skeleton-${idx}`} className="rounded-xl border border-border-default bg-surface">
-              <div className="px-5 pt-[18px]">
-                <div className="flex gap-2.5">
-                  <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
-                  <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 w-48 rounded wg-skeleton-shimmer" />
-                    <div className="h-3 w-32 rounded wg-skeleton-shimmer" />
-                  </div>
-                </div>
-              </div>
-              <div className="mx-5 my-2.5 border-t border-border-default" />
-              <div className="px-5 pb-4">
-                <div className="h-3 w-40 rounded wg-skeleton-shimmer" />
-                <div className="mt-2.5 h-7 w-36 rounded-lg wg-skeleton-shimmer" />
-              </div>
-            </article>
+            <JobCardSkeleton key={`skeleton-${idx}`} />
           ))}
         </div>
       ) : (
@@ -2179,6 +2164,8 @@ export default function RecommendedJobsSection({
                 matchPercent: score,
                 experienceLevel: meta.experienceLevel,
                 primaryJobType: meta.primaryJobType ?? meta.jobTypes[0] ?? null,
+                locationMode: meta.locationMode,
+                salary: meta.salary,
               })}
               index={i}
               saved={isSaved}

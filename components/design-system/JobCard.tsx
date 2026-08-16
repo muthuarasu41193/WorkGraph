@@ -32,10 +32,17 @@ function companyInitials(name: string): string {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
-function matchPillClass(percent: number): string {
-  if (percent > 80) return "bg-success-50 text-success";
-  if (percent >= 60) return "bg-info-50 text-info";
-  return "bg-surface-hover text-fg-tertiary";
+function matchBadgeClass(percent: number): string {
+  if (percent >= 80) return "border-emerald-100 bg-emerald-50 text-emerald-700";
+  if (percent >= 60) return "border-red-100 bg-red-50 text-red-700";
+  return "border-amber-100 bg-amber-50 text-amber-700";
+}
+
+function isUsefulChip(value?: string): value is string {
+  const trimmed = value?.trim();
+  if (!trimmed) return false;
+  const normalized = trimmed.toLowerCase();
+  return normalized !== "see listing" && normalized !== "—" && normalized !== "-";
 }
 
 function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }) {
@@ -46,7 +53,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
       <img
         src={logoUrl}
         alt=""
-        className="h-10 w-10 shrink-0 rounded-[10px] border border-border-default object-cover"
+        className="h-10 w-10 shrink-0 rounded-lg bg-slate-100 object-cover"
         onError={() => setFailed(true)}
       />
     );
@@ -54,7 +61,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-border-default bg-surface-active text-xs font-medium text-fg-tertiary"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[13px] font-semibold text-slate-700"
       aria-hidden
     >
       {companyInitials(company)}
@@ -62,8 +69,41 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
   );
 }
 
-function MetaSeparator() {
-  return <span className="text-gray-300" aria-hidden> · </span>;
+function JobChip({ children }: { children: string }) {
+  return (
+    <span className="rounded-[6px] bg-slate-50 px-2 py-0.5 text-[11.5px] leading-tight text-slate-600">
+      {children}
+    </span>
+  );
+}
+
+export function JobCardSkeleton() {
+  return (
+    <article className="job-card" aria-hidden>
+      <div className="flex flex-col gap-3 md:flex-row md:items-start">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <div className="h-10 w-10 shrink-0 rounded-lg wg-skeleton-shimmer" />
+          <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-2/3 max-w-[240px] rounded wg-skeleton-shimmer" />
+              <div className="h-5 w-16 shrink-0 rounded-[6px] wg-skeleton-shimmer md:hidden" />
+            </div>
+            <div className="h-3 w-1/2 max-w-[200px] rounded wg-skeleton-shimmer" />
+            <div className="flex gap-1.5 pt-0.5">
+              <div className="h-5 w-16 rounded-[6px] wg-skeleton-shimmer" />
+              <div className="h-5 w-14 rounded-[6px] wg-skeleton-shimmer" />
+              <div className="h-5 w-[4.5rem] rounded-[6px] wg-skeleton-shimmer" />
+            </div>
+          </div>
+        </div>
+        <div className="hidden shrink-0 flex-col items-end gap-2 md:flex">
+          <div className="h-5 w-16 rounded-[6px] wg-skeleton-shimmer" />
+          <div className="h-9 w-[5.5rem] rounded-lg wg-skeleton-shimmer" />
+        </div>
+        <div className="h-10 w-full rounded-lg wg-skeleton-shimmer md:hidden" />
+      </div>
+    </article>
+  );
 }
 
 export default function JobCard({
@@ -81,15 +121,16 @@ export default function JobCard({
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
   const jobDescription = job.description?.trim() || job.title;
+  const workType = job.workMode || job.employmentType;
 
-  const subtitleParts = [job.company, job.location, job.employmentType || job.workMode].filter(Boolean);
+  const metaParts = [job.company, job.location, workType].filter((part, i, arr) => {
+    const value = part?.trim();
+    return Boolean(value) && arr.findIndex((item) => item?.trim() === value) === i;
+  });
 
-  const metaParts: string[] = [];
-  if (job.sourceLabel) metaParts.push(`via ${job.sourceLabel}`);
-  if (job.postedAgo) metaParts.push(job.postedAgo);
-  if (job.experience) metaParts.push(job.experience);
-
+  const chips = [job.salaryRange, job.experience, job.postedAgo].filter(isUsefulChip);
   const showSkillGaps = Boolean(job.missingSkills && job.missingSkills.length > 0);
+  const showRightRail = job.matchPercent !== undefined || canApply;
 
   return (
     <article
@@ -108,121 +149,127 @@ export default function JobCard({
       }
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={cn("job-card wg-job-card-enter group", className)}
+      className={cn("job-card wg-job-card-enter group min-w-0", onClick && "cursor-pointer", className)}
     >
-      {onSave ? (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onSave(job.id);
-          }}
-          aria-label={saved ? "Remove from saved" : "Save job"}
-          className={cn(
-            "job-card__bookmark absolute right-5 top-[18px] rounded-md p-1 text-fg-tertiary transition-colors hover:text-indigo-600 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
-            saved && "opacity-100 text-indigo-600",
-          )}
-        >
-          <Bookmark className={cn(iconClass("inline"), saved && "fill-current")} />
-        </button>
-      ) : null}
+      <div className="flex flex-col gap-3 md:flex-row md:items-start">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
 
-      <div className="job-card__header flex items-start gap-2.5 pr-6">
-        <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <h3 className="truncate text-md font-semibold leading-tight text-wg-heading">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start gap-2">
+              <h3 className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-snug tracking-tight text-slate-900">
                 {job.title}
               </h3>
-              {subtitleParts.length > 0 ? (
-                <p className="mt-0.5 truncate text-sm leading-tight text-fg-tertiary">
-                  {subtitleParts.join(" · ")}
-                </p>
+              {job.matchPercent !== undefined ? (
+                <span
+                  className={cn(
+                    "inline-flex shrink-0 whitespace-nowrap rounded-[6px] border px-2 py-0.5 text-[11.5px] font-semibold leading-tight tabular-nums md:hidden",
+                    matchBadgeClass(job.matchPercent),
+                  )}
+                >
+                  {job.matchPercent}% match
+                </span>
+              ) : null}
+              {onSave ? (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onSave(job.id);
+                  }}
+                  aria-label={saved ? "Remove from saved" : "Save job"}
+                  className={cn(
+                    "job-card__bookmark wg-touch-target -mr-0.5 -mt-0.5 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:text-slate-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-1",
+                    saved && "opacity-100 text-slate-700",
+                  )}
+                >
+                  <Bookmark className={cn(iconClass("inline"), saved && "fill-current")} />
+                </button>
               ) : null}
             </div>
 
+            {metaParts.length > 0 ? (
+              <p className="mt-0.5 truncate text-[13px] leading-snug text-slate-500">
+                {metaParts.join(" · ")}
+              </p>
+            ) : null}
+
+            {chips.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {chips.map((chip) => (
+                  <JobChip key={chip}>{chip}</JobChip>
+                ))}
+              </div>
+            ) : null}
+
+            {showSkillGaps ? (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {job.missingSkills!.map((skill) => (
+                  <span
+                    key={skill}
+                    className="rounded-[6px] border border-slate-200 bg-white px-1.5 py-0.5 text-[11.5px] leading-tight text-slate-500"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            {hasResume ? (
+              <div
+                className="mt-2"
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+              >
+                <ResumeIntelligenceDialog
+                  jobId={job.id}
+                  jobTitle={job.title}
+                  company={job.company}
+                  jobDescription={jobDescription}
+                  hasResume={hasResume}
+                  triggerClassName="analyze-btn"
+                />
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {showRightRail ? (
+          <div
+            className={cn(
+              "flex flex-col gap-2",
+              "max-md:w-full",
+              !canApply && "max-md:hidden",
+              "md:shrink-0 md:items-end",
+            )}
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
             {job.matchPercent !== undefined ? (
               <span
                 className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium leading-tight tabular-nums",
-                  matchPillClass(job.matchPercent),
+                  "hidden whitespace-nowrap rounded-[6px] border px-2 py-0.5 text-[11.5px] font-semibold leading-tight tabular-nums md:inline-flex",
+                  matchBadgeClass(job.matchPercent),
                 )}
               >
                 {job.matchPercent}% match
               </span>
             ) : null}
+
+            {canApply && applyHref ? (
+              <JobApplyButton
+                jobId={job.id}
+                company={job.company}
+                title={job.title}
+                applyUrl={applyHref}
+                source={job.source}
+                onClick={onApplyClick}
+                className="max-md:w-full"
+              />
+            ) : null}
           </div>
-        </div>
+        ) : null}
       </div>
-
-      <hr className="job-card__divider" />
-
-      {metaParts.length > 0 ? (
-        <p className="job-card__meta">
-          {metaParts.map((part, i) => (
-            <span key={part}>
-              {i > 0 ? <MetaSeparator /> : null}
-              {i === 0 && job.sourceLabel ? (
-                <span className="font-medium text-gray-600">{part}</span>
-              ) : (
-                part
-              )}
-            </span>
-          ))}
-        </p>
-      ) : null}
-
-      {showSkillGaps ? (
-        <div className="job-card__skill-gaps">
-          <p className="text-xs leading-tight text-fg-tertiary">Skill gaps</p>
-          <div className="mt-1 flex flex-wrap gap-1">
-            {job.missingSkills!.map((skill) => (
-              <span
-                key={skill}
-                className="rounded-md border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-xs leading-tight text-fg-tertiary"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {(hasResume || canApply) ? (
-        <div
-          className="job-card__footer job-card__actions"
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
-          {hasResume ? (
-            <ResumeIntelligenceDialog
-              jobId={job.id}
-              jobTitle={job.title}
-              company={job.company}
-              jobDescription={jobDescription}
-              hasResume={hasResume}
-              triggerClassName="analyze-btn"
-            />
-          ) : (
-            <span aria-hidden />
-          )}
-
-          <span className="job-card__actions-spacer" aria-hidden />
-
-          {canApply && applyHref ? (
-            <JobApplyButton
-              jobId={job.id}
-              company={job.company}
-              title={job.title}
-              applyUrl={applyHref}
-              source={job.source}
-              onClick={onApplyClick}
-            />
-          ) : null}
-        </div>
-      ) : null}
 
       {children ? <div className="job-card__expanded">{children}</div> : null}
     </article>

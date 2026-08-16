@@ -218,7 +218,7 @@ export default function SideNav({
         <div className="flex shrink-0 justify-end px-2 pb-2">
           <button
             type="button"
-            className="wg-sidenav-collapse"
+            className="wg-sidenav-collapse wg-touch-target"
             onClick={onToggleCollapse}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >

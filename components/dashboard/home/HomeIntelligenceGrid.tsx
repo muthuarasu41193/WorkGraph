@@ -33,14 +33,13 @@ export default function HomeIntelligenceGrid({
         title="AI Career Intelligence"
         description="Your personalized insights — intelligence before listings."
       />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <InsightCard
           title="Resume Score"
           description="Excellent keyword optimization. Fix 2 high-impact gaps to reach 95%."
           icon={Brain}
           score={`${resumeScore}%`}
           badge="AI"
-          variant="accent"
           action={
             <Button asChild size="sm" variant="outline" className="wg-dash-compact-btn w-full">
               <Link href={dashboardHref("resume-intelligence")}>Improve resume</Link>
@@ -65,7 +64,6 @@ export default function HomeIntelligenceGrid({
           icon={HeartPulse}
           score={`${careerHealth}%`}
           badge="Trending"
-          variant="success"
           action={
             <Button asChild size="sm" variant="outline" className="wg-dash-compact-btn w-full">
               <Link href={dashboardHref("workgraph-direct")}>View insights</Link>

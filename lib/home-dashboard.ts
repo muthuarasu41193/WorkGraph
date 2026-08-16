@@ -28,7 +28,10 @@ export type JobMarketPulse = {
   trendingSkills: string[];
 };
 
-export type JobMatchPreviewExt = JobMatchPreview & { applyUrl?: string };
+export type JobMatchPreviewExt = JobMatchPreview & {
+  applyUrl?: string;
+  postedAgo?: string;
+};
 
 function inferWorkMode(location: string): JobMatchPreview["workMode"] {
   const l = location.toLowerCase();
@@ -40,14 +43,15 @@ function inferWorkMode(location: string): JobMatchPreview["workMode"] {
 function jobCardsToMatches(jobs?: RecommendedJobCard[]): JobMatchPreviewExt[] {
   if (!jobs?.length) return [];
   return jobs.slice(0, 6).map((job) => ({
-      id: job.id,
-      title: job.title,
-      company: job.company,
-      matchPercent: parseMatchPercent(job.matchLabel),
-      salaryRange: "See listing",
-      workMode: inferWorkMode(job.location),
-      location: job.location,
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    matchPercent: parseMatchPercent(job.matchLabel),
+    salaryRange: "See listing",
+    workMode: inferWorkMode(job.location),
+    location: job.location,
     applyUrl: job.applyUrl ?? undefined,
+    postedAgo: job.postedAgo,
   }));
 }
 

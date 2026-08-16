@@ -4,7 +4,7 @@ export { default as MiniChart } from "./MiniChart";
 export { default as SectionHeader } from "./SectionHeader";
 export { default as EmptyState } from "./EmptyState";
 export { default as InsightCard } from "./InsightCard";
-export { default as JobCard } from "./JobCard";
+export { default as JobCard, JobCardSkeleton } from "./JobCard";
 export type { JobCardData } from "./JobCard";
 export { jobCardFromMatch } from "@/lib/job-card-data";
 export { default as ActivityTimeline, DEMO_TIMELINE_EVENTS } from "./ActivityTimeline";

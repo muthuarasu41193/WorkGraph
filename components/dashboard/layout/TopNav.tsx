@@ -28,11 +28,7 @@ import { dashboardHref } from "@/lib/dashboard-routes";
 const ICON_BTN =
   "size-9 rounded-lg border-transparent enabled:hover:scale-100";
 
-type Props = {
-  sidebarCollapsed?: boolean;
-};
-
-export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
+export default function TopNav() {
   const { profile, liveListings } = useDashboardContext();
   const { navigate } = useDashboardNavigation();
   const router = useRouter();
@@ -57,13 +53,18 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={cn(ICON_BTN, "hover:bg-slate-100 md:hidden")}
+                  className={cn(ICON_BTN, "wg-touch-target hover:bg-slate-100 md:hidden")}
                   aria-label="Open navigation menu"
                 >
                   <Menu className="size-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] p-0">
+              <SheetContent
+                side="left"
+                showCloseButton={false}
+                overlayClassName="md:hidden"
+                className="w-[min(280px,85vw)] p-0 md:hidden data-[side=left]:data-open:slide-in-from-left-full"
+              >
                 <SheetHeader className="sr-only">
                   <SheetTitle>WorkGraph</SheetTitle>
                 </SheetHeader>
@@ -73,26 +74,28 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
 
             <Link
               href="/profile"
-              className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+              className="wg-touch-target rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
             >
-              <WorkGraphLogo iconClassName="h-7 w-7" className="gap-2" />
+              <WorkGraphLogo showWordmark={false} iconClassName="h-7 w-7" />
             </Link>
           </div>
 
-          <div className="mx-auto hidden w-full max-w-[560px] flex-1 md:block">
+          <div className="mx-auto hidden w-full max-w-[560px] min-w-0 flex-1 md:block">
             <GlobalSearch onOpenCommandPalette={() => setCmdOpen(true)} />
           </div>
 
-          <div className="flex flex-1 md:hidden">
-            <GlobalSearch compact onOpenCommandPalette={() => setCmdOpen(true)} />
-          </div>
-
-          <div className="ml-auto flex shrink-0 items-center gap-1.5">
+          <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1.5">
+            <div className="md:hidden">
+              <GlobalSearch compact onOpenCommandPalette={() => setCmdOpen(true)} />
+            </div>
             {liveListings > 0 ? (
-              <span className="hidden h-7 items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 lg:inline-flex">
-                <span className="wg-live-dot size-1.5 rounded-full bg-emerald-500" aria-hidden />
-                <span className="text-[12.5px] font-medium text-emerald-700">
-                  <span className="tabular-nums">{liveListings.toLocaleString()}</span> live
+              <span className="inline-flex h-7 max-w-full items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2">
+                <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+                <span className="text-[12.5px] font-medium tabular-nums text-emerald-700">
+                  {liveListings.toLocaleString()}
+                </span>
+                <span className="hidden text-[12.5px] font-medium text-emerald-700 md:inline">
+                  live
                 </span>
               </span>
             ) : null}
@@ -101,7 +104,7 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(ICON_BTN, "hidden hover:bg-slate-100 sm:inline-flex")}
+              className={cn(ICON_BTN, "wg-touch-target hidden hover:bg-slate-100 md:inline-flex")}
               onClick={() => setCmdOpen(true)}
               aria-label="Open command palette (⌘K)"
             >
@@ -113,7 +116,7 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
               size="icon"
               className={cn(
                 ICON_BTN,
-                "hidden bg-red-600 text-white shadow-sm sm:inline-flex enabled:hover:bg-red-700 enabled:hover:shadow-sm",
+                "wg-touch-target hidden bg-red-600 text-white shadow-sm md:inline-flex enabled:hover:bg-red-700 enabled:hover:shadow-sm",
               )}
               onClick={() => navigate("jobs")}
               aria-label="Quick action: explore jobs"
@@ -125,7 +128,7 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(ICON_BTN, "relative hover:bg-slate-100")}
+              className={cn(ICON_BTN, "wg-touch-target relative hover:bg-slate-100")}
               aria-label={hasUnread ? "Notifications, unread" : "Notifications"}
             >
               <Bell className="size-4 text-slate-600" />
@@ -138,7 +141,7 @@ export default function TopNav({ sidebarCollapsed: _sidebarCollapsed }: Props) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="rounded-full outline-none transition duration-200 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
+                  className="wg-touch-target rounded-full outline-none transition duration-200 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
                   aria-label="Account menu"
                 >
                   <Avatar className="size-8">

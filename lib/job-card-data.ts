@@ -93,6 +93,39 @@ export function clearbitLogoUrl(company: string, applyUrl?: string | null): stri
 
 export { getApplyLabel, applyButtonLabel } from "./job-apply";
 
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+};
+
+export function formatSalaryChip(
+  salary?: {
+    minK: number;
+    maxK: number;
+    currency: string;
+    period: "year" | "hour";
+  } | null,
+): string | undefined {
+  if (!salary || salary.minK <= 0 || salary.maxK <= 0) return undefined;
+  const symbol = CURRENCY_SYMBOLS[salary.currency] ?? `${salary.currency} `;
+  const format = (value: number) =>
+    salary.period === "hour" ? `${symbol}${value}` : `${symbol}${value}k`;
+  const suffix = salary.period === "hour" ? "/hr" : "";
+  if (salary.minK === salary.maxK) return `${format(salary.minK)}${suffix}`;
+  return `${format(salary.minK)}–${format(salary.maxK)}${suffix}`;
+}
+
+function workModeFromLocation(
+  mode?: "remote" | "hybrid" | "onsite" | string | null,
+): string | undefined {
+  if (mode === "remote") return "Remote";
+  if (mode === "hybrid") return "Hybrid";
+  if (mode === "onsite") return "On-site";
+  return undefined;
+}
+
 export function jobCardFromMatch(job: {
   id: string;
   title: string;
@@ -126,6 +159,14 @@ export function recommendedJobToCardData(
     matchPercent: number;
     experienceLevel?: string | null;
     primaryJobType?: string | null;
+    locationMode?: "remote" | "hybrid" | "onsite" | string | null;
+    salaryRange?: string | null;
+    salary?: {
+      minK: number;
+      maxK: number;
+      currency: string;
+      period: "year" | "hour";
+    } | null;
     isEasyApply?: boolean;
     missingSkills?: string[];
   },
@@ -143,6 +184,8 @@ export function recommendedJobToCardData(
     sourceLabel: formatJobSource(job.source),
     experience: options.experienceLevel ?? undefined,
     employmentType: options.primaryJobType ?? undefined,
+    workMode: workModeFromLocation(options.locationMode),
+    salaryRange: options.salaryRange ?? formatSalaryChip(options.salary),
     isEasyApply: options.isEasyApply,
     description: job.description,
     matchedSkills: job.matchedSkills,

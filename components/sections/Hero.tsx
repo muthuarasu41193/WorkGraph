@@ -252,7 +252,7 @@ export default function Hero() {
 
             <motion.h1
               variants={leftItem}
-              className="mt-6 font-heading text-[48px] font-bold leading-[1.05] tracking-heading text-fg-primary sm:text-[56px] lg:text-[72px]"
+              className="mt-6 font-heading font-bold leading-[1.05] tracking-heading text-fg-primary text-[clamp(2rem,8vw,4.5rem)]"
             >
               Find Jobs That
               <br />

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import MobileNav from "./MobileNav";
@@ -12,20 +13,27 @@ type Props = {
 };
 
 function DashboardLayoutInner({ children }: Props) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1025px)");
+  const [userCollapsed, setUserCollapsed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setUserCollapsed(null);
+  }, [isDesktop]);
+
+  const sidebarCollapsed = userCollapsed ?? !isDesktop;
 
   return (
-    <div className="wg-dash-root flex">
+    <div className="wg-dash-root flex max-w-full overflow-x-clip">
       <SideNav
         collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+        onToggleCollapse={() => setUserCollapsed(!sidebarCollapsed)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <TopNav sidebarCollapsed={sidebarCollapsed} />
+      <div className="flex min-w-0 flex-1 flex-col overflow-x-clip overflow-y-hidden">
+        <TopNav />
 
-        <div className="wg-dash-main min-w-0 px-4 py-8 sm:px-6 md:px-8">
-          <div className="wg-dash-content mx-auto w-full">{children}</div>
+        <div className="wg-dash-main min-w-0 max-w-full px-4 py-6 lg:px-8 lg:py-8">
+          <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">{children}</div>
         </div>
       </div>
 

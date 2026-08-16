@@ -3,11 +3,14 @@
  * Import alongside `dashboard-layout.css`.
  */
 export const DASHBOARD_LAYOUT = {
-  topNavHeight: "60px",
+  topNavHeight: "56px",
   sidebarWidth: "240px",
-  sidebarCollapsedWidth: "72px",
-  contentMaxWidth: "1200px",
-  mobileBreakpoint: "768px",
+  sidebarCollapsedWidth: "64px",
+  contentMaxWidth: "1280px",
+  mobileMax: "767px",
+  tabletMin: "768px",
+  tabletMax: "1024px",
+  desktopMin: "1025px",
 } as const;
 
 /** Tailwind class bundles for consistent dashboard spacing. */

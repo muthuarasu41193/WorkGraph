@@ -33,7 +33,7 @@ export default function PageHero({
           {greeting ? (
             <p className="text-sm font-medium text-[var(--dash-text-secondary)]">{greeting}</p>
           ) : null}
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-3xl">
+          <h1 className="font-semibold tracking-tight text-[var(--dash-text)] text-[clamp(1.375rem,4vw,1.875rem)]">
             {title}
           </h1>
           <p className="max-w-2xl text-sm leading-relaxed text-[var(--dash-text-secondary)]">

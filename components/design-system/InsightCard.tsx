@@ -1,9 +1,10 @@
 "use client";
 
-import { Icon as WgIcon } from "@/components/ui/icon";
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { iconClass } from "@/lib/icon-styles";
 
 type Props = {
   title: string;
@@ -12,14 +13,8 @@ type Props = {
   score?: string | number;
   badge?: string;
   action?: ReactNode;
-  variant?: "default" | "accent" | "success";
+  href?: string;
   className?: string;
-};
-
-const variantStyles = {
-  default: "bg-surface",
-  accent: "bg-gradient-to-br from-white to-red-50/40",
-  success: "bg-gradient-to-br from-white to-emerald-50/40",
 };
 
 export default function InsightCard({
@@ -29,39 +24,55 @@ export default function InsightCard({
   score,
   badge,
   action,
-  variant = "default",
+  href,
   className,
 }: Props) {
-  return (
-    <div
-      className={cn(
-        "wg-dash-section-card wg-dash-card-lift flex flex-col p-6",
-        variantStyles[variant],
-        className,
-      )}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-          <WgIcon icon={Icon} size="standalone" />
+  const actionable = Boolean(href) && !action;
+
+  const content = (
+    <>
+      <div className="flex items-start justify-between gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+          <Icon className={iconClass("standalone")} />
         </span>
-        {badge ? (
-          <span className="rounded-md bg-surface-active px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-secondary)]">
-            {badge}
+        {score !== undefined ? (
+          <span className="text-2xl font-bold tabular-nums leading-none text-slate-900">
+            {score}
           </span>
         ) : null}
       </div>
-      <div className="mt-4 flex-1 space-y-1.5">
-        <div className="flex items-baseline justify-between gap-2">
-          <h3 className="text-lg font-semibold leading-[1.2] tracking-[-0.01em] text-[var(--wg-text-primary)]">{title}</h3>
-          {score !== undefined ? (
-            <span className="text-lg font-semibold tabular-nums text-[var(--dash-accent)]">
-              {score}
+
+      <div className="mt-3 space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-[15px] font-semibold tracking-tight text-slate-900">{title}</h3>
+          {badge ? (
+            <span className="rounded-md bg-slate-50 px-2 py-0.5 text-[11.5px] font-medium text-slate-600">
+              {badge}
             </span>
           ) : null}
         </div>
-        <p className="text-xs leading-relaxed text-[var(--dash-text-secondary)]">{description}</p>
+        <p className="text-[13px] leading-relaxed text-slate-500">{description}</p>
       </div>
-      {action ? <div className="mt-6">{action}</div> : null}
-    </div>
+
+      {action ? <div className="mt-4">{action}</div> : null}
+    </>
   );
+
+  const classes = cn(
+    "flex flex-col rounded-[12px] border border-slate-200 bg-white p-5 shadow-none",
+    "transition-[border-color,box-shadow] duration-200",
+    "hover:border-slate-300 hover:shadow-sm",
+    actionable && "cursor-pointer",
+    className,
+  );
+
+  if (actionable && href) {
+    return (
+      <Link href={href} className={classes}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <article className={classes}>{content}</article>;
 }

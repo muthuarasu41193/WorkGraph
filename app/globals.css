@@ -130,9 +130,27 @@ html,
 body {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: clip;
   font-family: var(--wg-font-sans);
   background: var(--background);
   color: var(--foreground);
+}
+
+@media (max-width: 767px) {
+  .wg-touch-target {
+    position: relative;
+  }
+
+  .wg-touch-target::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .wg-label-mono {
