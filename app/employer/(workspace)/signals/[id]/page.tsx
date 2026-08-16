@@ -2,12 +2,13 @@
 
 import { useParams, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import type { HiringSignal } from "@/lib/employer/types";
 import { readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import HiringSignalForm from "@/components/employer/HiringSignalForm";
 import PulseInbox from "@/components/employer/PulseInbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ListSkeleton } from "@/components/ui/skeleton";
 
 export default function EditHiringSignalPage() {
   const params = useParams();
@@ -48,11 +49,7 @@ export default function EditHiringSignalPage() {
   }, [searchParams, id]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <ListSkeleton rows={4} className="py-6" />;
   }
 
   if (!signal) {

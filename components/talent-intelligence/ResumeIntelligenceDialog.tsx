@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Brain, Loader2 } from "lucide-react";
+import { Brain } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
@@ -140,10 +140,13 @@ export default function ResumeIntelligenceDialog({
               </AlertDescription>
             </Alert>
           ) : loading ? (
-            <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm">Analyzing your resume against this role…</p>
-              <p className="text-xs">This usually takes 1–2 minutes. Please keep this tab open.</p>
+            <div className="space-y-4 py-8" aria-busy="true" aria-label="Analyzing resume">
+              <div className="h-5 w-56 rounded wg-skeleton-shimmer" />
+              <div className="h-24 w-full rounded-xl wg-skeleton-shimmer" />
+              <div className="h-24 w-full rounded-xl wg-skeleton-shimmer" />
+              <p className="text-center text-xs text-muted-foreground">
+                Analyzing your resume against this role. This usually takes 1–2 minutes.
+              </p>
             </div>
           ) : error ? (
             <Alert variant="destructive">

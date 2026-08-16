@@ -22,6 +22,9 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
             <CardDescription>Highest momentum titles in your matched catalog.</CardDescription>
           </CardHeader>
           <CardContent>
+            {pulse.trendingRoles.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No trending roles yet. Matches will appear as your catalog fills in.</p>
+            ) : (
             <ol className="space-y-2">
               {pulse.trendingRoles.map((role, index) => (
                 <li
@@ -38,6 +41,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
                 </li>
               ))}
             </ol>
+            )}
           </CardContent>
         </Card>
 
@@ -47,6 +51,9 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
             <CardDescription>In-demand skills aligned to your profile and listings.</CardDescription>
           </CardHeader>
           <CardContent>
+            {pulse.trendingSkills.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Skill trends will show here once listings are indexed.</p>
+            ) : (
             <div className="flex flex-wrap gap-2">
               {pulse.trendingSkills.map((skill) => (
                 <Badge key={skill} variant="outline" className="text-xs font-medium">
@@ -54,6 +61,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
                 </Badge>
               ))}
             </div>
+            )}
           </CardContent>
         </Card>
       </div>

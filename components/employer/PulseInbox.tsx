@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ExternalLink, FileText, Loader2, Sparkles } from "lucide-react";
+import { ExternalLink, FileText, Inbox, Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import type { ConnectionStage, SignalConnection } from "@/lib/employer/types";
 import {
@@ -9,9 +9,11 @@ import {
   CONNECTION_STAGE_ORDER,
 } from "@/lib/employer/types";
 import ApplicantApplicationPanel from "@/components/employer/ApplicantApplicationPanel";
+import EmptyState from "@/components/design-system/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ListSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -57,11 +59,7 @@ export default function PulseInbox({ signalId }: Props) {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <ListSkeleton rows={4} className="py-4" />;
   }
 
   if (error) {
@@ -82,12 +80,11 @@ export default function PulseInbox({ signalId }: Props) {
       </div>
 
       {connections.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            No applications yet. When seekers apply to your live signals, their resume and profile
-            package appears here.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Inbox}
+          title="No applications yet"
+          description="When seekers apply to your live signals, their resume and profile package appears here."
+        />
       ) : (
         <div className="grid gap-4 lg:grid-cols-5">
           {CONNECTION_STAGE_ORDER.map((stage) => (

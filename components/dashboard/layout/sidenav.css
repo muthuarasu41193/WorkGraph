@@ -32,7 +32,9 @@
 }
 
 .wg-sidenav-logo__link:focus-visible {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #ef4444;
 }
 
 .wg-sidenav-logo__wordmark {
@@ -108,7 +110,9 @@
 
 .wg-nav-item:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #ef4444;
 }
 
 .wg-nav-item--active {
@@ -425,7 +429,9 @@
 }
 
 .wg-sidenav-profile:focus-visible {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #ef4444;
 }
 
 .wg-sidenav-profile__name {
@@ -499,11 +505,66 @@
 
 .wg-sidenav-collapse:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #ef4444;
 }
 
 .wg-dash-root .wg-sidenav-collapse {
   min-height: 28px;
+}
+
+.wg-sidenav-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out,
+    border-color 150ms ease-out,
+    transform 150ms ease-out;
+}
+
+.wg-sidenav-theme:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.wg-sidenav-theme:active {
+  transform: scale(0.98);
+}
+
+.dark .wg-sidenav-theme,
+[data-theme="dark"] .wg-sidenav-theme {
+  color: #94a3b8;
+}
+
+.dark .wg-sidenav-theme:hover,
+[data-theme="dark"] .wg-sidenav-theme:hover {
+  background: rgb(30 41 59 / 0.6);
+  border-color: rgb(51 65 85 / 0.8);
+  color: #f8fafc;
+}
+
+.dark .wg-sidenav-logo__link:focus-visible,
+[data-theme="dark"] .wg-sidenav-logo__link:focus-visible,
+.dark .wg-sidenav-profile:focus-visible,
+[data-theme="dark"] .wg-sidenav-profile:focus-visible,
+.dark .wg-sidenav-collapse:focus-visible,
+[data-theme="dark"] .wg-sidenav-collapse:focus-visible,
+.dark .wg-nav-item:focus-visible,
+[data-theme="dark"] .wg-nav-item:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--wg-surface),
+    0 0 0 4px #ef4444;
 }
 
 .dark .wg-sidenav-logo,

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { iconClass } from "@/lib/icon-styles";
+import { AlertCircle, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   onProfileSaved,
   onProfileSaveError,
@@ -36,6 +36,7 @@ export default function ProfileSaveStatus() {
   const [saveAllPending, setSaveAllPending] = useState<string[]>([]);
   const [saveAllFailed, setSaveAllFailed] = useState<string[]>([]);
   const [saveAllCompleted, setSaveAllCompleted] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const finalizeSaveAll = () => {
@@ -62,6 +63,7 @@ export default function ProfileSaveStatus() {
       setSection("all sections");
       setState("saving");
       setErrorMessage("");
+      setVisible(true);
     });
 
     const offSaved = onProfileSaved((savedSection) => {
@@ -72,11 +74,13 @@ export default function ProfileSaveStatus() {
       setSavedAt(new Date());
       setSection(savedSection);
       setState("saved");
+      setVisible(true);
     });
     const offStart = onProfileSaveStart((savingSection) => {
       setSection(savingSection);
       setState("saving");
       setErrorMessage("");
+      setVisible(true);
     });
     const offError = onProfileSaveError((errorSection, message) => {
       if (saveAllCompleted) {
@@ -87,6 +91,7 @@ export default function ProfileSaveStatus() {
       setSection(errorSection);
       setErrorMessage(message);
       setState("error");
+      setVisible(true);
     });
     return () => {
       offSaveAllBegin();
@@ -95,6 +100,12 @@ export default function ProfileSaveStatus() {
       offError();
     };
   }, [saveAllCompleted]);
+
+  useEffect(() => {
+    if (!visible || state === "saving") return;
+    const timeout = window.setTimeout(() => setVisible(false), 3000);
+    return () => window.clearTimeout(timeout);
+  }, [visible, state, savedAt, errorMessage]);
 
   const text = useMemo(() => {
     if (state === "saving") {
@@ -112,19 +123,31 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <Loader2 className={iconClass("inline", "animate-spin text-emerald-700")} aria-hidden />
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400">
+        <Loader2 className="size-3.5 animate-spin" aria-hidden />
+      </span>
     ) : state === "error" ? (
-      <AlertCircle className={iconClass("inline", "text-brand")} aria-hidden />
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400">
+        <AlertCircle className="size-3.5" strokeWidth={2.25} aria-hidden />
+      </span>
     ) : (
-      <CheckCircle2 className={iconClass("inline", "text-emerald-600")} aria-hidden />
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+        <Check className="size-3.5" strokeWidth={2.5} aria-hidden />
+      </span>
     );
 
+  if (!visible) return null;
+
   return (
-    <div className="fixed bottom-5 right-5 z-40 rounded-2xl border border-emerald-200/90 bg-surface/95 px-4 py-3 shadow-lg shadow-emerald-900/10 backdrop-blur-sm">
-      <div className="flex items-center gap-2.5">
-        {icon}
-        <p className="text-xs font-medium text-slate-700">{text}</p>
-      </div>
+    <div
+      role="status"
+      className={cn(
+        "wg-toast fixed bottom-5 right-5 z-40 flex items-center gap-3 border border-slate-200 bg-white p-3.5 shadow-lg dark:border-slate-700 dark:bg-slate-900",
+      )}
+      style={{ borderRadius: 10 }}
+    >
+      {icon}
+      <p className="text-[13px] font-medium text-slate-700 dark:text-slate-200">{text}</p>
     </div>
   );
 }

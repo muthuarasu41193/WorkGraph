@@ -12,11 +12,12 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { useDroppable } from "@dnd-kit/core";
-import { Plus } from "lucide-react";
+import { Plus, ClipboardList } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import ApplicationCard from "@/components/applications/ApplicationCard";
 import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
 import ApplicationDetailDrawer from "@/components/applications/ApplicationDetailDrawer";
+import EmptyState from "@/components/design-system/EmptyState";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -72,7 +73,7 @@ function KanbanColumn({
       <ul className="flex min-h-[120px] flex-1 flex-col gap-2 p-2">
         {applications.length === 0 ? (
           <li className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
-            Drop applications here
+            Empty — drop cards here
           </li>
         ) : (
           applications.map((application) => (
@@ -175,6 +176,19 @@ export default function KanbanBoard({
         </Button>
       </div>
 
+      {applications.length === 0 ? (
+        <EmptyState
+          icon={ClipboardList}
+          title="No applications yet"
+          description="Track every role you apply to. Add your first application to start moving cards across stages."
+          action={
+            <Button type="button" onClick={() => setAddOpen(true)}>
+              <Plus className={iconClass()} />
+              Add Application
+            </Button>
+          }
+        />
+      ) : (
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -202,6 +216,7 @@ export default function KanbanBoard({
           ) : null}
         </DragOverlay>
       </DndContext>
+      )}
 
       <AddApplicationDialog
         open={addOpen}

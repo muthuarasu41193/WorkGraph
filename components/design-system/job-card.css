@@ -83,10 +83,12 @@
   color: var(--wg-text-tertiary);
 }
 
-.filter-search:focus {
+.filter-search:focus-visible {
   background: var(--wg-surface);
-  border-color: var(--wg-brand-300);
-  box-shadow: 0 0 0 3px rgb(165 180 252 / 0.15);
+  border-color: #ef4444;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }
 
 .filter-dropdown-btn {
@@ -127,8 +129,10 @@
 }
 
 .filter-dropdown-btn:focus-visible {
-  outline: 2px solid rgb(165 180 252 / 0.5);
-  outline-offset: 1px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }
 
 .filter-menu {
@@ -338,8 +342,8 @@
 
 /* Compact card shell */
 .job-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--wg-surface);
+  border: 1px solid var(--wg-border);
   border-radius: 12px;
   margin: 0;
   padding: 1.25rem;
@@ -347,16 +351,16 @@
   min-width: 0;
   box-shadow: none;
   transition:
-    transform 200ms ease,
-    border-color 200ms ease,
-    box-shadow 200ms ease;
+    transform 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
   position: relative;
 }
 
 .job-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05);
-  transform: translateY(-1px);
+  border-color: var(--wg-border-strong);
+  box-shadow: var(--wg-shadow-md);
+  transform: translateY(-2px);
 }
 
 .job-card__expanded {
@@ -381,8 +385,8 @@
   justify-content: center;
   height: 36px;
   padding: 0 12px;
-  background: #0f172a;
-  color: #fff;
+  background: var(--wg-text-primary);
+  color: var(--wg-text-inverse);
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
@@ -390,14 +394,14 @@
   border: none;
   cursor: pointer;
   transition:
-    background 200ms ease,
-    transform 200ms ease;
+    background-color 150ms ease-out,
+    transform 150ms ease-out;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .apply-btn:hover {
-  background: #1e293b;
+  background: var(--wg-text-primary-hover);
 }
 
 .apply-btn:active {
@@ -405,8 +409,10 @@
 }
 
 .apply-btn:focus-visible {
-  outline: 2px solid #0f172a;
-  outline-offset: 2px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }
 
 @media (max-width: 767px) {
@@ -478,8 +484,10 @@
 }
 
 .analyze-btn:focus-visible {
-  outline: 2px solid var(--wg-brand-200);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }
 
 .apply-followup__primary {

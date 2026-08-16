@@ -16,6 +16,7 @@ import { signOutClient } from "@/lib/auth/client";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { cn } from "@/lib/utils";
+import { FOCUS_RING } from "@/lib/focus-ring";
 import NavBenefitTooltip from "./NavBenefitTooltip";
 
 const HELP_URL = "mailto:support@getworkgraph.com?subject=WorkGraph%20Help%20%26%20Support";
@@ -132,15 +133,31 @@ export default function SidebarBottom({
     </span>
   );
 
+  const themeToggle = (
+    <button
+      type="button"
+      onClick={onToggleTheme}
+      className={cn("wg-sidenav-theme wg-touch-target", FOCUS_RING)}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={isDark}
+    >
+      {isDark ? <Sun className="size-4" strokeWidth={1.75} /> : <Moon className="size-4" strokeWidth={1.75} />}
+    </button>
+  );
+
   if (collapsed) {
     return (
       <div className="sidebar-bottom px-2 pb-1 pt-2">
+        <div className="mb-2 flex justify-center">{themeToggle}</div>
         <NavBenefitTooltip hint={PROFILE_HINT}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="mx-auto flex rounded-full outline-none transition-colors duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-brand-200"
+                className={cn(
+                  "mx-auto flex rounded-full transition-colors duration-150 ease-out hover:opacity-90",
+                  FOCUS_RING,
+                )}
                 aria-label="Profile — Strengthen your presence"
               >
                 {avatarNode}
@@ -179,8 +196,10 @@ export default function SidebarBottom({
         </DropdownMenu>
       </NavBenefitTooltip>
 
+      <div className="mt-1 flex items-center px-1">{themeToggle}</div>
+
       {showCmdKHint ? (
-        <p className="mt-1.5 px-2 text-center text-[11px] text-slate-300">
+        <p className="mt-1.5 px-2 text-center text-[11px] text-slate-300 dark:text-slate-500">
           Press {isMac ? "⌘K" : "Ctrl+K"} to search
         </p>
       ) : null}

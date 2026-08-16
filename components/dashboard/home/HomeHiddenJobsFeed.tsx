@@ -1,9 +1,10 @@
-import { ExternalLink, Radio } from "lucide-react";
+import { ExternalLink, Radio, Radar } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import EmptyState from "@/components/design-system/EmptyState";
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 import { loadHiddenJobsFeed } from "@/lib/home-dashboard";
 import { cn } from "@/lib/utils";
@@ -49,11 +50,16 @@ export default async function HomeHiddenJobsFeed() {
       </div>
 
       {items.length === 0 ? (
-        <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            Hidden job sources are warming up. Check back in a moment or open Hidden Jobs Discovery.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Radar}
+          title="Hidden sources are warming up"
+          description="Reddit, Hacker News, and GitHub opportunities will land here. Open discovery to browse meanwhile."
+          action={
+            <Button asChild size="sm">
+              <Link href={dashboardHref("job-discovery")}>Open discovery</Link>
+            </Button>
+          }
+        />
       ) : (
         <ul className="space-y-2">
           {items.map((item) => (

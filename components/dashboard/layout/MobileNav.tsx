@@ -4,6 +4,7 @@ import type { DashboardRouteId } from "@/lib/dashboard-routes";
 import { getDashboardRoute } from "@/lib/dashboard-routes";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { cn } from "@/lib/utils";
+import { FOCUS_RING } from "@/lib/focus-ring";
 
 const MOBILE_ROUTES: DashboardRouteId[] = [
   "home",
@@ -33,7 +34,8 @@ export default function MobileNav() {
                 type="button"
                 onClick={() => navigate(routeId)}
                 className={cn(
-                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1.5 text-xs font-medium transition-all duration-200",
+                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1.5 text-xs font-medium transition-colors duration-150 ease-out",
+                  FOCUS_RING,
                   active
                     ? "bg-brand-50 text-brand"
                     : "text-fg-secondary hover:bg-[var(--wg-bg-secondary)]",

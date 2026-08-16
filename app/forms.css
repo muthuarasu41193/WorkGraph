@@ -23,8 +23,10 @@
   }
 
   .wg-field:focus-visible {
-    border-color: var(--wg-primary);
-    box-shadow: 0 0 0 2px var(--wg-brand-100);
+    border-color: #ef4444;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px #ef4444;
   }
 
   .wg-field:disabled {
@@ -42,6 +44,8 @@
 
 .dark .wg-field:focus-visible,
 [data-theme="dark"] .wg-field:focus-visible {
-  border-color: var(--wg-primary);
-  box-shadow: 0 0 0 2px var(--wg-error-100);
+  border-color: #ef4444;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }

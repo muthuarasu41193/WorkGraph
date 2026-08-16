@@ -6,6 +6,8 @@ import { SITE } from "@/lib/constants";
 import { PageShell } from "@/components/layout/PageShell";
 import { PageTransition } from "@/components/layout/PageTransition";
 import JsonLd from "@/components/seo/JsonLd";
+import ThemeProvider from "@/components/theme/ThemeProvider";
+import { ThemeScript } from "@/components/theme/ThemeScript";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,11 +63,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={cn(inter.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
-        <JsonLd />
-        <PageTransition>
-          {children}
-        </PageTransition>
-        <PageShell />
+        <ThemeScript />
+        <ThemeProvider>
+          <JsonLd />
+          <PageTransition>
+            {children}
+          </PageTransition>
+          <PageShell />
+        </ThemeProvider>
       </body>
     </html>
   );

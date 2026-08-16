@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import {
   BadgeCheck,
   Building2,
-  Loader2,
   MapPin,
   Radio,
   Send,
@@ -21,6 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import EmptyState from "@/components/design-system/EmptyState";
+import { ListSkeleton } from "@/components/ui/skeleton";
 import ApplicationConnectDialog, {
   type ApplicationFormValues,
 } from "./ApplicationConnectDialog";
@@ -175,24 +176,22 @@ export default function WorkgraphDirectSection({
       ) : null}
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
+        <ListSkeleton rows={4} className="py-4" />
       ) : error ? (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : signals.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            No live hiring signals yet. Employers on WorkGraph publish intent posts here — check back
-            soon, or{" "}
-            <a href="/employer/signup" className="font-medium text-[var(--wg-red)] underline-offset-2 hover:underline">
-              post as an employer
-            </a>
-            .
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Radio}
+          title="No live hiring signals yet"
+          description="Employers on WorkGraph publish intent posts here. Check back soon, or post as an employer."
+          action={
+            <Button asChild variant="outline" size="sm">
+              <a href="/employer/signup">Post as an employer</a>
+            </Button>
+          }
+        />
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {signals.map((signal) => {

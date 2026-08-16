@@ -8,7 +8,12 @@
     border-radius: var(--wg-radius-md);
     font-weight: 500;
     letter-spacing: var(--wg-tracking-body);
-    transition: all var(--wg-duration) var(--wg-ease);
+    transition:
+      color var(--wg-duration) var(--wg-ease),
+      background-color var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease),
+      transform var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease);
     outline: none;
     user-select: none;
   }
@@ -18,14 +23,14 @@
     opacity: 0.5;
   }
 
-  .wg-btn:not(:disabled):hover {
-    transform: scale(1.02);
+  .wg-btn:not(:disabled):active {
+    transform: scale(0.98);
   }
 
   .wg-btn:focus-visible {
     box-shadow:
-      0 0 0 2px var(--wg-surface),
-      0 0 0 4px var(--wg-primary);
+      0 0 0 2px var(--background),
+      0 0 0 4px #ef4444;
   }
 
   .wg-btn-primary {

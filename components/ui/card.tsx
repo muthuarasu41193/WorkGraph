@@ -1,9 +1,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { cardHoverLift } from "@/lib/focus-ring"
 
 const cardBase =
-  "group/card flex flex-col gap-4 overflow-hidden rounded-lg border border-border-default bg-surface p-5 text-sm shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md dark:bg-surface"
+  "group/card flex flex-col gap-4 overflow-hidden rounded-lg border border-border-default bg-surface p-5 text-sm shadow-sm hover:border-border-strong dark:bg-surface " +
+  cardHoverLift
 
 function Card({
   className,

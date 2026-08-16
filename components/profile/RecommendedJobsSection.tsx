@@ -15,7 +15,6 @@ import {
   LayoutGrid,
   LayoutList,
   LifeBuoy,
-  Loader2,
   SearchX,
   Search,
   SlidersHorizontal,
@@ -60,6 +59,7 @@ import { cn } from "@/lib/utils";
 import { iconClass } from "@/lib/icon-styles";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
 import JobCard, { JobCardSkeleton } from "@/components/design-system/JobCard";
+import EmptyState from "@/components/design-system/EmptyState";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
 import ApplyFollowupPrompt from "@/components/design-system/ApplyFollowupPrompt";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
@@ -1600,7 +1600,10 @@ export default function RecommendedJobsSection({
                 </button>
               ) : null}
               {isSearching ? (
-                <Loader2 className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-slate-400" />
+                <span
+                  className="absolute right-3 top-1/2 h-3.5 w-8 -translate-y-1/2 rounded wg-skeleton-shimmer"
+                  aria-label="Searching"
+                />
               ) : null}
             </div>
 
@@ -2093,7 +2096,7 @@ export default function RecommendedJobsSection({
               </div>
             </details>
             {isPageLoading ? (
-              <Loader2 className={iconClass("inline", "animate-spin text-slate-400")} aria-label="Loading jobs" />
+              <span className="h-3 w-16 rounded wg-skeleton-shimmer" aria-label="Loading jobs" />
             ) : null}
           </div>
           <div className="view-toggle" role="group" aria-label="Choose jobs list view">
@@ -2131,13 +2134,14 @@ export default function RecommendedJobsSection({
       <div className="relative">
         {showPageLoadingOverlay ? (
           <div
-            className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center rounded-xl bg-surface/60 pt-8 backdrop-blur-[1px]"
+            className="pointer-events-none absolute inset-0 z-10 rounded-xl bg-surface/50 pt-2 backdrop-blur-[1px]"
             aria-hidden
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-border-default bg-surface px-4 py-2 text-sm text-fg-secondary shadow-sm">
-              <Loader2 className={iconClass("inline", "animate-spin text-info")} />
-              Loading page {safePage}…
-            </span>
+            <div className="job-list px-1">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <JobCardSkeleton key={`overlay-${idx}`} />
+              ))}
+            </div>
           </div>
         ) : null}
       <div
@@ -2336,68 +2340,57 @@ export default function RecommendedJobsSection({
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings === 0 && !isPageLoading ? (
-        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
-          <SearchX className="mx-auto h-20 w-20 text-border-default" />
-          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No jobs indexed yet</h3>
-          <p className="mt-2 text-sm text-fg-tertiary">
-            Run the job ingest pipeline to populate live listings from ATS sources.
-          </p>
-        </div>
+        <EmptyState
+          icon={SearchX}
+          title="No jobs indexed yet"
+          description="Live listings will appear here once the job ingest pipeline populates ATS sources."
+        />
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && !userFiltersActive && liveListings > 0 && !showProfileMatchesOnly && !isPageLoading ? (
-        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-info" />
-          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">Loading jobs…</h3>
-          <p className="mt-2 text-sm text-fg-tertiary">
-            {liveListings.toLocaleString()} jobs are indexed. Fetching listings now.
-          </p>
+        <div className="job-list" aria-busy="true" aria-label="Loading jobs">
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <JobCardSkeleton key={`fetch-${idx}`} />
+          ))}
         </div>
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length > 0 && !showProfileMatchesOnly ? (
-        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
-          <SearchX className="mx-auto h-20 w-20 text-border-default" />
-          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No jobs found</h3>
-          <p className="mt-2 text-sm text-fg-tertiary">Try adjusting your filters or search terms</p>
-          <div className="mt-4 flex items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="inline-flex h-10 items-center rounded-[20px] border border-info px-5 text-sm font-medium text-info"
-            >
-              Clear all filters
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                clearFilters();
-                setCurrentPage(1);
-              }}
-              className="text-sm font-medium text-info underline underline-offset-2"
-            >
-              Browse all jobs
-            </button>
-          </div>
-        </div>
+        <EmptyState
+          icon={SearchX}
+          title="No jobs found"
+          description="Try adjusting your filters or search terms to see more roles."
+          action={
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button type="button" variant="outline" onClick={clearFilters}>
+                Clear all filters
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  clearFilters();
+                  setCurrentPage(1);
+                }}
+              >
+                Browse all jobs
+              </Button>
+            </div>
+          }
+        />
       ) : null}
 
       {!showSkeleton && listingPipeline.length === 0 && userFiltersActive && skillHints.length === 0 ? (
-        <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
-          <UserSearch className="mx-auto h-20 w-20 text-info" />
-          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">Complete your profile to see matches</h3>
-          <div className="mx-auto mt-4 flex max-w-sm flex-col items-start gap-2 text-sm">
-            <Link href="/create-profile#skills" className="inline-flex items-center gap-1 text-info">Add your skills <ArrowRight className={iconClass()} /></Link>
-            <Link href="/create-profile#salary" className="inline-flex items-center gap-1 text-info">Add expected salary <ArrowRight className={iconClass()} /></Link>
-            <Link href="/create-profile#location" className="inline-flex items-center gap-1 text-info">Add location preference <ArrowRight className={iconClass()} /></Link>
-          </div>
-          <Link
-            href="/create-profile"
-            className="mt-5 inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-white hover:bg-info-foreground"
-          >
-            Complete Profile
-          </Link>
-        </div>
+        <EmptyState
+          icon={UserSearch}
+          title="Complete your profile to see matches"
+          description="Add skills, salary, and location so we can rank roles that actually fit you."
+          action={
+            <Button asChild>
+              <Link href="/create-profile">Complete Profile</Link>
+            </Button>
+          }
+        />
       ) : null}
       </div>
 

@@ -8,7 +8,6 @@ import DashboardLayout from "../../dashboard/layout/DashboardLayout";
 import DashboardSectionSkeleton from "../../dashboard/DashboardSectionSkeleton";
 import { DashboardProvider } from "../../dashboard/DashboardProvider";
 import DashboardViewRouter from "../../dashboard/sections/DashboardViewRouter";
-import ProfileThemeProvider from "../theme/ProfileThemeProvider";
 import ProfileSaveStatus from "../ProfileSaveStatus";
 import PageHero from "@/components/design-system/PageHero";
 import ProfileHero from "./ProfileHero";
@@ -235,10 +234,8 @@ function ProfileShellInner({
 
 export default function ProfileShell(props: ProfileShellProps) {
   return (
-    <ProfileThemeProvider>
-      <div className="wg-profile-app">
-        <ProfileShellInner {...props} />
-      </div>
-    </ProfileThemeProvider>
+    <div className="wg-profile-app">
+      <ProfileShellInner {...props} />
+    </div>
   );
 }

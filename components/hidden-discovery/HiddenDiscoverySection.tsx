@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Radar, RefreshCw } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import HiddenDiscoveryFilters from "./HiddenDiscoveryFilters";
 import HiddenOpportunityCard from "./HiddenOpportunityCard";
@@ -12,8 +12,9 @@ import {
   toggleSavedOpportunity,
 } from "@/lib/hidden-opportunities/saved-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import EmptyState from "@/components/design-system/EmptyState";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { ListSkeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function HiddenDiscoverySection() {
@@ -78,8 +79,8 @@ export default function HiddenDiscoverySection() {
           >
             Saved ({savedIds.size})
           </Button>
-          <Button type="button" variant="outline" size="sm" onClick={() => void reload()} disabled={loading}>
-            {loading ? <Loader2 className={iconClass("inline", "animate-spin")} /> : <RefreshCw className={iconClass()} />}
+          <Button type="button" variant="outline" size="sm" onClick={() => void reload()} loading={loading}>
+            <RefreshCw className={iconClass()} />
             Refresh
           </Button>
         </div>
@@ -103,20 +104,13 @@ export default function HiddenDiscoverySection() {
       ) : null}
 
       {loading && visible.length === 0 ? (
-        <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            Aggregating opportunities from providers…
-          </CardContent>
-        </Card>
-      ) : null}
-
-      {!loading && visible.length === 0 ? (
-        <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            No opportunities match your filters. Try broadening search or date range.
-          </CardContent>
-        </Card>
+        <ListSkeleton rows={4} />
+      ) : !loading && visible.length === 0 ? (
+        <EmptyState
+          icon={Radar}
+          title="No opportunities match"
+          description="Try broadening your search, source, or date range to see more hidden roles."
+        />
       ) : (
         <ul className="hidden-discovery-feed">
           {visible.map((opportunity) => (

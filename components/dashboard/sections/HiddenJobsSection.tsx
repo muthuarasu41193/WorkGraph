@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { ExternalLink, Eye, RotateCcw } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import type { RecommendedJobCard } from "@/lib/job-dashboard";
 import { readHiddenJobIds, restoreJob } from "@/lib/hidden-jobs-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import EmptyState from "@/components/design-system/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { dashboardHref } from "@/lib/dashboard-routes";
 
 export default function HiddenJobsSection() {
   const { userId, recommendedJobs } = useDashboardContext();
@@ -41,15 +44,16 @@ export default function HiddenJobsSection() {
       </header>
 
       {hiddenJobs.length === 0 ? (
-        <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="flex flex-col items-center py-12 text-center">
-            <Eye className="mb-3 h-10 w-10 text-muted-foreground" />
-            <p className="font-medium">No hidden jobs yet</p>
-            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              When browsing listings, use Hide on roles you are not interested in — they will appear here.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Eye}
+          title="No hidden jobs yet"
+          description="When browsing listings, use Hide on roles you are not interested in — they will appear here."
+          action={
+            <Button asChild size="sm">
+              <Link href={dashboardHref("jobs")}>Browse jobs</Link>
+            </Button>
+          }
+        />
       ) : (
         <ul className="space-y-3">
           {hiddenJobs.map((job) => (

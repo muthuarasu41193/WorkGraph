@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Briefcase, Building2, Loader2, Search, Sparkles, X } from "lucide-react";
+import { Briefcase, Building2, Search, Sparkles, X } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -114,14 +114,16 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
         className={cn(
           "h-10 rounded-[10px] border-slate-200 bg-slate-50 py-0 pl-10 text-[13.5px] text-slate-800 shadow-none",
           "placeholder:text-[13.5px] placeholder:text-slate-400",
-          "focus:border-red-400 focus:ring-2 focus:ring-red-100",
-          "focus-visible:border-red-400 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-red-100",
+          "focus-visible:border-red-500 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
           "[&::-webkit-search-cancel-button]:hidden",
           compact ? "pr-3" : "pr-14",
         )}
       />
       {query.length > 1 && deferredQuery !== query.trim().toLowerCase() ? (
-        <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-slate-400" />
+        <span
+          className="absolute right-3 top-1/2 h-3.5 w-8 -translate-y-1/2 rounded wg-skeleton-shimmer"
+          aria-label="Searching"
+        />
       ) : !compact && !query ? (
         <button
           type="button"

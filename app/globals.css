@@ -86,11 +86,27 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--background);
+  transition: background-color 200ms ease;
+}
+
+html,
+body {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+    transition: none;
+  }
+
+  html,
+  body {
+    transition: none;
   }
 }
 
@@ -117,9 +133,15 @@ html {
   background: var(--wg-primary-hover);
 }
 
+*:focus {
+  outline: none;
+}
+
 *:focus-visible {
-  outline: 2px solid var(--wg-primary);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px #ef4444;
 }
 
 section[id] {
@@ -599,13 +621,28 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background font-sans antialiased;
   }
   html {
     @apply font-sans;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea,
+  summary,
+  [data-slot="button"],
+  [data-slot="checkbox"],
+  [data-slot="input"] {
+    transition-property: color, background-color, border-color, box-shadow, text-decoration-color, fill, stroke;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
   }
   a[href]:where(:not([data-slot="button"]):not([role="button"])) {
     text-underline-offset: 4px;

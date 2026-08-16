@@ -8,7 +8,6 @@ import {
   Check,
   CheckCircle,
   FileText,
-  Loader2,
   Upload,
 } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
@@ -183,10 +182,15 @@ export default function ResumeUploader() {
 
   if (status === "parsing") {
     return (
-      <div className="rounded-[14px] border border-border bg-card p-8 text-center shadow-sm">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
-        <p className="mt-4 text-base font-semibold text-foreground">Analyzing your resume…</p>
-        <p className="mt-1 text-sm text-muted-foreground">Usually finishes in a few seconds</p>
+      <div className="rounded-[14px] border border-border bg-card p-8 shadow-sm" aria-busy="true">
+        <div className="mx-auto h-12 w-12 rounded-xl wg-skeleton-shimmer" />
+        <div className="mx-auto mt-4 h-5 w-48 rounded wg-skeleton-shimmer" />
+        <p className="mt-3 text-center text-sm text-muted-foreground">Analyzing your resume… usually a few seconds</p>
+        <div className="mt-6 space-y-2">
+          <div className="h-3 w-full rounded wg-skeleton-shimmer" />
+          <div className="h-3 w-5/6 rounded wg-skeleton-shimmer" />
+          <div className="h-3 w-2/3 rounded wg-skeleton-shimmer" />
+        </div>
       </div>
     );
   }

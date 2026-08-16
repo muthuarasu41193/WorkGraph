@@ -1,20 +1,19 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { BUTTON_PRESS, FOCUS_RING } from "@/lib/focus-ring"
 import { WG_ICON } from "@/lib/icon-styles"
-
-const premiumFocus =
-  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand focus-visible:outline-none"
-const premiumMotion =
-  "transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
 
 const buttonVariants = cva(
   cn(
-    "group/button wg-touch-target inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-sm font-medium tracking-body whitespace-nowrap outline-none select-none",
-    premiumMotion,
-    premiumFocus,
+    "group/button wg-touch-target relative inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-sm font-medium tracking-body whitespace-nowrap select-none",
+    "transition-colors duration-150 ease-out",
+    BUTTON_PRESS,
+    FOCUS_RING,
+    "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
     "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20",
     WG_ICON.childInline,
   ),
@@ -36,7 +35,7 @@ const buttonVariants = cva(
           "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs aria-expanded:bg-surface-active dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
         destructive:
           "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm",
-        link: "border-transparent bg-transparent text-brand shadow-none transition-all duration-200 ease-in-out enabled:hover:scale-100 enabled:hover:underline underline-offset-4",
+        link: "border-transparent bg-transparent text-brand shadow-none enabled:hover:scale-100 enabled:active:scale-100 enabled:hover:underline underline-offset-4",
       },
       size: {
         default:
@@ -65,21 +64,44 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  loading = false,
+  children,
+  disabled,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    loading?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "button"
+  const isDisabled = Boolean(disabled || loading)
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      data-loading={loading ? "true" : undefined}
+      aria-busy={loading || undefined}
+      disabled={asChild ? undefined : isDisabled}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {asChild ? (
+        children
+      ) : loading ? (
+        <>
+          <span className="invisible inline-flex items-center justify-center gap-[inherit]">
+            {children}
+          </span>
+          <span className="absolute inset-0 inline-flex items-center justify-center" aria-hidden>
+            <Loader2 className="size-4 animate-spin" />
+          </span>
+        </>
+      ) : (
+        children
+      )}
+    </Comp>
   )
 }
 

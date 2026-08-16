@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Brain, Loader2, Sparkles } from "lucide-react";
+import { Brain, Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
@@ -192,9 +192,9 @@ export default function ResumeIntelligenceSection({
           <div className="flex flex-wrap gap-2">
             <Button
               onClick={() => analyze(false)}
-              disabled={loading || !hasResume || jobDescription.trim().length < 80}
+              disabled={!hasResume || jobDescription.trim().length < 80}
+              loading={loading}
             >
-              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Analyze Resume
             </Button>
             {report ? (

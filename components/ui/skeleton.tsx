@@ -10,4 +10,14 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Skeleton }
+function ListSkeleton({ rows = 3, className }: { rows?: number; className?: string }) {
+  return (
+    <div className={cn("space-y-3", className)} aria-busy="true" aria-label="Loading">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-24 w-full rounded-xl" />
+      ))}
+    </div>
+  )
+}
+
+export { Skeleton, ListSkeleton }

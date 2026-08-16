@@ -19,6 +19,7 @@
   overflow: hidden;
   background: var(--dash-page-bg);
   scroll-behavior: smooth;
+  transition: background-color 200ms ease;
 }
 
 .dark .wg-dash-root,

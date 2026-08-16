@@ -3,14 +3,16 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Loader2, Radio } from "lucide-react";
+import { LayoutDashboard, Radio } from "lucide-react";
 import type { EmployerProfile, HiringSignal } from "@/lib/employer/types";
 import { HIRING_INTENT_LABELS } from "@/lib/employer/types";
 import PulseInbox from "@/components/employer/PulseInbox";
 import VerificationBanner from "@/components/employer/VerificationBanner";
+import EmptyState from "@/components/design-system/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ListSkeleton } from "@/components/ui/skeleton";
 
 export default function EmployerDashboardPage() {
   const searchParams = useSearchParams();
@@ -67,18 +69,18 @@ export default function EmployerDashboardPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
+        <ListSkeleton rows={3} />
       ) : signals.length === 0 ? (
-        <Card>
-          <CardContent className="space-y-4 py-10 text-center">
-            <p className="text-sm text-muted-foreground">No signals yet.</p>
+        <EmptyState
+          icon={Radio}
+          title="No hiring signals yet"
+          description="Post a live signal so jobseekers can discover your roles in WorkGraph Direct."
+          action={
             <Button asChild>
               <Link href="/employer/signals/new">Post your first hiring signal</Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <ul className="space-y-3">
           {signals.map((s) => (

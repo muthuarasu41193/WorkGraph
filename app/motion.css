@@ -1,8 +1,9 @@
 /* WorkGraph motion system — smooth transitions & micro-interactions */
 
 :root {
-  --wg-duration: 200ms;
-  --wg-ease: ease-in-out;
+  --wg-duration: 150ms;
+  --wg-ease: ease-out;
+  --wg-duration-theme: 200ms;
   --wg-skeleton-base: var(--wg-slate-100);
   --wg-skeleton-highlight: var(--wg-slate-200);
 }
@@ -22,19 +23,50 @@
   }
 }
 
+@keyframes wg-toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wg-toast-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
 @layer components {
   /* Base interactive transition */
   .wg-interactive {
-    transition: all var(--wg-duration) var(--wg-ease);
+    transition:
+      color var(--wg-duration) var(--wg-ease),
+      background-color var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease);
   }
 
-  /* Buttons: subtle scale on hover */
+  /* Buttons: press, not hover-grow */
   .wg-motion-button {
-    transition: all var(--wg-duration) var(--wg-ease);
+    transition:
+      color var(--wg-duration) var(--wg-ease),
+      background-color var(--wg-duration) var(--wg-ease),
+      border-color var(--wg-duration) var(--wg-ease),
+      transform var(--wg-duration) var(--wg-ease),
+      box-shadow var(--wg-duration) var(--wg-ease);
   }
 
-  .wg-motion-button:not(:disabled):hover {
-    transform: scale(1.02);
+  .wg-motion-button:not(:disabled):active {
+    transform: scale(0.98);
   }
 
   /* Cards: lift on hover */
@@ -47,6 +79,15 @@
 
   .wg-motion-card:hover {
     transform: translateY(-2px);
+    box-shadow: var(--wg-shadow-md);
+  }
+
+  .wg-toast {
+    animation: wg-toast-in 280ms var(--wg-ease) both;
+  }
+
+  .wg-toast[data-leaving="true"] {
+    animation: wg-toast-out 180ms var(--wg-ease) both;
   }
 
   /* Links: subtle underline on hover */
@@ -77,13 +118,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wg-motion-button:not(:disabled):hover,
+  .wg-motion-button:not(:disabled):active,
   .wg-motion-card:hover {
     transform: none;
   }
 
-  .wg-skeleton-shimmer {
+  .wg-skeleton-shimmer,
+  .wg-toast,
+  .wg-toast[data-leaving="true"] {
     animation: none;
+  }
+
+  .wg-skeleton-shimmer {
     background: var(--wg-skeleton-base);
   }
 }
