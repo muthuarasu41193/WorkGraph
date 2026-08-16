@@ -53,7 +53,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
       <img
         src={logoUrl}
         alt=""
-        className="h-10 w-10 shrink-0 rounded-lg bg-slate-100 object-cover"
+        className="h-9 w-9 shrink-0 rounded-md bg-slate-100 object-cover"
         onError={() => setFailed(true)}
       />
     );
@@ -61,7 +61,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[13px] font-semibold text-slate-700"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-slate-100 text-[12px] font-semibold text-slate-700"
       aria-hidden
     >
       {companyInitials(company)}
@@ -71,7 +71,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
 function JobChip({ children }: { children: string }) {
   return (
-    <span className="rounded-[6px] bg-slate-50 px-2 py-0.5 text-[11.5px] leading-tight text-slate-600">
+    <span className="rounded-[6px] bg-slate-50 px-1.5 py-px text-[11px] leading-tight text-slate-600">
       {children}
     </span>
   );
@@ -121,7 +121,7 @@ export function JobCardSkeleton() {
     <article className="job-card" aria-hidden>
       <div className="flex flex-col gap-3 md:hidden">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 shrink-0 rounded-lg wg-skeleton-shimmer" />
+          <div className="h-9 w-9 shrink-0 rounded-md wg-skeleton-shimmer" />
           <div className="min-w-0 flex-1 space-y-2 pt-0.5">
             <div className="h-3.5 w-28 rounded wg-skeleton-shimmer" />
             <div className="h-3 w-36 rounded wg-skeleton-shimmer" />
@@ -136,7 +136,7 @@ export function JobCardSkeleton() {
 
       <div className="hidden md:flex md:items-start md:gap-3">
         <div className="flex min-w-0 flex-1 items-start gap-3">
-          <div className="h-10 w-10 shrink-0 rounded-lg wg-skeleton-shimmer" />
+          <div className="h-9 w-9 shrink-0 rounded-md wg-skeleton-shimmer" />
           <div className="min-w-0 flex-1 space-y-2 pt-0.5">
             <div className="h-4 w-2/3 max-w-[240px] rounded wg-skeleton-shimmer" />
             <div className="h-3 w-1/2 max-w-[200px] rounded wg-skeleton-shimmer" />
@@ -263,8 +263,8 @@ export default function JobCard({
       tabIndex={onClick ? 0 : undefined}
       className={cn("job-card wg-job-card-enter group min-w-0", onClick && "cursor-pointer", className)}
     >
-      <div className="flex flex-col gap-3 md:hidden">
-        <div className="flex items-start gap-3">
+      <div className="flex flex-col gap-2 md:hidden">
+        <div className="flex items-start gap-2.5">
           <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-medium leading-snug text-slate-700">{job.company}</p>
@@ -278,7 +278,7 @@ export default function JobCard({
         </div>
 
         <div className="flex items-start gap-2">
-          <h3 className="min-w-0 flex-1 text-[15px] font-semibold leading-snug tracking-tight text-slate-900">
+          <h3 className="min-w-0 flex-1 text-[14px] font-semibold leading-snug tracking-tight text-slate-900">
             {job.title}
           </h3>
           {job.matchPercent !== undefined ? <MatchBadge percent={job.matchPercent} /> : null}
@@ -297,12 +297,12 @@ export default function JobCard({
         ) : null}
       </div>
 
-      <div className="hidden md:flex md:items-start md:gap-3">
-        <div className="flex min-w-0 flex-1 items-start gap-3">
+      <div className="hidden md:flex md:items-start md:gap-2.5">
+        <div className="flex min-w-0 flex-1 items-start gap-2.5">
           <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
           <div className="min-w-0 flex-1">
             <div className="flex items-start gap-2">
-              <h3 className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-snug tracking-tight text-slate-900">
+              <h3 className="min-w-0 flex-1 truncate text-[14px] font-semibold leading-snug tracking-tight text-slate-900">
                 {job.title}
               </h3>
               {onSave ? <BookmarkButton saved={saved} onSave={() => onSave(job.id)} /> : null}

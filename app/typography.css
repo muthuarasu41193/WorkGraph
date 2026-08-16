@@ -1,13 +1,13 @@
-/* WorkGraph typography system — Inter + JetBrains Mono */
+/* WorkGraph typography system — Plus Jakarta Sans + JetBrains Mono */
 
 :root {
   --wg-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --wg-font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --wg-font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
-  --wg-leading-body: 1.5;
-  --wg-leading-heading: 1.2;
-  --wg-tracking-body: -0.005em;
-  --wg-tracking-heading: -0.01em;
+  --wg-leading-body: 1.45;
+  --wg-leading-heading: 1.25;
+  --wg-tracking-body: -0.011em;
+  --wg-tracking-heading: -0.022em;
   --wg-text-xs: 0.75rem; /* 12 */
   --wg-text-sm: 0.8125rem; /* 13 */
   --wg-text-base: 0.875rem; /* 14 */
@@ -22,6 +22,7 @@
   html {
     font-family: var(--wg-font-sans);
     letter-spacing: var(--wg-tracking-body);
+    font-feature-settings: "kern" 1, "liga" 1;
   }
 
   body {

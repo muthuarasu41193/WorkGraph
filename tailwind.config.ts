@@ -42,12 +42,12 @@ const config: Config = {
         fg: {
           primary: "#0F172A",
           secondary: "#475569",
-          tertiary: "#94A3B8",
+          tertiary: "#64748B",
         },
         foreground: {
           DEFAULT: "#0F172A",
           secondary: "#475569",
-          muted: "#94A3B8",
+          muted: "#64748B",
         },
         border: {
           DEFAULT: "#E2E8F0",
@@ -99,14 +99,14 @@ const config: Config = {
         numeric: ["var(--font-jetbrains)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       fontSize: {
-        xs: ["0.75rem", { lineHeight: "1.5", letterSpacing: "-0.005em" }],
-        sm: ["0.8125rem", { lineHeight: "1.5", letterSpacing: "-0.005em" }],
-        base: ["0.875rem", { lineHeight: "1.5", letterSpacing: "-0.005em" }],
-        md: ["0.9375rem", { lineHeight: "1.5", letterSpacing: "-0.005em" }],
-        lg: ["1.0625rem", { lineHeight: "1.5", letterSpacing: "-0.005em" }],
-        xl: ["1.25rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
-        "2xl": ["1.5rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
-        "3xl": ["1.875rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        xs: ["0.75rem", { lineHeight: "1.4", letterSpacing: "-0.011em" }],
+        sm: ["0.8125rem", { lineHeight: "1.45", letterSpacing: "-0.011em" }],
+        base: ["0.875rem", { lineHeight: "1.45", letterSpacing: "-0.011em" }],
+        md: ["0.9375rem", { lineHeight: "1.45", letterSpacing: "-0.011em" }],
+        lg: ["1.0625rem", { lineHeight: "1.4", letterSpacing: "-0.018em" }],
+        xl: ["1.25rem", { lineHeight: "1.25", letterSpacing: "-0.022em" }],
+        "2xl": ["1.5rem", { lineHeight: "1.2", letterSpacing: "-0.024em" }],
+        "3xl": ["1.875rem", { lineHeight: "1.15", letterSpacing: "-0.028em" }],
       },
       fontWeight: {
         normal: "400",
@@ -115,12 +115,12 @@ const config: Config = {
         bold: "700",
       },
       letterSpacing: {
-        body: "-0.005em",
-        heading: "-0.01em",
+        body: "-0.011em",
+        heading: "-0.022em",
       },
       lineHeight: {
-        body: "1.5",
-        heading: "1.2",
+        body: "1.45",
+        heading: "1.25",
       },
       spacing: {
         "1": "4px",

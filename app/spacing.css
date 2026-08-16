@@ -3,11 +3,11 @@
 :root {
   --wg-radius-sm: 6px;
   --wg-radius-md: 8px;
-  --wg-radius-lg: 12px;
-  --wg-radius-xl: 16px;
-  --wg-pad-button-x: 1rem; /* px-4 */
-  --wg-pad-button-y: 0.625rem; /* py-2.5 */
-  --wg-pad-card: 1.25rem; /* p-5 */
+  --wg-radius-lg: 10px;
+  --wg-radius-xl: 14px;
+  --wg-pad-button-x: 0.875rem;
+  --wg-pad-button-y: 0.5rem;
+  --wg-pad-card: 1rem;
 }
 
 @layer components {

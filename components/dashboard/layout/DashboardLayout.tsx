@@ -34,7 +34,7 @@ function DashboardLayoutInner({ children }: Props) {
       <div className="flex min-w-0 flex-1 flex-col overflow-x-clip overflow-y-hidden">
         <TopNav />
 
-        <div className="wg-dash-main min-w-0 max-w-full px-4 py-6 md:px-6 min-[1025px]:px-8 min-[1025px]:py-8">
+        <div className="wg-dash-main min-w-0 max-w-full px-4 py-4 md:px-5 min-[1025px]:px-6 min-[1025px]:py-5">
           <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">{children}</div>
         </div>
       </div>

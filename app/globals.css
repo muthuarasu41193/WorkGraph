@@ -453,26 +453,26 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --font-numeric: var(--wg-font-mono);
 
   --text-xs: 0.75rem;
-  --text-xs--line-height: 1.5;
+  --text-xs--line-height: 1.4;
   --text-sm: 0.8125rem;
-  --text-sm--line-height: 1.5;
+  --text-sm--line-height: 1.45;
   --text-base: 0.875rem;
-  --text-base--line-height: 1.5;
+  --text-base--line-height: 1.45;
   --text-md: 0.9375rem;
-  --text-md--line-height: 1.5;
+  --text-md--line-height: 1.45;
   --text-lg: 1.0625rem;
-  --text-lg--line-height: 1.5;
+  --text-lg--line-height: 1.4;
   --text-xl: 1.25rem;
-  --text-xl--line-height: 1.2;
+  --text-xl--line-height: 1.25;
   --text-2xl: 1.5rem;
   --text-2xl--line-height: 1.2;
   --text-3xl: 1.875rem;
-  --text-3xl--line-height: 1.2;
+  --text-3xl--line-height: 1.15;
 
-  --leading-body: 1.5;
-  --leading-heading: 1.2;
-  --tracking-body: -0.005em;
-  --tracking-heading: -0.01em;
+  --leading-body: 1.45;
+  --leading-heading: 1.25;
+  --tracking-body: -0.011em;
+  --tracking-heading: -0.022em;
 
   --color-brand-50: var(--wg-brand-50);
   --color-brand-100: var(--wg-brand-100);

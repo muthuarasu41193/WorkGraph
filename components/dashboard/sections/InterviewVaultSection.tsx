@@ -84,10 +84,10 @@ export default function InterviewVaultSection() {
   }
 
   return (
-    <section className="space-y-8" aria-labelledby="vault-heading">
+    <section className="space-y-4" aria-labelledby="vault-heading">
       <header>
-        <h1 id="vault-heading" className="text-2xl font-bold tracking-tight">Prep Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 id="vault-heading" className="text-xl font-semibold tracking-tight text-fg-primary">Prep Vault</h1>
+        <p className="mt-0.5 text-[13px] text-fg-secondary">
           Private prep notes stored on this device — questions, answers, and company research.
         </p>
       </header>

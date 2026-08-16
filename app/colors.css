@@ -36,7 +36,7 @@
   /* Text hierarchy */
   --wg-text-primary: var(--wg-slate-900);
   --wg-text-secondary: var(--wg-slate-600);
-  --wg-text-tertiary: var(--wg-slate-400);
+  --wg-text-tertiary: var(--wg-slate-500);
   --wg-text-muted: var(--wg-text-tertiary);
   --wg-text-inverse: #ffffff;
   --wg-text-primary-hover: var(--wg-slate-800);
@@ -88,8 +88,8 @@
   --wg-primary-hover: var(--wg-brand-400);
 
   --wg-text-primary: var(--wg-slate-50);
-  --wg-text-secondary: var(--wg-slate-400);
-  --wg-text-tertiary: var(--wg-slate-500);
+  --wg-text-secondary: var(--wg-slate-300);
+  --wg-text-tertiary: var(--wg-slate-400);
   --wg-text-muted: var(--wg-text-tertiary);
   --wg-text-inverse: var(--wg-slate-950);
   --wg-text-primary-hover: #ffffff;

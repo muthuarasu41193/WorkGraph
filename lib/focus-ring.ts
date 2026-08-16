@@ -10,7 +10,7 @@ export const BUTTON_PRESS =
   "transition-transform duration-150 ease-out active:scale-[0.98] motion-reduce:active:scale-100"
 
 export const cardHoverLift =
-  "transition-[transform,box-shadow,border-color] duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0"
+  "transition-[box-shadow,border-color,background-color] duration-150 ease-out hover:shadow-sm motion-reduce:hover:shadow-none"
 
 export function interactiveClass(...classNames: Array<string | undefined>) {
   return cn(INTERACTIVE_COLORS, FOCUS_RING, ...classNames)

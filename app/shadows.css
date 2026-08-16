@@ -46,14 +46,12 @@
   .wg-shadow-card {
     box-shadow: var(--wg-shadow-sm);
     transition:
-      transform var(--wg-duration) var(--wg-ease),
       box-shadow var(--wg-duration) var(--wg-ease),
       border-color var(--wg-duration) var(--wg-ease);
   }
 
   .wg-shadow-card:hover {
-    box-shadow: var(--wg-shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--wg-shadow-sm);
   }
 
   .wg-shadow-button {

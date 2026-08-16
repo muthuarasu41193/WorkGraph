@@ -51,13 +51,13 @@ export default function HiddenDiscoverySection() {
   );
 
   return (
-    <section className="space-y-4" aria-labelledby="hidden-discovery-heading">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <section className="space-y-3" aria-labelledby="hidden-discovery-heading">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 id="hidden-discovery-heading" className="text-xl font-semibold tracking-tight text-foreground">
+          <h1 id="hidden-discovery-heading" className="text-[17px] font-semibold tracking-tight text-fg-primary">
             Unlisted Jobs
           </h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-[13px] text-fg-secondary">
             Hiring posts from Reddit, Hacker News, and GitHub.
             {meta ? (
               <span className="text-muted-foreground/80">

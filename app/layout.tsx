@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
@@ -9,7 +9,7 @@ import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
@@ -61,8 +61,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(inter.variable, jetbrainsMono.variable)} suppressHydrationWarning>
-      <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
+    <html lang="en" className={cn(plusJakarta.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+      <body className={cn(plusJakarta.className, "min-h-dvh bg-background text-foreground antialiased")}>
         <ThemeScript />
         <ThemeProvider>
           <JsonLd />

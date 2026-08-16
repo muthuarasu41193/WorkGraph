@@ -3,7 +3,7 @@ import { FOCUS_RING } from "@/lib/focus-ring"
 
 /** Shared premium form control styles for inputs, textareas, and selects. */
 export const formFieldClasses = cn(
-  "w-full min-w-0 rounded-md border border-border-default bg-surface px-4 py-2.5 font-sans text-sm font-normal tracking-body",
+  "w-full min-w-0 rounded-md border border-border-default bg-surface px-3 py-2 font-sans text-sm font-normal tracking-body",
   "transition-colors duration-150 ease-out",
   FOCUS_RING,
   "placeholder:text-fg-tertiary",

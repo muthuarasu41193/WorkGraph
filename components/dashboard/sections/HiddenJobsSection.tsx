@@ -10,7 +10,6 @@ import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import EmptyState from "@/components/design-system/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { dashboardHref } from "@/lib/dashboard-routes";
 
@@ -33,12 +32,12 @@ export default function HiddenJobsSection() {
   }
 
   return (
-    <section className="space-y-4" aria-labelledby="hidden-jobs-heading">
+    <section className="space-y-3" aria-labelledby="hidden-jobs-heading">
       <header>
-        <h1 id="hidden-jobs-heading" className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 id="hidden-jobs-heading" className="text-xl font-semibold tracking-tight text-fg-primary">
           Hidden Jobs
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-0.5 text-[13px] text-fg-secondary">
           Roles you dismissed from your feed. Restore any job to see it again under Jobs.
         </p>
       </header>
@@ -55,17 +54,16 @@ export default function HiddenJobsSection() {
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="overflow-hidden rounded-[10px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
           {hiddenJobs.map((job) => (
-            <li key={job.id}>
-              <Card className="wg-dash-section-card">
-                <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <li key={job.id} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
+              <div className="flex flex-col gap-2 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="font-semibold">{job.title}</h2>
-                      <Badge variant="outline">{job.source}</Badge>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <h2 className="text-[14px] font-semibold tracking-tight text-fg-primary">{job.title}</h2>
+                      <Badge variant="outline" className="h-5 px-1.5 text-[11px]">{job.source}</Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-[12.5px] text-fg-secondary">
                       {job.company} · {job.location}
                     </p>
                   </div>
@@ -83,8 +81,7 @@ export default function HiddenJobsSection() {
                       </Button>
                     ) : null}
                   </div>
-                </CardContent>
-              </Card>
+              </div>
             </li>
           ))}
         </ul>

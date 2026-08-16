@@ -94,7 +94,7 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
   const searchField = (
     <div className="relative min-w-0 flex-1">
       <Search
-        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-slate-400"
         aria-hidden
       />
       <Input
@@ -112,8 +112,8 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
         }}
         onFocus={() => setOpen(true)}
         className={cn(
-          "h-10 rounded-[10px] border-slate-200 bg-slate-50 py-0 pl-10 text-[13.5px] text-slate-800 shadow-none",
-          "placeholder:text-[13.5px] placeholder:text-slate-400",
+          "h-9 rounded-lg border-slate-200 bg-slate-50 py-0 pl-9 text-[13px] text-slate-800 shadow-none",
+          "placeholder:text-[13px] placeholder:text-slate-400",
           "focus-visible:border-red-500 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
           "[&::-webkit-search-cancel-button]:hidden",
           compact ? "pr-3" : "pr-14",

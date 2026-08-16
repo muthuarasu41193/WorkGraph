@@ -2,7 +2,7 @@
 .job-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   padding: 0;
   margin: 0;
   list-style: none;
@@ -344,23 +344,23 @@
 .job-card {
   background: var(--wg-surface);
   border: 1px solid var(--wg-border);
-  border-radius: 12px;
+  border-radius: 10px;
   margin: 0;
-  padding: 1.25rem;
+  padding: 0.75rem 0.875rem;
   max-width: 100%;
   min-width: 0;
   box-shadow: none;
   transition:
-    transform 150ms ease-out,
     border-color 150ms ease-out,
-    box-shadow 150ms ease-out;
+    box-shadow 150ms ease-out,
+    background-color 150ms ease-out;
   position: relative;
 }
 
 .job-card:hover {
   border-color: var(--wg-border-strong);
-  box-shadow: var(--wg-shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--wg-shadow-sm);
+  background: var(--wg-surface-hover);
 }
 
 .job-card__expanded {
@@ -417,7 +417,7 @@
 
 @media (max-width: 767px) {
   .job-card {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .job-card__bookmark {
@@ -451,7 +451,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .job-card:hover,
   .apply-btn:active {
     transform: none;
   }

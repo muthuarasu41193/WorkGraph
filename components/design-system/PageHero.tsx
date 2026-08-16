@@ -27,16 +27,16 @@ export default function PageHero({
   className,
 }: Props) {
   return (
-    <header className={cn("wg-section-fade space-y-6", className)}>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2">
+    <header className={cn("wg-section-fade space-y-3", className)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1">
           {greeting ? (
-            <p className="text-sm font-medium text-[var(--dash-text-secondary)]">{greeting}</p>
+            <p className="text-[13px] font-medium text-fg-secondary">{greeting}</p>
           ) : null}
-          <h1 className="font-semibold tracking-tight text-[var(--dash-text)] text-[clamp(1.375rem,4vw,1.875rem)]">
+          <h1 className="font-semibold tracking-heading text-fg-primary text-[clamp(1.25rem,3vw,1.625rem)]">
             {title}
           </h1>
-          <p className="max-w-2xl text-sm leading-relaxed text-[var(--dash-text-secondary)]">
+          <p className="max-w-2xl text-[13.5px] leading-relaxed text-fg-secondary">
             {subtitle}
           </p>
         </div>
@@ -44,19 +44,19 @@ export default function PageHero({
       </div>
 
       {metrics && metrics.length > 0 ? (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2">
           {metrics.map((m) => (
             <div
               key={m.label}
               className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px]",
                 m.accent
                   ? "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
                   : "bg-surface ring-1 ring-[var(--dash-border)]",
               )}
             >
-              <span className="font-semibold tabular-nums">{m.value}</span>
-              <span className="text-[var(--dash-text-secondary)]">{m.label}</span>
+              <span className="font-semibold tabular-nums text-fg-primary">{m.value}</span>
+              <span className="text-fg-secondary">{m.label}</span>
             </div>
           ))}
         </div>

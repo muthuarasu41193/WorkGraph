@@ -6,17 +6,16 @@
     border: 1px solid var(--wg-border-default);
     border-radius: var(--wg-radius-lg);
     padding: var(--wg-pad-card);
-    box-shadow: var(--wg-shadow-sm);
+    box-shadow: none;
     transition:
-      transform var(--wg-duration) var(--wg-ease),
       box-shadow var(--wg-duration) var(--wg-ease),
-      border-color var(--wg-duration) var(--wg-ease);
+      border-color var(--wg-duration) var(--wg-ease),
+      background-color var(--wg-duration) var(--wg-ease);
   }
 
   .wg-card:hover {
     border-color: var(--wg-border-strong);
-    box-shadow: var(--wg-shadow-md);
-    transform: translateY(-2px);
+    box-shadow: var(--wg-shadow-sm);
   }
 
   .wg-card__title {
@@ -30,7 +29,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wg-card:hover {
-    transform: none;
+    box-shadow: none;
   }
 }
 

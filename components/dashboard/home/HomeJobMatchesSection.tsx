@@ -34,16 +34,16 @@ export default function HomeJobMatchesSection({
   feedKind: "live" | "demo";
 }) {
   return (
-    <section className="space-y-4" aria-labelledby="home-matches-heading">
+    <section className="space-y-3" aria-labelledby="home-matches-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2
             id="home-matches-heading"
-            className="text-xl font-semibold tracking-tight text-slate-900"
+            className="text-[17px] font-semibold tracking-tight text-fg-primary"
           >
             Recommended Jobs
           </h2>
-          <p className="mt-0.5 text-[13px] text-slate-500">
+          <p className="mt-0.5 text-[13px] text-fg-secondary">
             {`Top roles ranked by AI match score${feedKind === "live" ? " · live catalog" : ""}.`}
           </p>
         </div>

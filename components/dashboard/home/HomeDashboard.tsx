@@ -33,7 +33,7 @@ function StatCardsSkeleton() {
       {Array.from({ length: 2 }).map((_, i) => (
         <div
           key={i}
-          className="relative overflow-hidden rounded-[12px] border border-slate-200 bg-white p-5"
+          className="relative overflow-hidden rounded-[10px] border border-slate-200 bg-white p-4"
         >
           <span className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-red-600 to-red-400" />
           <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
@@ -92,7 +92,7 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   const newMatches = props.semanticJobMatches?.length ?? props.recommendedJobs.length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <HomeWelcomeHeader
         greeting={greeting}
         displayName={displayName}

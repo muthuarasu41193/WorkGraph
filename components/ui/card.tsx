@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { cardHoverLift } from "@/lib/focus-ring"
 
 const cardBase =
-  "group/card flex flex-col gap-4 overflow-hidden rounded-lg border border-border-default bg-surface p-5 text-sm shadow-sm hover:border-border-strong dark:bg-surface " +
+  "group/card flex flex-col gap-3 overflow-hidden rounded-[10px] border border-border-default bg-surface p-4 text-sm shadow-none hover:border-border-strong dark:bg-surface " +
   cardHoverLift
 
 function Card({
@@ -18,7 +18,7 @@ function Card({
       data-size={size}
       className={cn(
         cardBase,
-        "text-card-foreground has-data-[slot=card-footer]:pb-6 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:p-4 data-[size=sm]:has-data-[slot=card-footer]:pb-4 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "text-card-foreground has-data-[slot=card-footer]:pb-4 has-[>img:first-child]:pt-0 data-[size=sm]:gap-2 data-[size=sm]:p-3 data-[size=sm]:has-data-[slot=card-footer]:pb-3 *:[img:first-child]:rounded-t-[10px] *:[img:last-child]:rounded-b-[10px]",
         className
       )}
       {...props}
@@ -44,7 +44,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "text-lg font-semibold leading-heading tracking-heading text-fg-primary group-data-[size=sm]/card:text-base",
+        "text-base font-semibold leading-heading tracking-heading text-fg-primary group-data-[size=sm]/card:text-sm",
         className
       )}
       {...props}
@@ -56,7 +56,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-        className={cn("text-sm text-fg-tertiary", className)}
+        className={cn("text-[13px] leading-snug text-fg-secondary", className)}
       {...props}
     />
   )
