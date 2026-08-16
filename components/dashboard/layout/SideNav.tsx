@@ -1,10 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { iconClass } from "@/lib/icon-styles";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV_GROUPS, type NavGroup, type NavItem } from "@/lib/dashboard-nav-groups";
 import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
@@ -13,6 +12,7 @@ import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useNavFeedbackListener } from "@/hooks/use-nav-feedback-listener";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import { useNavUiStore } from "@/stores/nav-ui-store";
+import { WorkGraphMark } from "@/components/brand/WorkGraphLogo";
 import CareerIntelligenceSection from "./CareerIntelligenceSection";
 import JobSearchWellbeingCard from "./JobSearchWellbeingCard";
 import SidebarBottom from "./SidebarBottom";
@@ -158,8 +158,8 @@ export default function SideNav({
     }
 
     return (
-      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-[var(--wg-border)] pt-2")}>
-        <ul className="space-y-0.5 px-0">{group.items.map(renderNavItem)}</ul>
+      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-slate-100 pt-2")}>
+        <ul className="wg-nav-list">{group.items.map(renderNavItem)}</ul>
       </div>
     );
   }
@@ -167,14 +167,36 @@ export default function SideNav({
   return (
     <aside
       className={cn(
-        "wg-dash-sidenav flex h-full flex-col bg-surface",
-        !mobile &&
-          "sticky top-[var(--dash-topnav-h)] hidden h-[calc(100dvh-var(--dash-topnav-h))] border-r border-[var(--wg-border)] md:flex",
-        collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",
+        "wg-dash-sidenav flex flex-col bg-white",
+        mobile
+          ? "h-full w-full"
+          : cn(
+              "sticky top-0 z-40 hidden h-dvh shrink-0 border-r border-slate-200 md:flex",
+              collapsed ? "w-[var(--dash-sidebar-collapsed-w)]" : "w-[var(--dash-sidebar-w)]",
+            ),
       )}
       aria-label="Dashboard navigation"
     >
-      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 py-4">
+      <div className={cn("wg-sidenav-logo", collapsed && "wg-sidenav-logo--collapsed")}>
+        <Link
+          href="/profile"
+          className="wg-sidenav-logo__link"
+          aria-label="workgraph home"
+          onClick={onNavigate}
+        >
+          <WorkGraphMark className="h-7 w-7" />
+          {!collapsed ? (
+            <span className="wg-sidenav-logo__wordmark">
+              <span className="wg-sidenav-logo__work">work</span>
+              <span className="wg-sidenav-logo__graph">graph</span>
+            </span>
+          ) : (
+            <span className="sr-only">workgraph</span>
+          )}
+        </Link>
+      </div>
+
+      <nav className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-2 py-3">
         <div className="space-y-1">{DASHBOARD_NAV_GROUPS.map(renderGroup)}</div>
 
         {!collapsed && showWellbeing ? (
@@ -186,26 +208,28 @@ export default function SideNav({
         ) : null}
       </nav>
 
-      {!mobile && onToggleCollapse ? (
-        <div className="hidden shrink-0 px-2 pb-1 lg:block">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="w-full justify-center text-slate-400 hover:text-slate-600"
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <ChevronRight className={iconClass()} /> : <ChevronLeft className={iconClass()} />}
-          </Button>
-        </div>
-      ) : null}
-
       <SidebarBottom
         collapsed={collapsed}
         onNavigate={onNavigate}
         profileSuccess={successState.profile === "check"}
       />
+
+      {!mobile && onToggleCollapse ? (
+        <div className="flex shrink-0 justify-end px-2 pb-2">
+          <button
+            type="button"
+            className="wg-sidenav-collapse"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <ChevronRight className="size-4" strokeWidth={1.75} />
+            ) : (
+              <ChevronLeft className="size-4" strokeWidth={1.75} />
+            )}
+          </button>
+        </div>
+      ) : null}
     </aside>
   );
 }

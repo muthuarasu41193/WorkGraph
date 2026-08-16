@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { Check } from "lucide-react";
 import { Icon as WgIcon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { NavFeedbackKind } from "@/lib/nav-feedback-events";
@@ -13,6 +14,7 @@ type BaseProps = {
   icon: LucideIcon;
   active?: boolean;
   collapsed?: boolean;
+  nested?: boolean;
   badge?: string | null;
   countSuffix?: number | null;
   benefitHint?: string;
@@ -67,7 +69,7 @@ function NavItemContent({
           suggested && "wg-nav-item__icon-wrap--suggested",
         )}
       >
-        <WgIcon icon={IconComponent} className="nav-icon" />
+        <WgIcon icon={IconComponent} className="nav-icon" strokeWidth={1.75} />
       </span>
       {!collapsed ? (
         <>
@@ -85,7 +87,7 @@ function NavItemContent({
           </span>
           {successKind === "check" ? (
             <span className="wg-nav-item__success-check" aria-label="Section updated">
-              ✓
+              <Check className="nav-icon" strokeWidth={1.75} />
             </span>
           ) : badge ? (
             <span className="wg-nav-item__badge">{badge}</span>
@@ -106,6 +108,7 @@ export default function SideNavItem(props: SideNavItemProps) {
     label,
     active = false,
     collapsed = false,
+    nested = false,
     badge,
     countSuffix,
     benefitHint,
@@ -118,6 +121,7 @@ export default function SideNavItem(props: SideNavItemProps) {
     "wg-nav-item",
     active && "wg-nav-item--active",
     collapsed && "wg-nav-item--collapsed",
+    nested && "wg-nav-item--nested",
     loading && "wg-nav-item--loading",
     successKind === "glow" && "wg-nav-item--success-glow",
     successKind === "pulse" && "wg-nav-item--success-pulse",

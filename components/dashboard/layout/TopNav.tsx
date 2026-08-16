@@ -47,9 +47,9 @@ export default function TopNav({ sidebarCollapsed }: Props) {
 
   return (
     <>
-      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] border-b">
+      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] shrink-0 border-b">
         <div className="flex h-full items-center gap-2 px-3 md:gap-3 md:px-5">
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 md:hidden">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -62,7 +62,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] p-0">
-                <SheetHeader className="border-b px-4 py-4 text-left">
+                <SheetHeader className="sr-only">
                   <SheetTitle>WorkGraph</SheetTitle>
                 </SheetHeader>
                 <SideNav mobile onNavigate={() => setMenuOpen(false)} />
@@ -71,7 +71,7 @@ export default function TopNav({ sidebarCollapsed }: Props) {
 
             <Link
               href="/profile"
-              className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
             >
               <WorkGraphLogo iconClassName="h-7 w-7" className="gap-2" />
             </Link>

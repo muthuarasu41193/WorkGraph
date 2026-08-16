@@ -2,72 +2,158 @@
 
 .nav-icon {
   flex-shrink: 0;
-  color: inherit;
-  width: var(--wg-icon-inline);
-  height: var(--wg-icon-inline);
-  stroke-width: var(--wg-icon-stroke);
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.75;
+}
+
+.wg-sidenav-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 20px 16px;
+  border-bottom: 1px solid #f1f5f9; /* slate-100 */
+}
+
+.wg-sidenav-logo--collapsed {
+  justify-content: center;
+  padding: 20px 12px;
+}
+
+.wg-sidenav-logo__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  border-radius: 8px;
+  outline: none;
+  text-decoration: none;
+}
+
+.wg-sidenav-logo__link:focus-visible {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+}
+
+.wg-sidenav-logo__wordmark {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.wg-sidenav-logo__work {
+  color: #0f172a; /* slate-900 */
+}
+
+.wg-sidenav-logo__graph {
+  color: var(--wg-brand-600);
+}
+
+.wg-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .wg-nav-item {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 0.625rem 1rem;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
   border: none;
-  border-left: 4px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   background: transparent;
-  color: var(--wg-text-secondary);
-  font-size: 0.875rem;
+  color: #475569; /* slate-600 */
+  font-size: 13.5px;
   font-weight: 500;
   line-height: 1.25;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
   transition:
-    background-color 200ms ease,
-    color 200ms ease,
-    border-color 200ms ease,
-    box-shadow 200ms ease;
+    background-color 150ms ease,
+    color 150ms ease;
 }
 
 .wg-dash-root .wg-nav-item {
-  min-height: unset;
+  min-height: 40px;
+  height: 40px;
+}
+
+.wg-dash-sidenav .wg-nav-item .nav-icon,
+.wg-dash-sidenav .wg-nav-item svg.lucide,
+.wg-dash-sidenav .wg-nav-item .wg-icon {
+  width: 18px;
+  height: 18px;
+  color: #64748b; /* slate-500 */
+  stroke-width: 1.75;
 }
 
 .wg-nav-item:hover {
-  background: var(--wg-bg-secondary);
-  color: var(--wg-text-primary);
+  background: #f8fafc; /* slate-50 */
+  color: #0f172a; /* slate-900 */
+}
+
+.wg-dash-sidenav .wg-nav-item:hover .nav-icon,
+.wg-dash-sidenav .wg-nav-item:hover svg.lucide,
+.wg-dash-sidenav .wg-nav-item:hover .wg-icon {
+  color: #0f172a;
 }
 
 .wg-nav-item:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--wg-surface), 0 0 0 4px var(--wg-brand-200);
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
 }
 
 .wg-nav-item--active {
-  background: var(--wg-brand-50);
-  color: var(--wg-primary);
-  border-left-color: var(--wg-primary);
+  background: #fef2f2; /* red-50 */
+  color: #dc2626; /* red-600 */
   font-weight: 500;
 }
 
 .wg-nav-item--active:hover {
-  background: var(--wg-brand-100);
-  color: var(--wg-primary);
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.wg-dash-sidenav .wg-nav-item--active .nav-icon,
+.wg-dash-sidenav .wg-nav-item--active svg.lucide,
+.wg-dash-sidenav .wg-nav-item--active .wg-icon,
+.wg-dash-sidenav .wg-nav-item--active:hover .nav-icon,
+.wg-dash-sidenav .wg-nav-item--active:hover svg.lucide,
+.wg-dash-sidenav .wg-nav-item--active:hover .wg-icon {
+  color: #dc2626;
+}
+
+.wg-nav-item--active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #dc2626;
+  transform: translateY(-50%);
 }
 
 .wg-nav-item--collapsed {
   justify-content: center;
-  padding: 0.625rem 0.5rem;
-  border-left-color: transparent;
+  padding: 0 8px;
 }
 
-.wg-nav-item--collapsed.wg-nav-item--active {
-  border-left-color: transparent;
-  box-shadow: inset 4px 0 0 var(--wg-primary);
+.wg-nav-item--collapsed.wg-nav-item--active::before {
+  height: 16px;
+}
+
+.wg-nav-item--nested {
+  padding-left: 10px;
 }
 
 .wg-nav-item__badge {
@@ -84,42 +170,18 @@
 
 .wg-nav-item__count {
   font-weight: 400;
-  color: var(--wg-text-tertiary);
+  color: #94a3b8; /* slate-400 */
 }
 
 .wg-nav-item--active .wg-nav-item__count {
-  color: var(--wg-brand-400);
+  color: #f87171; /* red-400 */
 }
 
-/* ── Nav loading shimmer ── */
+/* ── Nav loading ── */
 
 .wg-nav-item--loading {
-  overflow: hidden;
   pointer-events: none;
-}
-
-.wg-nav-item--loading::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(248 250 252 / 0.9) 45%,
-    rgb(241 245 249 / 0.95) 55%,
-    transparent 100%
-  );
-  animation: wg-nav-shimmer 1.4s ease-in-out infinite;
-}
-
-@keyframes wg-nav-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+  opacity: 0.55;
 }
 
 /* ── Nav success states ── */
@@ -161,11 +223,9 @@
 
 .wg-nav-item__success-check {
   margin-left: auto;
+  display: inline-flex;
   flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--wg-text-tertiary);
+  color: #64748b;
   animation: wg-check-fade-in 200ms ease forwards;
 }
 
@@ -222,8 +282,28 @@
 /* ── AI Tools collapsible group ── */
 
 .ai-tools-header {
-  font-size: 0.875rem;
-  color: var(--wg-text-secondary);
+  font-size: 13.5px;
+  color: #475569;
+}
+
+.wg-ai-tools-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 0 20px;
+  padding-left: 12px;
+}
+
+.wg-ai-tools-list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  border-radius: 1px;
+  background: #e2e8f0; /* slate-200 */
 }
 
 .wg-nav-item__unvisited {
@@ -246,28 +326,6 @@
   to {
     opacity: 1;
     transform: translateY(-50%) scale(1);
-  }
-}
-
-.wg-nav-item__icon-wrap--suggested::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 9999px;
-  border: 1.5px solid var(--wg-border-strong);
-  animation: wg-calm-pulse 2.8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes wg-calm-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.06);
   }
 }
 
@@ -307,7 +365,7 @@
   border: 1px solid var(--wg-border);
   border-radius: 10px;
   padding: 10px 12px;
-  margin: 8px 8px;
+  margin: 8px 4px 0;
 }
 
 .week-stats {
@@ -335,16 +393,170 @@
 /* ── Sidebar bottom pinned zone ── */
 
 .sidebar-bottom {
-  position: sticky;
-  bottom: 0;
+  position: relative;
   z-index: 10;
   margin-top: auto;
-  border-top: 1px solid var(--wg-border);
-  background: var(--wg-surface);
-  padding-top: 12px;
+  flex-shrink: 0;
+  border-top: 1px solid #f1f5f9;
+  background: #fff;
+  padding: 12px 8px 8px;
 }
 
 .wg-dash-root .sidebar-bottom .wg-dash-compact-btn,
 .wg-dash-root .sidebar-bottom button {
   min-height: unset;
+}
+
+.wg-sidenav-profile {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: left;
+  outline: none;
+  transition: background-color 150ms ease;
+}
+
+.wg-sidenav-profile:hover,
+.wg-sidenav-profile[data-state="open"] {
+  background: #f8fafc;
+}
+
+.wg-sidenav-profile:focus-visible {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+}
+
+.wg-sidenav-profile__name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.wg-sidenav-profile__role {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #64748b; /* slate-500 */
+}
+
+.wg-sidenav-profile__chevron {
+  flex-shrink: 0;
+  color: #94a3b8;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease;
+}
+
+.wg-sidenav-profile:hover .wg-sidenav-profile__chevron,
+.wg-sidenav-profile[data-state="open"] .wg-sidenav-profile__chevron {
+  opacity: 1;
+  color: #64748b;
+}
+
+.wg-sidenav-online {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #10b981;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.wg-sidenav-collapse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.wg-sidenav-collapse:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.wg-sidenav-collapse:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wg-brand-200);
+}
+
+.wg-dash-root .wg-sidenav-collapse {
+  min-height: 28px;
+}
+
+.dark .wg-sidenav-logo,
+[data-theme="dark"] .wg-sidenav-logo {
+  border-bottom-color: rgb(51 65 85 / 0.5);
+}
+
+.dark .wg-sidenav-logo__work,
+[data-theme="dark"] .wg-sidenav-logo__work {
+  color: #f8fafc;
+}
+
+.dark .wg-nav-item,
+[data-theme="dark"] .wg-nav-item {
+  color: #94a3b8;
+}
+
+.dark .wg-nav-item:hover,
+[data-theme="dark"] .wg-nav-item:hover {
+  background: rgb(30 41 59 / 0.6);
+  color: #f8fafc;
+}
+
+.dark .wg-nav-item--active,
+[data-theme="dark"] .wg-nav-item--active,
+.dark .wg-nav-item--active:hover,
+[data-theme="dark"] .wg-nav-item--active:hover {
+  background: rgb(127 29 29 / 0.22);
+  color: #f87171;
+}
+
+.dark .sidebar-bottom,
+[data-theme="dark"] .sidebar-bottom {
+  background: var(--wg-surface);
+  border-top-color: rgb(51 65 85 / 0.5);
+}
+
+.dark .wg-sidenav-profile:hover,
+[data-theme="dark"] .wg-sidenav-profile:hover {
+  background: rgb(30 41 59 / 0.6);
+}
+
+.dark .wg-sidenav-profile__name,
+[data-theme="dark"] .wg-sidenav-profile__name {
+  color: #f8fafc;
+}
+
+.dark .wg-sidenav-online,
+[data-theme="dark"] .wg-sidenav-online {
+  box-shadow: 0 0 0 2px var(--wg-surface);
+}
+
+.dark .wg-ai-tools-list::before,
+[data-theme="dark"] .wg-ai-tools-list::before {
+  background: rgb(51 65 85 / 0.8);
 }

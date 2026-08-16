@@ -15,16 +15,16 @@ function DashboardLayoutInner({ children }: Props) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="wg-dash-root flex min-h-dvh flex-col">
-      <TopNav sidebarCollapsed={sidebarCollapsed} />
+    <div className="wg-dash-root flex">
+      <SideNav
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+      />
 
-      <div className="flex flex-1">
-        <SideNav
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
-        />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <TopNav sidebarCollapsed={sidebarCollapsed} />
 
-        <div className="wg-dash-main min-w-0 flex-1 px-4 py-8 sm:px-6 md:px-8">
+        <div className="wg-dash-main min-w-0 px-4 py-8 sm:px-6 md:px-8">
           <div className="wg-dash-content mx-auto w-full">{children}</div>
         </div>
       </div>

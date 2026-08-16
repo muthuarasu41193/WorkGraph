@@ -13,7 +13,9 @@
   --dash-border: var(--wg-border);
   --dash-text: var(--wg-text-primary);
   --dash-text-secondary: var(--wg-text-muted);
+  height: 100dvh;
   min-height: 100dvh;
+  overflow: hidden;
   background: var(--dash-page-bg);
   scroll-behavior: smooth;
 }
@@ -27,7 +29,9 @@
 }
 
 .wg-dash-main {
-  min-height: calc(100dvh - var(--dash-topnav-h));
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
 }
 
@@ -80,9 +84,16 @@
 }
 
 .wg-dash-sidenav {
-  background: var(--wg-surface) !important;
-  border-right: 1px solid var(--wg-border) !important;
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important; /* slate-200 */
   box-shadow: none !important;
+  transition: width 250ms ease-in-out;
+}
+
+.dark .wg-dash-sidenav,
+[data-theme="dark"] .wg-dash-sidenav {
+  background: var(--wg-surface) !important;
+  border-right-color: rgb(51 65 85 / 0.8) !important;
 }
 
 .wg-dash-topnav {
@@ -98,11 +109,10 @@
 }
 
 .wg-dash-nav-active {
-  background: var(--wg-brand-50) !important;
-  color: var(--wg-primary) !important;
-  border-left: 4px solid var(--wg-primary) !important;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
   box-shadow: none !important;
-  border-radius: 0.5rem !important;
+  border-radius: 8px !important;
 }
 
 .wg-dash-skeleton-pulse {
@@ -126,4 +136,11 @@
 
 .wg-dash-root .wg-dash-compact-btn {
   min-height: 36px;
+}
+
+.wg-dash-root .wg-nav-item,
+.wg-dash-root .wg-sidenav-collapse,
+.wg-dash-root .wg-sidenav-profile,
+.wg-dash-root .wg-sidenav-logo__link {
+  min-height: unset;
 }

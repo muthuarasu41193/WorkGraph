@@ -3,9 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
-import { ChevronRight, Sparkles } from "lucide-react";
-import { iconClass } from "@/lib/icon-styles";
-import { cn } from "@/lib/utils";
+import { ChevronRight, Layers } from "lucide-react";
 import type { NavGroup, NavItem } from "@/lib/dashboard-nav-groups";
 import type { NavFeedbackKind, NavFeedbackRoute } from "@/lib/nav-feedback-events";
 import {
@@ -21,16 +19,16 @@ const collapseVariants = {
     height: 0,
     opacity: 0,
     transition: {
-      height: { duration: 0.2, ease: "easeInOut" as const },
-      opacity: { duration: 0.1 },
+      height: { duration: 0.25, ease: "easeInOut" as const },
+      opacity: { duration: 0.12 },
     },
   },
   visible: {
     height: "auto",
     opacity: 1,
     transition: {
-      height: { duration: 0.2, ease: "easeInOut" as const },
-      opacity: { duration: 0.15, delay: 0.05 },
+      height: { duration: 0.25, ease: "easeInOut" as const },
+      opacity: { duration: 0.18, delay: 0.04 },
     },
   },
 } satisfies Variants;
@@ -80,6 +78,7 @@ function renderIntelItem(
   opts: {
     active: boolean;
     collapsed: boolean;
+    nested?: boolean;
     hydrated: boolean;
     suggestedId: ReturnType<typeof getSuggestedIntelligenceRoute>;
     isVisited: (id: string) => boolean;
@@ -93,6 +92,7 @@ function renderIntelItem(
     icon: item.icon,
     active: opts.active,
     collapsed: opts.collapsed,
+    nested: opts.nested,
     benefitHint: item.benefitHint,
     unvisited: opts.hydrated && !opts.isVisited(item.id),
     suggested: item.id === opts.suggestedId,
@@ -157,12 +157,13 @@ export default function CareerIntelligenceSection({
   if (collapsed) {
     return (
       <div className="mb-1 mt-3 border-t border-slate-100 pt-2">
-        <ul className="space-y-0.5">
+        <ul className="wg-nav-list">
           {group.items.map((item) => (
             <li key={item.id}>
               {renderIntelItem(item, {
                 active: isActive(item.id),
                 collapsed: true,
+                nested: false,
                 hydrated,
                 suggestedId,
                 isVisited,
@@ -184,22 +185,19 @@ export default function CareerIntelligenceSection({
       <button
         type="button"
         onClick={toggle}
-        className={cn(
-          "ai-tools-header wg-nav-item",
-          groupActive && "wg-nav-item--active",
-        )}
+        className="ai-tools-header wg-nav-item"
         aria-expanded={showItems}
       >
-        <Sparkles className={cn("nav-icon", iconClass("inline"))} aria-hidden />
+        <Layers className="nav-icon" strokeWidth={1.75} aria-hidden />
         <span className="min-w-0 flex-1 truncate text-left">{group.label || "AI Tools"}</span>
         <motion.span
           animate={showItems ? "expanded" : "collapsed"}
           variants={chevronVariants}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
           className="shrink-0"
           aria-hidden
         >
-          <ChevronRight className={cn("nav-icon", iconClass("inline"))} />
+          <ChevronRight className="nav-icon" strokeWidth={1.75} />
         </motion.span>
       </button>
 
@@ -210,7 +208,7 @@ export default function CareerIntelligenceSection({
         className="overflow-hidden"
       >
         <motion.ul
-          className="space-y-0.5 pt-0.5"
+          className="wg-ai-tools-list"
           variants={intelListVariants}
           initial={false}
           animate={showItems && hydrated ? "visible" : "hidden"}
@@ -220,6 +218,7 @@ export default function CareerIntelligenceSection({
               {renderIntelItem(item, {
                 active: isActive(item.id),
                 collapsed: false,
+                nested: true,
                 hydrated,
                 suggestedId,
                 isVisited,
