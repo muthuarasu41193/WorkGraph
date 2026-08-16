@@ -1,0 +1,6 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="320" fill="white"/>
+  <path d="M160 48L272 272H48L160 48Z" fill="#0A0A0A"/>
+  <path d="M160 104L232 232H88L160 104Z" fill="#C41E3A"/>
+  <text x="320" y="198" fill="#0A0A0A" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="112" font-weight="700" letter-spacing="-2">workgraph</text>
+</svg>
