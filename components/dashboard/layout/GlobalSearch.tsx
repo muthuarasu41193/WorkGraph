@@ -22,9 +22,10 @@ const FILTERS: { id: SearchFilter; label: string }[] = [
 type Props = {
   className?: string;
   compact?: boolean;
+  onOpenCommandPalette?: () => void;
 };
 
-export default function GlobalSearch({ className, compact = false }: Props) {
+export default function GlobalSearch({ className, compact = false, onOpenCommandPalette }: Props) {
   const { recommendedJobs, profile } = useDashboardContext();
   const { navigate } = useDashboardNavigation();
   const [query, setQuery] = useState("");
@@ -68,7 +69,7 @@ export default function GlobalSearch({ className, compact = false }: Props) {
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <div className="relative">
         <Search
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
           aria-hidden
         />
         <Input
@@ -85,12 +86,25 @@ export default function GlobalSearch({ className, compact = false }: Props) {
           }}
           onFocus={() => setOpen(true)}
           className={cn(
-            "h-11 rounded-lg border-slate-200 bg-slate-50/80 pl-10 pr-3 shadow-sm transition-shadow focus-visible:bg-background focus-visible:shadow-md dark:border-slate-700 dark:bg-slate-900/50",
-            compact && "h-10",
+            "h-10 rounded-[10px] border-slate-200 bg-slate-50 py-0 pl-10 text-[13.5px] text-slate-800 shadow-none",
+            "placeholder:text-[13.5px] placeholder:text-slate-400",
+            "focus:border-red-400 focus:ring-2 focus:ring-red-100",
+            "focus-visible:border-red-400 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-red-100",
+            "[&::-webkit-search-cancel-button]:hidden",
+            compact ? "pr-3" : "pr-14",
           )}
         />
         {query.length > 1 && deferredQuery !== query ? (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-slate-400" />
+        ) : !compact && !query ? (
+          <button
+            type="button"
+            onClick={() => onOpenCommandPalette?.()}
+            className="absolute right-2 top-1/2 hidden h-[22px] -translate-y-1/2 items-center rounded-md border border-slate-200 bg-white px-1.5 font-sans text-[11px] font-medium text-slate-400 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-500 md:inline-flex"
+            aria-label="Open command palette"
+          >
+            <kbd className="font-sans text-[11px] font-medium">⌘K</kbd>
+          </button>
         ) : null}
       </div>
 
