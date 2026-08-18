@@ -3,13 +3,18 @@ import { getSupabaseSessionUser } from "@/lib/route-auth";
 import { analyzeResumeIntelligence } from "@/lib/talent-intelligence";
 import { formatTalentIntelligenceError } from "@/lib/talent-intelligence/errors";
 import { truncateText } from "@/lib/talent-intelligence/utils";
+import {
+  isValidationError,
+  parseJsonBody,
+  publicErrorResponse,
+  talentIntelligenceAnalyzeSchema,
+} from "@/lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 const MIN_RESUME_CHARS = 120;
-const MIN_JD_CHARS = 80;
 const MAX_JD_CHARS = 32000;
 
 /**
@@ -32,19 +37,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
     }
 
-    const body = (await request.json()) as Record<string, unknown>;
-    const jobDescription = String(body.jobDescription ?? "").trim();
+    const body = await parseJsonBody(request, talentIntelligenceAnalyzeSchema);
+    const jobDescription = body.jobDescription;
     const jobId = body.jobId ? String(body.jobId) : null;
-    const jobTitle = body.jobTitle ? String(body.jobTitle).trim() : null;
-    const company = body.company ? String(body.company).trim() : null;
+    const jobTitle = body.jobTitle?.trim() || null;
+    const company = body.company?.trim() || null;
     const forceRefresh = Boolean(body.forceRefresh);
-
-    if (jobDescription.length < MIN_JD_CHARS) {
-      return NextResponse.json(
-        { ok: false, error: `Job description must be at least ${MIN_JD_CHARS} characters.` },
-        { status: 400 },
-      );
-    }
 
     const { createClient } = await import("@supabase/supabase-js");
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -63,7 +61,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (profileError) {
-      return NextResponse.json({ ok: false, error: profileError.message }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "Could not load your profile. Please try again." }, { status: 500 });
     }
 
     const resumeText = String(profile?.resume_raw_text ?? "").trim();
@@ -105,6 +103,9 @@ export async function POST(request: Request) {
       report: result.report,
     });
   } catch (error) {
+    if (isValidationError(error)) {
+      return publicErrorResponse(error, { fallback: "Invalid request.", style: "ok" });
+    }
     const formatted = formatTalentIntelligenceError(error);
     const headers: Record<string, string> = {};
     if (formatted.retryAfterSec) {

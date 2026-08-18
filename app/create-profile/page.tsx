@@ -20,6 +20,7 @@ import {
   withSupabaseAuthHeaders,
 } from "../../lib/api-fetch";
 import { describeFetchError } from "../../lib/auth-errors";
+import { profileManualInputSchema } from "../../lib/validation";
 import { ensureClientSession } from "../../lib/auth/session-client";
 import { supertokensEnabled } from "../../lib/auth/config";
 import {
@@ -221,7 +222,7 @@ export default function CreateProfilePage() {
     setMessage("");
     try {
       await requireSignedInUser();
-      const payload = {
+      const parsed = profileManualInputSchema.safeParse({
         email: manual.email.trim(),
         full_name: manual.full_name.trim(),
         headline: manual.headline.trim(),
@@ -233,7 +234,11 @@ export default function CreateProfilePage() {
         skills: splitLines(manual.skills),
         experience: splitLines(manual.experience),
         education: splitLines(manual.education),
-      };
+      });
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message ?? "Please check your profile details.");
+      }
+      const payload = parsed.data;
 
       const saveRes = await fetch("/api/profile", {
         method: "POST",

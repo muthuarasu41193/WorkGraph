@@ -1,25 +1,34 @@
 import { NextResponse } from "next/server";
 import { analyzeResumeWithGroq } from "@/lib/resume/groq-client";
 import { extractResumeTextFromPdf, normalizeResumeText } from "@/lib/resume/pdf-parser";
-import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "@/lib/upload-limits";
+import {
+  isValidationError,
+  parseResumeUploadFile,
+  parseWithSchema,
+  publicErrorResponse,
+  resumeAnalyzeTextSchema,
+} from "@/lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-function isPdf(file: File): boolean {
-  const lower = file.name.toLowerCase();
-  return file.type === "application/pdf" || lower.endsWith(".pdf");
-}
-
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const fileValue = formData.get("file");
-    const file = fileValue instanceof File ? fileValue : null;
-    const resumeTextInput = String(formData.get("resumeText") ?? "");
-    const targetRole = String(formData.get("targetRole") ?? "").trim();
-    const jobDescription = String(formData.get("jobDescription") ?? "").trim();
+    const fields = parseWithSchema(resumeAnalyzeTextSchema, {
+      resumeText: String(formData.get("resumeText") ?? ""),
+      targetRole: String(formData.get("targetRole") ?? ""),
+      jobDescription: String(formData.get("jobDescription") ?? ""),
+    });
+    const file =
+      fileValue instanceof File && fileValue.size > 0
+        ? parseResumeUploadFile(fileValue, { pdfOnly: true })
+        : null;
+    const resumeTextInput = fields.resumeText ?? "";
+    const targetRole = fields.targetRole?.trim() ?? "";
+    const jobDescription = fields.jobDescription?.trim() ?? "";
 
     if (!file && !resumeTextInput.trim()) {
       return NextResponse.json(
@@ -30,15 +39,6 @@ export async function POST(request: Request) {
 
     let resumeText = "";
     if (file) {
-      if (!isPdf(file)) {
-        return NextResponse.json({ ok: false, error: "Only PDF files are supported." }, { status: 400 });
-      }
-      if (file.size > MAX_RESUME_UPLOAD_BYTES) {
-        return NextResponse.json(
-          { ok: false, error: `PDF exceeds ${MAX_RESUME_UPLOAD_LABEL}.` },
-          { status: 413 },
-        );
-      }
       resumeText = await extractResumeTextFromPdf(file);
     } else {
       resumeText = normalizeResumeText(resumeTextInput);
@@ -62,8 +62,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, analysis });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Resume analysis failed.";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    if (isValidationError(error)) {
+      return publicErrorResponse(error, { fallback: "Invalid resume upload.", style: "ok" });
+    }
+    return publicErrorResponse(error, {
+      fallback: "Could not analyze your resume. Please try again.",
+      style: "ok",
+    });
   }
 }
-

@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getBearerToken, getSupabaseSessionUser } from "../../../../lib/route-auth";
 import { parseResumeViaApi, workgraphApiEnabled } from "../../../../lib/workgraph-api";
-import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "../../../../lib/upload-limits";
+import {
+  isValidationError,
+  parseAiParsedResume,
+  parseResumeUploadFile,
+  publicErrorResponse,
+} from "../../../../lib/validation";
 import type { ParsedResume } from "../../../../packages/shared/types/workgraph";
 
 export const runtime = "nodejs";
@@ -52,29 +57,21 @@ export async function POST(request: Request) {
     }
 
     const form = await request.formData();
-    const file = form.get("file");
-    if (!(file instanceof File)) {
-      return NextResponse.json({ error: "file is required" }, { status: 400 });
-    }
-    if (file.size > MAX_RESUME_UPLOAD_BYTES) {
-      return NextResponse.json(
-        { error: `File exceeds ${MAX_RESUME_UPLOAD_LABEL}` },
-        { status: 413 },
-      );
-    }
+    const file = parseResumeUploadFile(form.get("file"));
 
-    const parsed = (await parseResumeViaApi(file, {
+    const parsedRaw = (await parseResumeViaApi(file, {
       userId: user.id,
       store: false,
     })) as ParsedResume & { raw_text?: string };
+    const parsed = parseAiParsedResume(parsedRaw);
 
-    const resumeText = parsed.raw_text?.trim() ?? "";
+    const resumeText = parsedRaw.raw_text?.trim() ?? "";
     const storagePath = `${user.id}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
     const { error: uploadError } = await supabase.storage.from("resumes").upload(storagePath, file, {
       upsert: false,
     });
     if (uploadError) {
-      return NextResponse.json({ error: uploadError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not store your resume. Please try again." }, { status: 500 });
     }
     const { data: publicUrlData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
 
@@ -83,7 +80,7 @@ export async function POST(request: Request) {
       typeof formEmail === "string" && formEmail.trim() ? formEmail.trim() : null;
 
     const profileCompleteness =
-      typeof parsed.profile_completeness === "number" ? parsed.profile_completeness : 0;
+      typeof parsedRaw.profile_completeness === "number" ? parsedRaw.profile_completeness : 0;
 
     const { error: upsertError } = await supabase.from("profiles").upsert(
       {
@@ -111,7 +108,7 @@ export async function POST(request: Request) {
     );
 
     if (upsertError) {
-      return NextResponse.json({ error: upsertError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save your profile. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -125,7 +122,9 @@ export async function POST(request: Request) {
       source: "workgraph-api",
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Parse failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(err)) {
+      return publicErrorResponse(err, { fallback: "Invalid resume upload." });
+    }
+    return publicErrorResponse(err, { fallback: "Could not parse your resume. Please try again." });
   }
 }

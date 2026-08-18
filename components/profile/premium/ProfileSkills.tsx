@@ -3,6 +3,7 @@
 import { Plus, Sparkles, X } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { useEffect, useMemo, useState } from "react";
+import { skillsInputSchema } from "../../../lib/validation";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
 import type { SkillCategory } from "../../../lib/profile-mock-data";
 import {
@@ -46,10 +47,16 @@ export default function ProfileSkills({ userId, initialSkills }: Props) {
 
   const persist = async (next: string[]) => {
     emitProfileSaveStart("skills");
+    const parsed = skillsInputSchema.safeParse(next);
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message ?? "Invalid skills.";
+      emitProfileSaveError("skills", message);
+      throw new Error(message);
+    }
     const supabase = createBrowserSupabaseClient();
     const { error } = await supabase
       .from("profiles")
-      .update({ skills: next, updated_at: new Date().toISOString() })
+      .update({ skills: parsed.data, updated_at: new Date().toISOString() })
       .eq("id", userId);
     if (error) {
       emitProfileSaveError("skills", error.message);

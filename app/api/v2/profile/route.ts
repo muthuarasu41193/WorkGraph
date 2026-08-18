@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "../../../../lib/auth/session-server";
+import {
+  isValidationError,
+  parseJsonBody,
+  profileUpsertSchema,
+  publicErrorResponse,
+} from "../../../../lib/validation";
 import { workgraphBffFetch } from "../../../../lib/workgraph-bff";
 import { workgraphApiEnabled } from "../../../../lib/workgraph-api";
 
@@ -19,9 +25,7 @@ export async function GET(request: Request) {
     const data = await workgraphBffFetch<{ profile: Record<string, unknown> }>("/profile/me", { request });
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Profile load failed";
-    const status = message.includes("404") ? 404 : 500;
-    return NextResponse.json({ error: message }, { status });
+    return publicErrorResponse(err, { fallback: "Could not load your profile. Please try again." });
   }
 }
 
@@ -36,7 +40,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const body = await request.json();
+    const body = await parseJsonBody(request, profileUpsertSchema);
     const data = await workgraphBffFetch<{ profile: Record<string, unknown> }>("/profile/me", {
       method: "PUT",
       request,
@@ -44,7 +48,9 @@ export async function PUT(request: Request) {
     });
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Profile save failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(err)) {
+      return publicErrorResponse(err, { fallback: "Invalid profile data." });
+    }
+    return publicErrorResponse(err, { fallback: "Could not save your profile. Please try again." });
   }
 }

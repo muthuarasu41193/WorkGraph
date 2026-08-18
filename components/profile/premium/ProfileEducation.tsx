@@ -3,6 +3,7 @@
 import { Award, GraduationCap, Plus, Trash2 } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { useEffect, useState } from "react";
+import { educationListSchema } from "../../../lib/validation";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
 import type { Education } from "../../../lib/types";
 import {
@@ -28,10 +29,16 @@ export default function ProfileEducation({ userId, education, certifications }: 
 
   const persist = async (next: Education[]) => {
     emitProfileSaveStart("education");
+    const parsed = educationListSchema.safeParse(next);
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message ?? "Invalid education.";
+      emitProfileSaveError("education", message);
+      throw new Error(message);
+    }
     const supabase = createBrowserSupabaseClient();
     const { error } = await supabase
       .from("profiles")
-      .update({ education: next, updated_at: new Date().toISOString() })
+      .update({ education: parsed.data, updated_at: new Date().toISOString() })
       .eq("id", userId);
     if (error) {
       emitProfileSaveError("education", error.message);

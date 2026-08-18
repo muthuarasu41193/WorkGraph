@@ -26,6 +26,7 @@ import {
   type ApplicationInsert,
   type ApplicationStatus,
 } from "@/lib/applications";
+import { applicationInsertSchema } from "@/lib/validation";
 import { toast } from "@/hooks/use-toast";
 import { emitNavFeedback } from "@/lib/nav-feedback-events";
 
@@ -61,24 +62,29 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!company.trim() || !role.trim()) {
-      toast({ title: "Missing fields", description: "Company and role are required.", variant: "error" });
+    const parsed = applicationInsertSchema.safeParse({
+      company: company.trim(),
+      role: role.trim(),
+      status,
+      applied_date: appliedDate,
+      job_url: jobUrl.trim() || null,
+      contact_person: contactPerson.trim() || null,
+      next_step: nextStep.trim() || null,
+      next_step_date: nextStepDate || null,
+      notes: notes.trim() || null,
+    });
+    if (!parsed.success) {
+      toast({
+        title: "Check your entries",
+        description: parsed.error.issues[0]?.message ?? "Company and role are required.",
+        variant: "error",
+      });
       return;
     }
 
     setSubmitting(true);
     try {
-      await onSubmit({
-        company: company.trim(),
-        role: role.trim(),
-        status,
-        applied_date: appliedDate,
-        job_url: jobUrl.trim() || null,
-        contact_person: contactPerson.trim() || null,
-        next_step: nextStep.trim() || null,
-        next_step_date: nextStepDate || null,
-        notes: notes.trim() || null,
-      });
+      await onSubmit(parsed.data);
       toast({ title: "Application added", description: `${company} · ${role}`, variant: "success" });
       emitNavFeedback("applications", "glow");
       resetForm();

@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import type { ATSFeedback } from "../../../../lib/types";
 import { getBearerToken, getSupabaseSessionUser } from "../../../../lib/route-auth";
+import {
+  atsScoreBodySchema,
+  isValidationError,
+  parseAiAtsFeedback,
+  parseWithSchema,
+  publicErrorResponse,
+} from "../../../../lib/validation";
 import { scoreAtsViaApi, workgraphApiEnabled } from "../../../../lib/workgraph-api";
 
 export const runtime = "nodejs";
@@ -25,35 +31,12 @@ function defaultJobDescription(profile: {
 Experience with modern tools, measurable impact, and clear resume formatting preferred.`;
 }
 
-function mapFeedback(raw: Record<string, unknown>): ATSFeedback {
-  const num = (v: unknown) => {
-    const n = typeof v === "number" ? v : Number(v);
-    return Number.isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
-  };
-  const list = (v: unknown): string[] =>
-    Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+function mapFeedback(raw: Record<string, unknown>): ReturnType<typeof parseAiAtsFeedback> {
   const suggestions =
-    list(raw.optimization_suggestions).length > 0
-      ? list(raw.optimization_suggestions)
-      : list(raw.suggestions);
-
-  return {
-    score: num(raw.score),
-    grade:
-      typeof raw.grade === "string" && ["A", "B", "C", "D", "F"].includes(raw.grade.toUpperCase())
-        ? (raw.grade.toUpperCase() as ATSFeedback["grade"])
-        : "F",
-    strengths: list(raw.strengths),
-    weaknesses: list(raw.weaknesses),
-    suggestions,
-    keyword_density:
-      typeof raw.keyword_density === "string" &&
-      ["low", "medium", "high"].includes(raw.keyword_density.toLowerCase())
-        ? (raw.keyword_density.toLowerCase() as ATSFeedback["keyword_density"])
-        : "low",
-    formatting_score: num(raw.formatting_score),
-    content_score: num(raw.content_score),
-  };
+    Array.isArray(raw.optimization_suggestions) && raw.optimization_suggestions.length > 0
+      ? raw.optimization_suggestions
+      : raw.suggestions;
+  return parseAiAtsFeedback({ ...raw, suggestions });
 }
 
 export async function POST(request: Request) {
@@ -69,25 +52,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    const body = (await request.json().catch(() => ({}))) as {
-      resume_text?: string;
-      job_description?: string;
-      user_id?: string;
-      email?: string;
-    };
+    const rawBody = await request.json().catch(() => ({}));
+    const body = parseWithSchema(atsScoreBodySchema, rawBody);
 
     const supabase = createClient(
       getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
       getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
     );
 
-    let userId = body.user_id?.trim() ?? null;
-    if (!userId) {
-      const bearer = getBearerToken(request);
-      if (bearer) {
-        const { data: { user } } = await supabase.auth.getUser(bearer);
-        userId = user?.id ?? null;
-      }
+    let userId: string | null = null;
+    const bearer = getBearerToken(request);
+    if (bearer) {
+      const { data: { user } } = await supabase.auth.getUser(bearer);
+      userId = user?.id ?? null;
     }
     if (!userId) {
       const { data: { user } } = await getSupabaseSessionUser(request);
@@ -133,7 +110,7 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save ATS results. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -143,7 +120,9 @@ export async function POST(request: Request) {
       source: "workgraph-api",
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "ATS scoring failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(err)) {
+      return publicErrorResponse(err, { fallback: "Invalid request." });
+    }
+    return publicErrorResponse(err, { fallback: "Could not score your resume. Please try again." });
   }
 }

@@ -3,20 +3,16 @@ import { createClient } from "@supabase/supabase-js";
 import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
+import {
+  atsScoreBodySchema,
+  isValidationError,
+  parseAiAtsFeedback,
+  parseWithSchema,
+  publicErrorResponse,
+} from "../../../lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-type ATSFeedback = {
-  score: number;
-  grade: "A" | "B" | "C" | "D" | "F";
-  strengths: string[];
-  weaknesses: string[];
-  suggestions: string[];
-  keyword_density: "low" | "medium" | "high";
-  formatting_score: number;
-  content_score: number;
-};
 
 function getRequiredEnv(key: string): string {
   const value = process.env[key];
@@ -24,77 +20,25 @@ function getRequiredEnv(key: string): string {
   return value;
 }
 
-function normalizeAtsFeedback(input: unknown): ATSFeedback {
-  const fallback: ATSFeedback = {
-    score: 0,
-    grade: "F",
-    strengths: [],
-    weaknesses: [],
-    suggestions: [],
-    keyword_density: "low",
-    formatting_score: 0,
-    content_score: 0,
-  };
-  if (!input || typeof input !== "object") return fallback;
-
-  const obj = input as Record<string, unknown>;
-  const parseScore = (value: unknown): number => {
-    const n = typeof value === "number" ? value : Number(value);
-    return Number.isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
-  };
-
-  const grade =
-    typeof obj.grade === "string" && ["A", "B", "C", "D", "F"].includes(obj.grade.toUpperCase())
-      ? (obj.grade.toUpperCase() as ATSFeedback["grade"])
-      : "F";
-  const density =
-    typeof obj.keyword_density === "string" &&
-    ["low", "medium", "high"].includes(obj.keyword_density.toLowerCase())
-      ? (obj.keyword_density.toLowerCase() as ATSFeedback["keyword_density"])
-      : "low";
-
-  const asStringList = (value: unknown): string[] =>
-    Array.isArray(value)
-      ? value
-          .filter((v): v is string => typeof v === "string")
-          .map((v) => v.trim())
-          .filter(Boolean)
-      : [];
-
-  return {
-    score: parseScore(obj.score),
-    grade,
-    strengths: asStringList(obj.strengths),
-    weaknesses: asStringList(obj.weaknesses),
-    suggestions: asStringList(obj.suggestions),
-    keyword_density: density,
-    formatting_score: parseScore(obj.formatting_score),
-    content_score: parseScore(obj.content_score),
-  };
-}
-
 export async function POST(request: Request) {
   try {
-    const body = (await request.json().catch(() => ({}))) as { user_id?: string };
-    const providedUserId = body.user_id?.trim();
+    const rawBody = await request.json().catch(() => ({}));
+    parseWithSchema(atsScoreBodySchema, rawBody);
     const supabase = createClient(
       getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
       getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
     );
 
-    let userId = providedUserId ?? null;
+    let userId: string | null = null;
 
-    if (!userId) {
-      const bearer = getBearerToken(request);
-      if (bearer) {
-        const {
-          data: { user },
-          error: jwtError,
-        } = await supabase.auth.getUser(bearer);
-        if (jwtError) {
-          console.error("ATS API JWT auth error:", jwtError);
-        }
-        userId = user?.id ?? null;
+    const bearer = getBearerToken(request);
+    if (bearer) {
+      const {
+        data: { user },
+        error: jwtError,
+      } = await supabase.auth.getUser(bearer);
+      if (!jwtError && user) {
+        userId = user.id;
       }
     }
 
@@ -103,10 +47,9 @@ export async function POST(request: Request) {
         data: { user },
         error: sessionError,
       } = await getSupabaseSessionUser(request);
-      if (sessionError) {
-        console.error("ATS API cookie session error:", sessionError);
+      if (!sessionError && user) {
+        userId = user.id;
       }
-      userId = user?.id ?? null;
     }
 
     if (!userId) {
@@ -122,7 +65,6 @@ export async function POST(request: Request) {
       .eq("id", userId)
       .single();
     if (profileError || !profile) {
-      console.error("ATS API profile fetch error:", profileError);
       return NextResponse.json({ error: "Profile not found." }, { status: 404 });
     }
 
@@ -191,19 +133,16 @@ export async function POST(request: Request) {
         temperature: 0.1,
         max_tokens: 1000,
       });
-    } catch (error) {
-      console.error("Groq API error in ATS route:", error);
-      const message = error instanceof Error ? error.message : "Groq API request failed";
-      return NextResponse.json({ error: message }, { status: 500 });
+    } catch {
+      return NextResponse.json({ error: "Could not score your resume. Please try again." }, { status: 500 });
     }
 
     const content = completion.choices[0]?.message?.content ?? "{}";
-    let atsFeedback: ATSFeedback;
+    let atsFeedback: ReturnType<typeof parseAiAtsFeedback>;
     try {
-      atsFeedback = normalizeAtsFeedback(parseAssistantJsonObject(content));
-    } catch (error) {
-      console.error("ATS JSON parse error:", error, "Raw content:", content);
-      return NextResponse.json({ error: "Failed to parse ATS analysis JSON response" }, { status: 500 });
+      atsFeedback = parseAiAtsFeedback(parseAssistantJsonObject(content));
+    } catch {
+      return NextResponse.json({ error: "Could not read the ATS analysis. Please try again." }, { status: 500 });
     }
 
     const { data: updatedProfile, error: updateError } = await supabase
@@ -218,8 +157,7 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) {
-      console.error("ATS profile update error:", updateError);
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save ATS results. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json(
@@ -231,8 +169,9 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Unexpected ATS route error:", error);
-    const message = error instanceof Error ? error.message : "Unexpected error while scoring resume.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(error)) {
+      return publicErrorResponse(error, { fallback: "Invalid request." });
+    }
+    return publicErrorResponse(error, { fallback: "Could not score your resume. Please try again." });
   }
 }

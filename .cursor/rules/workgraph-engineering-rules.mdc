@@ -1,0 +1,28 @@
+---
+description: Binding WorkGraph engineering rules — inspect before changing major subsystems; no unjustified rewrites or dependencies.
+alwaysApply: true
+---
+
+# WorkGraph engineering rules
+
+Follow [`docs/WORKGRAPH_ENGINEERING_RULES.md`](docs/WORKGRAPH_ENGINEERING_RULES.md) on every change. That document is binding.
+
+## Inspect before editing
+
+Before modifying a major subsystem (auth, profile/resume, jobs, hidden jobs, ATS, Talent Intelligence, applications, Interview Vault, employer signals, community, ingest, worker, or the self-hosted stack):
+
+1. Inspect the existing implementation (entry points, data flow, auth, tests, call sites).
+2. Explain intended changes in the conversation first: what changes, why, what will not change, and the evidence.
+3. Then make the smallest change that preserves working production behavior (Vercel + Next.js + Supabase + Groq unless evidence says otherwise).
+
+## Non-negotiables
+
+- Never rewrite working functionality without evidence (failing repro, security/correctness defect, explicit requirement, or measurement).
+- Never add a dependency if existing code or packages can solve it. Justify every new dependency (problem, license, data egress, runtime).
+- Prefer MIT, Apache-2.0, BSD, ISC. Do not add AGPL/GPL/SSPL/source-available packages without explicit review.
+- Do not send resume PII to new external services unless architecture requires it and the user is informed.
+- Never log resumes, emails, phones, addresses, tokens, passwords, or secrets. Never put secrets in the browser.
+- Validate all input server-side. Scope every user-data query to the authenticated user. Enforce authorization on every mutation.
+- Treat AI output as untrusted. Present career scores as estimates, not hiring probabilities. Never infer or expose protected characteristics.
+- Users must be able to delete their data; they should be able to export major personal data. Every major feature needs tests.
+- Avoid N+1 queries and unnecessary API calls. Cache expensive, safely scoped computations.

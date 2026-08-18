@@ -42,7 +42,7 @@ export async function listApplicationsForUser(): Promise<Application[]> {
     .eq("user_id", user.id)
     .order("updated_at", { ascending: false });
 
-  if (error) throw new ApplicationsApiError(error.message, 500);
+  if (error) throw new ApplicationsApiError("Could not load applications. Please try again.", 500);
   return (data ?? []).map((row) => mapApplicationRow(row as Record<string, unknown>));
 }
 
@@ -78,7 +78,7 @@ export async function createApplicationForUser(input: ApplicationInsert): Promis
     .select("*")
     .single();
 
-  if (error) throw new ApplicationsApiError(error.message, 500);
+  if (error) throw new ApplicationsApiError("Could not create application. Please try again.", 500);
   return mapApplicationRow(data as Record<string, unknown>);
 }
 
@@ -95,7 +95,7 @@ export async function updateApplicationForUser(
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (fetchError) throw new ApplicationsApiError(fetchError.message, 500);
+  if (fetchError) throw new ApplicationsApiError("Could not load application. Please try again.", 500);
   if (!existing) throw new ApplicationsApiError("Application not found", 404);
 
   const current = mapApplicationRow(existing as Record<string, unknown>);
@@ -146,12 +146,12 @@ export async function updateApplicationForUser(
     .select("*")
     .single();
 
-  if (error) throw new ApplicationsApiError(error.message, 500);
+  if (error) throw new ApplicationsApiError("Could not update application. Please try again.", 500);
   return mapApplicationRow(data as Record<string, unknown>);
 }
 
 export async function deleteApplicationForUser(id: string): Promise<void> {
   const { user, supabase } = await requireUser();
   const { error } = await supabase.from("applications").delete().eq("id", id).eq("user_id", user.id);
-  if (error) throw new ApplicationsApiError(error.message, 500);
+  if (error) throw new ApplicationsApiError("Could not delete application. Please try again.", 500);
 }

@@ -3,6 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 
 import { getSessionUser } from "../../../lib/auth/session-server";
 import { supabaseServiceRoleConfigured } from "../../../lib/supabase-enabled";
+import {
+  isValidationError,
+  parseJsonBody,
+  profileManualInputSchema,
+  publicErrorResponse,
+} from "../../../lib/validation";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import { workgraphBffFetch } from "../../../lib/workgraph-bff";
 
@@ -26,12 +32,6 @@ type ManualProfilePayload = {
   education?: string[];
 };
 
-function toStringArray(input: unknown): string[] {
-  return Array.isArray(input)
-    ? input.filter((v): v is string => typeof v === "string").map((v) => v.trim()).filter(Boolean)
-    : [];
-}
-
 function calculateCompleteness(payload: ManualProfilePayload): number {
   let score = 0;
   if (payload.full_name?.trim()) score += 15;
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Not authenticated. Please sign in and try again." }, { status: 401 });
     }
 
-    const body = (await request.json()) as ManualProfilePayload;
+    const body = await parseJsonBody(request, profileManualInputSchema);
     const email = body.email?.trim() || sessionUser.email || "";
     if (!email) {
       return NextResponse.json({ error: "Email is required." }, { status: 400 });
@@ -66,9 +66,9 @@ export async function POST(request: Request) {
       linkedin_url: body.linkedin_url?.trim() || "",
       github_url: body.github_url?.trim() || "",
       website_url: body.website_url?.trim() || "",
-      skills: toStringArray(body.skills),
-      experience: toStringArray(body.experience),
-      education: toStringArray(body.education),
+      skills: body.skills ?? [],
+      experience: body.experience ?? [],
+      education: body.education ?? [],
     };
 
     const profile_completeness = calculateCompleteness(payload);
@@ -165,12 +165,14 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save your profile. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, profile: data, profile_completeness });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unexpected error saving profile.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(error)) {
+      return publicErrorResponse(error, { fallback: "Invalid profile data." });
+    }
+    return publicErrorResponse(error, { fallback: "Could not save your profile. Please try again." });
   }
 }

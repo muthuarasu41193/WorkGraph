@@ -1,3 +1,5 @@
+import { parseSavedJobIds } from "./validation/saved-jobs";
+
 const STORAGE_PREFIX = "wg-saved-catalog-jobs";
 
 function keyForUser(userId: string): string {
@@ -10,8 +12,7 @@ export function readSavedJobIds(userId: string): Set<string> {
     const raw = localStorage.getItem(keyForUser(userId));
     if (!raw) return new Set();
     const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return new Set();
-    return new Set(parsed.filter((id): id is string => typeof id === "string"));
+    return new Set(parseSavedJobIds(parsed));
   } catch {
     return new Set();
   }
@@ -19,7 +20,8 @@ export function readSavedJobIds(userId: string): Set<string> {
 
 export function writeSavedJobIds(userId: string, ids: Set<string>): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(keyForUser(userId), JSON.stringify([...ids]));
+  const sanitized = parseSavedJobIds([...ids]);
+  localStorage.setItem(keyForUser(userId), JSON.stringify(sanitized));
 }
 
 export function toggleSavedJobId(userId: string, jobId: string): boolean {

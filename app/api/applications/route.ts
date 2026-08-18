@@ -4,7 +4,7 @@ import {
   createApplicationForUser,
   listApplicationsForUser,
 } from "@/lib/applications-server";
-import type { ApplicationInsert } from "@/lib/applications";
+import { applicationInsertSchema, isValidationError, parseJsonBody, publicErrorResponse } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
@@ -14,23 +14,38 @@ export async function GET() {
     return NextResponse.json({ ok: true, applications });
   } catch (err) {
     if (err instanceof ApplicationsApiError) {
-      return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
+      return publicErrorResponse(err, {
+        fallback: "Could not load applications. Please try again.",
+        style: "ok",
+        status: err.status,
+      });
     }
-    const message = err instanceof Error ? err.message : "Failed to load applications";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    return publicErrorResponse(err, {
+      fallback: "Could not load applications. Please try again.",
+      style: "ok",
+    });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as ApplicationInsert;
+    const body = await parseJsonBody(request, applicationInsertSchema);
     const application = await createApplicationForUser(body);
     return NextResponse.json({ ok: true, application }, { status: 201 });
   } catch (err) {
-    if (err instanceof ApplicationsApiError) {
-      return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
+    if (isValidationError(err)) {
+      return publicErrorResponse(err, { fallback: "Invalid application.", style: "ok" });
     }
-    const message = err instanceof Error ? err.message : "Failed to create application";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    if (err instanceof ApplicationsApiError) {
+      return publicErrorResponse(err, {
+        fallback: "Could not create application. Please try again.",
+        style: "ok",
+        status: err.status,
+      });
+    }
+    return publicErrorResponse(err, {
+      fallback: "Could not create application. Please try again.",
+      style: "ok",
+    });
   }
 }

@@ -2,6 +2,7 @@
 
 import { Briefcase, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { workExperienceListSchema } from "../../../lib/validation";
 import { createBrowserSupabaseClient } from "../../../lib/supabase";
 import type { WorkExperience } from "../../../lib/types";
 import {
@@ -131,10 +132,16 @@ export default function ProfileExperience({ userId, experience }: Props) {
 
   const persist = async (next: WorkExperience[]) => {
     emitProfileSaveStart("experience");
+    const parsed = workExperienceListSchema.safeParse(next);
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message ?? "Invalid experience.";
+      emitProfileSaveError("experience", message);
+      throw new Error(message);
+    }
     const supabase = createBrowserSupabaseClient();
     const { error } = await supabase
       .from("profiles")
-      .update({ work_experience: next, updated_at: new Date().toISOString() })
+      .update({ work_experience: parsed.data, updated_at: new Date().toISOString() })
       .eq("id", userId);
     if (error) {
       emitProfileSaveError("experience", error.message);

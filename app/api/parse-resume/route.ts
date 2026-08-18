@@ -4,42 +4,17 @@ import mammoth from "mammoth";
 import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
-import { MAX_RESUME_UPLOAD_BYTES, MAX_RESUME_UPLOAD_LABEL } from "../../../lib/upload-limits";
+import {
+  isValidationError,
+  parseAiParsedResume,
+  parseResumeUploadFile,
+  publicErrorResponse,
+} from "../../../lib/validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 /** Resume parsing + Groq can exceed default hobby limits; raise where your plan allows. */
 export const maxDuration = 60;
-
-type ParsedEducation = {
-  degree: string;
-  institution: string;
-  year: string;
-};
-
-type ParsedWorkExperience = {
-  title: string;
-  company: string;
-  duration: string;
-  description: string;
-};
-
-type ParsedResume = {
-  full_name: string;
-  email: string | null;
-  phone: string | null;
-  location: string | null;
-  headline: string;
-  summary: string | null;
-  years_of_experience: number;
-  skills: string[];
-  education: ParsedEducation[];
-  work_experience: ParsedWorkExperience[];
-  certifications: string[];
-  linkedin_url: string | null;
-  github_url: string | null;
-  website_url: string | null;
-};
 
 function getRequiredEnv(key: string): string {
   const value = process.env[key];
@@ -47,73 +22,7 @@ function getRequiredEnv(key: string): string {
   return value;
 }
 
-function normalizeParsedResume(data: unknown): ParsedResume {
-  const fallback: ParsedResume = {
-    full_name: "",
-    email: null,
-    phone: null,
-    location: null,
-    headline: "",
-    summary: null,
-    years_of_experience: 0,
-    skills: [],
-    education: [],
-    work_experience: [],
-    certifications: [],
-    linkedin_url: null,
-    github_url: null,
-    website_url: null,
-  };
-
-  if (!data || typeof data !== "object") return fallback;
-  const obj = data as Record<string, unknown>;
-
-  return {
-    full_name: typeof obj.full_name === "string" ? obj.full_name.trim() : "",
-    email: typeof obj.email === "string" ? obj.email.trim() : null,
-    phone: typeof obj.phone === "string" ? obj.phone.trim() : null,
-    location: typeof obj.location === "string" ? obj.location.trim() : null,
-    headline: typeof obj.headline === "string" ? obj.headline.trim() : "",
-    summary: typeof obj.summary === "string" ? obj.summary.trim() : null,
-    years_of_experience:
-      typeof obj.years_of_experience === "number" && Number.isFinite(obj.years_of_experience)
-        ? obj.years_of_experience
-        : 0,
-    skills: Array.isArray(obj.skills)
-      ? obj.skills.filter((s): s is string => typeof s === "string").map((s) => s.trim()).filter(Boolean)
-      : [],
-    education: Array.isArray(obj.education)
-      ? obj.education
-          .filter((ed): ed is Record<string, unknown> => !!ed && typeof ed === "object")
-          .map((ed) => ({
-            degree: typeof ed.degree === "string" ? ed.degree.trim() : "",
-            institution: typeof ed.institution === "string" ? ed.institution.trim() : "",
-            year: typeof ed.year === "string" ? ed.year.trim() : "",
-          }))
-      : [],
-    work_experience: Array.isArray(obj.work_experience)
-      ? obj.work_experience
-          .filter((wx): wx is Record<string, unknown> => !!wx && typeof wx === "object")
-          .map((wx) => ({
-            title: typeof wx.title === "string" ? wx.title.trim() : "",
-            company: typeof wx.company === "string" ? wx.company.trim() : "",
-            duration: typeof wx.duration === "string" ? wx.duration.trim() : "",
-            description: typeof wx.description === "string" ? wx.description.trim() : "",
-          }))
-      : [],
-    certifications: Array.isArray(obj.certifications)
-      ? obj.certifications
-          .filter((c): c is string => typeof c === "string")
-          .map((c) => c.trim())
-          .filter(Boolean)
-      : [],
-    linkedin_url: typeof obj.linkedin_url === "string" ? obj.linkedin_url.trim() : null,
-    github_url: typeof obj.github_url === "string" ? obj.github_url.trim() : null,
-    website_url: typeof obj.website_url === "string" ? obj.website_url.trim() : null,
-  };
-}
-
-function calculateProfileCompleteness(profile: ParsedResume): number {
+function calculateProfileCompleteness(profile: ReturnType<typeof parseAiParsedResume>): number {
   let score = 0;
 
   if (profile.full_name) score += 15;
@@ -132,18 +41,7 @@ function calculateProfileCompleteness(profile: ParsedResume): number {
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const file = formData.get("file");
-
-    if (!(file instanceof File)) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
-
-    if (file.size > MAX_RESUME_UPLOAD_BYTES) {
-      return NextResponse.json(
-        { error: `File is too large. Maximum size is ${MAX_RESUME_UPLOAD_LABEL}.` },
-        { status: 400 }
-      );
-    }
+    const file = parseResumeUploadFile(formData.get("file"));
 
     const supabaseUrl = getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL");
     const serviceRole = getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY");
@@ -191,14 +89,9 @@ export async function POST(request: Request) {
       const pdfParse = (await import("pdf-parse")).default;
       const parsed = await pdfParse(buffer);
       resumeText = parsed.text?.trim() ?? "";
-    } else if (
-      lowerName.endsWith(".docx") ||
-      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
+    } else {
       const parsed = await mammoth.extractRawText({ buffer });
       resumeText = parsed.value?.trim() ?? "";
-    } else {
-      return NextResponse.json({ error: "Only PDF and DOCX files are supported" }, { status: 400 });
     }
 
     const textSample = resumeText.replace(/\s+/g, " ").trim();
@@ -217,7 +110,7 @@ export async function POST(request: Request) {
       upsert: false,
     });
     if (uploadError) {
-      return NextResponse.json({ error: uploadError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not store your resume. Please try again." }, { status: 500 });
     }
     const { data: publicUrlData } = supabaseAdmin.storage.from("resumes").getPublicUrl(storagePath);
     const resumeUrl = publicUrlData.publicUrl;
@@ -277,11 +170,11 @@ export async function POST(request: Request) {
 
     const content = completion.choices[0]?.message?.content ?? "{}";
 
-    let parsedJson: ParsedResume;
+    let parsedJson: ReturnType<typeof parseAiParsedResume>;
     try {
-      parsedJson = normalizeParsedResume(parseAssistantJsonObject(content));
+      parsedJson = parseAiParsedResume(parseAssistantJsonObject(content));
     } catch {
-      return NextResponse.json({ error: "Failed to parse Groq JSON response" }, { status: 500 });
+      return NextResponse.json({ error: "Could not read the resume analysis. Please try again." }, { status: 500 });
     }
 
     const profile_completeness = calculateProfileCompleteness(parsedJson);
@@ -316,7 +209,7 @@ export async function POST(request: Request) {
     );
 
     if (upsertError) {
-      return NextResponse.json({ error: upsertError.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save your profile. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json(
@@ -332,7 +225,9 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unexpected parse error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (isValidationError(error)) {
+      return publicErrorResponse(error, { fallback: "Invalid resume upload." });
+    }
+    return publicErrorResponse(error, { fallback: "Could not parse your resume. Please try again." });
   }
 }
