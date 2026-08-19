@@ -3,6 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 import { getBearerToken, getSupabaseSessionUser } from "../../../../lib/route-auth";
 import { parseResumeViaApi, workgraphApiEnabled } from "../../../../lib/workgraph-api";
 import {
+  buildNormalizedResume,
+  persistResumeIntelligence,
+  publicResumeIntelligence,
+  resumeFileUrlForOwner,
+  toLegacyProfileFields,
+  toStoredResumeIntelligence,
+} from "../../../../lib/resume-intelligence";
+import {
   isValidationError,
   parseAiParsedResume,
   parseResumeUploadFile,
@@ -18,6 +26,10 @@ function getRequiredEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Missing required environment variable: ${key}`);
   return value;
+}
+
+function safeFileName(name: string): string {
+  return name.replace(/[/\\]/g, "-").replace(/\s+/g, "-").slice(0, 180);
 }
 
 /**
@@ -66,59 +78,96 @@ export async function POST(request: Request) {
     const parsed = parseAiParsedResume(parsedRaw);
 
     const resumeText = parsedRaw.raw_text?.trim() ?? "";
-    const storagePath = `${user.id}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const storagePath = `${user.id}/${Date.now()}-${safeFileName(file.name)}`;
     const { error: uploadError } = await supabase.storage.from("resumes").upload(storagePath, file, {
       upsert: false,
     });
     if (uploadError) {
       return NextResponse.json({ error: "Could not store your resume. Please try again." }, { status: 500 });
     }
-    const { data: publicUrlData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
+    const resumeUrl = resumeFileUrlForOwner();
 
     const formEmail = form.get("email");
     const emailOverride =
       typeof formEmail === "string" && formEmail.trim() ? formEmail.trim() : null;
 
-    const profileCompleteness =
-      typeof parsedRaw.profile_completeness === "number" ? parsedRaw.profile_completeness : 0;
+    const normalized = buildNormalizedResume({
+      sourceText: resumeText,
+      extracted: parsedRaw,
+    });
+    const legacy = toLegacyProfileFields(normalized);
+    const merged = parseAiParsedResume({
+      ...parsed,
+      ...legacy,
+      years_of_experience: legacy.years_of_experience ?? parsed.years_of_experience,
+    });
 
-    const { error: upsertError } = await supabase.from("profiles").upsert(
-      {
-        id: user.id,
-        email: parsed.email ?? emailOverride ?? sessionEmail,
-        full_name: parsed.full_name || null,
-        phone: parsed.phone,
-        location: parsed.location,
-        headline: parsed.headline || null,
-        summary: parsed.summary,
-        years_of_experience: parsed.years_of_experience ?? null,
-        skills: parsed.skills ?? [],
-        education: parsed.education ?? [],
-        work_experience: parsed.work_experience ?? [],
-        certifications: parsed.certifications ?? [],
-        linkedin_url: parsed.linkedin_url,
-        github_url: parsed.github_url,
-        website_url: parsed.website_url,
-        resume_raw_text: resumeText || null,
-        resume_url: publicUrlData.publicUrl,
-        profile_completeness: profileCompleteness,
-        updated_at: new Date().toISOString(),
-      },
+    const profileCompleteness =
+      typeof parsedRaw.profile_completeness === "number"
+        ? parsedRaw.profile_completeness
+        : normalized.quality.completeness;
+
+    const coreProfile = {
+      id: user.id,
+      email: merged.email ?? emailOverride ?? sessionEmail,
+      full_name: merged.full_name || null,
+      phone: merged.phone,
+      location: merged.location,
+      headline: merged.headline || null,
+      summary: merged.summary,
+      years_of_experience: merged.years_of_experience ?? null,
+      skills: merged.skills ?? [],
+      education: merged.education ?? [],
+      work_experience: merged.work_experience ?? [],
+      certifications: merged.certifications ?? [],
+      linkedin_url: merged.linkedin_url,
+      github_url: merged.github_url,
+      website_url: merged.website_url,
+      resume_raw_text: resumeText || null,
+      resume_url: resumeUrl,
+      profile_completeness: profileCompleteness,
+      updated_at: new Date().toISOString(),
+    };
+    const intelligenceFields = {
+      resume_intelligence: toStoredResumeIntelligence(normalized),
+      resume_storage_path: storagePath,
+      resume_embedding: normalized.embedding?.vector ?? null,
+      resume_embedding_model: normalized.embedding?.model ?? null,
+    };
+
+    let { error: upsertError } = await supabase.from("profiles").upsert(
+      { ...coreProfile, ...intelligenceFields },
       { onConflict: "id" },
     );
+    if (upsertError) {
+      const fallback = await supabase.from("profiles").upsert(coreProfile, { onConflict: "id" });
+      upsertError = fallback.error;
+    }
 
     if (upsertError) {
       return NextResponse.json({ error: "Could not save your profile. Please try again." }, { status: 500 });
     }
 
+    try {
+      await persistResumeIntelligence({
+        supabase,
+        userId: user.id,
+        storagePath,
+        sourceText: resumeText,
+        resume: normalized,
+      });
+    } catch {
+      // Additive snapshot.
+    }
+
     return NextResponse.json({
       success: true,
       profile: {
-        ...parsed,
-        resume_url: publicUrlData.publicUrl,
-        resume_raw_text: resumeText,
+        ...merged,
+        resume_url: resumeUrl,
       },
       profile_completeness: profileCompleteness,
+      resume_intelligence: publicResumeIntelligence(normalized),
       source: "workgraph-api",
     });
   } catch (err) {

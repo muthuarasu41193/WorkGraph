@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListSkeleton } from "@/components/ui/skeleton";
+import { employerVisibleResumeHref } from "@/lib/security/resume-access";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -95,7 +96,10 @@ export default function PulseInbox({ signalId }: Props) {
               <ul className="space-y-2">
                 {byStage[stage].map((c) => {
                   const app = c.application_snapshot;
-                  const resumeUrl = app?.resume_url;
+                  const resumeUrl = employerVisibleResumeHref({
+                    connectionId: c.id,
+                    resumeUrl: app?.resume_url,
+                  });
                   return (
                     <Card
                       key={c.id}

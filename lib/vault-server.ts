@@ -7,6 +7,9 @@ import {
   isVaultResult,
   mapVaultExperienceRow,
   mapVaultReviewRow,
+  parseVaultPaymentStatus,
+  publicVaultListItem,
+  redactVaultExperience,
   VAULT_LIST_SELECT,
   type VaultDashboardStats,
   type VaultExperience,
@@ -15,6 +18,8 @@ import {
   type VaultListFilters,
   type VaultReview,
 } from "@/lib/vault";
+import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
+import { logRouteError } from "@/lib/security/log";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 
@@ -49,26 +54,7 @@ async function requireUser() {
 }
 
 function mapListItem(row: Record<string, unknown>): VaultExperienceListItem {
-  const exp = mapVaultExperienceRow(row);
-  return {
-    id: exp.id,
-    seller_id: exp.seller_id,
-    company: exp.company,
-    role: exp.role,
-    level: exp.level,
-    difficulty: exp.difficulty,
-    rounds: exp.rounds,
-    result: exp.result,
-    interview_date: exp.interview_date,
-    price_inr: exp.price_inr,
-    view_count: exp.view_count,
-    sales_count: exp.sales_count,
-    avg_rating: exp.avg_rating,
-    published_at: exp.published_at,
-    questions_html: exp.questions_html,
-    tips_html: exp.tips_html,
-    rounds_data: exp.rounds_data,
-  };
+  return publicVaultListItem(mapVaultExperienceRow(row));
 }
 
 export async function listPublishedExperiences(filters: VaultListFilters = {}): Promise<VaultExperienceListItem[]> {
@@ -97,7 +83,10 @@ export async function listPublishedExperiences(filters: VaultListFilters = {}): 
   }
 
   const { data, error } = await query;
-  if (error) throw new VaultApiError(error.message, 500);
+  if (error) {
+    logRouteError("vault/list", error);
+    throw new VaultApiError("Could not load experiences.", 500);
+  }
 
   let items = (data ?? []).map((row) => mapListItem(row as Record<string, unknown>));
 
@@ -128,16 +117,28 @@ export async function getExperienceById(id: string): Promise<VaultExperience | n
   return experience;
 }
 
-export async function userHasPurchased(experienceId: string, userId: string): Promise<boolean> {
+export async function getVaultPurchase(
+  experienceId: string,
+  userId: string,
+): Promise<{ payment_status: ReturnType<typeof parseVaultPaymentStatus> } | null> {
   const supabase = await requireSupabase();
   const { data, error } = await supabase
     .from("vault_purchases")
-    .select("id")
+    .select("id, payment_status")
     .eq("experience_id", experienceId)
     .eq("buyer_id", userId)
     .maybeSingle();
-  if (error) throw new VaultApiError(error.message, 500);
-  return Boolean(data);
+  if (error) {
+    logRouteError("vault/purchase-lookup", error);
+    return null;
+  }
+  if (!data) return null;
+  return { payment_status: parseVaultPaymentStatus((data as { payment_status?: unknown }).payment_status) };
+}
+
+export async function userHasPurchased(experienceId: string, userId: string): Promise<boolean> {
+  const purchase = await getVaultPurchase(experienceId, userId);
+  return purchase?.payment_status === "verified";
 }
 
 export async function incrementViewCount(id: string): Promise<void> {
@@ -162,18 +163,33 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
 
   const user = await getSessionUser();
   const is_owner = user?.id === experience.seller_id;
-  const purchased = user ? await userHasPurchased(id, user.id) : false;
-  const unlocked = is_owner || purchased;
+  const purchase = user ? await getVaultPurchase(id, user.id) : null;
+  const unlocked = hasVaultEntitlement({
+    viewerId: user?.id ?? null,
+    sellerId: experience.seller_id,
+    priceInr: experience.price_inr,
+    purchase,
+  });
 
   if (experience.status === "published") {
     await incrementViewCount(id);
   }
 
-  const full_content = buildFullContent(experience);
-  const preview = buildPreviewContent(full_content);
+  const rawFull = buildFullContent(experience);
+  const preview = buildPreviewContent(rawFull);
+  const full_content = unlocked ? rawFull : "";
+  const publicExperience = unlocked ? experience : redactVaultExperience(experience);
 
-  return { experience, preview, full_content, unlocked, is_owner };
+  return { experience: publicExperience, preview, full_content, unlocked, is_owner };
 }
+
+export type VaultPurchaseResult = {
+  ok: true;
+  unlocked: boolean;
+  payment_status: "pending" | "verified";
+  entitlement: "granted" | "pending";
+  message: string;
+};
 
 export async function createDraftExperience(input: VaultExperienceInsert = {}): Promise<VaultExperience> {
   const { user, supabase } = await requireUser();
@@ -260,7 +276,7 @@ export async function getSellerDraft(userId: string): Promise<VaultExperience | 
   return data ? mapVaultExperienceRow(data as Record<string, unknown>) : null;
 }
 
-export async function purchaseExperience(experienceId: string): Promise<{ ok: true }> {
+export async function purchaseExperience(experienceId: string): Promise<VaultPurchaseResult> {
   const { user, supabase } = await requireUser();
 
   const experience = await getExperienceById(experienceId);
@@ -271,19 +287,43 @@ export async function purchaseExperience(experienceId: string): Promise<{ ok: tr
     throw new VaultApiError("You already own this experience", 400);
   }
 
-  const already = await userHasPurchased(experienceId, user.id);
-  if (already) {
+  if (isVaultListingFree(experience.price_inr)) {
+    return {
+      ok: true,
+      unlocked: true,
+      payment_status: "verified",
+      entitlement: "granted",
+      message: "This listing is free.",
+    };
+  }
+
+  const existing = await getVaultPurchase(experienceId, user.id);
+  if (existing?.payment_status === "verified") {
     throw new VaultApiError("Already purchased", 400);
+  }
+  if (existing?.payment_status === "pending") {
+    throw new VaultApiError(
+      "Payment verification is required before this content can be unlocked.",
+      402,
+    );
   }
 
   const { error } = await supabase.from("vault_purchases").insert({
     experience_id: experienceId,
     buyer_id: user.id,
     amount_inr: experience.price_inr,
+    payment_status: "pending",
   });
 
-  if (error) throw new VaultApiError(error.message, 500);
-  return { ok: true };
+  if (error) {
+    logRouteError("vault/purchase", error);
+    throw new VaultApiError("Could not record purchase intent.", 500);
+  }
+
+  throw new VaultApiError(
+    "Payment verification is required before this content can be unlocked.",
+    402,
+  );
 }
 
 export async function listReviewsForExperience(experienceId: string): Promise<VaultReview[]> {
@@ -309,8 +349,17 @@ export async function submitReview(
     throw new VaultApiError("Rating must be between 1 and 5", 400);
   }
 
-  const purchased = await userHasPurchased(experienceId, user.id);
-  if (!purchased) {
+  const experience = await getExperienceById(experienceId);
+  if (!experience) throw new VaultApiError("Experience not found", 404);
+
+  const purchase = await getVaultPurchase(experienceId, user.id);
+  const entitled = hasVaultEntitlement({
+    viewerId: user.id,
+    sellerId: experience.seller_id,
+    priceInr: experience.price_inr,
+    purchase,
+  });
+  if (!entitled || experience.seller_id === user.id) {
     throw new VaultApiError("Purchase required to review", 403);
   }
 

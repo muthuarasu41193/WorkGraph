@@ -25,6 +25,7 @@ export const LIMITS = {
   pageSize: 4000,
   resumeText: 400_000,
   jobDescription: 32_000,
+  coverLetter: 16_000,
   years: 60,
 } as const;
 

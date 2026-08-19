@@ -7,6 +7,7 @@ const STORAGE_KEY = "wg-career-intelligence-expanded";
 
 const INTELLIGENCE_ROUTE_IDS = new Set<string>([
   "resume-intelligence",
+  "cover-letters",
   "applications",
   "workgraph-direct",
   "vault",

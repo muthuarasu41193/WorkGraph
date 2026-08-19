@@ -7,6 +7,8 @@ import {
   applicationStatusSchema,
   applicationUpdateSchema,
   careerPreferencesSchema,
+  coverLetterGenerateSchema,
+  coverLetterSaveSchema,
   educationListSchema,
   jobSchema,
   looksLikeInternalError,
@@ -255,5 +257,35 @@ describe("error sanitization", () => {
       assert.equal(error.status, 400);
       assert.ok(error.details[0]?.field.includes("email"));
     }
+  });
+});
+
+describe("cover letter schemas", () => {
+  it("accepts a generate payload and rejects missing fields", () => {
+    const data = parseWithSchema(coverLetterGenerateSchema, {
+      jobTitle: " Backend Engineer ",
+      company: " Acme ",
+      jobDescription: "Build APIs.",
+    });
+    assert.equal(data.jobTitle, "Backend Engineer");
+    assert.equal(data.company, "Acme");
+    assert.throws(
+      () => parseWithSchema(coverLetterGenerateSchema, { jobTitle: "X", company: "Y" }),
+      ValidationError,
+    );
+  });
+
+  it("accepts a save payload with optional job description", () => {
+    const data = parseWithSchema(coverLetterSaveSchema, {
+      jobTitle: "PM",
+      company: "Globex",
+      letter: "Dear hiring manager,\n\nI am writing...",
+    });
+    assert.equal(data.jobDescription, undefined);
+    assert.equal(data.letter.startsWith("Dear"), true);
+    assert.throws(
+      () => parseWithSchema(coverLetterSaveSchema, { jobTitle: "PM", company: "Globex", letter: "   " }),
+      ValidationError,
+    );
   });
 });

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { getBearerToken, getSupabaseSessionUser } from "../../../../lib/route-auth";
+import { logRouteError } from "../../../../lib/security/log";
+import { resolveAuthenticatedUserId } from "../../../../lib/security/session-identity";
+import { createSupabaseAdminClient } from "../../../../lib/supabase-admin";
 import {
   atsScoreBodySchema,
   isValidationError,
@@ -12,12 +14,6 @@ import { scoreAtsViaApi, workgraphApiEnabled } from "../../../../lib/workgraph-a
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function getRequiredEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`Missing required environment variable: ${key}`);
-  return value;
-}
 
 function defaultJobDescription(profile: {
   headline?: string | null;
@@ -55,21 +51,23 @@ export async function POST(request: Request) {
     const rawBody = await request.json().catch(() => ({}));
     const body = parseWithSchema(atsScoreBodySchema, rawBody);
 
-    const supabase = createClient(
-      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
-      getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
-    );
+    const supabase = createSupabaseAdminClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "Could not score your resume. Please try again." }, { status: 500 });
+    }
 
-    let userId: string | null = null;
+    let sessionUser: { id: string } | null = null;
     const bearer = getBearerToken(request);
     if (bearer) {
       const { data: { user } } = await supabase.auth.getUser(bearer);
-      userId = user?.id ?? null;
+      sessionUser = user ? { id: user.id } : null;
     }
-    if (!userId) {
+    if (!sessionUser) {
       const { data: { user } } = await getSupabaseSessionUser(request);
-      userId = user?.id ?? null;
+      sessionUser = user ? { id: user.id } : null;
     }
+
+    const userId = resolveAuthenticatedUserId(sessionUser, body.user_id);
     if (!userId) {
       return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
     }
@@ -110,6 +108,7 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) {
+      logRouteError("v2/ats-score", updateError);
       return NextResponse.json({ error: "Could not save ATS results. Please try again." }, { status: 500 });
     }
 
@@ -123,6 +122,7 @@ export async function POST(request: Request) {
     if (isValidationError(err)) {
       return publicErrorResponse(err, { fallback: "Invalid request." });
     }
+    logRouteError("v2/ats-score", err);
     return publicErrorResponse(err, { fallback: "Could not score your resume. Please try again." });
   }
 }

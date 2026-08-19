@@ -24,7 +24,7 @@ function gradeFromScore(score: number): string {
   return "F";
 }
 
-export default function ATSScoreCard({ userId, score, feedback }: Props) {
+export default function ATSScoreCard({ userId: _userId, score, feedback }: Props) {
   const [activeTab, setActiveTab] = useState<"strengths" | "weaknesses" | "suggestions">("strengths");
   const [loading, setLoading] = useState(false);
   const [localFeedback, setLocalFeedback] = useState<ATSFeedback | null>(feedback);
@@ -45,7 +45,7 @@ export default function ATSScoreCard({ userId, score, feedback }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({}),
       });
       const json = await readApiJson(res);
       const payload = json && typeof json === "object" ? (json as Record<string, unknown>) : {};

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { analyzeResumeWithGroq } from "@/lib/resume/groq-client";
-import { extractResumeTextFromPdf, normalizeResumeText } from "@/lib/resume/pdf-parser";
+import { extractResumeTextFromBuffer } from "@/lib/resume-intelligence";
+import { normalizeResumeText } from "@/lib/resume/pdf-parser";
+import { logRouteError } from "@/lib/security/log";
+import { getSupabaseSessionUser } from "@/lib/route-auth";
 import {
   isValidationError,
   parseResumeUploadFile,
@@ -15,6 +18,14 @@ export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
+    const {
+      data: { user },
+      error: authError,
+    } = await getSupabaseSessionUser(request);
+    if (authError || !user) {
+      return NextResponse.json({ ok: false, error: "Not authenticated." }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const fileValue = formData.get("file");
     const fields = parseWithSchema(resumeAnalyzeTextSchema, {
@@ -39,7 +50,8 @@ export async function POST(request: Request) {
 
     let resumeText = "";
     if (file) {
-      resumeText = await extractResumeTextFromPdf(file);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      resumeText = (await extractResumeTextFromBuffer(buffer, file.name, file.type)).text;
     } else {
       resumeText = normalizeResumeText(resumeTextInput);
     }
@@ -65,6 +77,7 @@ export async function POST(request: Request) {
     if (isValidationError(error)) {
       return publicErrorResponse(error, { fallback: "Invalid resume upload.", style: "ok" });
     }
+    logRouteError("resume/analyze", error);
     return publicErrorResponse(error, {
       fallback: "Could not analyze your resume. Please try again.",
       style: "ok",

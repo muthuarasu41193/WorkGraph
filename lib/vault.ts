@@ -1,3 +1,5 @@
+import { isVaultPaymentStatus, type VaultPaymentStatus } from "@/lib/security/vault-entitlement";
+
 export const VAULT_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type VaultDifficulty = (typeof VAULT_DIFFICULTIES)[number];
 
@@ -53,10 +55,12 @@ export type VaultExperienceListItem = Pick<
   | "sales_count"
   | "avg_rating"
   | "published_at"
-  | "questions_html"
-  | "tips_html"
-  | "rounds_data"
->;
+> & {
+  preview: string;
+  questions_html: string;
+  tips_html: string;
+  rounds_data: VaultRound[];
+};
 
 export type VaultExperienceInsert = {
   company?: string;
@@ -88,6 +92,9 @@ export type VaultPurchase = {
   experience_id: string;
   buyer_id: string;
   amount_inr: number;
+  payment_status: VaultPaymentStatus;
+  payment_provider: string | null;
+  payment_reference: string | null;
   created_at: string;
 };
 
@@ -226,6 +233,44 @@ export type VaultListFilters = {
   date_from?: string;
   date_to?: string;
 };
+
+export function redactVaultExperience(experience: VaultExperience): VaultExperience {
+  return {
+    ...experience,
+    questions_html: "",
+    tips_html: "",
+    rounds_data: [],
+  };
+}
+
+export function publicVaultListItem(experience: VaultExperience): VaultExperienceListItem {
+  const preview = buildPreviewContent(buildFullContent(experience));
+  return {
+    id: experience.id,
+    seller_id: experience.seller_id,
+    company: experience.company,
+    role: experience.role,
+    level: experience.level,
+    difficulty: experience.difficulty,
+    rounds: experience.rounds,
+    result: experience.result,
+    interview_date: experience.interview_date,
+    price_inr: experience.price_inr,
+    view_count: experience.view_count,
+    sales_count: experience.sales_count,
+    avg_rating: experience.avg_rating,
+    published_at: experience.published_at,
+    preview,
+    questions_html: "",
+    tips_html: "",
+    rounds_data: [],
+  };
+}
+
+export function parseVaultPaymentStatus(value: unknown): VaultPaymentStatus {
+  if (typeof value === "string" && isVaultPaymentStatus(value)) return value;
+  return "pending";
+}
 
 export const VAULT_LIST_SELECT =
   "id,seller_id,company,role,level,difficulty,rounds,result,interview_date,price_inr,view_count,sales_count,avg_rating,published_at,questions_html,tips_html,rounds_data";

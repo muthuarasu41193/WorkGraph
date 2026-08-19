@@ -97,15 +97,22 @@ export default function ApplicationConnectDialog({
         .upload(storagePath, file, { upsert: false });
       if (uploadError) throw new Error(uploadError.message);
 
-      const { data: publicData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
-      if (!publicData.publicUrl) throw new Error("Could not get resume URL.");
-
-      await supabase
+      const updated = await supabase
         .from("profiles")
-        .update({ resume_url: publicData.publicUrl, updated_at: new Date().toISOString() })
+        .update({
+          resume_url: "/api/resume/file",
+          resume_storage_path: storagePath,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", user.id);
+      if (updated.error) {
+        await supabase
+          .from("profiles")
+          .update({ resume_url: "/api/resume/file", updated_at: new Date().toISOString() })
+          .eq("id", user.id);
+      }
 
-      setValues((prev) => ({ ...prev, resumeUrl: publicData.publicUrl }));
+      setValues((prev) => ({ ...prev, resumeUrl: "/api/resume/file" }));
       setResumeFileName(file.name);
     } catch (err) {
       setResumeError(err instanceof Error ? err.message : "Resume upload failed");

@@ -6,8 +6,6 @@ import { iconClass } from "@/lib/icon-styles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  buildFullContent,
-  buildPreviewContent,
   VAULT_DIFFICULTY_LABELS,
   VAULT_RESULT_LABELS,
   type VaultExperienceListItem,
@@ -20,7 +18,7 @@ type Props = {
 };
 
 export default function VaultExperienceCard({ experience, className }: Props) {
-  const preview = buildPreviewContent(buildFullContent(experience));
+  const preview = experience.preview;
   const rating = experience.avg_rating;
 
   return (

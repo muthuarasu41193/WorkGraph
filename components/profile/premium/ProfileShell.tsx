@@ -18,6 +18,7 @@ import ResumeAnalyzer from "@/app/(dashboard)/profile/components/ResumeAnalyzer"
 import type { JobMatchPreviewExt } from "./job-match-utils";
 import { workgraphApiEnabled } from "../../../lib/workgraph-api";
 import type { Profile } from "../../../lib/types";
+import { CoverLetterSection } from "@/components/cover-letters/CoverLetterSection";
 
 const ProfileJobsView = dynamic(() => import("../ProfileJobsView"), {
   loading: () => <DashboardSectionSkeleton />,
@@ -200,6 +201,17 @@ function ProfileShellInner({
             subtitle="Improve your interview chances by fixing the highest-impact resume issues."
           />
           <ResumeIntelligenceSection
+            hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
+          />
+        </div>
+      ),
+      "cover-letters": (
+        <div className="space-y-6">
+          <PageHero
+            title="Cover Letters"
+            subtitle="AI-powered cover letter generation"
+          />
+          <CoverLetterSection
             hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
           />
         </div>

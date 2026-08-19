@@ -25,6 +25,7 @@ export type DashboardRouteId =
   | "job-news"
   | "workgraph-direct"
   | "resume-intelligence"
+  | "cover-letters"
   | "settings";
 
 export type DashboardRoute = {
@@ -56,6 +57,13 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     shortLabel: "Intelligence",
     icon: Brain,
     description: "Compare your resume to any job with honest, evidence-based analysis",
+  },
+  {
+    id: "cover-letters",
+    label: "Cover Letters",
+    shortLabel: "Letters",
+    icon: FileText,
+    description: "AI-powered cover letter generation",
   },
   {
     id: "workgraph-direct",

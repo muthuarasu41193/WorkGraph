@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { VaultApiError, createDraftExperience, listPublishedExperiences } from "@/lib/vault-server";
+import { logRouteError } from "@/lib/security/log";
 import type { VaultListFilters } from "@/lib/vault";
 import { isVaultDifficulty, isVaultResult } from "@/lib/vault";
 
@@ -34,8 +35,8 @@ export async function GET(request: Request) {
     if (err instanceof VaultApiError) {
       return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
     }
-    const message = err instanceof Error ? err.message : "Failed to load experiences";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    logRouteError("vault/experiences", err);
+    return NextResponse.json({ ok: false, error: "Could not load experiences." }, { status: 500 });
   }
 }
 
@@ -47,7 +48,7 @@ export async function POST() {
     if (err instanceof VaultApiError) {
       return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
     }
-    const message = err instanceof Error ? err.message : "Failed to create draft";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    logRouteError("vault/experiences", err);
+    return NextResponse.json({ ok: false, error: "Could not create a draft." }, { status: 500 });
   }
 }

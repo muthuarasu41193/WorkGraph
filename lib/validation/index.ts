@@ -41,3 +41,10 @@ export {
 export type { ApplicationInsertInput, ApplicationUpdateInput } from "./application";
 
 export { savedJobIdSchema, savedJobIdsSchema, parseSavedJobIds, savedJobToggleSchema } from "./saved-jobs";
+
+export {
+  coverLetterGenerateSchema,
+  coverLetterSaveSchema,
+  coverLetterIdSchema,
+} from "./cover-letters";
+export type { CoverLetterGenerateInput, CoverLetterSaveInput } from "./cover-letters";

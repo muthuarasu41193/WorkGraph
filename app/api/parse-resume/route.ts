@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import mammoth from "mammoth";
-import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
-import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
+import {
+  buildNormalizedResume,
+  extractResumeTextFromBuffer,
+  extractStructuredResumeWithGroq,
+  persistResumeIntelligence,
+  publicResumeIntelligence,
+  resumeFileUrlForOwner,
+  toLegacyProfileFields,
+  toStoredResumeIntelligence,
+} from "../../../lib/resume-intelligence";
 import {
   isValidationError,
   parseAiParsedResume,
@@ -20,6 +27,10 @@ function getRequiredEnv(key: string): string {
   const value = process.env[key];
   if (!value) throw new Error(`Missing required environment variable: ${key}`);
   return value;
+}
+
+function safeFileName(name: string): string {
+  return name.replace(/[/\\]/g, "-").replace(/\s+/g, "-").slice(0, 180);
 }
 
 function calculateProfileCompleteness(profile: ReturnType<typeof parseAiParsedResume>): number {
@@ -80,136 +91,94 @@ export async function POST(request: Request) {
       );
     }
 
-    const lowerName = file.name.toLowerCase();
     const buffer = Buffer.from(await file.arrayBuffer());
-    let resumeText = "";
+    const extracted = await extractResumeTextFromBuffer(buffer, file.name, file.type);
+    const resumeText = extracted.text;
 
-    if (lowerName.endsWith(".pdf") || file.type === "application/pdf") {
-      // Lazy-load pdf-parse only when needed to keep cold starts lighter.
-      const pdfParse = (await import("pdf-parse")).default;
-      const parsed = await pdfParse(buffer);
-      resumeText = parsed.text?.trim() ?? "";
-    } else {
-      const parsed = await mammoth.extractRawText({ buffer });
-      resumeText = parsed.value?.trim() ?? "";
-    }
-
-    const textSample = resumeText.replace(/\s+/g, " ").trim();
-    if (textSample.length < 24) {
-      return NextResponse.json(
-        {
-          error:
-            "We could not extract enough text from this file. Try another PDF/DOCX export, or enter your profile manually.",
-        },
-        { status: 422 }
-      );
-    }
-
-    const storagePath = `${userId}/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const storagePath = `${userId}/${Date.now()}-${safeFileName(file.name)}`;
     const { error: uploadError } = await supabaseAdmin.storage.from("resumes").upload(storagePath, file, {
       upsert: false,
     });
     if (uploadError) {
       return NextResponse.json({ error: "Could not store your resume. Please try again." }, { status: 500 });
     }
-    const { data: publicUrlData } = supabaseAdmin.storage.from("resumes").getPublicUrl(storagePath);
-    const resumeUrl = publicUrlData.publicUrl;
+    const resumeUrl = resumeFileUrlForOwner();
 
-    const groq = getGroqClient();
-
-    const completion = await groq.chat.completions.create({
-      model: GROQ_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `You are a professional resume parser.
-         You always respond with valid JSON only.
-         Never include markdown, code blocks, or explanations.`,
-        },
-        {
-          role: "user",
-          content: `Parse this resume and return ONLY this JSON structure
-         with no other text:
-         {
-           "full_name": "string",
-           "email": "string or null",
-           "phone": "string or null",
-           "location": "string or null",
-           "headline": "their professional job title",
-           "summary": "professional summary or null",
-           "years_of_experience": number,
-           "skills": ["skill1", "skill2"],
-           "education": [
-             {
-               "degree": "string",
-               "institution": "string",
-               "year": "string"
-             }
-           ],
-           "work_experience": [
-             {
-               "title": "string",
-               "company": "string",
-               "duration": "string",
-               "description": "string"
-             }
-           ],
-           "certifications": ["cert1", "cert2"],
-           "linkedin_url": "string or null",
-           "github_url": "string or null",
-           "website_url": "string or null"
-         }
-
-         Resume text:
-         ${resumeText}`,
-        },
-      ],
-      temperature: 0.1,
-      max_tokens: 2000,
-    });
-
-    const content = completion.choices[0]?.message?.content ?? "{}";
-
-    let parsedJson: ReturnType<typeof parseAiParsedResume>;
+    let untrusted: unknown = {};
     try {
-      parsedJson = parseAiParsedResume(parseAssistantJsonObject(content));
+      untrusted = await extractStructuredResumeWithGroq(resumeText);
     } catch {
-      return NextResponse.json({ error: "Could not read the resume analysis. Please try again." }, { status: 500 });
+      untrusted = {};
     }
 
-    const profile_completeness = calculateProfileCompleteness(parsedJson);
+    const normalized = buildNormalizedResume({ sourceText: resumeText, extracted: untrusted });
+    const legacy = toLegacyProfileFields(normalized);
+    const parsedJson = parseAiParsedResume({
+      ...legacy,
+      years_of_experience: legacy.years_of_experience ?? 0,
+      full_name: legacy.full_name ?? "",
+      headline: legacy.headline ?? "",
+    });
+
+    const profile_completeness =
+      normalized.quality.completeness || calculateProfileCompleteness(parsedJson);
 
     const formEmail = formData.get("email");
     const emailOverride =
       typeof formEmail === "string" && formEmail.trim() ? formEmail.trim() : null;
 
-    const { error: upsertError } = await supabaseAdmin.from("profiles").upsert(
-      {
-        id: userId,
-        email: parsedJson.email ?? emailOverride ?? sessionEmail,
-        full_name: parsedJson.full_name || null,
-        phone: parsedJson.phone,
-        location: parsedJson.location,
-        headline: parsedJson.headline || null,
-        summary: parsedJson.summary,
-        years_of_experience: parsedJson.years_of_experience ?? null,
-        skills: parsedJson.skills,
-        education: parsedJson.education,
-        work_experience: parsedJson.work_experience,
-        certifications: parsedJson.certifications,
-        linkedin_url: parsedJson.linkedin_url,
-        github_url: parsedJson.github_url,
-        website_url: parsedJson.website_url,
-        resume_raw_text: resumeText,
-        resume_url: resumeUrl,
-        profile_completeness,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "id" }
+    const coreProfile = {
+      id: userId,
+      email: parsedJson.email ?? emailOverride ?? sessionEmail,
+      full_name: parsedJson.full_name || null,
+      phone: parsedJson.phone,
+      location: parsedJson.location,
+      headline: parsedJson.headline || null,
+      summary: parsedJson.summary,
+      years_of_experience: parsedJson.years_of_experience ?? null,
+      skills: parsedJson.skills,
+      education: parsedJson.education,
+      work_experience: parsedJson.work_experience,
+      certifications: parsedJson.certifications,
+      linkedin_url: parsedJson.linkedin_url,
+      github_url: parsedJson.github_url,
+      website_url: parsedJson.website_url,
+      resume_raw_text: resumeText,
+      resume_url: resumeUrl,
+      profile_completeness,
+      updated_at: new Date().toISOString(),
+    };
+
+    const intelligenceFields = {
+      resume_intelligence: toStoredResumeIntelligence(normalized),
+      resume_storage_path: storagePath,
+      resume_embedding: normalized.embedding?.vector ?? null,
+      resume_embedding_model: normalized.embedding?.model ?? null,
+    };
+
+    let { error: upsertError } = await supabaseAdmin.from("profiles").upsert(
+      { ...coreProfile, ...intelligenceFields },
+      { onConflict: "id" },
     );
+    if (upsertError) {
+      const fallback = await supabaseAdmin.from("profiles").upsert(coreProfile, { onConflict: "id" });
+      upsertError = fallback.error;
+    }
 
     if (upsertError) {
       return NextResponse.json({ error: "Could not save your profile. Please try again." }, { status: 500 });
+    }
+
+    try {
+      await persistResumeIntelligence({
+        supabase: supabaseAdmin,
+        userId,
+        storagePath,
+        sourceText: resumeText,
+        resume: normalized,
+      });
+    } catch {
+      // Additive snapshot; profile save is the production path.
     }
 
     return NextResponse.json(
@@ -218,9 +187,9 @@ export async function POST(request: Request) {
         profile: {
           ...parsedJson,
           resume_url: resumeUrl,
-          resume_raw_text: resumeText,
         },
         profile_completeness,
+        resume_intelligence: publicResumeIntelligence(normalized),
       },
       { status: 200 }
     );

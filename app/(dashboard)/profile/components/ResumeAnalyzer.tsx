@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { withSupabaseAuthHeaders } from "@/lib/api-fetch";
 
 type AnalyzeResponse =
   | { ok: true; analysis: ResumeAnalysis }
@@ -59,7 +60,9 @@ export default function ResumeAnalyzer() {
 
       const response = await fetch("/api/resume/analyze", {
         method: "POST",
+        headers: await withSupabaseAuthHeaders(),
         body: formData,
+        credentials: "include",
       });
       const json = (await response.json()) as AnalyzeResponse;
 

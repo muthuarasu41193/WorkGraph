@@ -77,8 +77,10 @@ export default function VaultExperienceDetail({
     setPurchasing(true);
     try {
       const res = await fetch(`/api/vault/experiences/${experience.id}/purchase`, { method: "POST" });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error ?? "Purchase failed");
+      const data = (await res.json()) as { ok?: boolean; unlocked?: boolean; error?: string };
+      if (!res.ok || !data.unlocked) {
+        throw new Error(data.error ?? "Payment verification is required before this content can be unlocked.");
+      }
       setUnlocked(true);
       toast({
         title: "Unlocked!",
@@ -164,11 +166,9 @@ export default function VaultExperienceDetail({
             />
           ) : (
             <div className="relative overflow-hidden rounded-lg border bg-muted/30 p-6">
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none blur-sm select-none"
-                aria-hidden
-                dangerouslySetInnerHTML={{ __html: fullContent.slice(0, Math.floor(fullContent.length * 0.35)) }}
-              />
+              <p className="text-sm leading-relaxed text-muted-foreground blur-sm select-none" aria-hidden>
+                {preview}
+              </p>
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-background via-background/90 to-transparent">
                 <Lock className="h-8 w-8 text-muted-foreground" />
                 <p className="text-sm font-medium">Premium content locked</p>

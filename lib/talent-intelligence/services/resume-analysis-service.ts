@@ -197,4 +197,23 @@ export async function deleteAllTalentIntelligenceData(userId: string): Promise<v
   const supabase = getServiceClient();
   await supabase.from("resume_intelligence_reports").delete().eq("user_id", userId);
   await supabase.from("resume_versions").delete().eq("user_id", userId);
+  try {
+    await supabase
+      .from("profiles")
+      .update({
+        resume_intelligence: {},
+        resume_embedding: null,
+        resume_embedding_model: null,
+        resume_storage_path: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userId);
+    const { data: objects } = await supabase.storage.from("resumes").list(userId, { limit: 100 });
+    if (objects?.length) {
+      await supabase.storage.from("resumes").remove(objects.map((obj) => `${userId}/${obj.name}`));
+    }
+    await supabase.from("workgraph_embeddings").delete().eq("owner_user_id", userId);
+  } catch {
+    // Newer columns / private storage are additive.
+  }
 }

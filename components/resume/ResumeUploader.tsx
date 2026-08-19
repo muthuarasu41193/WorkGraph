@@ -123,13 +123,10 @@ export default function ResumeUploader() {
 
       setProgress(100);
 
-      const { data: publicData } = supabase.storage.from("resumes").getPublicUrl(storagePath);
-
       setStatus("parsing");
       const formData = new FormData();
       formData.append("file", selectedFile);
       if (user.email) formData.append("email", user.email);
-      if (publicData.publicUrl) formData.append("resume_url", publicData.publicUrl);
 
       const parseRes = await fetch(
         process.env.NEXT_PUBLIC_WORKGRAPH_API_URL ? "/api/v2/parse-resume" : "/api/parse-resume",
@@ -154,7 +151,7 @@ export default function ResumeUploader() {
             method: "POST",
             headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
             credentials: "include",
-            body: JSON.stringify({ user_id: user.id, email: profileEmail }),
+            body: JSON.stringify(profileEmail ? { email: profileEmail } : {}),
           },
         );
       }

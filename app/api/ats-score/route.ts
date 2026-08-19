@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { GROQ_MODEL, getGroqClient } from "../../../lib/groq";
 import { parseAssistantJsonObject } from "../../../lib/parseAssistantJson";
 import { getBearerToken, getSupabaseSessionUser } from "../../../lib/route-auth";
+import { logRouteError } from "../../../lib/security/log";
+import { resolveAuthenticatedUserId } from "../../../lib/security/session-identity";
+import { createSupabaseAdminClient } from "../../../lib/supabase-admin";
 import {
   atsScoreBodySchema,
   isValidationError,
@@ -14,22 +16,17 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function getRequiredEnv(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`Missing required environment variable: ${key}`);
-  return value;
-}
-
 export async function POST(request: Request) {
   try {
     const rawBody = await request.json().catch(() => ({}));
-    parseWithSchema(atsScoreBodySchema, rawBody);
-    const supabase = createClient(
-      getRequiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
-      getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY")
-    );
+    const body = parseWithSchema(atsScoreBodySchema, rawBody);
 
-    let userId: string | null = null;
+    let sessionUser: { id: string } | null = null;
+
+    const supabase = createSupabaseAdminClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "Could not score your resume. Please try again." }, { status: 500 });
+    }
 
     const bearer = getBearerToken(request);
     if (bearer) {
@@ -38,24 +35,25 @@ export async function POST(request: Request) {
         error: jwtError,
       } = await supabase.auth.getUser(bearer);
       if (!jwtError && user) {
-        userId = user.id;
+        sessionUser = { id: user.id };
       }
     }
 
-    if (!userId) {
+    if (!sessionUser) {
       const {
         data: { user },
         error: sessionError,
       } = await getSupabaseSessionUser(request);
       if (!sessionError && user) {
-        userId = user.id;
+        sessionUser = { id: user.id };
       }
     }
 
+    const userId = resolveAuthenticatedUserId(sessionUser, body.user_id);
     if (!userId) {
       return NextResponse.json(
         { error: "Not authenticated. Please sign in and try again." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -74,7 +72,7 @@ export async function POST(request: Request) {
     if (!resumeText) {
       return NextResponse.json(
         { error: "No resume found. Please upload your resume first." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,7 +131,8 @@ export async function POST(request: Request) {
         temperature: 0.1,
         max_tokens: 1000,
       });
-    } catch {
+    } catch (err) {
+      logRouteError("ats-score", err);
       return NextResponse.json({ error: "Could not score your resume. Please try again." }, { status: 500 });
     }
 
@@ -141,7 +140,8 @@ export async function POST(request: Request) {
     let atsFeedback: ReturnType<typeof parseAiAtsFeedback>;
     try {
       atsFeedback = parseAiAtsFeedback(parseAssistantJsonObject(content));
-    } catch {
+    } catch (err) {
+      logRouteError("ats-score", err);
       return NextResponse.json({ error: "Could not read the ATS analysis. Please try again." }, { status: 500 });
     }
 
@@ -157,6 +157,7 @@ export async function POST(request: Request) {
       .single();
 
     if (updateError) {
+      logRouteError("ats-score", updateError);
       return NextResponse.json({ error: "Could not save ATS results. Please try again." }, { status: 500 });
     }
 
@@ -166,12 +167,13 @@ export async function POST(request: Request) {
         ...atsFeedback,
         profile: updatedProfile,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     if (isValidationError(error)) {
       return publicErrorResponse(error, { fallback: "Invalid request." });
     }
+    logRouteError("ats-score", error);
     return publicErrorResponse(error, { fallback: "Could not score your resume. Please try again." });
   }
 }

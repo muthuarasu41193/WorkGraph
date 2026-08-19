@@ -20,6 +20,8 @@ export type NavItem = {
   description?: string;
   /** Supportive micro-copy on hover — coach tone, not corporate */
   benefitHint?: string;
+  /** Hide or prompt until the seeker has a usable profile/resume */
+  requiresProfile?: boolean;
 };
 
 export type NavGroup = {
@@ -80,6 +82,13 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         label: "Resume Intelligence",
         icon: FileText,
         benefitHint: "Make your resume stand out",
+      },
+      {
+        id: "cover-letters",
+        label: "Cover Letters",
+        icon: FileText,
+        benefitHint: "AI-powered cover letter generation",
+        requiresProfile: true,
       },
       {
         id: "applications",

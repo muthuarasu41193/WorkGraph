@@ -197,7 +197,7 @@ export default function CreateProfilePage() {
           method: "POST",
           headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
-          body: JSON.stringify({ user_id: session.userId, email }),
+          body: JSON.stringify(email ? { email } : {}),
         });
       }
 
@@ -261,7 +261,7 @@ export default function CreateProfilePage() {
           method: "POST",
           headers: await withSupabaseAuthHeaders({ "Content-Type": "application/json" }),
           credentials: "include",
-          body: JSON.stringify({ user_id: session.userId, email: payload.email }),
+          body: JSON.stringify(payload.email ? { email: payload.email } : {}),
         });
       }
 

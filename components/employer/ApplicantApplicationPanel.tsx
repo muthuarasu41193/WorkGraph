@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import type { ApplicationSnapshot, SignalConnection } from "@/lib/employer/types";
+import { employerVisibleResumeHref } from "@/lib/security/resume-access";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -85,6 +86,10 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
 
   const app = snapshotFromConnection(connection);
   const displayName = app?.full_name ?? connection.seeker?.full_name ?? "Applicant";
+  const resumeHref = employerVisibleResumeHref({
+    connectionId: connection.id,
+    resumeUrl: app?.resume_url,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -131,9 +136,9 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
               ) : null}
             </div>
 
-            {app.resume_url ? (
+            {resumeHref ? (
               <a
-                href={app.resume_url}
+                href={resumeHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg bg-[var(--wg-red)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--wg-red)]/90"

@@ -4,6 +4,7 @@ import {
   getExperienceView,
   updateExperienceForSeller,
 } from "@/lib/vault-server";
+import { logRouteError } from "@/lib/security/log";
 import type { VaultExperienceInsert } from "@/lib/vault";
 
 export const dynamic = "force-dynamic";
@@ -22,8 +23,8 @@ export async function GET(_request: Request, context: RouteContext) {
     if (err instanceof VaultApiError) {
       return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
     }
-    const message = err instanceof Error ? err.message : "Failed to load experience";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    logRouteError("vault/experience", err);
+    return NextResponse.json({ ok: false, error: "Could not load this experience." }, { status: 500 });
   }
 }
 
@@ -37,7 +38,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     if (err instanceof VaultApiError) {
       return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
     }
-    const message = err instanceof Error ? err.message : "Failed to update experience";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    logRouteError("vault/experience", err);
+    return NextResponse.json({ ok: false, error: "Could not update this experience." }, { status: 500 });
   }
 }

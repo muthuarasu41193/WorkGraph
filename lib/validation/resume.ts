@@ -155,7 +155,8 @@ export const matchJobsBodySchema = z.object({
   resume_text: z
     .string()
     .trim()
-    .min(80, "resume_text must be at least 80 characters")
-    .max(LIMITS.resumeText, "Resume text is too long."),
+    .max(LIMITS.resumeText, "Resume text is too long.")
+    .optional(),
+  user_id: z.string().trim().uuid("Invalid user id.").optional(),
   top_k: z.coerce.number().int().min(1).max(50).optional(),
 });
