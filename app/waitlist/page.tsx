@@ -1,20 +1,26 @@
 import { Suspense } from "react";
 import WaitlistClient from "./WaitlistClient";
+import Footer from "@/components/layout/Footer";
+import { getRealCounts } from "@/lib/social-proof";
 
-export default function WaitlistPage() {
+export default async function WaitlistPage() {
+  const counts = await getRealCounts();
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-dvh items-center justify-center bg-background">
-          <div className="mx-auto w-full max-w-md space-y-4 p-8">
-            <div className="mx-auto h-8 w-48 rounded-lg wg-skeleton-shimmer" />
-            <div className="h-40 w-full rounded-xl wg-skeleton-shimmer" />
-            <div className="h-10 w-full rounded-lg wg-skeleton-shimmer" />
+    <>
+      <Suspense
+        fallback={
+          <div className="flex min-h-dvh items-center justify-center bg-background">
+            <div className="mx-auto w-full max-w-md space-y-4 p-8">
+              <div className="mx-auto h-8 w-48 rounded-lg wg-skeleton-shimmer" />
+              <div className="h-40 w-full rounded-xl wg-skeleton-shimmer" />
+              <div className="h-10 w-full rounded-lg wg-skeleton-shimmer" />
+            </div>
           </div>
-        </div>
-      }
-    >
-      <WaitlistClient />
-    </Suspense>
+        }
+      >
+        <WaitlistClient signups={counts.signups} />
+      </Suspense>
+      <Footer signups={counts.signups} />
+    </>
   );
 }

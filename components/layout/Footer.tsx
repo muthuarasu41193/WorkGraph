@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { SocialLinks } from "@/components/brand/SocialLinks";
 import { FOOTER_LINKS, SITE } from "@/lib/constants";
+import { LEGAL_NAV } from "@/lib/legal";
+import { displayCount } from "@/lib/social-proof";
 
 function FooterLink({
   href,
@@ -44,9 +46,10 @@ function FooterColumn({
   );
 }
 
-function NewsletterStrip() {
+function NewsletterStrip({ signups }: { signups: number }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const subscribers = displayCount(signups);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +68,10 @@ function NewsletterStrip() {
             Stay ahead. Get the weekly hidden jobs digest.
           </p>
           <p className="mt-2 text-sm text-white/80">
-            No spam. Unsubscribe anytime. ~2,400 subscribers
+            No spam. Unsubscribe anytime.{" "}
+            {subscribers.showNumber
+              ? `${subscribers.display} people have signed up`
+              : subscribers.display}
           </p>
         </div>
 
@@ -91,10 +97,10 @@ function NewsletterStrip() {
   );
 }
 
-export default function Footer() {
+export default function Footer({ signups = 0 }: { signups?: number }) {
   return (
     <footer aria-label="Site footer">
-      <NewsletterStrip />
+      <NewsletterStrip signups={signups} />
 
       <div className="bg-slate-950 px-4 py-14 md:px-6 min-[1025px]:px-8">
         <div className="mx-auto max-w-[1280px]">
@@ -118,12 +124,13 @@ export default function Footer() {
               <p className="text-sm text-fg-tertiary">
                 &copy; 2025 {SITE.name}. All rights reserved.
               </p>
-              <div className="flex items-center gap-4 text-sm text-fg-tertiary">
-                <FooterLink href="#">Privacy</FooterLink>
-                <span aria-hidden>·</span>
-                <FooterLink href="#">Terms</FooterLink>
-                <span aria-hidden>·</span>
-                <FooterLink href="#">Cookies</FooterLink>
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-fg-tertiary">
+                {LEGAL_NAV.map((item, index) => (
+                  <span key={item.href} className="inline-flex items-center gap-4">
+                    {index > 0 ? <span aria-hidden>·</span> : null}
+                    <FooterLink href={item.href}>{item.label}</FooterLink>
+                  </span>
+                ))}
               </div>
             </div>
           </div>

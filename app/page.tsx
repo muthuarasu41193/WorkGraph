@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/sections/Hero";
 import StatsBar from "@/components/sections/StatsBar";
 import { SectionSkeleton } from "@/components/landing/SectionSkeleton";
+import { getConsentedTestimonials } from "@/lib/social-proof-server";
+import { getRealCounts } from "@/lib/social-proof";
 
 const Features = dynamic(() => import("@/components/sections/Features"), {
   loading: () => <SectionSkeleton />,
@@ -31,7 +33,12 @@ const Contact = dynamic(() => import("@/components/sections/Contact"), {
   loading: () => <SectionSkeleton className="bg-background" />,
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [counts, testimonials] = await Promise.all([
+    getRealCounts(),
+    getConsentedTestimonials(),
+  ]);
+
   return (
     <>
       <a
@@ -42,22 +49,22 @@ export default function HomePage() {
       </a>
 
       <SiteHeader>
-        <AnnouncementBar />
+        <AnnouncementBar signups={counts.signups} />
         <Navbar />
       </SiteHeader>
 
       <main id="main-content">
-        <Hero />
-        <StatsBar />
+        <Hero counts={counts} />
+        <StatsBar counts={counts} />
         <Features />
         <HowItWorks />
-        <InterviewVault />
-        <Testimonials />
+        <InterviewVault publishedGuides={counts.publishedGuides} />
+        <Testimonials items={testimonials} />
         <Pricing />
         <Contact />
       </main>
 
-      <Footer />
+      <Footer signups={counts.signups} />
     </>
   );
 }

@@ -4,6 +4,7 @@
  */
 
 import { WG_COLORS } from "@/lib/design-tokens";
+import { getSiteUrl } from "@/lib/site-url";
 
 export type SendEmailInput = {
   to: string;
@@ -15,10 +16,14 @@ export type SendEmailInput = {
 export type SendEmailResult = { ok: true } | { ok: false; error: string };
 
 function appBaseUrl(): string {
+  const vercel =
+    process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL?.trim()
+      ? `https://${process.env.VERCEL_URL.replace(/^https?:\/\//, "")}`
+      : "";
   return (
     process.env.NEXT_PUBLIC_APP_URL?.trim() ||
-    process.env.VERCEL_URL?.trim()?.replace(/^/, "https://") ||
-    "http://localhost:3000"
+    vercel ||
+    getSiteUrl()
   ).replace(/\/$/, "");
 }
 

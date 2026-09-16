@@ -1,6 +1,9 @@
+import { getSiteUrl } from "../site-url";
+
 const DEFAULT_HEADERS: HeadersInit = {
   Accept: "application/json",
-  "User-Agent": process.env.HIDDEN_JOBS_USER_AGENT?.trim() || "WorkGraphHiddenJobs/1.0 (+https://workgraph.app)",
+  "User-Agent":
+    process.env.HIDDEN_JOBS_USER_AGENT?.trim() || `WorkGraphHiddenJobs/1.0 (+${getSiteUrl()})`,
 };
 
 export async function fetchJson<T>(

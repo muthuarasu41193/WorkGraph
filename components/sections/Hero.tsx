@@ -6,7 +6,8 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { ArrowRight, ChevronDown, CirclePlay, Radar, Star } from "lucide-react";
+import { ArrowRight, ChevronDown, CirclePlay, Radar } from "lucide-react";
+import { displayCount, type SocialProofCounts } from "@/lib/social-proof";
 import { Button } from "@/components/ui/button";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { BrandLogo } from "@/components/brand/BrandLogo";
@@ -208,8 +209,9 @@ function DashboardMockup() {
   );
 }
 
-export default function Hero() {
+export default function Hero({ counts }: { counts: SocialProofCounts }) {
   const prefersReducedMotion = useReducedMotion();
+  const signups = displayCount(counts.signups);
 
   const scrollToHowItWorks = () => {
     document.querySelector("#how-it-works")?.scrollIntoView({
@@ -275,39 +277,34 @@ export default function Hero() {
               lets you earn by selling your prep guides.
             </motion.p>
 
-            {/* Social proof */}
+            {/* Social proof — real signup count, or honest early-stage copy */}
             <motion.div
               variants={leftItem}
               className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center"
             >
-              <div className="flex items-center">
-                <div className="flex -space-x-2.5" aria-hidden>
-                  {AVATARS.map((avatar) => (
-                    <div
-                      key={avatar.initials}
-                      className={cn(
-                        "flex size-9 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white",
-                        avatar.color,
-                      )}
-                    >
-                      {avatar.initials}
-                    </div>
-                  ))}
+              {signups.showNumber ? (
+                <div className="flex items-center">
+                  <div className="flex -space-x-2.5" aria-hidden>
+                    {AVATARS.map((avatar) => (
+                      <div
+                        key={avatar.initials}
+                        className={cn(
+                          "flex size-9 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white",
+                          avatar.color,
+                        )}
+                      >
+                        {avatar.initials}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="ml-3 text-sm font-medium text-fg-secondary">
+                    <span className="font-semibold text-fg-primary">{signups.display}</span> job
+                    seekers already inside
+                  </p>
                 </div>
-                <p className="ml-3 text-sm font-medium text-fg-secondary">
-                  <span className="font-semibold text-fg-primary">2,400+</span> job seekers
-                  already inside
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5" aria-label="Rated 4.9 out of 5 stars">
-                <div className="flex text-warning" aria-hidden>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="size-4 fill-current" />
-                  ))}
-                </div>
-                <span className="text-sm font-semibold text-fg-primary">4.9/5</span>
-              </div>
+              ) : (
+                <p className="text-sm font-medium text-fg-secondary">{signups.display}</p>
+              )}
             </motion.div>
 
             {/* CTAs */}

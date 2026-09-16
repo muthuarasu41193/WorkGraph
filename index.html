@@ -10,7 +10,8 @@
   <meta name="description" content="WorkGraph surfaces hidden roles from Reddit, Twitter, Discord, and 50+ private sources — prep, apply, and earn by selling interview guides."/>
   <meta property="og:title" content="WorkGraph - AI Job Hunting Copilot"/>
   <meta property="og:description" content="Stop manually searching for jobs. Let AI find them for you."/>
-  <meta property="og:url" content="https://work-graph-fawn.vercel.app/"/>
+  <meta property="og:url" content="https://getworkgraph.com/"/>
+  <link rel="canonical" href="https://getworkgraph.com/"/>
   <meta property="og:type" content="website"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -3178,7 +3179,7 @@ p, li,
           <p>Share WorkGraph with friends. Every signup using your link moves you up the waitlist.</p>
 
           <div class="share-link-box">
-            <span id="referralLink">muthuarasu41193.github.io/WorkGraph/?ref=248</span>
+            <span id="referralLink">getworkgraph.com/?ref=248</span>
             <button onclick="copyReferral()" class="copy-ref-btn" id="copyRefBtn">Copy Link</button>
           </div>
 
@@ -3738,7 +3739,7 @@ p, li,
         <h3>Have a feature idea?</h3>
         <p>We are building WorkGraph based on what job seekers actually need. Tell us what would help you most.</p>
       </div>
-      <a href="mailto:hello@workgraph.ai" class="frb-btn">Suggest a Feature </a>
+      <a href="mailto:hello@getworkgraph.com" class="frb-btn">Suggest a Feature </a>
     </div>
   </div>
 </section>
@@ -3781,58 +3782,8 @@ p, li,
   <div class="container">
     <div class="section-head" data-aos="fade-up">
       <span class="section-tag">Early Feedback</span>
-      <h2>What beta users are saying</h2>
-      <p>Real stories from job seekers using WorkGraph during early access.</p>
-    </div>
-
-    <div class="testimonials-grid">
-      <article class="testi-card" data-aos="fade-up">
-        <div class="stars" aria-label="5 out of 5 stars">
-          <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-        </div>
-        <blockquote>
-          <p>"I found a job posting on Reddit that I never would have seen otherwise. Got an interview within 3 days. WorkGraph actually works."</p>
-        </blockquote>
-        <footer class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=15" alt="Priyanka Gupta" width="44" height="44"/>
-          <div>
-            <strong>Priyanka Gupta</strong>
-            <span>Software Engineer · Bangalore</span>
-          </div>
-        </footer>
-      </article>
-
-      <article class="testi-card featured-testi" data-aos="fade-up" data-aos-delay="100">
-        <div class="stars" aria-label="5 out of 5 stars">
-          <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-        </div>
-        <blockquote>
-          <p>"The match score is a game changer. I stopped wasting time on jobs I had no chance at. Now I only apply where I score above 75%. Got 3 interviews this week."</p>
-        </blockquote>
-        <footer class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=14" alt="Joseph McGarey" width="44" height="44"/>
-          <div>
-            <strong>Joseph McGarey</strong>
-            <span>Product Manager · London</span>
-          </div>
-        </footer>
-      </article>
-
-      <article class="testi-card" data-aos="fade-up" data-aos-delay="200">
-        <div class="stars" aria-label="5 out of 5 stars">
-          <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
-        </div>
-        <blockquote>
-          <p>"Finally. One place for ALL my job applications. WorkGraph shows me jobs from Reddit and Twitter I never knew to look for. Incredible tool."</p>
-        </blockquote>
-        <footer class="testi-author">
-          <img src="https://i.pravatar.cc/44?img=9" alt="Xiangyu Wang" width="44" height="44"/>
-          <div>
-            <strong>Xiangyu Wang</strong>
-            <span>Data Scientist · Singapore</span>
-          </div>
-        </footer>
-      </article>
+      <h2>We launched this month. Be one of the first.</h2>
+      <p>When someone consents to a public quote, it will show up here. We do not publish placeholder reviews.</p>
     </div>
   </div>
 </section>
@@ -4027,17 +3978,17 @@ p, li,
         </div>
         <div class="footer-col">
           <h4>Company</h4>
-          <a href="#">About</a>
-          <a href="#">Blog</a>
-          <a href="mailto:hello@workgraph.ai">Contact</a>
-          <a href="#">Careers</a>
+          <a href="/#contact">Contact</a>
+          <a href="/legal/privacy">Privacy</a>
+          <a href="/legal/terms">Terms</a>
         </div>
         <div class="footer-col">
           <h4>Legal</h4>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
-          <a href="#">GDPR</a>
+          <a href="/legal/privacy">Privacy Policy</a>
+          <a href="/legal/terms">Terms of Service</a>
+          <a href="/legal/cookies">Cookie Policy</a>
+          <a href="/legal/acceptable-use">Acceptable Use</a>
+          <a href="/legal/dpa">DPA</a>
         </div>
       </div>
     </div>
@@ -4392,11 +4343,11 @@ if (waitlistForm) {
     // Update referral link
     const refEl = document.getElementById('referralLink');
     if (refEl) {
-      refEl.textContent = 'muthuarasu41193.github.io/WorkGraph/?ref=' + position;
+      refEl.textContent = 'getworkgraph.com/?ref=' + position;
     }
 
     // Set share URLs
-    const shareText = 'I just joined WorkGraph - AI that finds jobs from professional networks, Reddit, Twitter and 50+ sources. Matches them to your resume. Free early access: https://muthuarasu41193.github.io/WorkGraph/';
+    const shareText = 'I just joined WorkGraph - AI that finds jobs from professional networks, Reddit, Twitter and 50+ sources. Matches them to your resume. Free early access: https://getworkgraph.com/';
 
     const waBtn = document.getElementById('shareWhatsApp');
     if (waBtn) waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);

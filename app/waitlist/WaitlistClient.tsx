@@ -7,6 +7,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { displayCount } from "@/lib/social-proof";
 
 const WAITLIST_EXPECTATIONS = [
   "Early access to hidden job discovery across 50+ sources",
@@ -14,12 +15,16 @@ const WAITLIST_EXPECTATIONS = [
   "Priority onboarding when your spot opens up",
 ] as const;
 
-export default function WaitlistClient() {
+export default function WaitlistClient({ signups = 0 }: { signups?: number }) {
   const searchParams = useSearchParams();
   const isSuccess = searchParams.get("success") === "true";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const joined = displayCount(signups);
+  const signupCopy = joined.showNumber
+    ? `${joined.display} people have already joined`
+    : joined.display;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -66,7 +71,7 @@ export default function WaitlistClient() {
               Join the waitlist
             </h1>
             <p className="mt-2 text-center text-sm text-fg-tertiary">
-              247 people ahead of you
+              {signupCopy}
             </p>
 
             <form onSubmit={onSubmit} className="mt-8 space-y-4">

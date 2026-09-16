@@ -1,4 +1,5 @@
 import type { AuthProvider } from "../../packages/shared/types/phase3";
+import { getSiteUrl } from "../site-url";
 import { supabaseConfigured } from "../supabase-enabled";
 
 /** Active auth backend — defaults to Supabase. */
@@ -21,8 +22,8 @@ export function supertokensEnabled(): boolean {
 
 export function appOrigin(): string {
   return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.APP_URL ??
-    "http://localhost:3000"
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    process.env.APP_URL?.trim() ||
+    getSiteUrl()
   ).replace(/\/$/, "");
 }

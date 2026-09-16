@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 const STORAGE_KEY = "wg-cookie-consent";
@@ -31,8 +32,15 @@ export function CookieBanner() {
           className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-2xl rounded-2xl border border-border-default bg-surface p-5 shadow-xl sm:inset-x-6"
         >
           <p className="text-sm leading-relaxed text-fg-secondary">
-            We use cookies to improve your experience and analyze site traffic. By continuing, you
-            agree to our use of cookies.
+            We use cookies to run sign-in and remember your choice. Read the{" "}
+            <Link href="/legal/cookies" className="font-semibold text-brand underline-offset-4 hover:underline">
+              Cookie Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/legal/privacy" className="font-semibold text-brand underline-offset-4 hover:underline">
+              Privacy Policy
+            </Link>
+            .
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
             <button

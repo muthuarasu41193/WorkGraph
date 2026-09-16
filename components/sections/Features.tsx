@@ -44,7 +44,7 @@ const FEATURES: Feature[] = [
     title: "AI Match Scoring",
     description:
       "Every job gets a personalized match score based on your skills, experience, and preferences. Focus only on roles where you have real shot.",
-    badge: "92% Accuracy",
+    badge: "Personalized",
     badgeClass: "bg-success-50 text-success",
     href: "#how-it-works",
   },
@@ -53,7 +53,7 @@ const FEATURES: Feature[] = [
     title: "Interview Vault",
     description:
       "Company-specific interview questions, insider tips, and prep guides — crowdsourced and AI-enhanced. Know what to expect before you walk in.",
-    badge: "10K+ Questions",
+    badge: "Interview prep",
     badgeClass: "bg-info-50 text-info",
     href: "#interview-vault",
   },

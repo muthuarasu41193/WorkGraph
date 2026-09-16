@@ -69,11 +69,11 @@ if (form) {
       `from LinkedIn, Reddit, Twitter & 50+ sources ` +
       `worldwide and matches them to your resume. ` +
       `Free early access: ` +
-      `https://muthuarasu41193.github.io/WorkGraph/`;
+      `https://getworkgraph.com/`;
 
     document.getElementById('shareLinkedIn').href =
       `https://www.linkedin.com/sharing/share-offsite/` +
-      `?url=https://muthuarasu41193.github.io/WorkGraph/`;
+      `?url=https://getworkgraph.com/`;
 
     document.getElementById('shareTwitter').href =
       `https://twitter.com/intent/tweet?text=` +
@@ -132,7 +132,7 @@ async function saveToWaitlist(data) {
 // COPY LINK
 function copyLink() {
   navigator.clipboard.writeText(
-    'https://muthuarasu41193.github.io/WorkGraph/'
+    'https://getworkgraph.com/'
   );
   const btn = document.getElementById('copyBtn');
   if (btn) {

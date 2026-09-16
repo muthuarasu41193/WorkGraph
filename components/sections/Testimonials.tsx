@@ -2,96 +2,20 @@
 
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { Star } from "lucide-react";
-import { BrandLogo } from "@/components/brand/BrandLogo";
 import { CompanyLogoStrip } from "@/components/brand/CompanyLogoStrip";
-import { SourceBadge } from "@/components/brand/SourceBadge";
-import type { CompanyBrand } from "@/lib/brands";
-import type { SourceBrand } from "@/lib/brands";
 import { cn } from "@/lib/utils";
+import {
+  EARLY_STAGE_COPY,
+  teamMemberDisclosure,
+  type TestimonialRow,
+} from "@/lib/social-proof";
 
-type Testimonial = {
-  name: string;
-  role: string;
-  hiredAt?: CompanyBrand;
-  avatar: string;
-  avatarColor: string;
-  text: string;
-  tall?: boolean;
-  source?: SourceBrand;
-  salaryBump?: string;
-  earningsBadge?: string;
-};
-
-const TESTIMONIALS: Testimonial[] = [
-  {
-    name: "Sarah K.",
-    role: "Software Engineer",
-    hiredAt: "google",
-    avatar: "S",
-    avatarColor: "bg-brand",
-    text: "WorkGraph showed me a Google role posted in a Discord server 3 hours before it hit LinkedIn. I applied first, prepped with the Interview Vault, and got the offer.",
-    tall: true,
-    source: "discord",
-    salaryBump: "+$45K salary increase",
-  },
-  {
-    name: "Marcus T.",
-    role: "Product Manager",
-    avatar: "M",
-    avatarColor: "bg-info",
-    text: "The match score is scary accurate. It told me I had 89% fit for a role — I got an interview within 48 hours. Skipped 50+ applications that weren't worth my time.",
-  },
-  {
-    name: "Priya R.",
-    role: "Data Scientist",
-    hiredAt: "netflix",
-    avatar: "P",
-    avatarColor: "bg-slate-700",
-    text: "I wrote a guide about my Netflix interview and made $340 in the first month. WorkGraph literally paid for itself 10x over.",
-    earningsBadge: "Earned $340",
-  },
-  {
-    name: "James L.",
-    role: "DevOps Engineer",
-    hiredAt: "stripe",
-    avatar: "J",
-    avatarColor: "bg-success",
-    text: "Found a Stripe role through a Reddit thread WorkGraph surfaced. The Interview Vault had exactly the questions they asked — felt like I had the answers before walking in.",
-    source: "reddit",
-  },
-  {
-    name: "Aisha M.",
-    role: "Frontend Developer",
-    avatar: "A",
-    avatarColor: "bg-warning",
-    text: "Applied to 8 jobs in one morning using the cover letter tool. Got 3 callbacks. Previously I'd spend 2 hours per application.",
-  },
-  {
-    name: "David C.",
-    role: "Full Stack Engineer",
-    hiredAt: "netflix",
-    avatar: "D",
-    avatarColor: "bg-slate-950",
-    text: "The hidden job discovery is real. 4 out of my last 5 interviews came from sources I'd never have found manually. Landed a $210K role at Netflix.",
-    salaryBump: "$210K offer",
-  },
-];
-
-function StarRating() {
-  return (
-    <div className="flex gap-0.5 text-warning" aria-label="5 out of 5 stars">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className="size-3.5 fill-current" aria-hidden />
-      ))}
-    </div>
-  );
-}
-
-function TestimonialCard({ item, index }: { item: Testimonial; index: number }) {
+function TestimonialCard({ item, index }: { item: TestimonialRow; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const prefersReducedMotion = useReducedMotion();
+  const disclosure = teamMemberDisclosure(item.is_employee);
+  const initial = item.author_name.trim().charAt(0).toUpperCase() || "?";
 
   return (
     <motion.article
@@ -101,61 +25,52 @@ function TestimonialCard({ item, index }: { item: Testimonial; index: number }) 
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "group break-inside-avoid rounded-2xl border border-border-default bg-surface p-6 shadow-sm transition-all duration-200 hover:border-brand/20 hover:shadow-[0_12px_40px_-12px_rgba(225, 29, 46,0.12)]",
-        item.tall && "lg:min-h-[280px]",
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className={cn(
-              "flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white",
-              item.avatarColor,
-            )}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-white"
             aria-hidden
           >
-            {item.avatar}
+            {initial}
           </div>
           <div>
-            <p className="font-semibold text-fg-primary">{item.name}</p>
-            <div className="mt-0.5 flex items-center gap-2">
-              <p className="text-xs text-fg-tertiary">{item.role}</p>
-              {item.hiredAt && <BrandLogo brand={item.hiredAt} size="sm" />}
-            </div>
+            <p className="font-semibold text-fg-primary">{item.author_name}</p>
+            {item.author_title ? (
+              <p className="mt-0.5 text-xs text-fg-tertiary">{item.author_title}</p>
+            ) : null}
+            {disclosure ? (
+              <p className="mt-1 text-xs font-semibold text-brand">{disclosure}</p>
+            ) : null}
           </div>
         </div>
-        <StarRating />
       </div>
 
-      {(item.source || item.earningsBadge || item.salaryBump) && (
+      {item.verified_outcome ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          {item.source && <SourceBadge source={item.source} compact />}
-          {item.earningsBadge && (
-            <span className="rounded-full bg-success-50 px-2.5 py-1 text-xs font-bold text-success">
-              {item.earningsBadge}
-            </span>
-          )}
-          {item.salaryBump && (
-            <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand">
-              {item.salaryBump}
-            </span>
-          )}
+          <span className="rounded-full bg-success-50 px-2.5 py-1 text-xs font-bold text-success">
+            {item.verified_outcome}
+          </span>
         </div>
-      )}
+      ) : null}
 
       <blockquote className="mt-4 text-md leading-relaxed text-fg-secondary">
-        &ldquo;{item.text}&rdquo;
+        &ldquo;{item.quote}&rdquo;
       </blockquote>
     </motion.article>
   );
 }
 
-export default function Testimonials() {
+export default function Testimonials({ items }: { items: TestimonialRow[] }) {
+  const consented = items.filter((row) => row.consent_given_at);
+
   return (
     <section aria-label="Testimonials" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="mb-12 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
-            Trusted by people hired at
+            Prep for interviews at teams like
           </p>
           <div className="mt-6">
             <CompanyLogoStrip />
@@ -164,18 +79,27 @@ export default function Testimonials() {
 
         <header className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
-            Loved by job seekers
+            From people using WorkGraph
           </p>
           <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
-            People are landing jobs they never knew existed
+            {consented.length > 0
+              ? "Stories from people who consented to share"
+              : EARLY_STAGE_COPY}
           </h2>
         </header>
 
-        <div className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
-          {TESTIMONIALS.map((item, index) => (
-            <TestimonialCard key={item.name} item={item} index={index} />
-          ))}
-        </div>
+        {consented.length > 0 ? (
+          <div className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
+            {consented.map((item, index) => (
+              <TestimonialCard key={item.id} item={item} index={index} />
+            ))}
+          </div>
+        ) : (
+          <p className="mx-auto mt-10 max-w-xl text-center text-fg-secondary">
+            When someone consents to a public quote, it will show up here. We do not publish
+            placeholder reviews.
+          </p>
+        )}
       </div>
     </section>
   );

@@ -72,7 +72,22 @@ export function AuthSplitShell({
       <section
         className={`flex min-h-0 flex-1 flex-col bg-card px-5 pb-12 pt-8 sm:px-10 lg:max-h-[100dvh] lg:overflow-y-auto lg:px-14 lg:pb-14 xl:px-20 ${wide ? "justify-start lg:pt-14 xl:pt-16" : "justify-center lg:pt-14"}`}
       >
-        <div className={`wg-auth-enter mx-auto w-full ${wide ? "max-w-xl" : "max-w-[400px]"}`}>{children}</div>
+        <div className={`wg-auth-enter mx-auto w-full ${wide ? "max-w-xl" : "max-w-[400px]"}`}>
+          {children}
+          <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
+            <Link href="/legal/terms" className="underline-offset-4 hover:underline">
+              Terms
+            </Link>
+            {" · "}
+            <Link href="/legal/privacy" className="underline-offset-4 hover:underline">
+              Privacy
+            </Link>
+            {" · "}
+            <Link href="/legal/cookies" className="underline-offset-4 hover:underline">
+              Cookies
+            </Link>
+          </p>
+        </div>
       </section>
     </main>
   );

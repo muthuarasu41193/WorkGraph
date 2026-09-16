@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveCanonicalHostRedirect } from "./lib/site-url";
 
 const AUTH_PROVIDER = (
   process.env.NEXT_PUBLIC_AUTH_PROVIDER ??
@@ -14,10 +15,24 @@ function supabaseEnvReady(): boolean {
   );
 }
 
+function canonicalHostRedirect(request: NextRequest): NextResponse | null {
+  const target = resolveCanonicalHostRedirect({
+    hostHeader: request.headers.get("host"),
+    pathname: request.nextUrl.pathname,
+    search: request.nextUrl.search,
+    vercelEnv: process.env.VERCEL_ENV,
+  });
+  if (!target) return null;
+  return NextResponse.redirect(target, 308);
+}
+
 /**
  * Refreshes auth cookies (Supabase by default; SuperTokens only without Supabase keys).
  */
 export async function middleware(request: NextRequest) {
+  const hostRedirect = canonicalHostRedirect(request);
+  if (hostRedirect) return hostRedirect;
+
   if (!supabaseEnvReady() && AUTH_PROVIDER === "supertokens") {
     const uri = process.env.SUPERTOKENS_CONNECTION_URI?.trim();
     if (!uri) return NextResponse.next({ request });

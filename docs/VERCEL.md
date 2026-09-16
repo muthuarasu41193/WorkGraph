@@ -1,8 +1,8 @@
 # Vercel deployment (WorkGraph Next.js app)
 
-Production URL: **https://work-graph-fawn.vercel.app**
+Canonical production URL: **https://getworkgraph.com** (`NEXT_PUBLIC_SITE_URL`). Alternate hosts (`workgraph.ai`, `*.vercel.app` production aliases) 308-redirect to this origin.
 
-GitHub Pages (`muthuarasu41193.github.io/WorkGraph/`) serves the static marketing `index.html` only. Login, profile, and the Shadcn UI live on **Vercel**.
+GitHub Pages previously served static marketing `index.html` only. Login, profile, and the Shadcn UI live on **Vercel** behind the canonical host.
 
 ## How deploys work
 
@@ -22,7 +22,8 @@ Set these in **Vercel → Project → Settings → Environment Variables** (Prod
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Public anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Recommended | Server-side profile/jobs |
 | `GROQ_API_KEY` | Optional | Resume/ATS when not using WorkGraph API |
-| `NEXT_PUBLIC_APP_URL` | Recommended | e.g. `https://work-graph-fawn.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Yes | Canonical origin: `https://getworkgraph.com` |
+| `NEXT_PUBLIC_APP_URL` | Recommended | e.g. `https://getworkgraph.com` |
 
 **Auth provider:** Default is Supabase. If you set `AUTH_PROVIDER=supertokens`, you must also set `SUPERTOKENS_CONNECTION_URI` (and optionally `SUPERTOKENS_API_KEY`). Do not set `AUTH_PROVIDER=supertokens` alone — the build will pass, but auth routes return 503 until SuperTokens is configured.
 

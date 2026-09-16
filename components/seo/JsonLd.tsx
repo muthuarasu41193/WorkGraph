@@ -16,11 +16,6 @@ export default function JsonLd() {
       priceCurrency: "USD",
       description: "Free Starter plan available",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      ratingCount: "2400",
-    },
     publisher: {
       "@type": "Organization",
       name: SITE.name,

@@ -61,8 +61,8 @@ const TIERS: PricingTier[] = [
     highlighted: true,
     features: [
       { text: "Unlimited job discoveries", included: true },
-      { text: "Advanced AI match scoring (92%+ accuracy)", included: true },
-      { text: "Full Interview Vault access (10,000+ Q&As)", included: true },
+      { text: "Advanced AI match scoring", included: true },
+      { text: "Full Interview Vault access", included: true },
       { text: "Public career profile + analytics", included: true },
       { text: "Real-time job alerts (instant)", included: true },
       { text: "All 50+ hidden job sources", included: true },
@@ -113,7 +113,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I really earn money selling interview guides?",
     answer:
-      "Absolutely. Pro users can publish interview guides for companies they've interviewed at. You keep 80% of every sale. Top sellers earn $500-2000/month.",
+      "Pro users can publish interview guides for companies they've interviewed at. You keep 80% of every sale. We don't publish typical-seller earnings because they depend on what you write and how it sells.",
   },
   {
     question: "What's your refund policy?",

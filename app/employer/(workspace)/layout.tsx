@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth/session-server";
 import { getEmployerProfileForUser } from "@/lib/employer/employer-server";
 import EmployerShell from "@/components/employer/EmployerShell";
+import { LegalNav } from "@/components/legal/LegalDocument";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 
 export const dynamic = "force-dynamic";
@@ -32,5 +33,12 @@ export default async function EmployerWorkspaceLayout({
     redirect("/employer/onboarding");
   }
 
-  return <EmployerShell companyName={companyName}>{children}</EmployerShell>;
+  return (
+    <div className="min-h-dvh">
+      <EmployerShell companyName={companyName}>{children}</EmployerShell>
+      <footer className="border-t border-border-default bg-background px-4 py-4">
+        <LegalNav className="mx-auto max-w-6xl" />
+      </footer>
+    </div>
+  );
 }

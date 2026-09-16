@@ -4,10 +4,15 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { NAV_ANNOUNCEMENT } from "@/lib/constants";
+import { displayCount } from "@/lib/social-proof";
 import { useLandingHeader } from "./LandingHeaderContext";
 
-export default function AnnouncementBar() {
+export default function AnnouncementBar({ signups = 0 }: { signups?: number }) {
   const { announcementVisible, dismissAnnouncement } = useLandingHeader();
+  const joined = displayCount(signups);
+  const message = joined.showNumber
+    ? `Early access · ${joined.display} people have joined`
+    : joined.display;
 
   return (
     <AnimatePresence initial={false}>
@@ -30,7 +35,7 @@ export default function AnnouncementBar() {
                 className="inline-block size-2 shrink-0 animate-pulse-soft rounded-full bg-brand"
                 aria-hidden
               />
-              <span>{NAV_ANNOUNCEMENT.message}</span>
+              <span>{message}</span>
               <Link
                 href={NAV_ANNOUNCEMENT.href}
                 className="font-semibold text-brand underline-offset-4 transition-colors hover:underline"

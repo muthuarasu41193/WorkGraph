@@ -2,8 +2,8 @@
 
 **Date:** 18 August 2026  
 **Scope:** Full repository inspection. No application code was modified.  
-**Production URL (documented):** `https://work-graph-fawn.vercel.app`  
-**Canonical product domain (SEO):** `https://workgraph.ai`
+**Production URL (documented):** `https://getworkgraph.com` (`NEXT_PUBLIC_SITE_URL`)  
+**Canonical product domain (SEO):** `https://getworkgraph.com`
 
 This audit describes **what exists and works today**, then **what is built but unused**, then **risks**, then a **recommended architecture that preserves working product paths**.
 
@@ -524,16 +524,16 @@ CI (`verify-build.yml`): Vercel config check + `tsc` + `next build`. **Does not 
 
 ### 2.25 SEO
 
-**Present:** root `metadata` (title, description, canonical `workgraph.ai`, Open Graph, Twitter card), `JsonLd` SoftwareApplication, `alternates.canonical`, `/opengraph-image`.
+**Present:** root `metadata` (title, description, canonical `getworkgraph.com` via `NEXT_PUBLIC_SITE_URL`, Open Graph, Twitter card), `JsonLd` SoftwareApplication, `alternates.canonical`, `/opengraph-image`.
 
 **Gaps / risks:**
 
-- No `app/sitemap.ts` or `robots.ts`
+- `app/sitemap.ts` and `app/robots.ts` emit only canonical-host URLs
 - Footer Privacy / Terms / Cookie Policy hrefs are `"#"`
 - JsonLd `aggregateRating` is **invented** (legal/quality risk)
 - Marketing copy claims Discord, Twitter, “50+ private sources”; Hidden Jobs code only uses **Reddit, HN, GitHub**
 - Product dashboard routes are auth-gated (correct); `/profile` is not a crawl target
-- Dual hostnames (`workgraph.ai` vs `work-graph-fawn.vercel.app`) — `metadataBase` uses `SITE.url`
+- Dual hostnames are 308-redirected to `getworkgraph.com` (`NEXT_PUBLIC_SITE_URL`); `metadataBase` uses `getSiteUrl()`
 
 ### 2.26 Privacy / data handling
 

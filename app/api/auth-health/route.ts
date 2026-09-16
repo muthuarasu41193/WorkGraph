@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,6 @@ export async function GET() {
         ? "Auth API unreachable from this deployment — check Supabase project status and URL."
         : profilesError
           ? "Run supabase/migrations/20260519120000_profiles_auth.sql on your Supabase project."
-          : "Auth config looks reachable. Ensure Supabase → Authentication → URL Configuration includes https://workgraph-landing.vercel.app/auth/callback",
+          : `Auth config looks reachable. Ensure Supabase → Authentication → URL Configuration includes ${siteUrl("/auth/callback")}`,
   });
 }

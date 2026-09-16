@@ -7,65 +7,25 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 import type { CompanyBrand } from "@/lib/brands";
 import { COMPANY_LABELS } from "@/lib/brands";
 import { cn } from "@/lib/utils";
+import { displayCount } from "@/lib/social-proof";
 
 type Difficulty = "Easy" | "Medium" | "Hard";
 
 type Company = {
   brand: CompanyBrand;
-  interviews: number;
   commonRole: string;
   difficulty: Difficulty;
 };
 
 const COMPANIES: Company[] = [
-  {
-    brand: "google",
-    interviews: 247,
-    commonRole: "Senior Software Engineer",
-    difficulty: "Hard",
-  },
-  {
-    brand: "meta",
-    interviews: 189,
-    commonRole: "Software Engineer",
-    difficulty: "Medium",
-  },
-  {
-    brand: "amazon",
-    interviews: 312,
-    commonRole: "SDE II",
-    difficulty: "Hard",
-  },
-  {
-    brand: "microsoft",
-    interviews: 198,
-    commonRole: "Software Engineer",
-    difficulty: "Medium",
-  },
-  {
-    brand: "apple",
-    interviews: 156,
-    commonRole: "iOS Engineer",
-    difficulty: "Medium",
-  },
-  {
-    brand: "stripe",
-    interviews: 89,
-    commonRole: "Backend Engineer",
-    difficulty: "Hard",
-  },
-  {
-    brand: "airbnb",
-    interviews: 134,
-    commonRole: "Product Manager",
-    difficulty: "Medium",
-  },
-  {
-    brand: "netflix",
-    interviews: 67,
-    commonRole: "Senior Engineer",
-    difficulty: "Hard",
-  },
+  { brand: "google", commonRole: "Senior Software Engineer", difficulty: "Hard" },
+  { brand: "meta", commonRole: "Software Engineer", difficulty: "Medium" },
+  { brand: "amazon", commonRole: "SDE II", difficulty: "Hard" },
+  { brand: "microsoft", commonRole: "Software Engineer", difficulty: "Medium" },
+  { brand: "apple", commonRole: "iOS Engineer", difficulty: "Medium" },
+  { brand: "stripe", commonRole: "Backend Engineer", difficulty: "Hard" },
+  { brand: "airbnb", commonRole: "Product Manager", difficulty: "Medium" },
+  { brand: "netflix", commonRole: "Senior Engineer", difficulty: "Hard" },
 ];
 
 const DIFFICULTY_STYLES: Record<Difficulty, string> = {
@@ -96,15 +56,14 @@ function CompanyCard({ company, active }: { company: Company; active?: boolean }
             {company.difficulty}
           </span>
         </div>
-        <p className="mt-0.5 text-xs text-fg-tertiary">
-          {company.interviews} interviews · {company.commonRole}
-        </p>
+        <p className="mt-0.5 text-xs text-fg-tertiary">{company.commonRole}</p>
       </div>
     </div>
   );
 }
 
-export default function InterviewVault() {
+export default function InterviewVault({ publishedGuides }: { publishedGuides: number }) {
+  const guides = displayCount(publishedGuides);
   return (
     <section
       id="interview-vault"
@@ -120,7 +79,9 @@ export default function InterviewVault() {
             Know exactly what to expect. Before you walk in.
           </h2>
           <p className="mt-4 text-lg text-fg-tertiary">
-            10,000+ real interview experiences from candidates at top companies
+            {guides.showNumber
+              ? `${guides.display} published interview guides from candidates`
+              : guides.display}
           </p>
         </header>
 
@@ -203,8 +164,17 @@ export default function InterviewVault() {
                   </div>
                   <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent pb-4">
                     <p className="px-4 text-center text-sm font-medium text-fg-tertiary">
-                      Join to see the answer +{" "}
-                      <span className="text-white">246 more Google questions</span> →
+                      Join to see the answer
+                      {guides.showNumber ? (
+                        <>
+                          {" "}
+                          +{" "}
+                          <span className="text-white">
+                            {guides.display} published guides
+                          </span>
+                        </>
+                      ) : null}{" "}
+                      →
                     </p>
                   </div>
                 </div>

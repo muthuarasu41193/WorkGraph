@@ -1,9 +1,11 @@
+import { getSiteUrl } from "./site-url";
+
 export const SITE = {
   name: "WorkGraph",
   tagline: "AI-powered job intelligence",
   description:
     "Discover hidden roles, sharpen your resume, and make smarter career moves — before everyone else sees the opportunity.",
-  url: "https://workgraph.ai",
+  url: getSiteUrl(),
   email: "hello@getworkgraph.com",
 } as const;
 
@@ -16,7 +18,7 @@ export const NAV_ITEMS = [
 ] as const;
 
 export const NAV_ANNOUNCEMENT = {
-  message: "Early access · 247 of 500 spots left",
+  message: "We launched this month. Be one of the first.",
   cta: "Join waitlist →",
   href: "/waitlist",
 } as const;
@@ -35,9 +37,9 @@ export const HERO = {
   primaryCta: { label: "Start free", href: "/signup" },
   secondaryCta: { label: "See how it works", href: "#how-it-works" },
   stats: [
-    { value: "50+", label: "Hidden sources" },
-    { value: "3×", label: "Faster discovery" },
-    { value: "12k+", label: "Roles tracked" },
+    { value: "Hidden roles", label: "From public communities" },
+    { value: "AI matching", label: "Against your resume" },
+    { value: "Interview Vault", label: "Guides you can sell" },
   ],
 } as const;
 
@@ -104,67 +106,33 @@ export const STEPS = [
   },
 ] as const;
 
-export const INTELLIGENCE_STATS = [
-  { value: "94%", label: "Match accuracy", detail: "on hidden role detection" },
-  { value: "2.4h", label: "Avg. time saved", detail: "per job search session" },
-  { value: "38%", label: "Higher response rate", detail: "with optimized applications" },
-] as const;
-
-export const TESTIMONIALS = [
-  {
-    quote:
-      "I found a Staff Engineer role on a Discord server three days before it hit LinkedIn. WorkGraph paid for itself instantly.",
-    author: "Priya M.",
-    role: "Staff Engineer",
-    company: "Series B startup",
-  },
-  {
-    quote:
-      "The resume intelligence alone bumped my ATS score from 62 to 91. I started getting callbacks within a week.",
-    author: "James K.",
-    role: "Product Manager",
-    company: "Fintech",
-  },
-  {
-    quote:
-      "Interview Vault saved me hours of prep. Real questions from real candidates — nothing else comes close.",
-    author: "Sarah L.",
-    role: "Data Scientist",
-    company: "Enterprise SaaS",
-  },
-] as const;
-
 export const CTA = {
   headline: "Your next role is already out there",
-  subheadline: "Join thousands of professionals using AI to find opportunities others miss.",
+  subheadline: "Join WorkGraph to find opportunities others miss.",
   primaryCta: { label: "Get started free", href: "/signup" },
   secondaryCta: { label: "Sign in", href: "/login" },
 } as const;
 
 export const FOOTER_LINKS = {
   product: [
-    { label: "Features", href: "#features" },
-    { label: "How it Works", href: "#how-it-works" },
-    { label: "Interview Vault", href: "#interview-vault" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "Changelog", href: "#" },
-    { label: "Roadmap", href: "#" },
+    { label: "Features", href: "/#features" },
+    { label: "How it Works", href: "/#how-it-works" },
+    { label: "Interview Vault", href: "/interview-vault" },
+    { label: "Pricing", href: "/#pricing" },
   ],
   resources: [
-    { label: "Blog", href: "#" },
-    { label: "Career Tips", href: "#" },
-    { label: "Resume Templates", href: "#" },
-    { label: "Salary Guide", href: "#" },
-    { label: "Interview Questions", href: "#" },
-    { label: "API Docs", href: "#" },
+    { label: "Job discovery", href: "/discovery" },
+    { label: "Interview Vault", href: "/interview-vault" },
+    { label: "Create profile", href: "/create-profile" },
+    { label: "Employer signup", href: "/employer/signup" },
   ],
   company: [
-    { label: "About", href: "#" },
-    { label: "Contact", href: "#contact" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "Status", href: "#" },
+    { label: "Contact", href: "/#contact" },
+    { label: "Privacy Policy", href: "/legal/privacy" },
+    { label: "Terms of Service", href: "/legal/terms" },
+    { label: "Cookie Policy", href: "/legal/cookies" },
+    { label: "Acceptable Use", href: "/legal/acceptable-use" },
+    { label: "Data Processing Addendum", href: "/legal/dpa" },
   ],
 } as const;
 

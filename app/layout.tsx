@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
+import { metadataBaseUrl, routeShareMetadata } from "@/lib/seo";
 import { PageShell } from "@/components/layout/PageShell";
 import { PageTransition } from "@/components/layout/PageTransition";
 import JsonLd from "@/components/seo/JsonLd";
@@ -29,17 +30,17 @@ const SEO_TITLE = "WorkGraph — Find Jobs That Never Hit LinkedIn";
 const SEO_DESCRIPTION =
   "AI-powered job intelligence platform. Discover hidden jobs from Reddit, Discord & 50+ private sources. AI match scoring, Interview Vault, and earn by selling your guides.";
 
+const share = routeShareMetadata("./");
+
 export const metadata: Metadata = {
   title: SEO_TITLE,
   description: SEO_DESCRIPTION,
-  metadataBase: new URL(SITE.url),
-  alternates: {
-    canonical: SITE.url,
-  },
+  metadataBase: metadataBaseUrl(),
+  alternates: share.alternates,
   openGraph: {
     title: SEO_TITLE,
     description: SEO_DESCRIPTION,
-    url: SITE.url,
+    url: share.openGraph?.url,
     siteName: SITE.name,
     type: "website",
     images: [
@@ -52,10 +53,9 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    ...share.twitter,
     title: SEO_TITLE,
     description: SEO_DESCRIPTION,
-    images: ["/opengraph-image"],
   },
 };
 
