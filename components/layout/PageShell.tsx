@@ -1,7 +1,8 @@
 "use client";
 
+import { ConsentManager } from "@/components/consent/ConsentManager";
+import { OptionalThirdPartyScripts } from "@/components/consent/OptionalThirdPartyScripts";
 import { BackToTop } from "@/components/ui/BackToTop";
-import { CookieBanner } from "@/components/ui/CookieBanner";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 
 export function PageShell() {
@@ -9,7 +10,8 @@ export function PageShell() {
     <>
       <ScrollProgress />
       <BackToTop />
-      <CookieBanner />
+      <ConsentManager />
+      <OptionalThirdPartyScripts />
     </>
   );
 }

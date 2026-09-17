@@ -1,8 +1,11 @@
+import { readConsent, shouldLoadCategory } from "@/lib/consent";
+
 type TrackPayload = Record<string, string | number | boolean | null | undefined>;
 
 /** Lightweight client analytics — extend with your provider when ready. */
 export function trackEvent(event: string, payload: TrackPayload = {}): void {
   if (typeof window === "undefined") return;
+  if (!shouldLoadCategory(readConsent(), "analytics")) return;
 
   const detail = { event, ...payload, at: new Date().toISOString() };
 

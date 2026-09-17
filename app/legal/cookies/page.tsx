@@ -50,10 +50,10 @@ export default function CookiePolicyPage() {
                     "Session / refresh period set by the auth provider",
                   ],
                   [
-                    "wg-cookie-consent (local storage)",
+                    "wg_consent (first-party cookie + local storage)",
                     "Strictly necessary",
-                    "Remember whether you accepted or declined the cookie banner",
-                    "Until you clear site data",
+                    "Stores consent version, timestamp, anonymous id, and the exact categories granted",
+                    "180 days, or until you change/clear the choice",
                   ],
                   [
                     "Theme / UI preferences (if set)",
@@ -64,9 +64,9 @@ export default function CookiePolicyPage() {
                 ]}
               />
               <p>
-                As of this draft we do not drop third-party advertising cookies. If we add analytics
-                that is not strictly necessary, we will list those cookies here and only set them
-                after consent where the law requires it.
+                Analytics and marketing tags are not loaded unless you opt in. Any future tag in
+                those categories is mounted behind a ConsentGate and stays off until a current
+                consent record grants that category.
               </p>
             </>
           ),
@@ -76,8 +76,23 @@ export default function CookiePolicyPage() {
           title: "How to change your choice",
           content: (
             <ul className="list-disc space-y-2 pl-5">
-              <li>Use Accept or Decline on the cookie banner the first time you visit.</li>
-              <li>Clear this site&apos;s cookies and local storage in your browser to see the banner again.</li>
+              <li>
+                Use <strong>Accept all</strong> or <strong>Reject all</strong> on the first cookie
+                banner. Both actions are on the same screen.
+              </li>
+              <li>
+                Open <strong>Manage preferences</strong> to allow analytics or marketing separately,
+                then save.
+              </li>
+              <li>
+                Reopen the same manager anytime from <strong>Cookie preferences</strong> in the
+                footer (or the legal nav). Reject all there is the withdrawal path — the same two
+                buttons as granting consent.
+              </li>
+              <li>
+                We re-prompt if the consent policy version increments. Clearing site data also
+                brings the banner back.
+              </li>
               <li>
                 Browser controls can block cookies entirely; some features (sign-in) will not work
                 without strictly necessary cookies.

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
+import { CookiePreferencesButton } from "@/components/consent/CookiePreferencesButton";
+import { LEGAL_NAV } from "@/lib/legal";
 
 type AuthSplitShellProps = {
   panelEyebrow?: string;
@@ -75,17 +77,16 @@ export function AuthSplitShell({
         <div className={`wg-auth-enter mx-auto w-full ${wide ? "max-w-xl" : "max-w-[400px]"}`}>
           {children}
           <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
-            <Link href="/legal/terms" className="underline-offset-4 hover:underline">
-              Terms
-            </Link>
+            {LEGAL_NAV.map((item, index) => (
+              <span key={item.href}>
+                {index > 0 ? " · " : null}
+                <Link href={item.href} className="underline-offset-4 hover:underline">
+                  {item.label}
+                </Link>
+              </span>
+            ))}
             {" · "}
-            <Link href="/legal/privacy" className="underline-offset-4 hover:underline">
-              Privacy
-            </Link>
-            {" · "}
-            <Link href="/legal/cookies" className="underline-offset-4 hover:underline">
-              Cookies
-            </Link>
+            <CookiePreferencesButton className="text-xs" />
           </p>
         </div>
       </section>

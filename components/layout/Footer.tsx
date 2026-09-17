@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { SocialLinks } from "@/components/brand/SocialLinks";
 import { FOOTER_LINKS, SITE } from "@/lib/constants";
+import { CookiePreferencesButton } from "@/components/consent/CookiePreferencesButton";
 import { LEGAL_NAV } from "@/lib/legal";
 import { displayCount } from "@/lib/social-proof";
 
@@ -131,6 +132,10 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
                     <FooterLink href={item.href}>{item.label}</FooterLink>
                   </span>
                 ))}
+                <span className="inline-flex items-center gap-4">
+                  <span aria-hidden>·</span>
+                  <CookiePreferencesButton className="hover:translate-x-1 hover:no-underline" />
+                </span>
               </div>
             </div>
           </div>

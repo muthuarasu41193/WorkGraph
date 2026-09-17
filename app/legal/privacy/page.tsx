@@ -117,14 +117,8 @@ export default function PrivacyPolicyPage() {
                 &quot;contract&quot; and &quot;legitimate interests&quot; refer to GDPR Article 6 where it applies.
               </p>
               <LegalTable
-                headers={["Category", "Examples", "Purpose", "Lawful basis", "Retention"]}
-                rows={DATA_CATEGORIES.map((row) => [
-                  row.category,
-                  row.examples,
-                  row.purpose,
-                  row.lawfulBasis,
-                  row.retention,
-                ])}
+                headers={["Category", "Purpose", "Lawful basis"]}
+                rows={DATA_CATEGORIES.map((row) => [row.category, row.purpose, row.lawfulBasis])}
               />
             </>
           ),
@@ -171,13 +165,14 @@ export default function PrivacyPolicyPage() {
           title: "Retention periods per data category",
           content: (
             <>
-              <p>See the retention column in the purpose table above. In summary:</p>
-              <ul className="list-disc space-y-2 pl-5">
-                <li>Account and resume content: kept while the account is open; deleted on your request or account deletion, with encrypted backups typically purged within 30 days.</li>
-                <li>Application activity and vault listings you created: kept until you delete them or close the account.</li>
-                <li>Device/analytics and security logs: typically 90 days unless needed longer for an active abuse investigation.</li>
-                <li>Cookie consent in local storage: until you clear site data or change the choice.</li>
-              </ul>
+              <p>
+                Production systems follow the periods below. Encrypted backups typically rotate out
+                within 30 days after deletion unless a legal hold applies.
+              </p>
+              <LegalTable
+                headers={["Category", "Retention period"]}
+                rows={DATA_CATEGORIES.map((row) => [row.category, row.retention])}
+              />
             </>
           ),
         },

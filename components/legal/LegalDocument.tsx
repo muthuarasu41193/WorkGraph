@@ -1,5 +1,8 @@
+/* LEGAL REVIEW REQUIRED — DO NOT SHIP WITHOUT COUNSEL SIGN-OFF. */
+
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CookiePreferencesButton } from "@/components/consent/CookiePreferencesButton";
 import { LEGAL_NAV, tocFromSections, type LegalHeading } from "@/lib/legal";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +22,9 @@ export function LegalNav({ className }: { className?: string }) {
             </Link>
           </li>
         ))}
+        <li>
+          <CookiePreferencesButton />
+        </li>
       </ul>
     </nav>
   );

@@ -1,3 +1,5 @@
+/* LEGAL REVIEW REQUIRED — DO NOT SHIP WITHOUT COUNSEL SIGN-OFF. */
+
 export const LEGAL_VERSION = "0.1.0-draft";
 export const LEGAL_LAST_UPDATED = "16 September 2026";
 export const PRIVACY_EMAIL = "privacy@getworkgraph.com";
@@ -48,7 +50,12 @@ export const SUBPROCESSORS = [
     region: "United States",
   },
   {
-    name: "Public job sources (RemoteOK, Arbeitnow, Reddit, GitHub, Hacker News, and similar listing APIs)",
+    name: "Adzuna",
+    function: "Jobs-API vendor used to ingest public job listings. We do not send resume files or account emails to Adzuna.",
+    region: "United Kingdom / European Union (API); listing data cached in our US database",
+  },
+  {
+    name: "Public job sources (USAJobs, RemoteOK, Arbeitnow, Jobicy, Reddit, GitHub, Hacker News, and similar listing APIs)",
     function: "Ingest of publicly posted job listings. We do not send resume files or account emails to these vendors.",
     region: "Various (public internet)",
   },
