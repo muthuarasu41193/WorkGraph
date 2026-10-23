@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
+import { SkipLink } from "@/components/a11y/SkipLink";
 import { LegalNav } from "@/components/legal/LegalDocument";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
@@ -25,6 +26,7 @@ function DashboardLayoutInner({ children }: Props) {
 
   return (
     <div className="wg-dash-root flex max-w-full overflow-x-clip">
+      <SkipLink />
       <SideNav
         collapsed={sidebarCollapsed}
         userCollapsed={userCollapsed}
@@ -34,14 +36,14 @@ function DashboardLayoutInner({ children }: Props) {
       <div className="flex min-w-0 flex-1 flex-col overflow-x-clip overflow-y-hidden">
         <TopNav />
 
-        <div className="wg-dash-main min-w-0 max-w-full px-4 py-4 md:px-5 min-[1025px]:px-6 min-[1025px]:py-5">
+        <main id="main-content" tabIndex={-1} className="wg-dash-main min-w-0 max-w-full px-4 py-4 outline-none md:px-5 min-[1025px]:px-6 min-[1025px]:py-5">
           <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">
             {children}
             <div className="mt-8 border-t border-hairline pt-4 md:hidden">
               <LegalNav />
             </div>
           </div>
-        </div>
+        </main>
       </div>
 
       <MobileNav />

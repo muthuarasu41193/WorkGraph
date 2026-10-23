@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TrustPage() {
   return (
-    <main id="main-content" className="measure space-y-8 px-4 py-8">
+    <main id="main-content" tabIndex={-1} className="measure space-y-8 px-4 py-8">
       <div>
         <Text as="h1" role="title">What we checked</Text>
         <Text role="body" className="mt-3 text-ink-muted">

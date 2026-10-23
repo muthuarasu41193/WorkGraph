@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState, useSyncExternalStore } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Menu, Search } from "lucide-react"
+import { SkipLink } from "@/components/a11y/SkipLink"
 import { ShellCommandPalette } from "@/components/shell/ShellCommandPalette"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,6 +47,7 @@ export function AppShell({
   const [palette, setPalette] = useState(false)
   const [help, setHelp] = useState(false)
   const [chord, setChord] = useState<"g" | null>(null)
+  const helpCloseRef = useRef<HTMLButtonElement>(null)
   const tabs = SHELL_DESTINATIONS.filter((dest) => dest.tab)
 
   function toggleCollapsed() {
@@ -61,6 +63,11 @@ export function AppShell({
       saveShellScroll(id, window.scrollY)
     }
   }, [pathname, search])
+
+  useEffect(() => {
+    if (!help) return
+    helpCloseRef.current?.focus()
+  }, [help])
 
   useEffect(() => {
     function onHelpRequest() {
@@ -122,6 +129,7 @@ export function AppShell({
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-surface text-ink">
+        <SkipLink />
         <div className="flex min-h-screen">
           <aside
             className={cn(
@@ -167,17 +175,18 @@ export function AppShell({
             </nav>
           </aside>
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="sticky top-0 z-nav flex min-h-14 items-center gap-2 border-b border-hairline bg-surface px-3">
-              <h1 className="text-role-subheading">{shellTitle(pathname)}</h1>
+            <header className="sticky top-0 z-nav flex min-h-14 flex-wrap items-center gap-2 border-b border-hairline bg-surface px-3">
+              <h1 className="min-w-0 max-w-full flex-1 truncate text-role-subheading">{shellTitle(pathname)}</h1>
               <button
                 id="shell-search"
                 type="button"
                 className="ml-auto inline-flex min-h-11 items-center gap-2 rounded-control border border-hairline px-3 text-role-caption text-ink-muted"
+                aria-label="Search"
                 onClick={() => setPalette(true)}
               >
                 <Search className="size-4" />
-                Search
-                <kbd className="text-role-caption">⌘K</kbd>
+                <span className="hidden sm:inline">Search</span>
+                <kbd className="hidden text-role-caption sm:inline">⌘K</kbd>
               </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -204,7 +213,7 @@ export function AppShell({
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <div className="min-w-0 flex-1 pb-24 md:pb-6">{children}</div>
+            <div id="main-content" tabIndex={-1} className="min-w-0 flex-1 pb-24 outline-none md:pb-6">{children}</div>
           </div>
         </div>
         <nav
@@ -234,10 +243,24 @@ export function AppShell({
             className="fixed inset-0 z-modal flex items-end justify-center bg-scrim/40 p-4 md:items-center"
             role="dialog"
             aria-modal="true"
-            aria-label="Keyboard shortcuts"
+            aria-labelledby="shell-shortcuts-title"
+            onKeyDown={(event) => {
+              if (event.key !== "Tab") return
+              const focusable = [...event.currentTarget.querySelectorAll<HTMLElement>("button, a[href], input, select, textarea")]
+              const first = focusable[0]
+              const last = focusable[focusable.length - 1]
+              if (!first || !last) return
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault()
+                last.focus()
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault()
+                first.focus()
+              }
+            }}
           >
             <div className="w-full max-w-md rounded-overlay border border-hairline bg-surface-raised p-4 shadow-overlay">
-              <h2 className="text-role-subheading">Shortcuts</h2>
+              <h2 id="shell-shortcuts-title" className="text-role-subheading">Shortcuts</h2>
               <ul className="mt-3 space-y-2 text-role-body-small">
                 <li>⌘K or Ctrl K opens search</li>
                 <li>/ opens search</li>
@@ -246,7 +269,7 @@ export function AppShell({
                 <li>? opens this list</li>
                 <li>Escape closes the open layer</li>
               </ul>
-              <Button className="mt-4 min-h-11" onClick={() => setHelp(false)}>
+              <Button ref={helpCloseRef} className="mt-4 min-h-11" onClick={() => setHelp(false)}>
                 Close
               </Button>
             </div>

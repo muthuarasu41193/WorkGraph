@@ -165,9 +165,9 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-3 text-xl font-semibold`}
               />
             ) : (
-              <h1 className="text-role-title mt-2 text-ink">
+              <h2 className="text-role-title mt-2 text-ink">
                 {form.full_name || "Your name"}
-              </h1>
+              </h2>
             )}
 
             {isEditing ? (

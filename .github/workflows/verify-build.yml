@@ -36,6 +36,9 @@ jobs:
       - name: TypeScript
         run: npm run typecheck
 
+      - name: Tests, including axe serious and critical
+        run: npm test
+
       - name: Production build (matches Vercel)
         run: npm run build
         env:

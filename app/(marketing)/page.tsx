@@ -53,7 +53,7 @@ export default async function HomePage() {
   const score = demo ? parseMatchPercent(demo.matchLabel) : null
 
   return (
-    <main id="main-content">
+    <main id="main-content" tabIndex={-1}>
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
           <Text as="h1" role="display">Search the live index</Text>

@@ -24,6 +24,7 @@ import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { formatJobSource } from "@/lib/job-card-data"
 import { sanitizeJobDescription } from "@/lib/job-summary"
+import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
 const ROW_HEIGHT = 300
@@ -155,6 +156,7 @@ export function JobFeed({
   const [loadingMore, setLoadingMore] = useState(false)
   const [emptyMark, setEmptyMark] = useState<Record<string, number>>({})
   const [focus, setFocus] = useState(0)
+  const [focusAnnouncement, setFocusAnnouncement] = useState("")
   const [preview, setPreview] = useState<RecommendedJobCard | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [naming, setNaming] = useState(false)
@@ -363,16 +365,31 @@ export function JobFeed({
     toast({ title: "Added to your tracker", variant: "success" })
   }
 
+  function moveFocus(delta: number) {
+    const next = nextListIndex(focus, delta, rows.length)
+    setFocus(next)
+    const job = rows[next]?.job
+    if (job) setFocusAnnouncement(feedFocusAnnouncement(job.title, job.company, next, rows.length))
+    const node = listRef.current
+    if (!node) return
+    const top = next * ROW_HEIGHT
+    if (top < node.scrollTop || top + ROW_HEIGHT > node.scrollTop + node.clientHeight) node.scrollTop = top
+  }
+
+  function prefetchJob(id: string) {
+    router.prefetch(`/jobs/${encodeURIComponent(id)}`)
+  }
+
   function onListKey(event: React.KeyboardEvent) {
     const target = event.target as HTMLElement
     if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return
     const job = rows[focus]?.job
     if (event.key === "j") {
       event.preventDefault()
-      setFocus((index) => Math.min(index + 1, Math.max(rows.length - 1, 0)))
+      moveFocus(1)
     } else if (event.key === "k") {
       event.preventDefault()
-      setFocus((index) => Math.max(index - 1, 0))
+      moveFocus(-1)
     } else if (event.key === "Enter" && job) {
       event.preventDefault()
       openJob(job)
@@ -552,11 +569,16 @@ export function JobFeed({
         )}
       </div>
       <Text role="body-small" aria-live="polite">{initial.error ? initial.error : `${initial.total.toLocaleString("en-US")} roles`}</Text>
+      <p id="job-feed-keys" className="text-role-caption text-ink-muted">j and k move. Enter opens. s saves. x dismisses.</p>
+      <p className="sr-only" aria-live="polite">{focusAnnouncement}</p>
       <div className={cn("grid min-h-0 flex-1 gap-3", railClosed ? (preview && wide ? "xl:grid-cols-[minmax(0,1fr)_22rem]" : "") : preview && wide ? "xl:grid-cols-[16rem_minmax(0,1fr)_22rem]" : "xl:grid-cols-[16rem_minmax(0,1fr)]")}>
         {railClosed ? null : <aside className="hidden xl:block">{filterBody}</aside>}
         <div
           ref={listRef}
           tabIndex={0}
+          aria-label="Job list"
+          aria-keyshortcuts="j k Enter s x"
+          aria-describedby="job-feed-keys"
           className="h-[70vh] overflow-auto rounded-card border border-hairline bg-surface outline-none focus-visible:ring-2 focus-visible:ring-accent"
           onScroll={(event) => {
             setScrollTop(event.currentTarget.scrollTop)
@@ -626,6 +648,7 @@ export function JobFeed({
                         onSave={() => toggleSave(row.job)}
                         onDismiss={() => dismiss(row.job)}
                         onApply={() => apply(row.job)}
+                        onIntent={() => prefetchJob(row.job.id)}
                       />
                     )}
                   </div>
@@ -635,10 +658,10 @@ export function JobFeed({
           )}
           {hasMore && !initial.error ? (
             <div className="p-3">
-              <Button type="button" className="min-h-11" disabled={loadingMore} onClick={() => void loadMore()}>
+              <Button type="button" className="min-h-11 min-w-32" disabled={loadingMore} onClick={() => void loadMore()}>
                 {loadingMore ? "Loading" : "Load more"}
               </Button>
-              {loadError ? <Text role="caption" className="mt-2 text-danger">{loadError}</Text> : null}
+              {loadError ? <p className="mt-2 text-role-caption text-danger" role="alert">{loadError}</p> : null}
             </div>
           ) : null}
         </div>
@@ -649,7 +672,7 @@ export function JobFeed({
             <Text role="body-small" className="mt-3 line-clamp-6">{sanitizeJobDescription(preview.description, preview.company) || "No description is stored for this listing."}</Text>
             <div className="mt-3 flex flex-col gap-2">
               <Button type="button" className="min-h-11" onClick={() => apply(preview)}>{jobCardView(preview).applyLabel}</Button>
-              <Button type="button" variant="outline" className="min-h-11" onClick={() => router.push(`/jobs/${encodeURIComponent(preview.id)}`)}>Open full page</Button>
+              <Button type="button" variant="outline" className="min-h-11" onMouseEnter={() => prefetchJob(preview.id)} onFocus={() => prefetchJob(preview.id)} onClick={() => router.push(`/jobs/${encodeURIComponent(preview.id)}`)}>Open full page</Button>
             </div>
           </aside>
         ) : null}
