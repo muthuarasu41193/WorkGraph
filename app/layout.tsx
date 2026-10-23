@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Newsreader, Public_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
@@ -10,28 +10,47 @@ import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-const publicSans = Public_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// Google Fonts sometimes returns extensionless /l/font?kit= URLs. Next.js 16.2
+// then fails the production build with "next/font/google queries have exactly
+// one entry". These are the same latin files that request would have downloaded.
+const publicSans = localFont({
+  src: [
+    { path: "./fonts/public-sans-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/public-sans-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/public-sans-latin.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/public-sans-latin.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
   variable: "--font-public",
-  display: "swap",
   preload: true,
+  adjustFontFallback: "Arial",
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
 });
 
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/newsreader-latin.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/newsreader-latin.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
   variable: "--font-display-face",
-  display: "swap",
   preload: false,
+  adjustFontFallback: "Times New Roman",
+  fallback: ["ui-serif", "Georgia", "serif"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains",
+const jetbrainsMono = localFont({
+  src: [
+    { path: "./fonts/jetbrains-mono-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/jetbrains-mono-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/jetbrains-mono-latin.woff2", weight: "600", style: "normal" },
+  ],
   display: "swap",
+  variable: "--font-jetbrains",
   preload: false,
+  adjustFontFallback: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "monospace"],
 });
 
 const SEO_TITLE = "WorkGraph — Find Jobs That Never Hit LinkedIn";
