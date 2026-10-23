@@ -1,7 +1,8 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import { namedApplyLabel, parseMatchPercent, relaxQuery, remotePolicy, sortFeedJobs } from "../job-feed"
+import { salaryText } from "../../components/product/SalaryDisplay"
+import { jobCardView, namedApplyLabel, parseMatchPercent, relaxQuery, remotePolicy, sortFeedJobs } from "../job-feed"
 import type { RecommendedJobCard } from "../job-dashboard"
 
 function job(partial: Partial<RecommendedJobCard> & Pick<RecommendedJobCard, "id" | "matchLabel">): RecommendedJobCard {
@@ -27,10 +28,30 @@ describe("job feed helpers", () => {
     assert.equal(parseMatchPercent("Acme · via greenhouse"), null)
   })
 
-  it("names the apply destination without using Apply Now", () => {
-    assert.equal(namedApplyLabel("greenhouse", true), "Apply on Greenhouse")
-    assert.equal(namedApplyLabel("other", true), "Apply on the company site")
-    assert.equal(namedApplyLabel("greenhouse", false), "Apply on the company site")
+  it("names the apply destination from the source, matching via {source}", () => {
+    assert.equal(namedApplyLabel("greenhouse", "https://boards.greenhouse.io/acme"), "Apply on Greenhouse")
+    assert.equal(namedApplyLabel("greenhouse", null), "Apply on Greenhouse")
+    assert.equal(namedApplyLabel("workgraph", null, "Acme"), "Apply on Acme")
+    assert.equal(
+      namedApplyLabel("other", "https://boards.greenhouse.io/acme/jobs/1", "Acme"),
+      "Apply on greenhouse.io",
+    )
+    const view = jobCardView(
+      job({
+        id: "host",
+        matchLabel: "10% match · a",
+        source: "other",
+        company: "Acme",
+        applyUrl: "https://www.greenhouse.io/acme",
+      }),
+    )
+    assert.equal(view.applyLabel, "Apply on greenhouse.io")
+    assert.equal(view.source.source, "greenhouse.io")
+    assert.equal(view.applyLabel, `Apply on ${view.source.source}`)
+    for (const label of [view.applyLabel, namedApplyLabel("other", null, "Acme"), namedApplyLabel("company", null, "Acme")]) {
+      assert.equal(label.includes("Apply Now"), false)
+      assert.equal(/company site/i.test(label), false)
+    }
   })
 
   it("relaxes a query by one token or one character", () => {
@@ -43,6 +64,12 @@ describe("job feed helpers", () => {
     assert.equal(remotePolicy("Berlin, Germany"), "Listed location")
     assert.equal(remotePolicy("Remote - US"), "Remote")
     assert.equal(remotePolicy("Location TBD"), "Remote policy not listed")
+  })
+
+  it("keeps a stated salary and names an undisclosed one", () => {
+    assert.equal(salaryText({ kind: "stated", label: "$120k–$150k" }), "$120k–$150k")
+    assert.equal(salaryText({ kind: "stated", label: "  " }), "Salary not disclosed")
+    assert.equal(salaryText({ kind: "undisclosed" }), "Salary not disclosed")
   })
 
   it("sorts by parsed match and leaves unscored rows last", () => {

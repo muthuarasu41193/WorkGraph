@@ -397,6 +397,17 @@
   color: var(--ink-subtle);
 }
 
+.sidebar-legal {
+  padding: 0 8px;
+}
+
+.sidebar-legal a,
+.sidebar-legal button {
+  font-family: var(--wg-font-sans);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-leading);
+}
+
 /* ── Sidebar bottom pinned zone ── */
 
 .sidebar-bottom {

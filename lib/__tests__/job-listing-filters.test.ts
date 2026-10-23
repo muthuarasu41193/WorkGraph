@@ -222,6 +222,7 @@ describe("job-listing-filters", () => {
     const strongMatch = row(
       baseJob({
         id: "strong",
+        title: "TypeScript React Engineer",
         description: "Build products with TypeScript and React across our SaaS platform",
         matchedSkills: ["typescript"],
       }),
@@ -234,7 +235,7 @@ describe("job-listing-filters", () => {
     const filtered = applyJobListingFilters(jobsFrom(weakMatch, strongMatch), emptyState(), {
       profile: { skills: ["typescript", "react"] },
       requireProfileOverlap: true,
-      minProfileScore: 8,
+      minMatchPercent: 40,
     });
 
     assert.equal(filtered.length, 1);

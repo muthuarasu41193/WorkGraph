@@ -3,8 +3,7 @@ import type { MatchScoreProps } from "@/components/product/MatchScore"
 import type { SalaryFigure } from "@/components/product/SalaryDisplay"
 import type { SourceAttributionProps } from "@/components/product/SourceAttribution"
 import type { TrustIndicatorProps } from "@/components/product/TrustIndicator"
-import { getApplyLabel } from "@/lib/job-apply"
-import { formatJobSource } from "@/lib/job-card-data"
+import { getApplyLabel, jobSourceName } from "@/lib/job-apply"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 
 export const JOB_FEED_PAGE_SIZE = 40
@@ -52,11 +51,13 @@ export function remotePolicy(location: string): string {
   return "Listed location"
 }
 
-export function namedApplyLabel(source: string | null | undefined, hasUrl: boolean): string {
-  if (!hasUrl) return "Apply on the company site"
-  const label = getApplyLabel(source)
-  if (label === "Apply Now" || label === "Apply on Company Site") return "Apply on the company site"
-  return label
+/** Same "Apply on {source}" string as the logged-in card. */
+export function namedApplyLabel(
+  source: string | null | undefined,
+  applyUrl?: string | null,
+  company?: string | null,
+): string {
+  return getApplyLabel(source, company, applyUrl)
 }
 
 export function relaxQuery(query: string): string | null {
@@ -104,9 +105,9 @@ export function jobCardView(job: RecommendedJobCard): JobCardView {
     },
     remoteType: remotePolicy(job.location),
     match,
-    source: { source: formatJobSource(job.source), href: job.applyUrl || undefined },
+    source: { source: jobSourceName(job.source, job.company, job.applyUrl), href: job.applyUrl || undefined },
     trust,
-    applyLabel: namedApplyLabel(job.source, Boolean(job.applyUrl)),
+    applyLabel: namedApplyLabel(job.source, job.applyUrl, job.company),
     stale,
   }
 }

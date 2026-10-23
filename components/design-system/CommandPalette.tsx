@@ -58,7 +58,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
     },
     {
       id: "jobs",
-      label: "Job Discovery",
+      label: "Jobs",
       icon: Briefcase,
       group: "Navigate",
       action: () => {
@@ -68,7 +68,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
     },
     {
       id: "job-discovery",
-      label: "Hidden Jobs",
+      label: "Community posts",
       icon: Radar,
       group: "Navigate",
       action: () => {

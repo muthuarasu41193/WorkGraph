@@ -22,6 +22,7 @@ import { dismissedSnapshot, readDismissedJobs, subscribeDismissedJobs, writeDism
 import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { formatJobSource } from "@/lib/job-card-data"
+import { sanitizeJobDescription } from "@/lib/job-summary"
 import { cn } from "@/lib/utils"
 
 const ROW_HEIGHT = 300
@@ -631,7 +632,7 @@ export function JobFeed({
           <aside className="hidden max-h-[70vh] overflow-auto rounded-card border border-hairline bg-surface-raised p-3 xl:block">
             <Text as="h2" role="subheading">{preview.title}</Text>
             <Text role="body-small" className="text-ink-muted">{preview.company}</Text>
-            <Text role="body-small" className="mt-3 line-clamp-6">{preview.description || "No description is stored for this listing."}</Text>
+            <Text role="body-small" className="mt-3 line-clamp-6">{sanitizeJobDescription(preview.description, preview.company) || "No description is stored for this listing."}</Text>
             <div className="mt-3 flex flex-col gap-2">
               <Button type="button" className="min-h-11" onClick={() => apply(preview)}>{jobCardView(preview).applyLabel}</Button>
               <Button type="button" variant="outline" className="min-h-11" onClick={() => router.push(`/jobs/${encodeURIComponent(preview.id)}`)}>Open full page</Button>

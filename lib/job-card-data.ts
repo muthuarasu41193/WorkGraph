@@ -19,6 +19,15 @@ export type JobCardData = {
   sourceLabel?: string;
   isEasyApply?: boolean;
   description?: string;
+  /** ISO posted time. Freshness is omitted when this is missing. */
+  postedAtIso?: string | null;
+  /** Profile skill total for "Matches 4 of 9 skills". */
+  profileSkillCount?: number;
+  /**
+   * Generated summary hook. Set this only when a summary was already produced
+   * and stored. JobCard does not call a model at render time.
+   */
+  generatedSummary?: string | null;
 };
 
 export const SOURCE_LABELS: Record<JobFeedSource, string> = {
@@ -169,6 +178,9 @@ export function recommendedJobToCardData(
     } | null;
     isEasyApply?: boolean;
     missingSkills?: string[];
+    profileSkillCount?: number;
+    /** Pass through when a generated summary already exists on the row. */
+    generatedSummary?: string | null;
   },
 ): JobCardData {
   return {
@@ -190,5 +202,8 @@ export function recommendedJobToCardData(
     description: job.description,
     matchedSkills: job.matchedSkills,
     missingSkills: options.missingSkills,
+    postedAtIso: job.postedAtIso,
+    profileSkillCount: options.profileSkillCount,
+    generatedSummary: options.generatedSummary ?? null,
   };
 }
