@@ -19,6 +19,8 @@ export type MatchScoreProps = {
   expanded?: boolean
   defaultExpanded?: boolean
   onExpandedChange?: (expanded: boolean) => void
+  /** When true, the percentage is hidden. Use this when the role was not scored. */
+  unscored?: boolean
   loading?: boolean
   error?: string
   className?: string
@@ -31,6 +33,7 @@ export function MatchScore({
   expanded,
   defaultExpanded = false,
   onExpandedChange,
+  unscored = false,
   loading = false,
   error,
   className,
@@ -48,6 +51,23 @@ export function MatchScore({
       <p className={cn("rounded-control bg-danger-wash px-2 py-1 text-role-caption text-danger", className)} role="alert">
         {error}
       </p>
+    )
+  }
+
+  if (unscored) {
+    return (
+      <div className={cn("min-w-0", className)}>
+        <p className="text-role-caption text-ink">{reason}</p>
+        {requirements.length > 0 ? (
+          <ul className="mt-1 space-y-1">
+            {requirements.map((item) => (
+              <li key={item.label} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
+                {item.met ? "Met" : "Not met"}: {item.label}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     )
   }
 

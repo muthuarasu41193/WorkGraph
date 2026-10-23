@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { CompanyLogoStrip } from "@/components/brand/CompanyLogoStrip";
 import { cn } from "@/lib/utils";
 import {
   EARLY_STAGE_COPY,
@@ -68,15 +67,6 @@ export default function Testimonials({ items }: { items: TestimonialRow[] }) {
   return (
     <section aria-label="Testimonials" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
-        <div className="mb-12 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
-            Prep for interviews at teams like
-          </p>
-          <div className="mt-6">
-            <CompanyLogoStrip />
-          </div>
-        </div>
-
         <header className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold text-brand text-role-caption">
             From people using WorkGraph

@@ -21,7 +21,7 @@ export type JobCardData = {
   description?: string;
 };
 
-const SOURCE_LABELS: Record<JobFeedSource, string> = {
+export const SOURCE_LABELS: Record<JobFeedSource, string> = {
   greenhouse: "Greenhouse",
   lever: "Lever",
   adzuna: "Adzuna",

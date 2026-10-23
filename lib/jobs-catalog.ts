@@ -314,6 +314,21 @@ export function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
   );
 }
 
+/** One live listing by the public id used in /jobs/[id] (external id, then numeric id). */
+export async function fetchLiveJobByPublicId(supabase: SupabaseClient, publicId: string): Promise<JobRow | null> {
+  const id = publicId.trim()
+  if (!id) return null
+  const external = await supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false).eq("external_id", id).limit(1)
+  if (!external.error) {
+    const row = (external.data ?? [])[0] as JobRow | undefined
+    if (row) return row
+  }
+  if (!/^\d+$/.test(id)) return null
+  const byId = await supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false).eq("id", Number(id)).limit(1)
+  if (byId.error) return null
+  return ((byId.data ?? [])[0] as JobRow | undefined) ?? null
+}
+
 /** Single page of live listings — used by the Jobs tab API (fast, no bulk download). */
 export async function fetchLiveJobsPage(
   supabase: SupabaseClient,
@@ -376,6 +391,17 @@ export async function fetchLiveJobsPage(
 const PROFILE_RANK_CANDIDATE_CAP = 5000;
 const PROFILE_RANK_FILTERED_CAP = 2500;
 
+async function maybeAttachHiringSignals(
+  include: boolean,
+  supabase: SupabaseClient,
+  profile: ProfileMatchInput,
+  jobs: RecommendedJobCard[] | null,
+  total: number,
+) {
+  if (!include) return { jobs, total };
+  return attachHiringSignalCards(supabase, profile, jobs, total);
+}
+
 async function attachHiringSignalCards(
   supabase: SupabaseClient,
   profile: ProfileMatchInput,
@@ -405,6 +431,11 @@ export async function loadLiveJobCardsPage(
     profile?: ProfileMatchInput;
     /** When false, return rows ordered by posted_at (used before client-side filtering). */
     rankByProfile?: boolean;
+    /**
+     * When false, do not merge employer hiring-signal cards into the page.
+     * Default true preserves the existing jobs API order.
+     */
+    includeHiringSignals?: boolean;
   }
 ): Promise<{
   jobs: RecommendedJobCard[] | null;
@@ -424,6 +455,7 @@ export async function loadLiveJobCardsPage(
   const hasSkills = profile.skills.some((s) => s.trim().length > 0);
   const rankByProfile =
     options.rankByProfile !== false && hasSkills && !filtered;
+  const includeHiringSignals = options.includeHiringSignals !== false;
 
   const pageSize = Math.min(
     options.pageSizeCap ?? LIVE_JOBS_MAX_API_PAGE_SIZE,
@@ -437,7 +469,7 @@ export async function loadLiveJobCardsPage(
       const maxRows = Math.min(pageSize, LIVE_JOBS_CLIENT_FILTER_CAP);
       const bulk = await fetchLiveJobsCatalog(supabase, { maxRows });
       if (bulk.rows === null) {
-        const withSignals = await attachHiringSignalCards(supabase, profile, null, bulk.total);
+        const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, null, bulk.total);
         return {
           jobs: withSignals.jobs,
           total: withSignals.total,
@@ -449,7 +481,7 @@ export async function loadLiveJobCardsPage(
         };
       }
       const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
-      const withSignals = await attachHiringSignalCards(supabase, profile, cards, bulk.total);
+      const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, cards, bulk.total);
       return {
         jobs: withSignals.jobs,
         total: withSignals.total,
@@ -465,7 +497,7 @@ export async function loadLiveJobCardsPage(
       const maxRows = Math.min(pageSize, LIVE_JOBS_CLIENT_FILTER_CAP);
       const bulk = await fetchFilteredLiveJobsCatalog(supabase, { filters, maxRows });
       if (bulk.rows === null) {
-        const withSignals = await attachHiringSignalCards(supabase, profile, null, bulk.total);
+        const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, null, bulk.total);
         return {
           jobs: withSignals.jobs,
           total: withSignals.total,
@@ -477,7 +509,7 @@ export async function loadLiveJobCardsPage(
         };
       }
       const cards = bulk.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
-      const withSignals = await attachHiringSignalCards(supabase, profile, cards, bulk.total);
+      const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, cards, bulk.total);
       return {
         jobs: withSignals.jobs,
         total: withSignals.total,
@@ -491,7 +523,7 @@ export async function loadLiveJobCardsPage(
 
     const result = await fetchLiveJobsPage(supabase, { ...options, pageSize });
     if (result.rows === null) {
-      const withSignals = await attachHiringSignalCards(supabase, profile, null, result.total);
+      const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, null, result.total);
       return {
         jobs: withSignals.jobs,
         total: withSignals.total,
@@ -503,7 +535,7 @@ export async function loadLiveJobCardsPage(
       };
     }
     const pageCards = result.rows.map((row) => mapJobRowToCard(row, profile.skills, profile));
-    const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, result.total);
+    const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, pageCards, result.total);
     return {
       jobs: withSignals.jobs,
       total: withSignals.total,
@@ -536,7 +568,7 @@ export async function loadLiveJobCardsPage(
     }
 
     if (candidates === null) {
-      const withSignals = await attachHiringSignalCards(supabase, profile, null, 0);
+      const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, null, 0);
       return {
         jobs: withSignals.jobs,
         total: withSignals.total,
@@ -553,7 +585,7 @@ export async function loadLiveJobCardsPage(
     const slice = ranked.slice(offset, offset + pageSize);
     const pageCards = slice.map((row) => mapJobRowToCard(row, profile.skills, profile));
     const resultTotal = filtered && filteredTotal !== null ? filteredTotal : ranked.length;
-    const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, resultTotal);
+    const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, pageCards, resultTotal);
     return {
       jobs: withSignals.jobs,
       total: withSignals.total,
@@ -567,7 +599,7 @@ export async function loadLiveJobCardsPage(
 
   const result = await fetchLiveJobsPage(supabase, options);
   if (result.rows === null) {
-    const withSignals = await attachHiringSignalCards(supabase, profile, null, result.total);
+    const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, null, result.total);
     return {
       jobs: withSignals.jobs,
       total: withSignals.total,
@@ -579,7 +611,7 @@ export async function loadLiveJobCardsPage(
     };
   }
   const pageCards = result.rows.map((row) => mapJobRowToCard(row, profileSkills, profile));
-  const withSignals = await attachHiringSignalCards(supabase, profile, pageCards, result.total);
+  const withSignals = await maybeAttachHiringSignals(includeHiringSignals, supabase, profile, pageCards, result.total);
   return {
     jobs: withSignals.jobs,
     total: withSignals.total,
