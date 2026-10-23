@@ -40,7 +40,7 @@ export default function JobNewsSection() {
           Hiring posts and community listings from social platforms — filtered by source.
         </p>
         {feedKind === "live" ? (
-          <p className="mt-1 text-[12px] font-medium text-emerald-700 dark:text-emerald-400">
+          <p className="mt-1 text-[12px] font-medium text-positive ">
             {allPosts.length} posts synced from your jobs database
           </p>
         ) : null}
@@ -76,10 +76,10 @@ export default function JobNewsSection() {
           </CardContent>
         </Card>
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised  ">
           {filtered.map((post) => (
-            <li key={post.id} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
-              <article className="flex items-start gap-3 px-3.5 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60">
+            <li key={post.id} className="border-b border-hairline last:border-b-0 ">
+              <article className="flex items-start gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken ">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <Badge variant="outline" className="h-5 px-1.5 text-[11px] capitalize">

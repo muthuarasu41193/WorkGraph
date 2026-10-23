@@ -36,12 +36,12 @@ const EVENT_ICONS: Record<TimelineEvent["type"], LucideIcon> = {
 };
 
 const EVENT_COLORS: Record<TimelineEvent["type"], string> = {
-  resume_improved: "bg-blue-50 text-blue-600",
+  resume_improved: "bg-accent-wash text-accent",
   jobs_matched: "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]",
-  application_submitted: "bg-surface-active text-gray-600",
-  recruiter_viewed: "bg-purple-50 text-purple-600",
-  interview_invitation: "bg-amber-50 text-amber-600",
-  offer_received: "bg-emerald-50 text-emerald-600",
+  application_submitted: "bg-surface-active text-ink-muted",
+  recruiter_viewed: "bg-accent-wash text-accent",
+  interview_invitation: "bg-caution-wash text-caution",
+  offer_received: "bg-positive-wash text-positive",
 };
 
 type Props = {
@@ -67,7 +67,7 @@ export default function ActivityTimeline({ events, className }: Props) {
             ) : null}
             <span
               className={cn(
-                "relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                "relative z-sticky flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
                 EVENT_COLORS[event.type],
               )}
             >

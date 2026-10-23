@@ -66,14 +66,14 @@ export default function HomeChartsSection() {
                   type="category"
                   dataKey="stage"
                   width={72}
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tick={{ fontSize: 11, fill: "var(--ink-subtle)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip
                   contentStyle={{
                     borderRadius: 8,
-                    border: "1px solid #ECECEC",
+                    border: "1px solid var(--hairline)",
                     fontSize: 12,
                   }}
                 />
@@ -96,19 +96,19 @@ export default function HomeChartsSection() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={WG_COLORS.border} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tick={{ fontSize: 11, fill: "var(--ink-subtle)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tick={{ fontSize: 11, fill: "var(--ink-subtle)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <Tooltip
                   contentStyle={{
                     borderRadius: 8,
-                    border: "1px solid #ECECEC",
+                    border: "1px solid var(--hairline)",
                     fontSize: 12,
                   }}
                 />
@@ -144,7 +144,7 @@ export default function HomeChartsSection() {
                 <Tooltip
                   contentStyle={{
                     borderRadius: 8,
-                    border: "1px solid #ECECEC",
+                    border: "1px solid var(--hairline)",
                     fontSize: 12,
                   }}
                 />

@@ -94,7 +94,7 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
   const searchField = (
     <div className="relative min-w-0 flex-1">
       <Search
-        className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-ink-subtle"
         aria-hidden
       />
       <Input
@@ -112,9 +112,9 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
         }}
         onFocus={() => setOpen(true)}
         className={cn(
-          "h-9 rounded-lg border-slate-200 bg-slate-50 py-0 pl-9 text-[13px] text-slate-800 shadow-none",
-          "placeholder:text-[13px] placeholder:text-slate-400",
-          "focus-visible:border-red-500 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
+          "h-9 rounded-lg border-hairline bg-surface-sunken py-0 pl-9 text-[13px] text-ink shadow-none",
+          "placeholder:text-[13px] placeholder:text-ink-subtle",
+          "focus-visible:border-danger focus-visible:bg-surface-raised focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2",
           "[&::-webkit-search-cancel-button]:hidden",
           compact ? "pr-3" : "pr-14",
         )}
@@ -128,7 +128,7 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
         <button
           type="button"
           onClick={() => onOpenCommandPalette?.()}
-          className="absolute right-2 top-1/2 hidden h-[22px] -translate-y-1/2 items-center rounded-md border border-slate-200 bg-white px-1.5 font-sans text-[11px] font-medium text-slate-400 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-500 md:inline-flex"
+          className="absolute right-2 top-1/2 hidden h-[22px] -translate-y-1/2 items-center rounded-md border border-hairline bg-surface-raised px-1.5 font-sans text-[11px] font-medium text-ink-subtle shadow-sm transition-colors hover:border-hairline hover:text-ink-subtle md:inline-flex"
           aria-label="Open command palette"
         >
           <kbd className="font-sans text-[11px] font-medium">⌘K</kbd>
@@ -142,7 +142,7 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
       <div
         id="global-search-listbox"
         role="listbox"
-        className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[min(24rem,70dvh)] overflow-hidden overflow-x-clip rounded-lg border border-slate-200 bg-background shadow-lg dark:border-slate-700"
+        className="absolute left-0 right-0 top-[calc(100%+6px)] z-modal max-h-[min(24rem,70dvh)] overflow-hidden overflow-x-clip rounded-lg border border-hairline bg-background shadow-lg "
       >
         <div className="flex flex-wrap gap-1 border-b border-border p-2">
           {FILTERS.map((f) => (
@@ -206,7 +206,7 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
       <div ref={containerRef} className={cn("relative", className)}>
         <button
           type="button"
-          className="wg-touch-target flex size-9 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100"
+          className="wg-touch-target flex size-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-sunken"
           aria-label="Search jobs, companies, or skills"
           aria-expanded={overlayOpen}
           onClick={() => {
@@ -221,16 +221,16 @@ export default function GlobalSearch({ className, compact = false, onOpenCommand
           <>
             <button
               type="button"
-              className="fixed inset-0 z-[55] bg-black/40"
+              className="fixed inset-0 z-modal bg-scrim/40"
               aria-label="Dismiss search"
               onClick={closeOverlay}
             />
-            <div className="fixed inset-x-0 top-0 z-[60] border-b border-slate-200 bg-white px-3 py-2.5 shadow-sm">
+            <div className="fixed inset-x-0 top-0 z-modal border-b border-hairline bg-surface-raised px-3 py-2.5 shadow-sm">
               <div className="flex items-center gap-2">
                 {searchField}
                 <button
                   type="button"
-                  className="wg-touch-target flex size-9 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                  className="wg-touch-target flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-subtle hover:bg-surface-sunken hover:text-ink"
                   aria-label="Close search"
                   onClick={closeOverlay}
                 >

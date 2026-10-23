@@ -10,7 +10,7 @@ import { WG_ICON } from "@/lib/icon-styles"
 const buttonVariants = cva(
   cn(
     "group/button wg-touch-target relative inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-sm font-medium tracking-body whitespace-nowrap select-none",
-    "transition-colors duration-150 ease-out",
+    "transition-colors duration-base ease-exit",
     BUTTON_PRESS,
     FOCUS_RING,
     "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
@@ -21,18 +21,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "border-transparent bg-brand text-white shadow-brand",
+          "border-transparent bg-brand text-accent-ink shadow-brand",
           "enabled:hover:bg-brand-700 enabled:hover:shadow-md",
         ),
         secondary: cn(
           "border-border-default bg-surface text-fg-secondary shadow-none",
           "enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm",
-          "dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          " dark:bg-transparent  ",
         ),
         outline:
-          "border-border-default bg-surface text-fg-secondary shadow-none enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm aria-expanded:bg-surface-active aria-expanded:text-fg-secondary dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          "border-border-default bg-surface text-fg-secondary shadow-none enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm aria-expanded:bg-surface-active aria-expanded:text-fg-secondary  dark:bg-transparent  ",
         ghost:
-          "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs aria-expanded:bg-surface-active dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs aria-expanded:bg-surface-active  ",
         destructive:
           "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm",
         link: "border-transparent bg-transparent text-brand shadow-none enabled:hover:scale-100 enabled:active:scale-100 enabled:hover:underline underline-offset-4",

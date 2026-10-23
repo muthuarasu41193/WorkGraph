@@ -156,7 +156,7 @@ export default function CareerIntelligenceSection({
 
   if (collapsed) {
     return (
-      <div className="mb-1 mt-3 border-t border-slate-100 pt-2">
+      <div className="mb-1 mt-3 border-t border-hairline pt-2">
         <ul className="wg-nav-list">
           {group.items.map((item) => (
             <li key={item.id}>
@@ -181,7 +181,7 @@ export default function CareerIntelligenceSection({
   const showItems = expanded || groupActive;
 
   return (
-    <div className="mb-1 mt-3 border-t border-slate-100 pt-2">
+    <div className="mb-1 mt-3 border-t border-hairline pt-2">
       <button
         type="button"
         onClick={toggle}

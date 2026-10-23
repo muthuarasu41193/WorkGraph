@@ -100,11 +100,11 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       initial={prefersReducedMotion ? false : { opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex h-full flex-col rounded-2xl border border-border-default bg-surface p-8 transition-all duration-200 ease-in-out hover:scale-[1.02] hover:border-brand hover:shadow-[0_12px_40px_-12px_rgba(225, 29, 46,0.18)]"
+      className="group flex h-full flex-col rounded-2xl border border-border-default bg-surface p-8 transition-all duration-base ease-standard hover:scale-[1.02] hover:border-brand hover:shadow-overlay"
     >
       <div className="flex items-start justify-between gap-3">
         <div
-          className="flex size-12 items-center justify-center rounded-xl bg-brand text-white shadow-sm"
+          className="flex size-12 items-center justify-center rounded-xl bg-brand text-accent-ink shadow-sm"
           aria-hidden
         >
           <Icon className="size-6" strokeWidth={2} />
@@ -140,7 +140,7 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
 
       <Link
         href={feature.href}
-        className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand opacity-80 transition-all duration-200 group-hover:gap-2 group-hover:opacity-100"
+        className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand opacity-80 transition-all duration-base group-hover:gap-2 group-hover:opacity-100"
       >
         Learn more
         <ArrowRight className="size-4" aria-hidden />

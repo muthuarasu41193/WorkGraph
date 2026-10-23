@@ -155,7 +155,7 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("monthly")}
           className={cn(
-            "relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+            "relative z-sticky rounded-full px-5 py-2 text-sm font-semibold transition-colors",
             !isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={!isAnnual}
@@ -166,7 +166,7 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("annual")}
           className={cn(
-            "relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+            "relative z-sticky rounded-full px-5 py-2 text-sm font-semibold transition-colors",
             isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={isAnnual}
@@ -235,15 +235,15 @@ function PricingCard({
       className={cn(
         "relative flex flex-col rounded-[20px] border p-10",
         tier.highlighted
-          ? "z-10 border-brand bg-brand-50 shadow-[0_20px_60px_-20px_rgba(225, 29, 46,0.25)] lg:scale-105"
+          ? "z-sticky border-brand bg-brand-50 shadow-overlay lg:scale-105"
           : "border-border-default bg-surface shadow-sm",
       )}
     >
       {tier.badge && (
         <span
           className={cn(
-            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider text-white",
-            tier.badgeVariant === "popular" ? "bg-brand" : "bg-slate-950",
+            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider text-accent-ink",
+            tier.badgeVariant === "popular" ? "bg-brand" : "bg-ink",
           )}
         >
           {tier.badge}
@@ -290,13 +290,13 @@ function PricingCard({
       <Link
         href={tier.cta.href}
         className={cn(
-          "mt-8 inline-flex w-full items-center justify-center rounded-full font-semibold transition-all duration-200 ease-in-out hover:scale-[1.02]",
+          "mt-8 inline-flex w-full items-center justify-center rounded-full font-semibold transition-all duration-base ease-standard hover:scale-[1.02]",
           tier.cta.style === "outline" &&
             "border-2 border-brand bg-transparent py-3 text-brand hover:bg-brand-50",
           tier.cta.style === "primary" &&
-            "bg-brand py-3.5 text-base text-white shadow-md hover:bg-brand-700 hover:shadow-lg",
+            "bg-brand py-3.5 text-base text-accent-ink shadow-md hover:bg-brand-700 hover:shadow-lg",
           tier.cta.style === "dark" &&
-            "bg-slate-950 py-3 text-white hover:bg-slate-900",
+            "bg-ink py-3 text-accent-ink hover:bg-ink",
         )}
       >
         {tier.cta.label}
@@ -334,7 +334,7 @@ function FaqAccordion() {
                 <span className="font-semibold text-fg-primary">{item.question}</span>
                 <ChevronDown
                   className={cn(
-                    "size-5 shrink-0 text-fg-tertiary transition-transform duration-300",
+                    "size-5 shrink-0 text-fg-tertiary transition-transform duration-slow",
                     isOpen && "rotate-180",
                   )}
                   aria-hidden
@@ -376,14 +376,14 @@ function EnterpriseCta() {
       initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-16 rounded-[20px] bg-slate-950 px-4 py-12 text-center sm:px-8 min-[1025px]:px-12"
+      className="mt-16 rounded-[20px] bg-ink px-4 py-12 text-center sm:px-8 min-[1025px]:px-12"
     >
-      <p className="font-heading text-xl font-bold text-white sm:text-2xl">
+      <p className="font-heading text-xl font-bold text-accent-ink sm:text-2xl">
         Need a custom plan for your company or bootcamp?
       </p>
       <Link
         href="#contact"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-all duration-200 hover:scale-[1.02] hover:bg-surface-active"
+        className="mt-6 inline-flex items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-all duration-base hover:scale-[1.02] hover:bg-surface-active"
       >
         Contact Sales →
       </Link>

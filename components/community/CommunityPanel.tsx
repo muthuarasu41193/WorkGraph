@@ -66,7 +66,7 @@ export default function CommunityPanel() {
                   onClick={() => setPostType(t.value)}
                   className={`rounded-md border px-2 py-1 text-xs font-medium ${
                     postType === t.value
-                      ? "border-emerald-700 bg-emerald-50 text-emerald-900"
+                      ? "border-positive bg-positive-wash text-positive"
                       : "border-[var(--wg-color-border)] text-[var(--wg-color-text-secondary)]"
                   }`}
                 >
@@ -148,7 +148,7 @@ export default function CommunityPanel() {
                     variant="ghost"
                     size="sm"
                     onClick={() => vote.mutate({ postId: post.id, vote: 1 })}
-                    className={post.user_vote === 1 ? "text-emerald-700" : ""}
+                    className={post.user_vote === 1 ? "text-positive" : ""}
                   >
                     <ThumbsUp className={iconClass()} />
                     {post.upvotes}

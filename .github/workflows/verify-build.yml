@@ -30,6 +30,9 @@ jobs:
       - name: Verify Vercel config
         run: npm run verify:vercel-config
 
+      - name: Design tokens
+        run: npm run check:tokens
+
       - name: TypeScript
         run: npm run typecheck
 

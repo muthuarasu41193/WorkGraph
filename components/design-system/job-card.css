@@ -23,7 +23,7 @@
   border-bottom: 1px solid var(--wg-border-default);
   position: sticky;
   top: var(--dash-topnav-h, 56px);
-  z-index: 9;
+  z-index: var(--z-sticky);
   overflow-x: auto;
   max-width: 100%;
   scrollbar-width: none;
@@ -74,9 +74,9 @@
   background: var(--wg-surface-hover);
   outline: none;
   transition:
-    background-color 150ms ease,
-    border-color 150ms ease,
-    box-shadow 150ms ease;
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    box-shadow var(--duration-base) ease;
 }
 
 .filter-search::placeholder {
@@ -85,10 +85,10 @@
 
 .filter-search:focus-visible {
   background: var(--wg-surface);
-  border-color: #ef4444;
+  border-color: var(--accent);
   box-shadow:
     0 0 0 2px var(--background),
-    0 0 0 4px #ef4444;
+    0 0 0 4px var(--accent);
 }
 
 .filter-dropdown-btn {
@@ -108,9 +108,9 @@
   list-style: none;
   flex-shrink: 0;
   transition:
-    background-color 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease;
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    color var(--duration-base) ease;
 }
 
 .filter-dropdown-btn::-webkit-details-marker {
@@ -132,19 +132,19 @@
   outline: none;
   box-shadow:
     0 0 0 2px var(--background),
-    0 0 0 4px #ef4444;
+    0 0 0 4px var(--accent);
 }
 
 .filter-menu {
   position: absolute;
   left: 0;
   top: calc(100% + 4px);
-  z-index: 20;
+  z-index: var(--z-nav);
   border-radius: 8px;
   border: 1px solid var(--wg-border);
   background: var(--wg-surface);
   padding: 6px;
-  box-shadow: 0 4px 12px rgb(15 23 42 / 0.08);
+  box-shadow: var(--shadow-raised);
 }
 
 .filter-menu--wide {
@@ -250,13 +250,13 @@
   position: absolute;
   left: 0;
   top: calc(100% + 4px);
-  z-index: 20;
+  z-index: var(--z-nav);
   min-width: 11rem;
   border-radius: 8px;
   border: 1px solid var(--wg-border);
   background: var(--wg-surface);
   padding: 4px;
-  box-shadow: 0 4px 12px rgb(15 23 42 / 0.08);
+  box-shadow: var(--shadow-raised);
 }
 
 .results-bar__sort-option {
@@ -302,8 +302,8 @@
   color: var(--wg-text-tertiary);
   cursor: pointer;
   transition:
-    background-color 150ms ease,
-    color 150ms ease;
+    background-color var(--duration-base) ease,
+    color var(--duration-base) ease;
 }
 
 .view-toggle__btn:hover {
@@ -324,9 +324,9 @@
   font-size: 12px;
   color: var(--wg-text-secondary);
   transition:
-    background-color 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease;
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    color var(--duration-base) ease;
 }
 
 .filter-location-pill:hover {
@@ -351,9 +351,9 @@
   min-width: 0;
   box-shadow: none;
   transition:
-    border-color 150ms ease-out,
-    box-shadow 150ms ease-out,
-    background-color 150ms ease-out;
+    border-color var(--duration-base) ease-exit,
+    box-shadow var(--duration-base) ease-exit,
+    background-color var(--duration-base) ease-exit;
   position: relative;
 }
 
@@ -366,12 +366,12 @@
 .job-card__expanded {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--hairline);
 }
 
 .job-card__bookmark {
   opacity: 0;
-  transition: opacity 150ms ease;
+  transition: opacity var(--duration-base) ease;
 }
 
 .job-card:hover .job-card__bookmark,
@@ -394,8 +394,8 @@
   border: none;
   cursor: pointer;
   transition:
-    background-color 150ms ease-out,
-    transform 150ms ease-out;
+    background-color var(--duration-base) ease-exit,
+    transform var(--duration-base) ease-exit;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -412,7 +412,7 @@
   outline: none;
   box-shadow:
     0 0 0 2px var(--background),
-    0 0 0 4px #ef4444;
+    0 0 0 4px var(--accent);
 }
 
 @media (max-width: 767px) {
@@ -471,9 +471,9 @@
   line-height: 1;
   cursor: pointer;
   transition:
-    color 150ms ease,
-    border-color 150ms ease,
-    background 150ms ease;
+    color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    background var(--duration-base) ease;
 }
 
 .analyze-btn:hover {
@@ -486,7 +486,7 @@
   outline: none;
   box-shadow:
     0 0 0 2px var(--background),
-    0 0 0 4px #ef4444;
+    0 0 0 4px var(--accent);
 }
 
 .apply-followup__primary {
@@ -500,7 +500,7 @@
   font-weight: 500;
   color: var(--wg-text-inverse);
   cursor: pointer;
-  transition: background 150ms ease;
+  transition: background var(--duration-base) ease;
 }
 
 .apply-followup__primary:hover {
@@ -519,9 +519,9 @@
   color: var(--wg-text-muted);
   cursor: pointer;
   transition:
-    border-color 150ms ease,
-    color 150ms ease,
-    background 150ms ease;
+    border-color var(--duration-base) ease,
+    color var(--duration-base) ease,
+    background var(--duration-base) ease;
 }
 
 .apply-followup__secondary:hover {

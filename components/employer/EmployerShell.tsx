@@ -26,7 +26,7 @@ export default function EmployerShell({ companyName, children }: Props) {
 
   return (
     <div className="min-h-[100dvh] bg-background">
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <header className="sticky top-0 z-overlay border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-4">
             <Link href="/employer/dashboard" className="shrink-0">

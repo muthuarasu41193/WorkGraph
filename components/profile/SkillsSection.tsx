@@ -65,21 +65,21 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
   };
 
   return (
-    <section className="rounded-3xl border border-emerald-200/90 bg-surface p-6 shadow-[0_18px_55px_-44px_rgba(16,185,129,0.28)]">
+    <section className="rounded-3xl border border-positive-wash/90 bg-surface p-6 shadow-overlay">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">Skills</h2>
-          <p className="mt-0.5 text-xs font-semibold text-slate-700">Resume keywords that improve recruiter and ATS visibility.</p>
+          <h2 className="text-lg font-semibold text-ink">Skills</h2>
+          <p className="mt-0.5 text-xs font-semibold text-ink">Resume keywords that improve recruiter and ATS visibility.</p>
         </div>
         <button
           type="button"
           onClick={() => setShowAdd((v) => !v)}
-          className="rounded-xl border border-emerald-200 bg-emerald-50 p-2 text-emerald-700 transition hover:bg-emerald-100"
+          className="rounded-xl border border-positive-wash bg-positive-wash p-2 text-positive transition hover:bg-positive-wash"
         >
           <PlusCircle className="h-5 w-5" />
         </button>
       </div>
-      {status ? <p className="mb-3 text-xs font-medium text-emerald-700">{status}</p> : null}
+      {status ? <p className="mb-3 text-xs font-medium text-positive">{status}</p> : null}
 
       {showAdd ? (
         <div className="mb-4 flex gap-2">
@@ -93,12 +93,12 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
               }
             }}
             placeholder="Add a skill"
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-sm outline-none transition focus:border-emerald-800 focus:bg-surface focus:ring-4 focus:ring-emerald-900/12"
+            className="flex-1 rounded-xl border border-hairline bg-surface-sunken/80 px-3 py-2 text-sm outline-none transition focus:border-positive focus:bg-surface focus:ring-4 focus:ring-positive/12"
           />
           <button
             type="button"
             onClick={() => void addSkill()}
-            className="rounded-xl bg-emerald-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-950"
+            className="rounded-xl bg-positive px-3 py-2 text-sm font-semibold text-accent-ink transition hover:bg-positive"
           >
             Add
           </button>
@@ -110,10 +110,10 @@ export default function SkillsSection({ userId, initialSkills }: Props) {
           skills.map((skill) => (
             <span
               key={skill}
-              className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-950 ring-1 ring-emerald-200"
+              className="inline-flex items-center gap-1 rounded-full bg-positive-wash px-3 py-1 text-sm font-semibold text-positive ring-1 ring-positive-wash"
             >
               {skill}
-              <button type="button" onClick={() => void removeSkill(skill)} className="text-emerald-700">
+              <button type="button" onClick={() => void removeSkill(skill)} className="text-positive">
                 <X className="h-3.5 w-3.5" />
               </button>
             </span>

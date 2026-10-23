@@ -53,7 +53,7 @@
   height: 4px;
   background: var(--wg-primary);
   border-radius: 2px;
-  transition: width 600ms ease-out;
+  transition: width var(--duration-slow) ease-exit;
 }
 
 .match-overall {
@@ -142,7 +142,7 @@
   background: transparent;
   cursor: pointer;
   text-align: center;
-  transition: all 150ms;
+  transition: all var(--duration-base);
 }
 
 .create-alert-btn:hover {

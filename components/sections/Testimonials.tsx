@@ -24,13 +24,13 @@ function TestimonialCard({ item, index }: { item: TestimonialRow; index: number 
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "group break-inside-avoid rounded-2xl border border-border-default bg-surface p-6 shadow-sm transition-all duration-200 hover:border-brand/20 hover:shadow-[0_12px_40px_-12px_rgba(225, 29, 46,0.12)]",
+        "group break-inside-avoid rounded-2xl border border-border-default bg-surface p-6 shadow-sm transition-all duration-base hover:border-brand/20 hover:shadow-overlay",
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-white"
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-sm font-bold text-accent-ink"
             aria-hidden
           >
             {initial}

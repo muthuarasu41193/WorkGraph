@@ -123,15 +123,15 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
         <Loader2 className="size-3.5 animate-spin" aria-hidden />
       </span>
     ) : state === "error" ? (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-danger-wash text-danger  ">
         <AlertCircle className="size-3.5" strokeWidth={2.25} aria-hidden />
       </span>
     ) : (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
         <Check className="size-3.5" strokeWidth={2.5} aria-hidden />
       </span>
     );
@@ -142,12 +142,12 @@ export default function ProfileSaveStatus() {
     <div
       role="status"
       className={cn(
-        "wg-toast fixed bottom-5 right-5 z-40 flex items-center gap-3 border border-slate-200 bg-white p-3.5 shadow-lg dark:border-slate-700 dark:bg-slate-900",
+        "wg-toast fixed bottom-5 right-5 z-overlay flex items-center gap-3 border border-hairline bg-surface-raised p-3.5 shadow-lg  ",
       )}
       style={{ borderRadius: 10 }}
     >
       {icon}
-      <p className="text-[13px] font-medium text-slate-700 dark:text-slate-200">{text}</p>
+      <p className="text-[13px] font-medium text-ink ">{text}</p>
     </div>
   );
 }

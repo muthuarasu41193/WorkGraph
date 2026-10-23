@@ -18,7 +18,7 @@ type Props = {
 };
 
 const inputReset =
-  "border-0 bg-transparent shadow-none outline-none ring-0 transition placeholder:text-slate-400 focus:ring-0 focus-visible:ring-2 focus-visible:ring-slate-900/15 focus-visible:ring-offset-2 rounded-sm";
+  "border-0 bg-transparent shadow-none outline-none ring-0 transition placeholder:text-ink-subtle focus:ring-0 focus-visible:ring-2 focus-visible:ring-ink-muted/15 focus-visible:ring-offset-2 rounded-sm";
 
 export default function EducationSection({ userId, education }: Props) {
   const [items, setItems] = useState<Education[]>(education);
@@ -74,14 +74,14 @@ export default function EducationSection({ userId, education }: Props) {
   };
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-surface-hover shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+    <section className="overflow-hidden rounded-2xl border border-hairline/90 bg-surface-hover shadow-overlay">
       {toast ? (
-        <p className="border-b border-amber-200/80 bg-amber-50 px-6 py-2.5 text-sm text-amber-900">{toast}</p>
+        <p className="border-b border-caution-wash/80 bg-caution-wash px-6 py-2.5 text-sm text-caution">{toast}</p>
       ) : null}
 
-      <header className="flex flex-col gap-4 border-b border-slate-200/80 bg-surface px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
+      <header className="flex flex-col gap-4 border-b border-hairline/80 bg-surface px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-800">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-hairline bg-surface-sunken text-ink">
             <GraduationCap className={iconClass("inline")} />
           </span>
           <div>
@@ -104,27 +104,27 @@ export default function EducationSection({ userId, education }: Props) {
 
       <div className="px-2 pb-2 pt-1 sm:px-4 sm:pb-4 sm:pt-2">
         {items.length ? (
-          <ul className="divide-y divide-slate-200/90">
+          <ul className="divide-y divide-hairline/90">
             {items.map((item, idx) => (
               <li key={`edu-${idx}`} className="group relative py-4 sm:py-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
                   <div className="flex shrink-0 items-baseline gap-3 sm:w-28 sm:flex-col sm:gap-1">
-                    <span className="font-mono text-xs font-medium tabular-nums text-slate-400">
+                    <span className="font-mono text-xs font-medium tabular-nums text-ink-subtle">
                       {(idx + 1).toString().padStart(2, "0")}
                     </span>
                     <input
                       value={item.year}
                       onChange={(e) => void updateField(idx, "year", e.target.value)}
                       placeholder="Year"
-                      className={`${inputReset} w-full max-w-[8rem] rounded border border-dashed border-slate-300 bg-surface px-2 py-1 font-mono text-xs text-slate-800 sm:max-w-none`}
+                      className={`${inputReset} w-full max-w-[8rem] rounded border border-dashed border-hairline bg-surface px-2 py-1 font-mono text-xs text-ink sm:max-w-none`}
                     />
                   </div>
 
-                  <div className="relative min-w-0 flex-1 pl-0 sm:border-l sm:border-slate-200 sm:pl-6">
+                  <div className="relative min-w-0 flex-1 pl-0 sm:border-l sm:border-hairline sm:pl-6">
                     <button
                       type="button"
                       onClick={() => void removeItem(idx)}
-                      className="absolute -top-1 right-0 rounded p-1.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-brand group-hover:opacity-100 sm:top-0"
+                      className="absolute -top-1 right-0 rounded p-1.5 text-ink-subtle opacity-0 transition hover:bg-surface-sunken hover:text-brand group-hover:opacity-100 sm:top-0"
                       aria-label="Remove education"
                     >
                       <Trash2 className={iconClass("inline")} />
@@ -149,7 +149,7 @@ export default function EducationSection({ userId, education }: Props) {
           </ul>
         ) : (
           <p className="px-6 py-10 text-center text-sm text-muted-foreground">
-            No credentials yet. Use <span className="font-semibold text-slate-700">Add credential</span> to add one.
+            No credentials yet. Use <span className="font-semibold text-ink">Add credential</span> to add one.
           </p>
         )}
       </div>

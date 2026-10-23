@@ -61,7 +61,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             <span className="flex items-center gap-1">
               {rating != null ? (
                 <>
-                  <Star className={iconClass("inline", "fill-amber-400 text-amber-400")} />
+                  <Star className={iconClass("inline", "fill-caution text-caution")} />
                   {rating.toFixed(1)}
                 </>
               ) : (

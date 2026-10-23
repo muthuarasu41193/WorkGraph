@@ -29,7 +29,7 @@ export default function DashboardViewRouter({ sections }: Props) {
             className={cn(
               "wg-dash-view outline-none",
               isActive
-                ? "animate-in fade-in-0 duration-150"
+                ? "animate-in fade-in-0 duration-base"
                 : "hidden",
             )}
             hidden={!isActive}

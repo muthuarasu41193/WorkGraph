@@ -4,12 +4,12 @@ import { SourceBrandIcon } from "@/components/brand/brand-icons";
 import { cn } from "@/lib/utils";
 
 const SOURCE_COLORS: Record<SourceBrand, string> = {
-  reddit: "text-[#FF4500]",
-  discord: "text-[#5865F2]",
+  reddit: "text-[var(--mark-reddit)]",
+  discord: "text-[var(--mark-discord)]",
   x: "text-fg-primary",
-  slack: "text-[#4A154B]",
-  linkedin: "text-[#0A66C2]",
-  github: "text-[#24292F]",
+  slack: "text-[var(--mark-slack-aubergine)]",
+  linkedin: "text-[var(--mark-linkedin)]",
+  github: "text-[var(--mark-github)]",
 };
 
 type SourceBadgeProps = {

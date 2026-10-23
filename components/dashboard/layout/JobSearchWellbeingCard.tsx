@@ -18,7 +18,7 @@ export default function JobSearchWellbeingCard({
 
   return (
     <div className="week-card" aria-label="This week">
-      <p className="text-xs font-medium text-slate-700">This week</p>
+      <p className="text-xs font-medium text-ink">This week</p>
 
       {weekendRest ? (
         <p className="week-quote mt-1.5">{message}</p>

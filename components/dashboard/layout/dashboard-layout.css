@@ -19,7 +19,7 @@
   overflow: hidden;
   background: var(--dash-page-bg);
   scroll-behavior: smooth;
-  transition: background-color 200ms ease;
+  transition: background-color var(--duration-base) ease;
 }
 
 .dark .wg-dash-root,
@@ -47,7 +47,7 @@
 .wg-dash-content {
   max-width: var(--dash-content-max);
   min-width: 0;
-  animation: wg-dash-fade-in 0.28s ease-out;
+  animation: wg-dash-fade-in var(--duration-slow) ease-exit;
 }
 
 .wg-dash-sidenav:not(.wg-dash-sidenav--mobile) {
@@ -99,20 +99,20 @@
 
 .dark .wg-dash-section-card,
 [data-theme="dark"] .wg-dash-section-card {
-  border-color: rgb(51 65 85 / 0.8);
+  border-color: var(--hairline);
 }
 
 .wg-dash-sidenav {
-  background: #ffffff !important;
-  border-right: 1px solid #e2e8f0 !important; /* slate-200 */
+  background: var(--surface-raised) !important;
+  border-right: 1px solid var(--hairline) !important; /* slate-200 */
   box-shadow: none !important;
-  transition: width 250ms ease-in-out;
+  transition: width var(--duration-slow) ease-standard;
 }
 
 .dark .wg-dash-sidenav,
 [data-theme="dark"] .wg-dash-sidenav {
   background: var(--wg-surface) !important;
-  border-right-color: rgb(51 65 85 / 0.8) !important;
+  border-right-color: var(--hairline) !important;
 }
 
 .wg-dash-topnav {
@@ -175,18 +175,18 @@
 }
 
 .wg-live-dot {
-  animation: wg-live-dot-pulse 2.2s ease-in-out infinite;
+  animation: wg-live-dot-pulse var(--duration-slow) ease-standard infinite;
 }
 
 .wg-dash-nav-active {
-  background: #fef2f2 !important;
-  color: #dc2626 !important;
+  background: var(--danger-wash) !important;
+  color: var(--danger) !important;
   box-shadow: none !important;
   border-radius: 8px !important;
 }
 
 .wg-dash-skeleton-pulse {
-  animation: wg-dash-pulse 1.4s ease-in-out infinite;
+  animation: wg-dash-pulse var(--duration-slow) ease-standard infinite;
 }
 
 @keyframes wg-dash-pulse {

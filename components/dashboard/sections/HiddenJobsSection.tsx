@@ -54,9 +54,9 @@ export default function HiddenJobsSection() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised  ">
           {hiddenJobs.map((job) => (
-            <li key={job.id} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
+            <li key={job.id} className="border-b border-hairline last:border-b-0 ">
               <div className="flex flex-col gap-2 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">

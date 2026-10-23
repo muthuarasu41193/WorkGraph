@@ -51,7 +51,7 @@ export default function HomeJobMatchesSection({
           asChild
           variant="ghost"
           size="sm"
-          className="wg-touch-target text-red-600 hover:bg-red-50 hover:text-red-700 enabled:hover:scale-100"
+          className="wg-touch-target text-danger hover:bg-danger-wash hover:text-danger enabled:hover:scale-100"
         >
           <Link href={dashboardHref("jobs")}>
             View all jobs

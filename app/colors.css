@@ -1,153 +1,79 @@
-/* WorkGraph design system — color tokens */
+/* Semantic aliases. Values live in tokens.css. No color literals in this file. */
 
 :root {
-  /* Brand red — logo #E11D2E as 600 */
-  --wg-brand-50: #fef2f3;
-  --wg-brand-100: #fde3e5;
-  --wg-brand-200: #fbcbd0;
-  --wg-brand-300: #f8a3ab;
-  --wg-brand-400: #f2707c;
-  --wg-brand-500: #e83d4d;
-  --wg-brand-600: #e11d2e;
-  --wg-brand-700: #be1528;
-  --wg-brand-800: #9d1626;
-  --wg-brand-900: #821822;
-  --wg-brand-950: #480a12;
+  --wg-brand-50: var(--accent-wash);
+  --wg-brand-100: var(--accent-wash);
+  --wg-brand-200: var(--accent-wash);
+  --wg-brand-300: var(--accent);
+  --wg-brand-400: var(--accent);
+  --wg-brand-500: var(--accent);
+  --wg-brand-600: var(--accent);
+  --wg-brand-700: var(--accent);
+  --wg-brand-800: var(--accent);
+  --wg-brand-900: var(--accent);
+  --wg-brand-950: var(--accent);
 
-  --wg-primary: var(--wg-brand-600);
-  --wg-primary-dark: var(--wg-brand-700);
-  --wg-primary-light: var(--wg-brand-500);
-  --wg-primary-hover: var(--wg-brand-700);
-  --wg-primary-foreground: #ffffff;
+  --wg-primary: var(--accent);
+  --wg-primary-dark: var(--accent);
+  --wg-primary-light: var(--accent);
+  --wg-primary-hover: var(--accent);
+  --wg-primary-foreground: var(--accent-ink);
 
-  /* Neutral slate */
-  --wg-slate-50: #f8fafc;
-  --wg-slate-100: #f1f5f9;
-  --wg-slate-200: #e2e8f0;
-  --wg-slate-300: #cbd5e1;
-  --wg-slate-400: #94a3b8;
-  --wg-slate-500: #64748b;
-  --wg-slate-600: #475569;
-  --wg-slate-700: #334155;
-  --wg-slate-800: #1e293b;
-  --wg-slate-900: #0f172a;
-  --wg-slate-950: #020617;
+  --wg-slate-50: var(--surface);
+  --wg-slate-100: var(--surface-sunken);
+  --wg-slate-200: var(--hairline);
+  --wg-slate-300: var(--hairline);
+  --wg-slate-400: var(--ink-subtle);
+  --wg-slate-500: var(--ink-subtle);
+  --wg-slate-600: var(--ink-muted);
+  --wg-slate-700: var(--ink-muted);
+  --wg-slate-800: var(--ink);
+  --wg-slate-900: var(--ink);
+  --wg-slate-950: var(--ink);
 
-  /* Text hierarchy */
-  --wg-text-primary: var(--wg-slate-900);
-  --wg-text-secondary: var(--wg-slate-600);
-  --wg-text-tertiary: var(--wg-slate-500);
-  --wg-text-muted: var(--wg-text-tertiary);
-  --wg-text-inverse: #ffffff;
-  --wg-text-primary-hover: var(--wg-slate-800);
-  --wg-text-secondary-hover: var(--wg-slate-700);
-  --wg-text-muted-hover: var(--wg-slate-500);
-  --wg-text-heading: var(--wg-text-primary);
-  --wg-text-body: var(--wg-text-secondary);
+  --wg-text-primary: var(--ink);
+  --wg-text-secondary: var(--ink-muted);
+  --wg-text-tertiary: var(--ink-subtle);
+  --wg-text-muted: var(--ink-subtle);
+  --wg-text-inverse: var(--accent-ink);
+  --wg-text-primary-hover: var(--ink);
+  --wg-text-secondary-hover: var(--ink);
+  --wg-text-muted-hover: var(--ink-muted);
+  --wg-text-heading: var(--ink);
+  --wg-text-body: var(--ink-muted);
 
-  /* Surfaces */
-  --wg-bg: var(--wg-slate-50);
-  --wg-bg-hover: var(--wg-slate-100);
-  --wg-surface: #ffffff;
-  --wg-surface-hover: var(--wg-slate-50);
-  --wg-surface-active: var(--wg-slate-100);
-  --wg-bg-secondary: var(--wg-slate-100);
-  --wg-bg-secondary-hover: var(--wg-slate-200);
+  --wg-bg: var(--surface);
+  --wg-bg-hover: var(--surface-sunken);
+  --wg-surface: var(--surface-raised);
+  --wg-surface-hover: var(--surface-sunken);
+  --wg-surface-active: var(--surface-sunken);
+  --wg-bg-secondary: var(--surface-sunken);
+  --wg-bg-secondary-hover: var(--hairline);
 
-  /* Borders */
-  --wg-border: var(--wg-slate-200);
-  --wg-border-default: var(--wg-slate-200);
-  --wg-border-strong: var(--wg-slate-300);
-  --wg-border-hover: var(--wg-slate-300);
-  --wg-placeholder: var(--wg-slate-400);
+  --wg-border: var(--hairline);
+  --wg-border-default: var(--hairline);
+  --wg-border-strong: var(--hairline);
+  --wg-border-hover: var(--ink-subtle);
+  --wg-placeholder: var(--ink-subtle);
 
-  /* Semantic */
-  --wg-success: #10b981;
-  --wg-success-50: #ecfdf5;
-  --wg-success-100: #d1fae5;
-  --wg-success-foreground: #065f46;
-  --wg-warning: #f59e0b;
-  --wg-warning-50: #fffbeb;
-  --wg-warning-100: #fef3c7;
-  --wg-warning-foreground: #92400e;
-  --wg-info: #3b82f6;
-  --wg-info-50: #eff6ff;
-  --wg-info-100: #dbeafe;
-  --wg-info-foreground: #1e40af;
-  --wg-accent-blue: var(--wg-info);
-  --wg-error: var(--wg-brand-600);
-  --wg-error-50: var(--wg-brand-50);
-  --wg-error-100: var(--wg-brand-100);
-}
+  --wg-success: var(--positive);
+  --wg-success-50: var(--positive-wash);
+  --wg-success-100: var(--positive-wash);
+  --wg-success-foreground: var(--positive);
+  --wg-warning: var(--caution);
+  --wg-warning-50: var(--caution-wash);
+  --wg-warning-100: var(--caution-wash);
+  --wg-warning-foreground: var(--caution);
+  --wg-info: var(--accent);
+  --wg-info-50: var(--accent-wash);
+  --wg-info-100: var(--accent-wash);
+  --wg-info-foreground: var(--accent);
+  --wg-accent-blue: var(--accent);
+  --wg-error: var(--danger);
+  --wg-error-50: var(--danger-wash);
+  --wg-error-100: var(--danger-wash);
 
-.dark,
-[data-theme="dark"] {
-  --wg-primary: var(--wg-brand-500);
-  --wg-primary-dark: var(--wg-brand-600);
-  --wg-primary-light: var(--wg-brand-400);
-  --wg-primary-hover: var(--wg-brand-400);
-
-  --wg-text-primary: var(--wg-slate-50);
-  --wg-text-secondary: var(--wg-slate-300);
-  --wg-text-tertiary: var(--wg-slate-400);
-  --wg-text-muted: var(--wg-text-tertiary);
-  --wg-text-inverse: var(--wg-slate-950);
-  --wg-text-primary-hover: #ffffff;
-  --wg-text-secondary-hover: var(--wg-slate-300);
-  --wg-text-muted-hover: var(--wg-slate-400);
-  --wg-text-heading: var(--wg-text-primary);
-  --wg-text-body: var(--wg-text-secondary);
-
-  --wg-bg: var(--wg-slate-950);
-  --wg-bg-hover: var(--wg-slate-900);
-  --wg-surface: var(--wg-slate-900);
-  --wg-surface-hover: var(--wg-slate-800);
-  --wg-surface-active: var(--wg-slate-800);
-  --wg-bg-secondary: var(--wg-slate-900);
-  --wg-bg-secondary-hover: var(--wg-slate-800);
-
-  --wg-border: var(--wg-slate-800);
-  --wg-border-default: var(--wg-slate-800);
-  --wg-border-strong: var(--wg-slate-700);
-  --wg-border-hover: var(--wg-slate-700);
-  --wg-placeholder: var(--wg-slate-500);
-
-  --wg-success: #34d399;
-  --wg-success-50: rgb(16 185 129 / 0.12);
-  --wg-success-100: rgb(16 185 129 / 0.2);
-  --wg-success-foreground: #a7f3d0;
-  --wg-warning: #fbbf24;
-  --wg-warning-50: rgb(245 158 11 / 0.12);
-  --wg-warning-100: rgb(245 158 11 / 0.2);
-  --wg-warning-foreground: #fde68a;
-  --wg-info: #60a5fa;
-  --wg-info-50: rgb(59 130 246 / 0.12);
-  --wg-info-100: rgb(59 130 246 / 0.2);
-  --wg-info-foreground: #bfdbfe;
-  --wg-accent-blue: var(--wg-info);
-  --wg-error: var(--wg-brand-400);
-  --wg-error-50: rgb(225 29 46 / 0.12);
-  --wg-error-100: rgb(225 29 46 / 0.2);
-}
-
-@layer utilities {
-  .hover\:bg-wg-surface:hover {
-    background-color: var(--wg-surface-hover);
-  }
-
-  .hover\:bg-wg-surface-secondary:hover {
-    background-color: var(--wg-bg-secondary-hover);
-  }
-
-  .hover\:border-wg:hover {
-    border-color: var(--wg-border-hover);
-  }
-
-  .hover\:text-wg-primary:hover {
-    color: var(--wg-text-primary-hover);
-  }
-
-  .hover\:bg-wg-primary:hover {
-    background-color: var(--wg-primary-hover);
-  }
+  --wg-duration: var(--duration-base);
+  --wg-ease: var(--ease-standard);
+  --wg-duration-theme: var(--duration-base);
 }

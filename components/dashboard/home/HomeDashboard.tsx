@@ -33,9 +33,9 @@ function StatCardsSkeleton() {
       {Array.from({ length: 2 }).map((_, i) => (
         <div
           key={i}
-          className="relative overflow-hidden rounded-[10px] border border-slate-200 bg-white p-4"
+          className="relative overflow-hidden rounded-[10px] border border-hairline bg-surface-raised p-4"
         >
-          <span className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-red-600 to-red-400" />
+          <span className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-danger to-danger" />
           <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
           <div className="mt-3 space-y-2">
             <div className="h-4 w-36 rounded wg-skeleton-shimmer" />

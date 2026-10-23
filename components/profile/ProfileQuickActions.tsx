@@ -22,7 +22,7 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
           <nav className="flex flex-shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end" aria-label="Profile actions">
             <Link
               href="/create-profile"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-info px-4 py-3 text-sm font-medium text-white transition hover:bg-info-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-info px-4 py-3 text-sm font-medium text-accent-ink transition hover:bg-info-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
             >
               <FileUp className={iconClass("inline", "shrink-0")} aria-hidden />
               Upload new resume
@@ -30,14 +30,14 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
             </Link>
             <a
               href="#ats-score"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-default bg-surface px-4 py-3 text-sm font-medium text-fg-secondary transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-default bg-surface px-4 py-3 text-sm font-medium text-fg-secondary transition hover:shadow-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
             >
               <Radar className={iconClass("inline", "shrink-0 text-info")} aria-hidden />
               Improve ATS score
             </a>
             <a
               href="#recommended-jobs"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-default bg-info-50 px-4 py-3 text-sm font-medium text-info-foreground transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border-default bg-info-50 px-4 py-3 text-sm font-medium text-info-foreground transition hover:shadow-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 sm:w-auto"
             >
               <Search className={iconClass("inline", "shrink-0 text-info")} aria-hidden />
               Browse matches

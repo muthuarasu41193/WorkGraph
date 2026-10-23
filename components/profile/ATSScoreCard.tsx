@@ -94,7 +94,7 @@ export default function ATSScoreCard({ userId: _userId, score, feedback }: Props
         : localFeedback?.suggestions ?? [];
 
   return (
-    <Card id="ats-score" className="scroll-mt-28 border-slate-200 shadow-sm transition-shadow hover:shadow-md">
+    <Card id="ats-score" className="scroll-mt-28 border-hairline shadow-sm transition-shadow hover:shadow-md">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">ATS Score</CardTitle>
         <CardDescription>Your parsed resume quality and action points.</CardDescription>
@@ -105,7 +105,7 @@ export default function ATSScoreCard({ userId: _userId, score, feedback }: Props
             <div className="mx-auto mb-4 flex w-fit flex-col items-center">
               <div className="relative h-36 w-36">
                 <svg className="-rotate-90" viewBox="0 0 140 140">
-                  <circle cx="70" cy="70" r={radius} fill="none" stroke="hsl(var(--border))" strokeWidth="10" />
+                  <circle cx="70" cy="70" r={radius} fill="none" stroke="var(--hairline)" strokeWidth="10" />
                   <circle
                     cx="70"
                     cy="70"
@@ -116,7 +116,7 @@ export default function ATSScoreCard({ userId: _userId, score, feedback }: Props
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
                     strokeLinecap="round"
-                    className="transition-[stroke-dashoffset] duration-700"
+                    className="transition-[stroke-dashoffset] duration-slow"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -145,7 +145,7 @@ export default function ATSScoreCard({ userId: _userId, score, feedback }: Props
                       tabItems.map((item, idx) => (
                         <li key={`${item}-${idx}`} className="flex items-start gap-2 text-sm text-muted-foreground">
                           {tab === "strengths" ? (
-                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-positive" />
                           ) : tab === "weaknesses" ? (
                             <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
                           ) : (

@@ -33,27 +33,27 @@ export default function InsightCard({
     <>
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-y-2 left-0 w-[2px] rounded-full bg-gradient-to-b from-red-600 to-red-400"
+        className="pointer-events-none absolute inset-y-2 left-0 w-[2px] rounded-full bg-gradient-to-b from-danger to-danger"
       />
 
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-red-50 text-red-600">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-danger-wash text-danger">
         <Icon className={iconClass("standalone")} />
       </span>
 
       <div className="mt-2 space-y-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-[14px] font-semibold tracking-tight text-slate-900">{title}</h3>
+          <h3 className="text-[14px] font-semibold tracking-tight text-ink">{title}</h3>
           {badge ? (
-            <span className="rounded-md bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+            <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-[11px] font-medium text-ink-muted">
               {badge}
             </span>
           ) : null}
         </div>
-        <p className="text-[13px] leading-snug text-slate-500">{description}</p>
+        <p className="text-[13px] leading-snug text-ink-subtle">{description}</p>
       </div>
 
       {score !== undefined ? (
-        <p className="mt-2 text-xl font-semibold tabular-nums leading-none tracking-tight text-slate-900">{score}</p>
+        <p className="mt-2 text-xl font-semibold tabular-nums leading-none tracking-tight text-ink">{score}</p>
       ) : null}
 
       {action ? <div className="mt-3">{action}</div> : null}
@@ -61,9 +61,9 @@ export default function InsightCard({
   );
 
   const classes = cn(
-    "relative flex flex-col overflow-hidden rounded-[10px] border border-slate-200 bg-white p-4 shadow-none",
-    "transition-[border-color,box-shadow] duration-150",
-    "hover:border-slate-300 hover:shadow-sm",
+    "relative flex flex-col overflow-hidden rounded-[10px] border border-hairline bg-surface-raised p-4 shadow-none",
+    "transition-[border-color,box-shadow] duration-base",
+    "hover:border-hairline hover:shadow-sm",
     actionable && "cursor-pointer no-underline",
     className,
   );

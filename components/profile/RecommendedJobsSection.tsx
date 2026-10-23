@@ -1476,14 +1476,14 @@ export default function RecommendedJobsSection({
       </div>
 
       {!isLiveFeed && feedDemoHint ? (
-        <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-sm text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "100ms" }}>
-          <span className="mt-0.5 shrink-0 text-amber-700">
+        <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-sm text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "var(--duration-fast)" }}>
+          <span className="mt-0.5 shrink-0 text-caution">
             <LifeBuoy className="h-5 w-5" aria-hidden />
           </span>
           <div className="min-w-0 space-y-2">
-            <p className="font-semibold leading-snug text-amber-950">{demoBannerCopy(feedDemoHint).title}</p>
-            <p className="leading-relaxed text-amber-900/95">{demoBannerCopy(feedDemoHint).body}</p>
-            <p className="text-xs text-amber-800/90">
+            <p className="font-semibold leading-snug text-caution">{demoBannerCopy(feedDemoHint).title}</p>
+            <p className="leading-relaxed text-caution/95">{demoBannerCopy(feedDemoHint).body}</p>
+            <p className="text-xs text-caution/90">
               <Link
                 href="/api/jobs-health"
                 className="font-medium underline decoration-warning underline-offset-2 hover:text-fg-primary"
@@ -1593,7 +1593,7 @@ export default function RecommendedJobsSection({
                 <button
                   type="button"
                   onClick={() => setSearchInput("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-subtle hover:text-ink-muted"
                   aria-label="Clear search"
                 >
                   <X className={iconClass()} />
@@ -1614,7 +1614,7 @@ export default function RecommendedJobsSection({
               </summary>
               <div data-filter-menu="true" className="filter-menu w-52">
                 {JOB_TYPE_OPTIONS.map((type) => (
-                  <label key={type} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50">
+                  <label key={type} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink hover:bg-surface-sunken">
                     <input
                       type="checkbox"
                       checked={jobTypes.has(type)}
@@ -1652,7 +1652,7 @@ export default function RecommendedJobsSection({
                     setCurrentPage(1);
                   }}
                   placeholder="Country or city"
-                  className="mb-2 h-9 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-700 outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+                  className="mb-2 h-9 w-full rounded-md border border-hairline px-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash"
                 />
                 <div className="flex flex-wrap gap-2">
                   {["any", "remote", "hybrid", "onsite"].map((loc) => (
@@ -1712,7 +1712,7 @@ export default function RecommendedJobsSection({
           </section>
 
           {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
-            <p className="-mx-4 hidden border-b border-slate-50 px-5 py-2 text-xs text-slate-400 sm:-mx-6 md:block md:-mx-8">
+            <p className="-mx-4 hidden border-b border-hairline px-5 py-2 text-xs text-ink-subtle sm:-mx-6 md:block md:-mx-8">
               No results for &quot;{query.trim()}&quot;.
             </p>
           ) : null}
@@ -2134,7 +2134,7 @@ export default function RecommendedJobsSection({
       <div className="relative">
         {showPageLoadingOverlay ? (
           <div
-            className="pointer-events-none absolute inset-0 z-10 rounded-xl bg-surface/50 pt-2 backdrop-blur-[1px]"
+            className="pointer-events-none absolute inset-0 z-sticky rounded-xl bg-surface/50 pt-2 backdrop-blur-[1px]"
             aria-hidden
           >
             <div className="job-list px-1">
@@ -2147,7 +2147,7 @@ export default function RecommendedJobsSection({
       <div
         className={cn(
           viewMode === "grid" ? "grid gap-1.5 md:grid-cols-2 xl:grid-cols-3" : "job-list",
-          showPageLoadingOverlay && "opacity-60 transition-opacity duration-200"
+          showPageLoadingOverlay && "opacity-60 transition-opacity duration-base"
         )}
       >
         {shouldVirtualize ? null : visibleJobs.map(({ job, meta, score }, i) => {
@@ -2197,7 +2197,7 @@ export default function RecommendedJobsSection({
             >
               {isExpanded ? (
                 <div className="space-y-3">
-                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-gray-600">
+                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-ink-muted">
                     {job.description?.trim() ? job.description : job.matchLabel}
                   </div>
                   <ul className="space-y-1 text-sm">
@@ -2210,7 +2210,7 @@ export default function RecommendedJobsSection({
                         ) : (
                           <X className={iconClass("inline", "text-fg-tertiary")} />
                         )}
-                        <span className="text-gray-600">{r.label}</span>
+                        <span className="text-ink-muted">{r.label}</span>
                       </li>
                     ))}
                   </ul>
@@ -2283,7 +2283,7 @@ export default function RecommendedJobsSection({
                     className={cn(
                       "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-medium transition",
                       token === safePage
-                        ? "bg-info text-white shadow-sm"
+                        ? "bg-info text-accent-ink shadow-sm"
                         : "border border-border-default bg-surface text-fg-secondary hover:border-info hover:bg-info-50"
                     )}
                   >
@@ -2325,7 +2325,7 @@ export default function RecommendedJobsSection({
                 setSkillsPick(new Set());
                 setCurrentPage(1);
               }}
-              className="inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-white hover:bg-info-foreground"
+              className="inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-accent-ink hover:bg-info-foreground"
             >
               Browse all {liveListings.toLocaleString()} jobs
             </button>
@@ -2422,7 +2422,7 @@ export default function RecommendedJobsSection({
       </div>
 
       {mobileDetailJobId ? (
-        <div className="fixed inset-0 z-[125] bg-surface p-4 md:hidden">
+        <div className="fixed inset-0 z-modal bg-surface p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-semibold text-fg-primary">Job Details</h3>
             <button type="button" onClick={() => setMobileDetailJobId(null)}>
@@ -2472,7 +2472,7 @@ export default function RecommendedJobsSection({
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-[110] inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:bg-surface-hover hover:shadow-md"
+          className="fixed bottom-6 right-6 z-toast inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:bg-surface-hover hover:shadow-md"
           aria-label="Scroll to top"
         >
           <ArrowUp className="h-5 w-5" />

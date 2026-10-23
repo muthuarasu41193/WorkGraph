@@ -51,8 +51,8 @@ export default function MetricCard({
               <span
                 className={cn(
                   "inline-flex items-center gap-0.5 text-xs font-medium",
-                  trendUp && "text-emerald-600",
-                  trendDown && "text-amber-600",
+                  trendUp && "text-positive",
+                  trendDown && "text-caution",
                 )}
               >
                 {trendUp ? (

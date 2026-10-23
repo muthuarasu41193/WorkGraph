@@ -1,0 +1,148 @@
+/* WorkGraph token definition. Color literals live in this file only.
+   Ledger palette: docs/ART_DIRECTION.md
+   lib/design-tokens.ts mirrors the values for email, charts, and OG images. */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --surface: #f4f1ea;
+  --surface-raised: #fbf8f2;
+  --surface-sunken: #e7e2d6;
+  --ink: #1a1714;
+  --ink-muted: #5c564c;
+  --ink-subtle: #6e675c;
+  --hairline: #d5d0c4;
+  --accent: #8e2e2e;
+  --accent-ink: #fbf8f2;
+  --positive: #1b6b43;
+  --caution: #8a5a10;
+  --danger: #9b2c2c;
+  --accent-wash: #f6e6e4;
+  --positive-wash: #e4f2ea;
+  --caution-wash: #f8eed9;
+  --danger-wash: #f8e6e3;
+  --ink-wash: #e7e2d6;
+  /* Modal scrim stays dark in both themes. Opacity is applied by the utility. */
+  --scrim: #1a1714;
+
+  --shadow-flat: 0 0 #0000;
+  --shadow-raised: 0 1px 2px rgb(26 23 20 / 0.08);
+  --shadow-overlay: 0 12px 32px rgb(26 23 20 / 0.18);
+
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 260ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --radius-control: 2px;
+  --radius-card: 6px;
+  --radius-overlay: 10px;
+  --radius-full: 999px;
+
+  --border-hairline: 1px;
+  --border-strong: 2px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-nav: 20;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+
+  /* Trademark marks. These are not UI colors. */
+  --mark-google-blue: #4285f4;
+  --mark-google-green: #34a853;
+  --mark-google-yellow: #fbbc05;
+  --mark-google-red: #ea4335;
+  --mark-microsoft-red: #f25022;
+  --mark-microsoft-blue: #00a4ef;
+  --mark-microsoft-green: #7fba00;
+  --mark-microsoft-yellow: #ffb900;
+  --mark-slack-red: #e01e5a;
+  --mark-slack-blue: #36c5f0;
+  --mark-slack-green: #2eb67d;
+  --mark-slack-yellow: #ecb22e;
+  --mark-reddit: #ff4500;
+  --mark-discord: #5865f2;
+  --mark-slack-aubergine: #4a154b;
+  --mark-linkedin: #0a66c2;
+  --mark-github: #24292f;
+  --mark-meta: #0668e1;
+  --mark-amazon: #ff9900;
+  --mark-stripe: #635bff;
+  --mark-netflix: #e50914;
+  --mark-airbnb: #ff5a5f;
+  --mark-databricks: #ff3621;
+  --mark-hn: #ff6600;
+  --mark-wellfound: #059669;
+  --mark-remoteok: #0891b2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --surface: #141210;
+    --surface-raised: #1e1b17;
+    --surface-sunken: #0e0c0a;
+    --ink: #f4efe6;
+    --ink-muted: #c9c1b4;
+    --ink-subtle: #a89f91;
+    --hairline: #3a342c;
+    --accent: #e7a9a2;
+    --accent-ink: #1a1210;
+    --positive: #8fcbb0;
+    --caution: #e2c48a;
+    --danger: #f0b2aa;
+    --accent-wash: #3a2422;
+    --positive-wash: #1a2e24;
+    --caution-wash: #332815;
+    --danger-wash: #3a2220;
+    --ink-wash: #2a2622;
+    --scrim: #1a1714;
+
+    --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme="dark"],
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface: #141210;
+  --surface-raised: #1e1b17;
+  --surface-sunken: #0e0c0a;
+  --ink: #f4efe6;
+  --ink-muted: #c9c1b4;
+  --ink-subtle: #a89f91;
+  --hairline: #3a342c;
+  --accent: #e7a9a2;
+  --accent-ink: #1a1210;
+  --positive: #8fcbb0;
+  --caution: #e2c48a;
+  --danger: #f0b2aa;
+  --accent-wash: #3a2422;
+  --positive-wash: #1a2e24;
+  --caution-wash: #332815;
+  --danger-wash: #3a2220;
+  --ink-wash: #2a2622;
+  --scrim: #1a1714;
+
+  --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);
+}

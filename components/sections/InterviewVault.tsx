@@ -39,14 +39,14 @@ function CompanyCard({ company, active }: { company: Company; active?: boolean }
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-3.5 transition-all duration-200 hover:border-brand/60",
+        "flex items-center gap-3 rounded-xl border border-ink-muted bg-ink p-3.5 transition-all duration-base hover:border-brand/60",
         active && "border-brand/80 ring-1 ring-brand/30",
       )}
     >
       <BrandLogo brand={company.brand} size="md" onDark />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate font-semibold text-white">{name}</p>
+          <p className="truncate font-semibold text-accent-ink">{name}</p>
           <span
             className={cn(
               "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold uppercase",
@@ -68,14 +68,14 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
     <section
       id="interview-vault"
       aria-label="Interview Vault"
-      className="bg-slate-950 py-20 sm:py-24 lg:py-28"
+      className="bg-ink py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
             Interview Vault
           </p>
-          <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-white">
+          <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-accent-ink">
             Know exactly what to expect. Before you walk in.
           </h2>
           <p className="mt-4 text-lg text-fg-tertiary">
@@ -89,7 +89,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
           {/* Company list */}
           <div className="relative">
             <div
-              className="h-[400px] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900 p-3 [mask-image:linear-gradient(to_bottom,transparent,black_24px,black_calc(100%-24px),transparent)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="h-[400px] overflow-y-auto rounded-2xl border border-ink-muted bg-ink p-3 [mask-image:linear-gradient(to_bottom,transparent,black_24px,black_calc(100%-24px),transparent)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               role="list"
               aria-label="Companies in Interview Vault"
             >
@@ -103,15 +103,15 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
 
           {/* Question preview */}
           <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-              <div className="border-b border-slate-800 px-5 py-4">
+            <div className="overflow-hidden rounded-2xl border border-ink-muted bg-ink">
+              <div className="border-b border-ink-muted px-5 py-4">
                 <div className="flex items-center gap-3">
                   <BrandLogo brand="google" size="md" onDark />
                   <div>
-                    <p className="font-semibold text-white">Google</p>
+                    <p className="font-semibold text-accent-ink">Google</p>
                     <p className="text-sm text-fg-tertiary">Senior Software Engineer</p>
                   </div>
-                  <span className="ml-auto rounded-full bg-slate-800 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  <span className="ml-auto rounded-full bg-ink px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
                     System Design
                   </span>
                 </div>
@@ -121,7 +121,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
                 <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
                   Interview question
                 </p>
-                <p className="mt-3 text-lg font-medium leading-relaxed text-white">
+                <p className="mt-3 text-lg font-medium leading-relaxed text-accent-ink">
                   Design a URL shortener that can handle 100M requests per day
                 </p>
 
@@ -132,7 +132,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
                   {["System Design", "Scalability", "Database"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs text-fg-tertiary"
+                      className="rounded-full border border-ink-muted bg-ink px-2.5 py-1 text-xs text-fg-tertiary"
                     >
                       {tag}
                     </span>
@@ -140,7 +140,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
                 </div>
 
                 <Button
-                  className="mt-6 w-full rounded-full bg-brand text-white hover:bg-brand-700 sm:w-auto"
+                  className="mt-6 w-full rounded-full bg-brand text-accent-ink hover:bg-brand-700 sm:w-auto"
                   asChild
                 >
                   <Link href="/signup">
@@ -150,7 +150,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
                 </Button>
 
                 {/* Blurred teaser */}
-                <div className="relative mt-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+                <div className="relative mt-6 overflow-hidden rounded-xl border border-ink-muted bg-ink">
                   <div className="space-y-2 p-4 blur-sm select-none" aria-hidden>
                     <p className="text-sm text-fg-tertiary">
                       Sample answer outline: API design, base62 encoding, database sharding...
@@ -162,14 +162,14 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
                       Insider tip: They care deeply about trade-off articulation...
                     </p>
                   </div>
-                  <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent pb-4">
+                  <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-ink via-ink/80 to-transparent pb-4">
                     <p className="px-4 text-center text-sm font-medium text-fg-tertiary">
                       Join to see the answer
                       {guides.showNumber ? (
                         <>
                           {" "}
                           +{" "}
-                          <span className="text-white">
+                          <span className="text-accent-ink">
                             {guides.display} published guides
                           </span>
                         </>
@@ -187,7 +187,7 @@ export default function InterviewVault({ publishedGuides }: { publishedGuides: n
         <div className="mt-12 flex flex-col items-center gap-2 text-center">
           <Button
             size="lg"
-            className="h-12 rounded-full bg-brand px-8 text-base font-semibold text-white hover:bg-brand-700"
+            className="h-12 rounded-full bg-brand px-8 text-base font-semibold text-accent-ink hover:bg-brand-700"
             asChild
           >
             <Link href="/signup">

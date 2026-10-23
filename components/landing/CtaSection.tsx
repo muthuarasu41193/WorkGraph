@@ -11,7 +11,7 @@ export function CtaSection() {
       <FadeIn>
         <div className="relative overflow-hidden rounded-3xl border border-wg-primary/20 bg-gradient-to-br from-wg-primary/5 via-surface to-wg-accent-blue/5 px-4 py-16 text-center sm:px-8 sm:py-20 lg:px-12">
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(225, 29, 46,0.08),transparent_60%)]"
+            className="pointer-events-none absolute inset-0 bg-accent-wash"
             aria-hidden
           />
           <div className="relative">

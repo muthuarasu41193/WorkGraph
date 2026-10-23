@@ -35,7 +35,7 @@ export default function HomeJobMarketPulse({ pulse }: { pulse: JobMarketPulse })
                     <span className="mr-2 text-muted-foreground">{index + 1}.</span>
                     {role.title}
                   </span>
-                  <span className="shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="shrink-0 text-xs font-semibold text-positive ">
                     {role.growth}
                   </span>
                 </li>

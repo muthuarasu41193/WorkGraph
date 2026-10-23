@@ -52,7 +52,7 @@ export default function TopNav() {
 
   return (
     <>
-      <header className="wg-dash-topnav sticky top-0 z-50 h-[var(--dash-topnav-h)] shrink-0 overflow-x-clip border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
+      <header className="wg-dash-topnav sticky top-0 z-modal h-[var(--dash-topnav-h)] shrink-0 overflow-x-clip border-b border-hairline bg-surface-raised/80 backdrop-blur-md  ">
         <div className="flex h-full items-center gap-2 px-3 md:gap-3 md:px-5">
           <div className="flex shrink-0 items-center gap-2 md:hidden">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -60,7 +60,7 @@ export default function TopNav() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={cn(ICON_BTN, "wg-touch-target hover:bg-slate-100 md:hidden")}
+                  className={cn(ICON_BTN, "wg-touch-target hover:bg-surface-sunken md:hidden")}
                   aria-label="Open navigation menu"
                 >
                   <Menu className="size-4" />
@@ -97,14 +97,14 @@ export default function TopNav() {
             </div>
             {liveListings > 0 ? (
               <span
-                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2"
+                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-positive-wash bg-positive-wash px-2"
                 aria-label={`${liveListings.toLocaleString()} live listings`}
               >
-                <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
-                <span className="text-[12.5px] font-medium tabular-nums text-emerald-700">
+                <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-positive" aria-hidden />
+                <span className="text-[12.5px] font-medium tabular-nums text-positive">
                   {liveListings.toLocaleString()}
                 </span>
-                <span className="hidden text-[12.5px] font-medium text-emerald-700 md:inline">
+                <span className="hidden text-[12.5px] font-medium text-positive md:inline">
                   live
                 </span>
               </span>
@@ -114,11 +114,11 @@ export default function TopNav() {
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(ICON_BTN, "wg-touch-target hidden hover:bg-slate-100 md:inline-flex")}
+              className={cn(ICON_BTN, "wg-touch-target hidden hover:bg-surface-sunken md:inline-flex")}
               onClick={() => setCmdOpen(true)}
               aria-label="Open command palette (⌘K)"
             >
-              <Command className="size-4 text-slate-600" />
+              <Command className="size-4 text-ink-muted" />
             </Button>
 
             <Button
@@ -126,24 +126,24 @@ export default function TopNav() {
               size="icon"
               className={cn(
                 ICON_BTN,
-                "wg-touch-target hidden bg-red-600 text-white shadow-sm md:inline-flex enabled:hover:bg-red-700 enabled:hover:shadow-sm",
+                "wg-touch-target hidden bg-danger text-accent-ink shadow-sm md:inline-flex enabled:hover:bg-danger enabled:hover:shadow-sm",
               )}
               onClick={() => navigate("jobs")}
               aria-label="Quick action: explore jobs"
             >
-              <Plus className="size-4 text-white" />
+              <Plus className="size-4 text-accent-ink" />
             </Button>
 
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn(ICON_BTN, "wg-touch-target relative hover:bg-slate-100")}
+              className={cn(ICON_BTN, "wg-touch-target relative hover:bg-surface-sunken")}
               aria-label={hasUnread ? "Notifications, unread" : "Notifications"}
             >
-              <Bell className="size-4 text-slate-600" />
+              <Bell className="size-4 text-ink-muted" />
               {hasUnread ? (
-                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500 ring-2 ring-white" />
+                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-danger ring-2 ring-surface-raised" />
               ) : null}
             </Button>
 
@@ -151,14 +151,14 @@ export default function TopNav() {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="wg-touch-target rounded-full outline-none transition duration-200 hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
+                  className="wg-touch-target rounded-full outline-none transition duration-base hover:ring-2 hover:ring-surface-raised hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-surface-raised focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
                   aria-label="Account menu"
                 >
                   <Avatar className="size-8">
                     {profile.photo_url ? (
                       <AvatarImage src={profile.photo_url} alt={profile.full_name || "Account"} />
                     ) : null}
-                    <AvatarFallback className="bg-red-50 text-xs font-semibold text-red-700">
+                    <AvatarFallback className="bg-danger-wash text-xs font-semibold text-danger">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -167,7 +167,7 @@ export default function TopNav() {
               <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-56 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100"
+                className="w-56 duration-base data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100"
               >
                 <DropdownMenuLabel>
                   <p className="font-medium">{profile.full_name || "Your account"}</p>

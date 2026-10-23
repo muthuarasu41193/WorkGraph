@@ -36,6 +36,6 @@ export const dashClasses = {
   grid: "grid gap-4",
   componentGap: "gap-4",
   touchTarget: "wg-touch-target",
-  fadeIn: "animate-in fade-in duration-300",
+  fadeIn: "animate-in fade-in duration-slow",
   mobileBottomPad: "pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-8",
 } as const;

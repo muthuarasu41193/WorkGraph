@@ -1,38 +1,54 @@
-/** WorkGraph design system tokens — professional SaaS visual language */
+/** Ledger color mirror for email, charts, and OG images. Keep in sync with app/tokens.css. */
 
 export const WG_COLORS = {
+  surface: "#F4F1EA",
+  surfaceRaised: "#FBF8F2",
+  surfaceSunken: "#E7E2D6",
+  ink: "#1A1714",
+  inkMuted: "#5C564C",
+  inkSubtle: "#6E675C",
+  hairline: "#D5D0C4",
+  accent: "#8E2E2E",
+  accentInk: "#FBF8F2",
+  positive: "#1B6B43",
+  caution: "#8A5A10",
+  danger: "#9B2C2C",
+  accentWash: "#F6E6E4",
+  positiveWash: "#E4F2EA",
+  cautionWash: "#F8EED9",
+  dangerWash: "#F8E6E3",
+  scrim: "#1A1714",
   brand: {
-    50: "#FEF2F3",
-    100: "#FDE3E5",
-    200: "#FBCBD0",
-    300: "#F8A3AB",
-    400: "#F2707C",
-    500: "#E83D4D",
-    600: "#E11D2E",
-    700: "#BE1528",
-    800: "#9D1626",
-    900: "#821822",
-    950: "#480A12",
+    50: "#F6E6E4",
+    100: "#F6E6E4",
+    200: "#F6E6E4",
+    300: "#8E2E2E",
+    400: "#8E2E2E",
+    500: "#8E2E2E",
+    600: "#8E2E2E",
+    700: "#8E2E2E",
+    800: "#8E2E2E",
+    900: "#8E2E2E",
+    950: "#8E2E2E",
   },
-  primary: "#E11D2E",
-  primaryHover: "#BE1528",
-  background: "#F8FAFC",
-  backgroundSecondary: "#F1F5F9",
-  surface: "#FFFFFF",
-  surfaceHover: "#F8FAFC",
-  surfaceActive: "#F1F5F9",
-  border: "#E2E8F0",
-  borderDefault: "#E2E8F0",
-  borderStrong: "#CBD5E1",
-  borderHover: "#CBD5E1",
-  text: "#0F172A",
-  textPrimary: "#0F172A",
-  textSecondary: "#475569",
-  textTertiary: "#94A3B8",
-  textMuted: "#94A3B8",
-  success: "#10B981",
-  warning: "#F59E0B",
-  info: "#3B82F6",
+  primary: "#8E2E2E",
+  primaryHover: "#8E2E2E",
+  background: "#F4F1EA",
+  backgroundSecondary: "#E7E2D6",
+  surfaceHover: "#E7E2D6",
+  surfaceActive: "#E7E2D6",
+  border: "#D5D0C4",
+  borderDefault: "#D5D0C4",
+  borderStrong: "#D5D0C4",
+  borderHover: "#6E675C",
+  text: "#1A1714",
+  textPrimary: "#1A1714",
+  textSecondary: "#5C564C",
+  textTertiary: "#6E675C",
+  textMuted: "#6E675C",
+  success: "#1B6B43",
+  warning: "#8A5A10",
+  info: "#8E2E2E",
 } as const;
 
 export const WG_RADIUS = {
@@ -117,43 +133,43 @@ export const WG_TYPOGRAPHY = {
 } as const;
 
 export const WG_MOTION = {
-  interactive: "transition-all duration-200 ease-in-out",
-  button: "transition-all duration-200 ease-in-out enabled:hover:scale-[1.02]",
-  card: "transition-all duration-200 ease-in-out hover:-translate-y-0.5",
-  link: "transition-all duration-200 ease-in-out hover:underline underline-offset-4",
+  interactive: "transition-colors duration-base ease-standard",
+  button: "transition-colors duration-fast ease-standard",
+  card: "transition-colors duration-base ease-standard",
+  link: "transition-colors duration-base ease-standard hover:underline underline-offset-4",
 } as const;
 
 export const WG_BUTTON = {
-  primary: "bg-brand text-white font-medium px-4 py-2.5 rounded-md shadow-brand",
-  secondary: "bg-surface text-fg-secondary border border-border-default font-medium px-4 py-2.5 rounded-md",
-  hover: "transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] enabled:hover:shadow-md",
-  focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand",
+  primary: "bg-accent text-accent-ink font-medium px-4 py-2.5 rounded-control shadow-flat",
+  secondary: "bg-surface-raised text-ink-muted border border-hairline font-medium px-4 py-2.5 rounded-control",
+  hover: "transition-colors duration-base ease-standard enabled:hover:shadow-raised",
+  focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent",
   disabled: "disabled:opacity-50 disabled:cursor-not-allowed",
   primaryFull:
-    "inline-flex items-center justify-center bg-brand text-white font-medium px-4 py-2.5 rounded-md shadow-brand transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] enabled:hover:bg-brand-700 enabled:hover:shadow-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand disabled:opacity-50 disabled:cursor-not-allowed",
+    "inline-flex items-center justify-center bg-accent text-accent-ink font-medium px-4 py-2.5 rounded-control shadow-flat transition-colors duration-base ease-standard enabled:hover:bg-accent enabled:hover:shadow-raised focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent disabled:opacity-50 disabled:cursor-not-allowed",
   secondaryFull:
-    "inline-flex items-center justify-center bg-surface text-fg-secondary border border-border-default font-medium px-4 py-2.5 rounded-md transition-all duration-200 ease-in-out enabled:hover:scale-[1.02] enabled:hover:bg-surface-hover enabled:hover:shadow-sm enabled:hover:border-border-strong focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand disabled:opacity-50 disabled:cursor-not-allowed",
+    "inline-flex items-center justify-center bg-surface-raised text-ink-muted border border-hairline font-medium px-4 py-2.5 rounded-control transition-colors duration-base ease-standard enabled:hover:bg-surface-sunken enabled:hover:shadow-raised focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent disabled:opacity-50 disabled:cursor-not-allowed",
 } as const;
 
 export const WG_CARD = {
-  base: "rounded-lg border border-border-default bg-surface p-5 shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md",
-  title: "text-lg font-semibold leading-heading tracking-heading text-fg-primary",
-  description: "text-sm text-fg-tertiary",
+  base: "rounded-card border border-hairline bg-surface-raised p-5 shadow-flat transition-colors duration-base ease-standard hover:border-ink-subtle",
+  title: "text-lg font-semibold leading-heading tracking-heading text-ink",
+  description: "text-sm text-ink-subtle",
 } as const;
 
 export const WG_FORM = {
   field:
-    "w-full rounded-md border border-border-default bg-surface px-4 py-2.5 font-sans text-sm font-normal tracking-body transition-all duration-200 ease-in-out placeholder:text-fg-tertiary focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand-100 focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-surface-active disabled:opacity-50",
+    "w-full rounded-control border border-hairline bg-surface-raised px-4 py-2.5 font-sans text-sm font-normal tracking-body transition-colors duration-base ease-standard placeholder:text-ink-subtle focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent-wash focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:opacity-50",
   label: "text-sm font-medium text-fg-secondary",
 } as const;
 
 export const WG_NAV = {
-  shell: "bg-surface border-r border-border-default",
-  item: "flex items-center gap-3 rounded-md border-l-4 border-transparent px-4 py-2.5 text-sm font-medium text-fg-secondary transition-all duration-200 ease-in-out hover:bg-surface-hover",
-  itemActive: "border-l-brand bg-brand-50 text-brand hover:bg-brand-100",
+  shell: "bg-surface-raised border-r border-hairline",
+  item: "flex items-center gap-3 rounded-control border-l-4 border-transparent px-4 py-2.5 text-sm font-medium text-ink-muted transition-colors duration-base ease-standard hover:bg-surface-sunken",
+  itemActive: "border-l-accent bg-accent-wash text-accent hover:bg-accent-wash",
   icon: "size-5 shrink-0",
 } as const;
 
 /** Neutral platform/source chips — no random brand colors in UI. */
 export const WG_PLATFORM_CHIP_CLASS =
-  "bg-surface-active text-fg-secondary ring-1 ring-border-default/80 dark:bg-slate-800/50 dark:text-slate-200 dark:ring-slate-600/40";
+  "bg-surface-sunken text-ink-muted ring-1 ring-hairline/80";

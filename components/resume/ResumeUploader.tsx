@@ -169,7 +169,7 @@ export default function ResumeUploader() {
         <p className="mb-3 text-sm font-medium text-foreground">Uploading your resume...</p>
         <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full bg-primary transition-all duration-200"
+            className="h-full bg-primary transition-all duration-base"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -195,7 +195,7 @@ export default function ResumeUploader() {
   if (status === "success") {
     return (
       <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-        <CheckCircle className="mx-auto h-10 w-10 text-emerald-600" />
+        <CheckCircle className="mx-auto h-10 w-10 text-positive" />
         <p className="mt-4 text-base font-semibold text-foreground">Resume parsed successfully!</p>
         <p className="mt-1 text-sm text-muted-foreground">Redirecting to your profile...</p>
       </div>
@@ -205,7 +205,7 @@ export default function ResumeUploader() {
   if (status === "error") {
     return (
       <div className="rounded-2xl border border-brand-200 bg-surface p-8 text-center shadow-sm">
-        <AlertCircle className="mx-auto h-10 w-10 text-rose-600" />
+        <AlertCircle className="mx-auto h-10 w-10 text-danger" />
         <p className="mt-4 text-base font-semibold text-foreground">Upload failed</p>
         <p className="mt-1 text-sm text-muted-foreground">{errorMessage}</p>
         <button
@@ -228,7 +228,7 @@ export default function ResumeUploader() {
             <p className="truncate text-sm font-medium text-foreground">{selectedFile.name}</p>
             <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
           </div>
-          <Check className="h-5 w-5 text-emerald-600" />
+          <Check className="h-5 w-5 text-positive" />
         </div>
 
         <button

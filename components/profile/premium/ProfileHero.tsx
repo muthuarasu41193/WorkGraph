@@ -35,7 +35,7 @@ type Props = {
 };
 
 const inputClass =
-  "border-slate-200 bg-background focus-visible:ring-primary/20";
+  "border-hairline bg-background focus-visible:ring-primary/20";
 
 export default function ProfileHero({ profile, userId, openToWork = true }: Props) {
   const [photoUrl, setPhotoUrl] = useState(profile.photo_url);
@@ -135,8 +135,8 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Camera className={iconClass("inline", "text-white")} />
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-ink/40 opacity-0 transition-opacity group-hover:opacity-100">
+              <Camera className={iconClass("inline", "text-accent-ink")} />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
           </button>

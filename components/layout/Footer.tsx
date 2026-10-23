@@ -19,7 +19,7 @@ function FooterLink({
   return (
     <Link
       href={href}
-      className="inline-flex items-center text-sm text-fg-tertiary transition-all duration-200 hover:translate-x-1 hover:text-brand"
+      className="inline-flex items-center text-sm text-fg-tertiary transition-all duration-base hover:translate-x-1 hover:text-brand"
     >
       {children}
     </Link>
@@ -35,7 +35,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-white">{title}</h3>
+      <h3 className="text-sm font-semibold text-accent-ink">{title}</h3>
       <ul className="mt-4 space-y-3" role="list">
         {links.map((link) => (
           <li key={link.label}>
@@ -65,10 +65,10 @@ function NewsletterStrip({ signups }: { signups: number }) {
     <div className="bg-brand px-4 py-10 md:px-6 min-[1025px]:px-8">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="font-heading text-xl font-bold text-white sm:text-2xl">
+          <p className="font-heading text-xl font-bold text-accent-ink sm:text-2xl">
             Stay ahead. Get the weekly hidden jobs digest.
           </p>
-          <p className="mt-2 text-sm text-white/80">
+          <p className="mt-2 text-sm text-accent-ink/80">
             No spam. Unsubscribe anytime.{" "}
             {subscribers.showNumber
               ? `${subscribers.display} people have signed up`
@@ -84,11 +84,11 @@ function NewsletterStrip({ signups }: { signups: number }) {
             placeholder="you@example.com"
             required
             aria-label="Email address"
-            className="flex-1 rounded-lg border-0 bg-surface/95 px-4 py-3 text-sm text-fg-primary outline-none placeholder:text-fg-tertiary focus:ring-2 focus:ring-white/50"
+            className="flex-1 rounded-lg border-0 bg-surface/95 px-4 py-3 text-sm text-fg-primary outline-none placeholder:text-fg-tertiary focus:ring-2 focus:ring-surface-raised/50"
           />
           <button
             type="submit"
-            className="shrink-0 rounded-lg bg-surface px-6 py-3 text-sm font-semibold text-brand transition-all duration-200 hover:scale-[1.02] hover:bg-brand-50"
+            className="shrink-0 rounded-lg bg-surface px-6 py-3 text-sm font-semibold text-brand transition-all duration-base hover:scale-[1.02] hover:bg-brand-50"
           >
             {submitted ? "Subscribed!" : "Subscribe"}
           </button>
@@ -103,11 +103,11 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
     <footer aria-label="Site footer">
       <NewsletterStrip signups={signups} />
 
-      <div className="bg-slate-950 px-4 py-14 md:px-6 min-[1025px]:px-8">
+      <div className="bg-ink px-4 py-14 md:px-6 min-[1025px]:px-8">
         <div className="mx-auto max-w-[1280px]">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <Logo className="[&_span]:text-white [&_svg_path:first-child]:fill-white" />
+              <Logo className="[&_span]:text-accent-ink [&_svg_path:first-child]:fill-accent-ink" />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-fg-tertiary">
                 Find jobs that never hit LinkedIn.
               </p>
@@ -120,7 +120,7 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
             <FooterColumn title="Company" links={FOOTER_LINKS.company} />
           </div>
 
-          <div className="mt-12 border-t border-slate-800 pt-8">
+          <div className="mt-12 border-t border-ink-muted pt-8">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-sm text-fg-tertiary">
                 &copy; 2025 {SITE.name}. All rights reserved.

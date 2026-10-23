@@ -89,7 +89,7 @@ export default function WalletPanel() {
           </form>
           {payout.isError ? <p className="mt-2 text-sm text-brand">{(payout.error as Error).message}</p> : null}
           {payout.isSuccess ? (
-            <p className="mt-2 text-sm text-emerald-700">Payout request submitted.</p>
+            <p className="mt-2 text-sm text-positive">Payout request submitted.</p>
           ) : null}
         </CardContent>
       </Card>
@@ -111,7 +111,7 @@ export default function WalletPanel() {
                 </div>
                 <span
                   className={`tabular-nums font-semibold ${
-                    tx.amount_cents >= 0 ? "text-emerald-700" : "text-[var(--wg-color-text-primary)]"
+                    tx.amount_cents >= 0 ? "text-positive" : "text-[var(--wg-color-text-primary)]"
                   }`}
                 >
                   {tx.amount_cents >= 0 ? "+" : ""}

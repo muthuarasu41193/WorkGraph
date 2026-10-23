@@ -342,10 +342,10 @@ export default function CreateProfilePage() {
           </TabsList>
 
           <TabsContent value="resume" className="mt-6">
-            <Card className="border-slate-200 shadow-md">
+            <Card className="border-hairline shadow-md">
               <CardContent className="space-y-6 p-6 sm:p-8">
                 {message ? (
-                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <Alert className="border-positive-wash bg-positive-wash text-positive">
                     <AlertDescription>{message}</AlertDescription>
                   </Alert>
                 ) : null}
@@ -383,7 +383,7 @@ export default function CreateProfilePage() {
                       <div
                         {...getRootProps()}
                         className={cn(
-                          "group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-200",
+                          "group mt-1 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-5 py-14 text-center transition-all duration-base",
                           isDragActive
                             ? "scale-[1.01] border-primary bg-primary/5"
                             : "border-border bg-gradient-to-b from-muted/40 via-background to-background hover:border-primary/40 hover:shadow-md",
@@ -391,7 +391,7 @@ export default function CreateProfilePage() {
                         )}
                       >
                         <input {...getInputProps()} />
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-200 group-hover:scale-105">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-base group-hover:scale-105">
                           <FileText className="h-6 w-6 text-primary" aria-hidden />
                         </div>
                         <p className="mt-5 text-md font-semibold text-foreground">
@@ -401,7 +401,7 @@ export default function CreateProfilePage() {
                       </div>
                     ) : (
                       <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3.5">
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden />
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-positive" aria-hidden />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
                           <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
@@ -432,10 +432,10 @@ export default function CreateProfilePage() {
           </TabsContent>
 
           <TabsContent value="manual" className="mt-6">
-            <Card className="border-slate-200 shadow-md">
+            <Card className="border-hairline shadow-md">
               <CardContent className="space-y-5 p-6 sm:p-8">
                 {message ? (
-                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <Alert className="border-positive-wash bg-positive-wash text-positive">
                     <AlertDescription>{message}</AlertDescription>
                   </Alert>
                 ) : null}

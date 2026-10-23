@@ -141,7 +141,7 @@ export default function ApplicantApplicationPanel({ connection, open, onOpenChan
                 href={resumeHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--wg-red)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--wg-red)]/90"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--wg-red)] px-4 py-2 text-sm font-medium text-accent-ink hover:bg-[var(--wg-red)]/90"
               >
                 <FileText className={iconClass()} />
                 View resume

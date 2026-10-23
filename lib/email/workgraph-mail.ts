@@ -85,7 +85,7 @@ export function buildConnectionNotifyEmployerEmail(params: {
       <h1 style="font-size:20px;margin:0 0 12px">New connection on <em>${escapeHtml(params.signalTitle)}</em></h1>
       <p><strong>${escapeHtml(params.seekerName)}</strong> connected with <strong>${params.matchPercent}%</strong> fit alignment.</p>
       <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid ${WG_COLORS.primary};background:${WG_COLORS.surfaceHover}">${escapeHtml(preview)}</blockquote>
-      <p><a href="${params.inboxUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Open Pulse inbox</a></p>
+      <p><a href="${params.inboxUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:${WG_COLORS.accentInk};padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Open Pulse inbox</a></p>
       <p style="font-size:12px;color:${WG_COLORS.textTertiary};margin-top:24px">${escapeHtml(params.companyName)} · WorkGraph hiring signals</p>
     </div>
   `;
@@ -116,7 +116,7 @@ export function buildStageUpdateSeekerEmail(params: {
       <h1 style="font-size:20px;margin:0 0 12px">Update on your connection</h1>
       <p><strong>${escapeHtml(params.companyName)}</strong> moved your connection to <strong>${escapeHtml(params.stageLabel)}</strong> for <em>${escapeHtml(params.signalTitle)}</em>.</p>
       ${replyBlock}
-      <p><a href="${params.directUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View in WorkGraph Direct</a></p>
+      <p><a href="${params.directUrl}" style="display:inline-block;background:${WG_COLORS.primary};color:${WG_COLORS.accentInk};padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View in WorkGraph Direct</a></p>
     </div>
   `;
 

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { WG_COLORS } from "@/lib/design-tokens";
 
 export const runtime = "edge";
 export const alt = "WorkGraph — Find Jobs That Never Hit LinkedIn";
@@ -16,8 +17,8 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "64px",
-          background: "linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)",
-          color: "white",
+          background: WG_COLORS.ink,
+          color: WG_COLORS.accentInk,
           fontFamily: "system-ui, sans-serif",
         }}
       >
@@ -33,7 +34,7 @@ export default function OpenGraphImage() {
             style={{
               width: 48,
               height: 48,
-              background: "#E11D2E",
+              background: WG_COLORS.accent,
               borderRadius: 12,
               display: "flex",
               alignItems: "center",
@@ -49,7 +50,7 @@ export default function OpenGraphImage() {
         <h1 style={{ fontSize: 56, fontWeight: 800, lineHeight: 1.1, margin: 0, maxWidth: 900 }}>
           Find Jobs That Never Hit LinkedIn
         </h1>
-        <p style={{ fontSize: 24, color: "#94A3B8", marginTop: 24, maxWidth: 800, lineHeight: 1.4 }}>
+        <p style={{ fontSize: 24, color: WG_COLORS.inkSubtle, marginTop: 24, maxWidth: 800, lineHeight: 1.4 }}>
           AI-powered job intelligence from Reddit, Discord & 50+ hidden sources
         </p>
       </div>

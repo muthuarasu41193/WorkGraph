@@ -34,7 +34,7 @@ export default async function HomeHiddenJobsFeed() {
         <div>
           <h2 id="home-hidden-heading" className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-fg-primary">
             Hidden Jobs Feed
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-px text-[11px] font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-full bg-positive-wash px-1.5 py-px text-[11px] font-medium text-positive  ">
               <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
               Live
             </span>
@@ -60,10 +60,10 @@ export default async function HomeHiddenJobsFeed() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised  ">
           {items.map((item) => (
-            <li key={item.id} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
-              <article className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60">
+            <li key={item.id} className="border-b border-hairline last:border-b-0 ">
+              <article className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken ">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <Badge variant="outline" className={cn("h-5 px-1.5 text-[11px] capitalize", WG_PLATFORM_CHIP_CLASS)}>
