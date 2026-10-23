@@ -39,6 +39,31 @@ function mapTestimonialRow(row: Record<string, unknown>): TestimonialRow {
   };
 }
 
+export type IndexStats = {
+  liveJobs: number | null
+  postedLast24Hours: number | null
+  verifiedEmployers: number | null
+}
+
+/** Null means the query failed. Zero is a real count and should be shown. */
+export async function getIndexStats(): Promise<IndexStats> {
+  const admin = createSupabaseAdminClient()
+  if (!admin) {
+    return { liveJobs: null, postedLast24Hours: null, verifiedEmployers: null }
+  }
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const [live, posted, employers] = await Promise.all([
+    admin.from("jobs").select("id", { count: "exact", head: true }).eq("is_community", false),
+    admin.from("jobs").select("id", { count: "exact", head: true }).eq("is_community", false).gte("posted_at", since),
+    admin.from("employer_profiles").select("id", { count: "exact", head: true }).eq("verification_status", "verified"),
+  ])
+  return {
+    liveJobs: live.error ? null : live.count ?? 0,
+    postedLast24Hours: posted.error ? null : posted.count ?? 0,
+    verifiedEmployers: employers.error ? null : employers.count ?? 0,
+  }
+}
+
 export async function getConsentedTestimonials(): Promise<TestimonialRow[]> {
   const admin = createSupabaseAdminClient();
   if (!admin) return [];

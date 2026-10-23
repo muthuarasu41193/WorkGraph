@@ -10,11 +10,11 @@ export const SITE = {
 } as const;
 
 export const NAV_ITEMS = [
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Interview Vault", href: "#interview-vault" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { label: "Features", href: "/#features" },
+  { label: "How it Works", href: "/#how-it-works" },
+  { label: "Interview Vault", href: "/interview-vault" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/#contact" },
 ] as const;
 
 export const NAV_ANNOUNCEMENT = {
@@ -24,9 +24,9 @@ export const NAV_ANNOUNCEMENT = {
 } as const;
 
 export const ANNOUNCEMENT = {
-  message: "Now scanning 50+ hidden job sources in real time",
-  cta: "See what's new",
-  href: "#features",
+  message: "Search the live job index",
+  cta: "See sources",
+  href: "/sources",
 } as const;
 
 export const HERO = {
