@@ -149,7 +149,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
+            <p className="text-xs font-semibold text-[var(--wg-color-text-tertiary)] text-role-caption">
               Professional profile
             </p>
 
@@ -165,7 +165,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-3 text-xl font-semibold`}
               />
             ) : (
-              <h1 className="mt-2 text-[1.625rem] font-bold leading-tight tracking-tight text-foreground">
+              <h1 className="text-role-title mt-2 text-ink">
                 {form.full_name || "Your name"}
               </h1>
             )}
@@ -233,7 +233,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
       </div>
 
       <div className="mt-6 border-t border-[var(--wg-color-border)] pt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
+        <p className="text-xs font-semibold text-[var(--wg-color-text-tertiary)] text-role-caption">
           Summary
         </p>
         {isEditing ? (

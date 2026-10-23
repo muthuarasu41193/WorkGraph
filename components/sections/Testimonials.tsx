@@ -78,7 +78,7 @@ export default function Testimonials({ items }: { items: TestimonialRow[] }) {
         </div>
 
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
+          <p className="text-xs font-bold text-brand text-role-caption">
             From people using WorkGraph
           </p>
           <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">

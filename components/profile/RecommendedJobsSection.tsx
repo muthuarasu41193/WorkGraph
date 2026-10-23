@@ -1454,8 +1454,8 @@ export default function RecommendedJobsSection({
     <section id="recommended-jobs" className="scroll-mt-28">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-fg-tertiary">Job board</p>
-          <h2 className="mt-1 text-[18px] font-semibold text-fg-primary sm:text-[18px]">
+          <p className="text-xs font-medium text-fg-tertiary text-role-caption">Job board</p>
+          <h2 className="mt-1 text-role-subheading font-semibold text-fg-primary sm:text-role-subheading">
             {isLiveFeed
               ? profileMatchActive
                 ? "Jobs matching your profile"
@@ -2197,7 +2197,10 @@ export default function RecommendedJobsSection({
             >
               {isExpanded ? (
                 <div className="space-y-3">
-                  <div className="max-h-[200px] overflow-auto text-sm leading-6 text-ink-muted">
+                  <div
+                    className="measure prose-rhythm max-h-[200px] overflow-auto text-role-body text-ink-muted"
+                    title={job.description?.trim() || job.matchLabel}
+                  >
                     {job.description?.trim() ? job.description : job.matchLabel}
                   </div>
                   <ul className="space-y-1 text-sm">
@@ -2311,7 +2314,7 @@ export default function RecommendedJobsSection({
       (liveListings > 0 || pageJobs.length > 0) ? (
         <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
           <UserSearch className="mx-auto h-20 w-20 text-info" />
-          <h3 className="mt-4 text-[20px] font-semibold text-fg-primary">No profile matches found</h3>
+          <h3 className="mt-4 text-role-subheading font-semibold text-fg-primary">No profile matches found</h3>
           <p className="mt-2 text-sm text-fg-tertiary">
             {matchedListings > 0
               ? `${matchedListings.toLocaleString()} jobs match your profile in the index. Try browsing all jobs or updating your skills.`
@@ -2435,13 +2438,20 @@ export default function RecommendedJobsSection({
             const { job, meta } = jobEntry;
             return (
               <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-fg-primary">{job.title}</h4>
-                <p className="text-sm text-fg-secondary">{job.company}</p>
-                <p className="text-sm text-fg-tertiary">
+                <h4 className="text-role-subheading line-clamp-2 text-ink" title={job.title}>
+                  {job.title}
+                </h4>
+                <p className="text-role-body-small truncate text-ink-muted" title={job.company}>
+                  {job.company}
+                </p>
+                <p className="text-role-caption truncate text-ink-subtle">
                   {job.location}
                   {meta.jobTypes[0] ? ` · ${meta.jobTypes[0]}` : ""}
                 </p>
-                <p className="max-h-[45vh] overflow-auto text-sm leading-6 text-fg-secondary">
+                <p
+                  className="measure prose-rhythm max-h-[45vh] overflow-auto text-role-body text-ink-muted"
+                  title={job.description?.trim() || job.matchLabel}
+                >
                   {job.description?.trim() ? job.description : job.matchLabel}
                 </p>
                 {job.applyUrl ? (

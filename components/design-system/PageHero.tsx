@@ -31,12 +31,10 @@ export default function PageHero({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           {greeting ? (
-            <p className="text-[13px] font-medium text-fg-secondary">{greeting}</p>
+            <p className="text-role-caption font-medium text-fg-secondary">{greeting}</p>
           ) : null}
-          <h1 className="font-semibold tracking-heading text-fg-primary text-[clamp(1.25rem,3vw,1.625rem)]">
-            {title}
-          </h1>
-          <p className="max-w-2xl text-[13.5px] leading-relaxed text-fg-secondary">
+          <h1 className="text-role-title text-ink">{title}</h1>
+          <p className="measure text-role-body text-ink-muted">
             {subtitle}
           </p>
         </div>
@@ -49,7 +47,7 @@ export default function PageHero({
             <div
               key={m.label}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px]",
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-role-caption",
                 m.accent
                   ? "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
                   : "bg-surface ring-1 ring-[var(--dash-border)]",

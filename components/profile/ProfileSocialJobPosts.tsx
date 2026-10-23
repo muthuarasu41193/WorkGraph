@@ -274,7 +274,7 @@ export default function ProfileSocialJobPosts({
     <section className="rounded-xl border border-border-default bg-surface p-4 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-fg-tertiary">Community jobs</p>
+          <p className="text-xs font-medium text-fg-tertiary text-role-caption">Community jobs</p>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-fg-primary">
             Community job posts — Reddit, RSS, RemoteOK, Arbeitnow, and Hacker News
           </h2>
@@ -328,7 +328,7 @@ export default function ProfileSocialJobPosts({
                     <Logo />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-fg-tertiary">{meta.eyebrow}</p>
+                    <p className="text-xs font-medium text-fg-tertiary text-role-caption">{meta.eyebrow}</p>
                     <h3 className="text-lg font-semibold text-fg-primary">{meta.label}</h3>
                   </div>
                 </div>

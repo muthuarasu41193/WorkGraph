@@ -36,11 +36,11 @@ export default function JobNewsSection() {
     <section className="space-y-3" aria-labelledby="job-news-heading">
       <header>
         <h1 id="job-news-heading" className="text-xl font-semibold tracking-tight text-fg-primary">Job News</h1>
-        <p className="mt-0.5 text-[13px] text-fg-secondary">
+        <p className="mt-0.5 text-role-caption text-fg-secondary">
           Hiring posts and community listings from social platforms — filtered by source.
         </p>
         {feedKind === "live" ? (
-          <p className="mt-1 text-[12px] font-medium text-positive ">
+          <p className="mt-1 text-role-caption font-medium text-positive">
             {allPosts.length} posts synced from your jobs database
           </p>
         ) : null}
@@ -55,14 +55,14 @@ export default function JobNewsSection() {
             aria-selected={platform === tab.id}
             onClick={() => setPlatform(tab.id)}
             className={cn(
-              "inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[13px] font-medium transition-colors",
+              "inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-role-caption font-medium transition-colors",
               platform === tab.id
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border bg-background text-fg-secondary hover:bg-muted",
             )}
           >
             {tab.label}
-            <Badge variant="secondary" className="h-5 px-1.5 text-[11px]">
+            <Badge variant="secondary" className="h-5 px-1.5 text-role-caption">
               {counts[tab.id]}
             </Badge>
           </button>
@@ -71,37 +71,37 @@ export default function JobNewsSection() {
 
       {filtered.length === 0 ? (
         <Card className="wg-dash-section-card border-dashed">
-          <CardContent className="py-8 text-center text-[13px] text-fg-secondary">
+          <CardContent className="py-8 text-center text-role-caption text-fg-secondary">
             No posts for this platform yet. Community sync adds Reddit, Hacker News, RemoteOK, and more daily.
           </CardContent>
         </Card>
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised  ">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised">
           {filtered.map((post) => (
-            <li key={post.id} className="border-b border-hairline last:border-b-0 ">
-              <article className="flex items-start gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken ">
+            <li key={post.id} className="border-b border-hairline last:border-b-0">
+              <article className="flex items-start gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <Badge variant="outline" className="h-5 px-1.5 text-[11px] capitalize">
+                    <Badge variant="outline" className="h-5 px-1.5 text-role-caption capitalize">
                       {post.source}
                     </Badge>
                     {post.kind === "post" ? (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-[11px]">Post</Badge>
+                      <Badge variant="secondary" className="h-5 px-1.5 text-role-caption">Post</Badge>
                     ) : null}
-                    <span className="text-[12px] text-fg-secondary">{post.postedAgo}</span>
+                    <span className="text-role-caption text-fg-secondary">{post.postedAgo}</span>
                   </div>
-                  <h2 className="mt-0.5 text-[14px] font-semibold leading-snug tracking-tight text-fg-primary">
+                  <h2 className="mt-0.5 text-role-body-small font-semibold leading-snug tracking-tight text-fg-primary">
                     {post.title}
                   </h2>
-                  <p className="truncate text-[12.5px] text-fg-secondary">
+                  <p className="truncate text-role-caption text-fg-secondary">
                     {post.company} · {post.location}
                   </p>
                   {post.description ? (
-                    <p className="mt-1 line-clamp-2 text-[13px] leading-snug text-fg-secondary">{post.description}</p>
+                    <p className="mt-1 line-clamp-2 text-role-caption leading-snug text-fg-secondary">{post.description}</p>
                   ) : null}
                 </div>
                 {post.applyUrl ? (
-                  <Button asChild size="sm" variant="outline" className="mt-0.5 h-7 shrink-0 px-2.5 text-[12px]">
+                  <Button asChild size="sm" variant="outline" className="mt-0.5 h-7 shrink-0 px-2.5 text-role-caption">
                     <a href={post.applyUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className={iconClass()} />
                       Open post

@@ -18,10 +18,10 @@ export default function StrengthsSection({ items }: Props) {
     >
       <ul className="space-y-4">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border border-positive-wash/60 bg-positive-wash/50 p-4  ">
+          <li key={i} className="rounded-lg border border-positive-wash/60 bg-positive-wash/50 p-4">
             <div className="flex flex-wrap items-center gap-2">
               <h4 className="font-semibold">{item.title}</h4>
-              <Badge variant="outline" className="border-positive text-positive ">
+              <Badge variant="outline" className="border-positive text-positive">
                 Match
               </Badge>
             </div>

@@ -82,7 +82,7 @@ export function ConsentManager() {
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="fixed inset-x-4 bottom-4 z-modal mx-auto max-w-2xl rounded-2xl border border-border-default bg-surface p-5 shadow-xl sm:inset-x-6"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Cookies</p>
+          <p className="text-xs font-bold text-brand text-role-caption">Cookies</p>
           <h2 id={titleId} className="mt-2 font-heading text-lg font-bold text-fg-primary">
             {view === "preferences" ? "Cookie preferences" : "We use cookies"}
           </h2>

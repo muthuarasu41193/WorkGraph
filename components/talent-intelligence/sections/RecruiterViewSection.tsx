@@ -23,7 +23,7 @@ export default function RecruiterViewSection({ data }: Props) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <h4 className="text-sm font-semibold text-positive ">Stands out</h4>
+          <h4 className="text-sm font-semibold text-positive">Stands out</h4>
           <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
             {data.standsOut.map((s, i) => (
               <li key={i}>{s}</li>
@@ -31,7 +31,7 @@ export default function RecruiterViewSection({ data }: Props) {
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-semibold text-caution ">Concerns</h4>
+          <h4 className="text-sm font-semibold text-caution">Concerns</h4>
           <ul className="mt-2 list-disc space-y-1 pl-4 text-sm">
             {data.concerns.map((c, i) => (
               <li key={i}>{c}</li>

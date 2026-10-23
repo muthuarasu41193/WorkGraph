@@ -254,7 +254,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
 
             <motion.h1
               variants={leftItem}
-              className="mt-6 font-heading font-bold leading-[1.05] tracking-heading text-fg-primary text-[clamp(2rem,8vw,4.5rem)]"
+              className="mt-6 font-heading font-bold tracking-heading text-fg-primary text-role-display"
             >
               Find Jobs That
               <br />
@@ -270,7 +270,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
 
             <motion.p
               variants={leftItem}
-              className="mt-6 max-w-[560px] text-[18px] leading-[1.65] text-fg-secondary sm:text-[20px]"
+              className="measure mt-6 text-role-body text-ink-muted"
             >
               WorkGraph surfaces hidden roles from Reddit, Twitter, Discord &amp; 50+
               private sources — then AI-matches you, preps you for interviews, and

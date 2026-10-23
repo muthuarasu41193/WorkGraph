@@ -39,11 +39,11 @@ export default function HomeJobMatchesSection({
         <div>
           <h2
             id="home-matches-heading"
-            className="text-[17px] font-semibold tracking-tight text-fg-primary"
+            className="text-role-subheading font-semibold tracking-tight text-fg-primary"
           >
             Recommended Jobs
           </h2>
-          <p className="mt-0.5 text-[13px] text-fg-secondary">
+          <p className="mt-0.5 text-role-caption text-fg-secondary">
             {`Top roles ranked by AI match score${feedKind === "live" ? " · live catalog" : ""}.`}
           </p>
         </div>

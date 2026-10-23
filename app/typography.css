@@ -1,9 +1,44 @@
-/* WorkGraph typography system — Plus Jakarta Sans + JetBrains Mono */
+/* WorkGraph typography system — Newsreader, Public Sans, JetBrains Mono */
 
 :root {
-  --wg-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --wg-font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --wg-font-sans: var(--font-public), ui-sans-serif, system-ui, sans-serif;
+  --wg-font-heading: var(--font-display-face), ui-serif, Georgia, serif;
+  --wg-font-display: var(--font-display-face), ui-serif, Georgia, serif;
   --wg-font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Major third from 16px. 560 and 650 fall back to 600: those cuts are not in the static font files. */
+  --type-display-size: 2.441rem;
+  --type-display-leading: 1.15;
+  --type-display-tracking: -0.02em;
+  --type-display-weight: 600;
+  --type-title-size: 1.953rem;
+  --type-title-leading: 1.2;
+  --type-title-tracking: -0.018em;
+  --type-title-weight: 600;
+  --type-heading-size: 1.563rem;
+  --type-heading-leading: 1.25;
+  --type-heading-tracking: -0.015em;
+  --type-heading-weight: 600;
+  --type-subheading-size: 1.25rem;
+  --type-subheading-leading: 1.35;
+  --type-subheading-tracking: -0.01em;
+  --type-subheading-weight: 600;
+  --type-body-size: 1rem;
+  --type-body-leading: 1.55;
+  --type-body-tracking: 0em;
+  --type-body-weight: 400;
+  --type-body-small-size: 0.875rem;
+  --type-body-small-leading: 1.45;
+  --type-body-small-tracking: 0em;
+  --type-body-small-weight: 400;
+  --type-caption-size: 0.75rem;
+  --type-caption-leading: 1.4;
+  --type-caption-tracking: 0.01em;
+  --type-caption-weight: 500;
+  --type-code-size: 0.8125rem;
+  --type-code-leading: 1.45;
+  --type-code-tracking: 0em;
+  --type-code-weight: 450;
   --wg-leading-body: 1.45;
   --wg-leading-heading: 1.25;
   --wg-tracking-body: -0.011em;
@@ -29,6 +64,7 @@
     font-weight: 400;
     line-height: var(--wg-leading-body);
     letter-spacing: var(--wg-tracking-body);
+    font-variant-numeric: tabular-nums;
     color: var(--wg-text-body);
   }
 
@@ -103,10 +139,103 @@
 }
 
 @layer utilities {
-  .font-numeric {
-    font-family: var(--wg-font-mono);
+  .font-numeric,
+  .tabular-nums {
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .font-numeric {
+    font-family: var(--wg-font-sans);
+  }
+
+  .text-role-display,
+  .text-role-title,
+  .text-role-heading {
+    font-family: var(--wg-font-display);
+    color: var(--ink);
+  }
+
+  .text-role-display {
+    font-size: var(--type-display-size);
+    line-height: var(--type-display-leading);
+    letter-spacing: var(--type-display-tracking);
+    font-weight: var(--type-display-weight);
+  }
+
+  .text-role-title {
+    font-size: var(--type-title-size);
+    line-height: var(--type-title-leading);
+    letter-spacing: var(--type-title-tracking);
+    font-weight: var(--type-title-weight);
+  }
+
+  .text-role-heading {
+    font-size: var(--type-heading-size);
+    line-height: var(--type-heading-leading);
+    letter-spacing: var(--type-heading-tracking);
+    font-weight: var(--type-heading-weight);
+  }
+
+  .text-role-subheading {
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-subheading-size);
+    line-height: var(--type-subheading-leading);
+    letter-spacing: var(--type-subheading-tracking);
+    font-weight: var(--type-subheading-weight);
+    color: var(--ink);
+  }
+
+  .text-role-body,
+  .text-role-body-small,
+  .text-role-caption {
+    font-family: var(--wg-font-sans);
+  }
+
+  .text-role-body {
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-leading);
+    letter-spacing: var(--type-body-tracking);
+    font-weight: var(--type-body-weight);
+  }
+
+  .text-role-body-small {
+    font-size: var(--type-body-small-size);
+    line-height: var(--type-body-small-leading);
+    letter-spacing: var(--type-body-small-tracking);
+    font-weight: var(--type-body-small-weight);
+  }
+
+  .text-role-caption {
+    font-size: var(--type-caption-size);
+    line-height: var(--type-caption-leading);
+    letter-spacing: var(--type-caption-tracking);
+    font-weight: var(--type-caption-weight);
+  }
+
+  .text-role-code {
+    font-family: var(--wg-font-mono);
+    font-size: var(--type-code-size);
+    line-height: var(--type-code-leading);
+    letter-spacing: var(--type-code-tracking);
+    font-weight: var(--type-code-weight);
+  }
+
+  .measure {
+    max-width: 68ch;
+  }
+
+  .prose-rhythm :is(h1, h2, h3, h4) {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-3);
+  }
+
+  .prose-rhythm :is(h1, h2, h3, h4):first-child {
+    margin-top: 0;
+  }
+
+  .prose-rhythm p + p {
+    margin-top: var(--space-4);
   }
 
   .wg-text-heading {
@@ -140,11 +269,26 @@
 }
 
 .wg-hero-heading {
-  font-size: clamp(1.875rem, 5vw, 3.75rem);
-  line-height: 1.1;
+  font-family: var(--wg-font-display);
+  font-size: var(--type-display-size);
+  line-height: var(--type-display-leading);
+  letter-spacing: var(--type-display-tracking);
+  font-weight: var(--type-display-weight);
 }
 
 .wg-section-heading {
-  font-size: clamp(1.875rem, 4vw, 2.75rem);
-  line-height: 1.2;
+  font-family: var(--wg-font-display);
+  font-size: var(--type-title-size);
+  line-height: var(--type-title-leading);
+  letter-spacing: var(--type-title-tracking);
+  font-weight: var(--type-title-weight);
+}
+
+html,
+body {
+  max-width: 100%;
+}
+
+body {
+  overflow-x: clip;
 }

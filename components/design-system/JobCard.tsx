@@ -61,7 +61,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
   return (
     <span
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-sunken text-[12px] font-semibold text-ink"
+      className="text-role-caption flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-sunken font-semibold text-ink"
       aria-hidden
     >
       {companyInitials(company)}
@@ -71,7 +71,7 @@ function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }
 
 function JobChip({ children }: { children: string }) {
   return (
-    <span className="rounded-[6px] bg-surface-sunken px-1.5 py-px text-[11px] leading-tight text-ink-muted">
+    <span className="text-role-caption rounded-control bg-surface-sunken px-1.5 py-px leading-tight text-ink-muted tabular-nums">
       {children}
     </span>
   );
@@ -81,7 +81,7 @@ function MatchBadge({ percent, className }: { percent: number; className?: strin
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 whitespace-nowrap rounded-[6px] border px-2 py-0.5 text-[11.5px] font-semibold leading-tight tabular-nums",
+        "text-role-caption inline-flex shrink-0 whitespace-nowrap rounded-control border px-2 py-0.5 font-semibold leading-tight tabular-nums",
         matchBadgeClass(percent),
         className,
       )}
@@ -196,12 +196,21 @@ export default function JobCard({
           </div>
         ) : null}
 
+        {job.description && !children ? (
+          <p
+            className="measure text-role-body-small mt-2 line-clamp-3 text-ink-muted"
+            title={job.description}
+          >
+            {job.description}
+          </p>
+        ) : null}
+
         {showSkillGaps ? (
           <div className="mt-2 flex flex-wrap gap-1">
             {job.missingSkills!.map((skill) => (
               <span
                 key={skill}
-                className="rounded-[6px] border border-hairline bg-surface-raised px-1.5 py-0.5 text-[11.5px] leading-tight text-ink-subtle"
+                className="text-role-caption rounded-control border border-hairline bg-surface-raised px-1.5 py-0.5 leading-tight text-ink-subtle"
               >
                 {skill}
               </span>
@@ -267,9 +276,12 @@ export default function JobCard({
         <div className="flex items-start gap-2.5">
           <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-medium leading-snug text-ink">{job.company}</p>
+            <p className="text-role-caption truncate font-medium text-ink" title={job.company}>{job.company}</p>
             {locationMeta.length > 0 ? (
-              <p className="mt-0.5 truncate text-[13px] leading-snug text-ink-subtle">
+              <p
+                className="text-role-caption mt-0.5 truncate text-ink-subtle"
+                title={locationMeta.join(" · ")}
+              >
                 {locationMeta.join(" · ")}
               </p>
             ) : null}
@@ -278,7 +290,7 @@ export default function JobCard({
         </div>
 
         <div className="flex items-start gap-2">
-          <h3 className="min-w-0 flex-1 text-[14px] font-semibold leading-snug tracking-tight text-ink">
+          <h3 className="text-role-body-small line-clamp-2 min-w-0 flex-1 font-semibold text-ink" title={job.title}>
             {job.title}
           </h3>
           {job.matchPercent !== undefined ? <MatchBadge percent={job.matchPercent} /> : null}
@@ -302,13 +314,16 @@ export default function JobCard({
           <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
           <div className="min-w-0 flex-1">
             <div className="flex items-start gap-2">
-              <h3 className="min-w-0 flex-1 truncate text-[14px] font-semibold leading-snug tracking-tight text-ink">
+              <h3 className="text-role-body-small line-clamp-2 min-w-0 flex-1 font-semibold text-ink" title={job.title}>
                 {job.title}
               </h3>
               {onSave ? <BookmarkButton saved={saved} onSave={() => onSave(job.id)} /> : null}
             </div>
             {metaParts.length > 0 ? (
-              <p className="mt-0.5 truncate text-[13px] leading-snug text-ink-subtle">
+              <p
+                className="text-role-caption mt-0.5 truncate text-ink-subtle"
+                title={metaParts.join(" · ")}
+              >
                 {metaParts.join(" · ")}
               </p>
             ) : null}

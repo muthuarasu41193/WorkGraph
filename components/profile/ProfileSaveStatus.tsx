@@ -123,15 +123,15 @@ export default function ProfileSaveStatus() {
 
   const icon =
     state === "saving" ? (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive">
         <Loader2 className="size-3.5 animate-spin" aria-hidden />
       </span>
     ) : state === "error" ? (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-danger-wash text-danger  ">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-danger-wash text-danger">
         <AlertCircle className="size-3.5" strokeWidth={2.25} aria-hidden />
       </span>
     ) : (
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive">
         <Check className="size-3.5" strokeWidth={2.5} aria-hidden />
       </span>
     );
@@ -147,7 +147,7 @@ export default function ProfileSaveStatus() {
       style={{ borderRadius: 10 }}
     >
       {icon}
-      <p className="text-[13px] font-medium text-ink ">{text}</p>
+      <p className="text-role-caption font-medium text-ink">{text}</p>
     </div>
   );
 }

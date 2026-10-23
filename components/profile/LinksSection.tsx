@@ -109,7 +109,7 @@ export default function LinksSection({ profile, userId }: Props) {
   return (
     <section className="rounded-xl border border-border-default bg-surface p-6">
       {toast ? <p className="mb-3 text-sm text-info">{toast}</p> : null}
-      <h2 className="mb-1 text-[18px] font-semibold text-fg-primary">Links</h2>
+      <h2 className="mb-1 text-role-subheading font-semibold text-fg-primary">Links</h2>
       <p className="mb-4 text-xs font-normal text-fg-tertiary">
         Keep your public profiles up-to-date — they are included when you apply to jobs.
       </p>

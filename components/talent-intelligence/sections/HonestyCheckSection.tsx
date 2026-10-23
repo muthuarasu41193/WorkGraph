@@ -45,7 +45,7 @@ export default function HonestyCheckSection({ data }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-positive ">
+        <p className="text-sm text-positive">
           No significant authenticity concerns detected.
         </p>
       )}

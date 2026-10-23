@@ -85,7 +85,7 @@ export default function ExperienceTimeline({ userId, experience }: Props) {
             <Briefcase className={iconClass("inline")} />
           </span>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Career arc</p>
+            <p className="text-xs font-semibold text-muted-foreground text-role-caption">Career arc</p>
             <h2 className="mt-0.5 text-xl font-semibold tracking-tight text-foreground">Roles & impact</h2>
             <p className="mt-1 max-w-md text-xs leading-relaxed text-foreground/85">
               One block per position — title and company read like a résumé line; details stay in the margin note.

@@ -276,7 +276,7 @@ export default function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
+            <p className="text-xs font-bold text-brand text-role-caption">
               GET IN TOUCH
             </p>
             <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">

@@ -277,7 +277,7 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
             <h3 className="mt-2 font-heading text-2xl font-bold text-fg-primary sm:text-3xl">
               {step.title}
             </h3>
-            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-fg-secondary">
+            <p className="mt-4 max-w-lg text-role-body leading-relaxed text-fg-secondary">
               {step.description}
             </p>
             <HighlightPills items={step.highlights} />
@@ -316,7 +316,7 @@ export default function HowItWorks() {
     >
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">The process</p>
+          <p className="text-xs font-bold text-brand text-role-caption">The process</p>
           <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
             From hidden job to hired — in 4 steps
           </h2>

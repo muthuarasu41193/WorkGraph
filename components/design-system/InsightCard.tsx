@@ -42,14 +42,14 @@ export default function InsightCard({
 
       <div className="mt-2 space-y-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-[14px] font-semibold tracking-tight text-ink">{title}</h3>
+          <h3 className="text-role-body-small font-semibold tracking-tight text-ink">{title}</h3>
           {badge ? (
-            <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-[11px] font-medium text-ink-muted">
+            <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-role-caption font-medium text-ink-muted">
               {badge}
             </span>
           ) : null}
         </div>
-        <p className="text-[13px] leading-snug text-ink-subtle">{description}</p>
+        <p className="text-role-caption leading-snug text-ink-subtle">{description}</p>
       </div>
 
       {score !== undefined ? (

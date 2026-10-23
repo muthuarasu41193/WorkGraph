@@ -10,8 +10,8 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
       <div>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0 space-y-2">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-fg-tertiary">Next steps</p>
-            <h2 className="text-pretty text-[18px] font-semibold text-fg-primary">
+            <p className="text-xs font-medium text-fg-tertiary text-role-caption">Next steps</p>
+            <h2 className="text-pretty text-role-subheading font-semibold text-fg-primary">
               Hey {name} — keep momentum after your resume parse.
             </h2>
             <p className="max-w-xl text-sm font-normal leading-relaxed text-fg-secondary">

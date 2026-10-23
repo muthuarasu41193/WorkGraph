@@ -83,10 +83,10 @@ export default function ProfileJobDashboard({
         <section aria-labelledby="job-dashboard-heading">
           <div className="mb-3 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
             <div className="min-w-0 flex-1">
-              <h2 id="job-dashboard-heading" className="text-[17px] font-semibold tracking-tight text-fg-primary">
+              <h2 id="job-dashboard-heading" className="text-role-subheading font-semibold tracking-tight text-fg-primary">
                 Job Dashboard
               </h2>
-              <p className="mt-0.5 text-[13px] font-normal text-fg-secondary">
+              <p className="mt-0.5 text-role-caption font-normal text-fg-secondary">
                 Live ATS jobs matched to your profile
               </p>
             </div>
@@ -139,7 +139,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={liveListings} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Live Jobs Available</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Live Jobs Available</p>
                     </div>
                   </div>
                 </article>
@@ -156,7 +156,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={matchedListings} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Matched to Your Profile</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Matched to Your Profile</p>
                     </div>
                   </div>
                 </article>
@@ -173,7 +173,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={stats.applied} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Applications Sent</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Applications Sent</p>
                       {stats.interview > 0 ? (
                         <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-warning-50 px-2 py-1 text-xs font-medium text-warning">
                           <LoaderCircle className={iconClass()} />
@@ -196,7 +196,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={stats.saved} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Jobs Saved</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Jobs Saved</p>
                     </div>
                   </div>
                 </article>

@@ -199,7 +199,7 @@ export default function SidebarBottom({
       <div className="mt-1 flex items-center px-1">{themeToggle}</div>
 
       {showCmdKHint ? (
-        <p className="mt-1.5 px-2 text-center text-[11px] text-ink-subtle ">
+        <p className="mt-1.5 px-2 text-center text-role-caption text-ink-subtle">
           Press {isMac ? "⌘K" : "Ctrl+K"} to search
         </p>
       ) : null}

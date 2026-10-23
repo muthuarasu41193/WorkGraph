@@ -9,17 +9,17 @@ import { useToastStore, type ToastVariant } from "@/hooks/use-toast";
 
 const VARIANT_ICON: Record<ToastVariant, ReactNode> = {
   default: (
-    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
+    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive">
       <Check className="size-3.5" strokeWidth={2.5} aria-hidden />
     </span>
   ),
   success: (
-    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive  ">
+    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-positive-wash text-positive">
       <Check className="size-3.5" strokeWidth={2.5} aria-hidden />
     </span>
   ),
   error: (
-    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-danger-wash text-danger  ">
+    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-danger-wash text-danger">
       <AlertCircle className="size-3.5" strokeWidth={2.25} aria-hidden />
     </span>
   ),
@@ -39,14 +39,14 @@ export function Toaster() {
         <div
           key={item.id}
           role="status"
-          className="wg-toast pointer-events-auto flex items-start gap-3 border border-hairline bg-surface-raised p-3.5 shadow-lg  "
+          className="wg-toast pointer-events-auto flex items-start gap-3 border border-hairline bg-surface-raised p-3.5 shadow-lg"
           style={{ borderRadius: 10 }}
         >
           {item.variant === "error" ? VARIANT_ICON.error : VARIANT_ICON.success}
           <div className="min-w-0 flex-1 pt-0.5">
-            <p className="text-[13px] font-medium text-ink ">{item.title}</p>
+            <p className="text-role-caption font-medium text-ink">{item.title}</p>
             {item.description ? (
-              <p className="mt-0.5 text-[13px] text-ink-subtle ">{item.description}</p>
+              <p className="mt-0.5 text-role-caption text-ink-subtle">{item.description}</p>
             ) : null}
           </div>
           <button

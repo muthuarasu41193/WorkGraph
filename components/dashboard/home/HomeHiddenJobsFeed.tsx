@@ -32,14 +32,14 @@ export default async function HomeHiddenJobsFeed() {
     <section className="space-y-3" aria-labelledby="home-hidden-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-fg-primary">
+          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-role-body-small font-semibold tracking-tight text-fg-primary">
             Hidden Jobs Feed
-            <span className="inline-flex items-center gap-1 rounded-full bg-positive-wash px-1.5 py-px text-[11px] font-medium text-positive  ">
+            <span className="inline-flex items-center gap-1 rounded-full bg-positive-wash px-1.5 py-px text-role-caption font-medium text-positive">
               <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
               Live
             </span>
           </h2>
-          <p className="mt-0.5 text-[13px] text-fg-secondary">
+          <p className="mt-0.5 text-role-caption text-fg-secondary">
             Latest from Reddit, Hacker News, and GitHub — {total.toLocaleString("en-IN")} opportunities indexed.
           </p>
         </div>
@@ -60,30 +60,30 @@ export default async function HomeHiddenJobsFeed() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised  ">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised">
           {items.map((item) => (
-            <li key={item.id} className="border-b border-hairline last:border-b-0 ">
-              <article className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken ">
+            <li key={item.id} className="border-b border-hairline last:border-b-0">
+              <article className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <Badge variant="outline" className={cn("h-5 px-1.5 text-[11px] capitalize", WG_PLATFORM_CHIP_CLASS)}>
+                    <Badge variant="outline" className={cn("h-5 px-1.5 text-role-caption capitalize", WG_PLATFORM_CHIP_CLASS)}>
                       {sourceLabel(item.source)}
                     </Badge>
-                    <span className="text-[12px] text-fg-secondary">{formatPostedAt(item.postedAt)}</span>
+                    <span className="text-role-caption text-fg-secondary">{formatPostedAt(item.postedAt)}</span>
                     {item.tags.includes("remote") ? (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-[11px]">
+                      <Badge variant="secondary" className="h-5 px-1.5 text-role-caption">
                         Remote
                       </Badge>
                     ) : null}
                   </div>
-                  <h3 className="mt-0.5 truncate text-[14px] font-semibold tracking-tight text-fg-primary">
+                  <h3 className="mt-0.5 truncate text-role-body-small font-semibold tracking-tight text-fg-primary">
                     {item.title}
                   </h3>
-                  <p className="truncate text-[12.5px] text-fg-secondary">
+                  <p className="truncate text-role-caption text-fg-secondary">
                     {[item.company, item.author, item.location].filter(Boolean).join(" · ") || "Community post"}
                   </p>
                 </div>
-                <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-2.5 text-[12px]">
+                <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-2.5 text-role-caption">
                   <a href={item.url} target="_blank" rel="noopener noreferrer">
                     Open post
                     <ExternalLink className={iconClass()} />

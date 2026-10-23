@@ -18,7 +18,7 @@ export default function AchievementDiscoverySection({ items }: Props) {
     >
       <ul className="space-y-4">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border border-accent-wash/50 bg-accent-wash/30 p-4  ">
+          <li key={i} className="rounded-lg border border-accent-wash/50 bg-accent-wash/30 p-4">
             <p className="font-medium">{item.question}</p>
             <p className="mt-2 text-sm text-muted-foreground">{item.context}</p>
             {item.relatedGap ? (

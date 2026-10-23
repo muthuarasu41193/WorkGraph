@@ -59,7 +59,7 @@ export default function EditHiringSignalPage() {
   return (
     <div className="space-y-10">
       {saveNotice ? (
-        <Alert className="border-positive-wash bg-positive-wash text-positive   ">
+        <Alert className="border-positive-wash bg-positive-wash text-positive">
           <CheckCircle2 className="h-4 w-4 text-positive" aria-hidden />
           <AlertDescription>{saveNotice}</AlertDescription>
         </Alert>

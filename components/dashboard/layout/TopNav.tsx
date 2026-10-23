@@ -52,7 +52,7 @@ export default function TopNav() {
 
   return (
     <>
-      <header className="wg-dash-topnav sticky top-0 z-modal h-[var(--dash-topnav-h)] shrink-0 overflow-x-clip border-b border-hairline bg-surface-raised/80 backdrop-blur-md  ">
+      <header className="wg-dash-topnav sticky top-0 z-modal h-[var(--dash-topnav-h)] shrink-0 overflow-x-clip border-b border-hairline bg-surface-raised/80 backdrop-blur-md">
         <div className="flex h-full items-center gap-2 px-3 md:gap-3 md:px-5">
           <div className="flex shrink-0 items-center gap-2 md:hidden">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -101,10 +101,10 @@ export default function TopNav() {
                 aria-label={`${liveListings.toLocaleString()} live listings`}
               >
                 <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-positive" aria-hidden />
-                <span className="text-[12.5px] font-medium tabular-nums text-positive">
+                <span className="text-role-caption font-medium tabular-nums text-positive">
                   {liveListings.toLocaleString()}
                 </span>
-                <span className="hidden text-[12.5px] font-medium text-positive md:inline">
+                <span className="hidden text-role-caption font-medium text-positive md:inline">
                   live
                 </span>
               </span>

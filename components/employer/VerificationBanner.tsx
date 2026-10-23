@@ -40,12 +40,12 @@ export default function VerificationBanner({ profile, onUpdated }: Props) {
 
   if (local.verification_status === "verified") {
     return (
-      <Alert className="border-positive-wash bg-positive-wash/80 ">
+      <Alert className="border-positive-wash bg-positive-wash/80">
         <BadgeCheck className={iconClass("inline", "text-positive")} />
-        <AlertTitle className="text-positive ">
+        <AlertTitle className="text-positive">
           {VERIFICATION_STATUS_LABELS.verified}
         </AlertTitle>
-        <AlertDescription className="text-positive ">
+        <AlertDescription className="text-positive">
           Your public company page is live at{" "}
           <Link
             href={`/company/${local.company_slug}`}

@@ -191,7 +191,7 @@ export default function Navbar() {
 
             <button
               type="button"
-              className="inline-flex size-10 items-center justify-center rounded-lg text-fg-primary transition-colors hover:bg-scrim/5 md:hidden  dark:hover:bg-surface/10"
+              className="inline-flex size-10 items-center justify-center rounded-lg text-fg-primary transition-colors hover:bg-scrim/5 md:hidden dark:hover:bg-surface/10"
               onClick={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
@@ -215,7 +215,7 @@ export default function Navbar() {
               }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-border-default bg-surface md:hidden  "
+              className="overflow-hidden border-t border-border-default bg-surface md:hidden"
             >
               <div className="flex h-full flex-col px-4 py-6 sm:px-6">
                 <ul className="flex flex-col gap-1" role="list">
@@ -249,7 +249,7 @@ export default function Navbar() {
                   ))}
                 </ul>
 
-                <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6 ">
+                <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6">
                   <Button variant="outline" size="lg" className="h-12 w-full rounded-full" asChild>
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       Sign in

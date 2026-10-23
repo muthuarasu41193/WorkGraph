@@ -29,7 +29,7 @@ export function Logo({ className, href = "/" }: LogoProps) {
           className="opacity-90"
         />
       </svg>
-      <span className="font-heading text-xl font-bold tracking-tight text-fg-primary lowercase ">
+      <span className="font-heading text-xl font-bold tracking-tight text-fg-primary lowercase">
         workgraph
       </span>
     </Link>
