@@ -23,6 +23,7 @@ export async function GET(request: Request) {
     pageSize,
     filters: parsed.filters,
     rankByProfile: parsed.rankByProfile,
+    includeHiringSignals: searchParams.get("signals") !== "0",
     profile: {
       skills: parsed.profileSkills,
       headline: parsed.profileHeadline,
