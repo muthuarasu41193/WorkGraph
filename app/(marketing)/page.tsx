@@ -9,6 +9,7 @@ import { MatchScore } from "@/components/product/MatchScore"
 import { Text } from "@/components/ui/text"
 import { jobCardView, parseMatchPercent } from "@/lib/job-feed"
 import { fetchLiveJobsPage, mapJobRowToCard } from "@/lib/jobs-catalog"
+import { countedAtLabel } from "@/lib/credibility"
 import { getConsentedTestimonials, getIndexStats } from "@/lib/social-proof-server"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import type { IndexStats } from "@/lib/social-proof-server"
@@ -47,6 +48,7 @@ export default async function HomePage() {
       return row ? mapJobRowToCard(row, []) : null
     })(),
   ])
+  const countedAt = new Date().toISOString()
   const view = demo ? jobCardView(demo) : null
   const score = demo ? parseMatchPercent(demo.matchLabel) : null
 
@@ -67,6 +69,9 @@ export default async function HomePage() {
           <div className="mt-3">
             <IndexNumbers stats={stats} />
           </div>
+          {countedAtLabel(countedAt) && [stats.liveJobs, stats.postedLast24Hours, stats.verifiedEmployers].some((value) => value != null) ? (
+            <Text role="caption" className="mt-2 text-ink-subtle">{countedAtLabel(countedAt)}</Text>
+          ) : null}
           <Text role="caption" className="mt-3 text-ink-subtle">
             Posted means the listing date we stored. It is not a verification time. Suspected scams removed this month are not shown because that count is not stored.
           </Text>

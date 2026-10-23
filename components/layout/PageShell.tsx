@@ -1,6 +1,7 @@
 "use client";
 
 import { ConsentManager } from "@/components/consent/ConsentManager";
+import { FeedbackLink } from "@/components/trust/FeedbackLink";
 import { OptionalThirdPartyScripts } from "@/components/consent/OptionalThirdPartyScripts";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
@@ -8,6 +9,7 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 export function PageShell() {
   return (
     <>
+      <FeedbackLink />
       <ScrollProgress />
       <BackToTop />
       <ConsentManager />

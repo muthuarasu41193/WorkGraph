@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { AIProvenance } from "@/components/product/AIProvenance"
 import { cn } from "@/lib/utils"
 
 export type MatchRequirement = {
@@ -100,17 +101,24 @@ export function MatchScore({
         </span>
         <span className="min-w-0 text-role-caption text-ink">
           <span className="font-medium tabular-nums">{safeScore}</span>
-          <span className="text-ink-muted"> — {reason}</span>
+          <span className="text-ink-muted"> estimate — {reason}</span>
         </span>
       </button>
-      {open && requirements.length > 0 ? (
-        <ul className="mt-1 space-y-1 pl-7">
-          {requirements.map((item) => (
-            <li key={item.label} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
-              {item.met ? "Met" : "Not met"}: {item.label}
-            </li>
-          ))}
-        </ul>
+      {open ? (
+        <div className="mt-1 pl-7">
+          <AIProvenance summary="From skill overlap and title family. Not a chance of an offer.">
+            <p>The number does not change when you open this. Other people’s salaries are not part of it.</p>
+          </AIProvenance>
+          {requirements.length > 0 ? (
+            <ul className="mt-1 space-y-1">
+              {requirements.map((item) => (
+                <li key={item.label} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
+                  {item.met ? "Met" : "Not met"}: {item.label}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       ) : null}
     </div>
   )

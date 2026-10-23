@@ -39,8 +39,8 @@ function TestimonialCard({ item }: { item: TestimonialRow }) {
 
       {item.verified_outcome ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-full bg-success-50 px-2.5 py-1 text-xs font-bold text-success">
-            {item.verified_outcome}
+          <span className="rounded-full border border-hairline px-2.5 py-1 text-xs text-ink">
+            Reported outcome: {item.verified_outcome}
           </span>
         </div>
       ) : null}

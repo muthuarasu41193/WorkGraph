@@ -13,6 +13,7 @@ import { Text } from "@/components/ui/text"
 import { toast } from "@/hooks/use-toast"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
+import { AIProvenance } from "@/components/product/AIProvenance"
 import { buildJobSummary, jobSummaryLabel, sanitizeJobDescription } from "@/lib/job-summary"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { cn } from "@/lib/utils"
@@ -177,6 +178,7 @@ export function JobDecision({
         <Text role="body-small" className="text-ink-muted">
           Unmet requirements are not listed. This posting does not include a separate requirements checklist.
         </Text>
+        <AIProvenance summary="The match line is an estimate when a profile was compared. It is not a hiring decision." />
         <Link href="/interview-vault" className="inline-flex min-h-11 items-center text-role-body-small text-accent">
           Prepare with the interview vault
         </Link>
@@ -190,7 +192,11 @@ export function JobDecision({
             {summary.text}
           </Text>
         ) : null}
-        <Text role="caption" className="text-ink-subtle">This is the listing text from the ingest, not a generated summary.</Text>
+        {summary?.kind === "ai" ? (
+          <AIProvenance label="AI summary" summary="This sentence was generated and stored. It is not the original posting." href="/trust#match" hrefLabel="What generated text means" />
+        ) : (
+          <Text role="caption" className="text-ink-subtle">This is the listing text from the ingest, not a generated summary.</Text>
+        )}
         <Text role="body" className="whitespace-pre-wrap">{storedDescription || "No description is stored for this listing."}</Text>
         {job.applyUrl ? (
           <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-role-body text-accent">

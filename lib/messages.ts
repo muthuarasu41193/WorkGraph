@@ -44,7 +44,7 @@ export const messages = {
 
   contactEyebrow: "Contact",
   contactHeading: "Talk about a job search",
-  contactBody: "Have a question about WorkGraph or a partnership? Send it here.",
+  contactBody: "Have a question or feedback? A person reads this form. A reply time is not published.",
   contactSend: "Send message",
   contactSending: "Sending",
   contactSent: "Message sent.",

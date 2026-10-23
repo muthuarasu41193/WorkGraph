@@ -7,15 +7,8 @@ export default function JsonLd() {
     name: SITE.name,
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web",
-    description:
-      "AI-powered job intelligence platform. Discover hidden jobs from Reddit, Discord and 50+ private sources.",
+    description: SITE.description,
     url: SITE.url,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      description: "Free Starter plan available",
-    },
     publisher: {
       "@type": "Organization",
       name: SITE.name,

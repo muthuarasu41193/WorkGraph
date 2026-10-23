@@ -4,8 +4,7 @@ import { getSiteUrl } from "./site-url";
 export const SITE = {
   name: "WorkGraph",
   tagline: "AI-powered job intelligence",
-  description:
-    "Discover hidden roles, sharpen your resume, and make smarter career moves — before everyone else sees the opportunity.",
+  description: "Search the live job index. Match notes are estimates when a profile is available.",
   url: getSiteUrl(),
   email: "hello@getworkgraph.com",
 } as const;
@@ -98,7 +97,7 @@ export const STEPS = [
   {
     step: "02",
     title: "AI scans the market",
-    description: "Our engine monitors 50+ sources and matches roles to your skills.",
+    description: "The index is searched with the skills on the profile. Match notes are estimates.",
   },
   {
     step: "03",

@@ -63,7 +63,12 @@ export function SalaryDisplay({ salary, loading = false, error, className }: Sal
       <span className="font-medium tabular-nums">{salaryText(salary)}</span>
       {salary.kind === "converted" ? (
         <span className="mt-0.5 block text-role-caption text-ink-muted">
-          Converted from {salary.originalLabel ?? salary.convertedFrom}. Rate date {salary.rateDate}.
+          Converted from {salary.originalLabel ?? salary.convertedFrom}. Rate date {salary.rateDate}. This is not an estimate from other salaries.
+        </span>
+      ) : null}
+      {salary.kind === "stated" || salary.kind === "range" || salary.kind === "single" ? (
+        <span className="mt-0.5 block text-role-caption text-ink-muted">
+          This is the figure stored on the listing. It is not an estimate from other salaries.
         </span>
       ) : null}
     </p>

@@ -11,6 +11,7 @@ import { type JobCardData } from "@/lib/job-card-data";
 import { formatJobFreshness } from "@/lib/job-freshness";
 import { jobSourceName } from "@/lib/job-apply";
 import { matchReason } from "@/lib/job-match-reason";
+import { AIProvenance } from "@/components/product/AIProvenance";
 import { buildJobSummary, jobSummaryLabel } from "@/lib/job-summary";
 import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
@@ -235,10 +236,15 @@ export default function JobCard({
             </div>
           ) : null}
           {summary ? (
-            <p className="measure text-role-body-small mt-2 text-ink-muted">
-              <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
-              {summary.text}
-            </p>
+            <div className="mt-2">
+              <p className="measure text-role-body-small text-ink-muted">
+                <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
+                {summary.text}
+              </p>
+              {summary.kind === "ai" ? (
+                <AIProvenance label="AI summary" summary="Generated and stored. Not the original posting." href="/trust#match" hrefLabel="What generated text means" />
+              ) : null}
+            </div>
           ) : null}
         </div>
       </div>

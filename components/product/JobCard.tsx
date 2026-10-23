@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { FreshnessIndicator, type FreshnessIndicatorProps } from "@/components/product/FreshnessIndicator"
 import { MatchScore, type MatchScoreProps } from "@/components/product/MatchScore"
@@ -88,7 +89,10 @@ export function ProductJobCard({
           </h3>
           <p className="text-role-caption truncate text-ink" title={company}>
             {company}
-            {companyVerified ? <span className="text-positive"> · Company domain verified</span> : <span className="text-ink-muted"> · Company not verified</span>}
+            {" · "}
+            <Link href="/trust#verified-employer" className={companyVerified ? "text-positive" : "text-ink-muted"}>
+              {companyVerified ? "Company domain verified" : "Company not verified"}
+            </Link>
           </p>
           <p className="text-role-caption truncate text-ink-subtle" title={`${location} · ${remoteType}`}>
             {location} · {remoteType}
