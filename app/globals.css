@@ -152,6 +152,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
   max-width: 100%;
   overflow-x: clip;
   font-family: var(--wg-font-sans);
@@ -160,6 +163,12 @@ body {
 }
 
 @media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+
   .wg-touch-target {
     position: relative;
   }
@@ -169,8 +178,8 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     transform: translate(-50%, -50%);
   }
 }

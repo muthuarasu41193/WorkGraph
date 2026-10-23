@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useSyncExternalStore } from "react"
+import { useMemo, useRef, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import {
   DndContext,
@@ -12,6 +12,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core"
 import { EmptyState } from "@/components/states/EmptyState"
+import { SwipeRow } from "@/components/states/SwipeRow"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -104,6 +105,12 @@ export function TrackerBoard({
   const [bulkStatus, setBulkStatus] = useState<ApplicationStatus | "">("")
   const [confirmBulk, setConfirmBulk] = useState(false)
   const [overId, setOverId] = useState<string | null>(null)
+  const [companyError, setCompanyError] = useState("")
+  const [roleError, setRoleError] = useState("")
+  const [errorSummary, setErrorSummary] = useState("")
+  const [logging, setLogging] = useState(false)
+  const companyRef = useRef<HTMLInputElement>(null)
+  const roleRef = useRef<HTMLInputElement>(null)
 
   const detail = rows.find((row) => row.id === detailId) ?? null
   const visible = useMemo(() => {
@@ -153,26 +160,47 @@ export function TrackerBoard({
     void move(String(event.active.id), status)
   }
 
+  function neighbor(status: ApplicationStatus, direction: -1 | 1): ApplicationStatus | null {
+    const index = APPLICATION_STATUSES.indexOf(status)
+    return APPLICATION_STATUSES[index + direction] ?? null
+  }
+
   async function quickAdd(event: React.FormEvent) {
     event.preventDefault()
     const company = quickCompany.trim()
     const role = quickRole.trim()
-    if (!company || !role) return
-    const res = await fetch("/api/applications", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ company, role, status: "applied" }),
-    })
-    const data = (await res.json()) as { ok?: boolean; application?: Application }
-    if (!res.ok || !data.application) {
-      toast({ title: "Could not log that application", variant: "error" })
+    const companyMessage = company ? "" : messages.trackerCompanyMissing
+    const roleMessage = role ? "" : messages.trackerRoleMissing
+    setCompanyError(companyMessage)
+    setRoleError(roleMessage)
+    const count = Number(Boolean(companyMessage)) + Number(Boolean(roleMessage))
+    if (count > 0) {
+      setErrorSummary(messages.trackerErrorCount(count))
+      if (companyMessage) companyRef.current?.focus()
+      else roleRef.current?.focus()
       return
     }
-    setRows((current) => [data.application!, ...current])
-    setQuickCompany("")
-    setQuickRole("")
-    toast({ title: "Logged the application", variant: "success" })
+    setErrorSummary("")
+    setLogging(true)
+    try {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company, role, status: "applied" }),
+      })
+      const data = (await res.json()) as { ok?: boolean; application?: Application }
+      if (!res.ok || !data.application) {
+        toast({ title: messages.trackerLogFailed, variant: "error" })
+        return
+      }
+      setRows((current) => [data.application!, ...current])
+      setQuickCompany("")
+      setQuickRole("")
+      toast({ title: messages.trackerLogged, variant: "success" })
+    } finally {
+      setLogging(false)
+    }
   }
 
   async function importCsv(file: File) {
@@ -304,7 +332,7 @@ export function TrackerBoard({
   )
 
   return (
-    <main className="space-y-4 p-3">
+    <main className="flex flex-col gap-4 p-3">
       <div className="flex flex-wrap items-center gap-2">
         <Text as="h2" role="heading">Tracker</Text>
         <div className="ml-auto flex gap-2">
@@ -312,10 +340,38 @@ export function TrackerBoard({
           <Button type="button" variant={viewChoice === "table" ? "default" : "outline"} className="min-h-11" onClick={() => setView("table")}>Table</Button>
         </div>
       </div>
-      <form className="flex flex-wrap gap-2" onSubmit={(event) => void quickAdd(event)}>
-        <Input className="min-h-11 max-w-xs" aria-label="Company" placeholder="Company" value={quickCompany} onChange={(event) => setQuickCompany(event.target.value)} />
-        <Input className="min-h-11 max-w-xs" aria-label="Role" placeholder="Role" value={quickRole} onChange={(event) => setQuickRole(event.target.value)} />
-        <Button type="submit" className="min-h-11">Log application</Button>
+      <form className="order-last flex flex-wrap gap-2 bg-surface py-2 md:order-none" onSubmit={(event) => void quickAdd(event)}>
+        <div>
+          <Input
+            ref={companyRef}
+            className="min-h-11 max-w-xs"
+            aria-label="Company"
+            aria-invalid={Boolean(companyError)}
+            aria-describedby="tracker-company-error"
+            autoComplete="organization"
+            placeholder="Company"
+            value={quickCompany}
+            onChange={(event) => setQuickCompany(event.target.value)}
+            onBlur={() => setCompanyError(quickCompany.trim() ? "" : messages.trackerCompanyMissing)}
+          />
+          <p id="tracker-company-error" className="min-h-5 text-role-caption text-danger">{companyError}</p>
+        </div>
+        <div>
+          <Input
+            ref={roleRef}
+            className="min-h-11 max-w-xs"
+            aria-label="Role"
+            aria-invalid={Boolean(roleError)}
+            aria-describedby="tracker-role-error"
+            autoComplete="organization-title"
+            placeholder="Role"
+            value={quickRole}
+            onChange={(event) => setQuickRole(event.target.value)}
+            onBlur={() => setRoleError(quickRole.trim() ? "" : messages.trackerRoleMissing)}
+          />
+          <p id="tracker-role-error" className="min-h-5 text-role-caption text-danger">{roleError}</p>
+        </div>
+        <Button type="submit" className="min-h-11" disabled={logging}>{logging ? messages.trackerLogging : messages.trackerLog}</Button>
         <label className="inline-flex min-h-11 items-center text-role-caption text-ink-muted">
           Import CSV
           <input className="ml-2" type="file" accept=".csv,text/csv" aria-label="CSV import" onChange={(event) => {
@@ -323,6 +379,7 @@ export function TrackerBoard({
             if (file) void importCsv(file)
           }} />
         </label>
+        <p className="min-h-5 w-full text-role-caption text-danger" role="status">{errorSummary}</p>
       </form>
       <div className="flex flex-wrap gap-2">
         <label className="text-role-caption text-ink-muted">
@@ -382,7 +439,29 @@ export function TrackerBoard({
         />
       ) : null}
       {rows.length > 0 && viewChoice === "board" ? board : null}
-      {rows.length > 0 && viewChoice === "table" ? table : null}
+      {rows.length > 0 && viewChoice === "table" ? (
+        <>
+          <div className="space-y-2 md:hidden">
+            {visible.map((row) => (
+              <SwipeRow
+                key={row.id}
+                title={row.role}
+                detail={row.company}
+                onOpen={() => setDetailId(row.id)}
+                onBack={() => {
+                  const status = neighbor(row.status, -1)
+                  if (status) void move(row.id, status)
+                }}
+                onForward={() => {
+                  const status = neighbor(row.status, 1)
+                  if (status) void move(row.id, status)
+                }}
+              />
+            ))}
+          </div>
+          <div className="hidden overflow-x-auto md:block">{table}</div>
+        </>
+      ) : null}
       <section className="rounded-card border border-hairline bg-surface-raised p-3">
         <Text as="h3" role="subheading">What the tracker can measure</Text>
         <ul className="mt-2 space-y-2 text-role-body-small">

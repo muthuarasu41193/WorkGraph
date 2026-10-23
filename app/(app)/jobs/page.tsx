@@ -1,5 +1,6 @@
 import { cookies } from "next/headers"
 import { JobFeed, type AppliedRef } from "@/components/jobs/JobFeed"
+import { PullToRefresh } from "@/components/states/PullToRefresh"
 import { getSessionUser } from "@/lib/auth/session-server"
 import { listApplicationsForUser } from "@/lib/applications-server"
 import { JOB_FEED_PAGE_SIZE, parseFeedSort, relaxQuery } from "@/lib/job-feed"
@@ -79,20 +80,22 @@ export default async function JobsPage({
 
   const jobs: RecommendedJobCard[] = result.jobs ?? []
   return (
-    <JobFeed
-      key={params.toString()}
-      initial={{
-        jobs,
-        total: result.jobs ? result.total : 0,
-        hasMore: result.hasMore,
-        error: result.jobs ? null : "Jobs could not be loaded. Refresh the page to try again.",
-        relaxedQuery,
-        originalQuery,
-      }}
-      userId={user?.id ?? null}
-      applications={applications}
-      skills={skills}
-      search={params.toString()}
-    />
+    <PullToRefresh>
+      <JobFeed
+        key={params.toString()}
+        initial={{
+          jobs,
+          total: result.jobs ? result.total : 0,
+          hasMore: result.hasMore,
+          error: result.jobs ? null : "Jobs could not be loaded. Refresh the page to try again.",
+          relaxedQuery,
+          originalQuery,
+        }}
+        userId={user?.id ?? null}
+        applications={applications}
+        skills={skills}
+        search={params.toString()}
+      />
+    </PullToRefresh>
   )
 }

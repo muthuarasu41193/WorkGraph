@@ -23,11 +23,23 @@ import {
 
 const STEP_LABEL = ["See jobs", "Resume", "Review extraction", "Target role", "Location", "Constraints"]
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  autoComplete,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  autoComplete?: string
+}) {
+  const id = `onboarding-${label.toLowerCase().replace(/\s+/g, "-")}`
   return (
-    <label className="block">
+    <label className="block" htmlFor={id}>
       <span className="text-role-caption text-ink-muted">{label} · Extracted</span>
-      <Input className="mt-1 min-h-11" value={value} onChange={(event) => onChange(event.target.value)} />
+      <Input id={id} className="mt-1 min-h-11" autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} />
+      <span className="block min-h-5 text-role-caption text-danger" />
     </label>
   )
 }
@@ -43,6 +55,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
   const [jobsError, setJobsError] = useState<string | null>(null)
   const [phase, setPhase] = useState<"idle" | "uploading" | "reading" | "done" | "error">("idle")
   const [phaseError, setPhaseError] = useState<string | null>(null)
+  const [roleNote, setRoleNote] = useState("")
   const searchTimer = useRef<number | null>(null)
 
   function update(partial: Partial<OnboardingDraft>) {
@@ -131,6 +144,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
         <Text role="caption" className="text-ink-muted">
           Step {position + 1} of {steps.length}: {STEP_LABEL[draft.step] ?? "Onboarding"}
         </Text>
+        <Text role="caption" className="text-ink-subtle">{messages.onboardingSaved}</Text>
         <div className="mt-2 h-1 bg-surface-sunken" aria-hidden>
           <div className="h-1 bg-accent" style={{ width: `${((position + 1) / steps.length) * 100}%` }} />
         </div>
@@ -215,7 +229,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
           <section className="mt-4 space-y-3">
             <Text as="h2" role="heading">Review what was extracted</Text>
             <Text role="body-small">Every value below was extracted. Edits stay on this device. The original extraction was already written to your profile by the parser. Open your profile if you want those edits saved there.</Text>
-            <Field label="Name" value={draft.extracted.full_name} onChange={(full_name) => update({ extracted: { ...draft.extracted!, full_name } })} />
+            <Field label="Name" autoComplete="name" value={draft.extracted.full_name} onChange={(full_name) => update({ extracted: { ...draft.extracted!, full_name } })} />
             <Field label="Headline" value={draft.extracted.headline} onChange={(headline) => update({ extracted: { ...draft.extracted!, headline } })} />
             <Field label="Summary" value={draft.extracted.summary} onChange={(summary) => update({ extracted: { ...draft.extracted!, summary } })} />
             <Field label="Skills" value={draft.extracted.skills} onChange={(skills) => update({ extracted: { ...draft.extracted!, skills } })} />
@@ -228,14 +242,23 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
           <section className="mt-4 space-y-3">
             <Text as="h2" role="heading">Target role</Text>
             <Text role="body-small">This becomes the search that opens when you finish.</Text>
-            <Input className="min-h-11" aria-label="Target role" value={draft.role} onChange={(event) => update({ role: event.target.value })} />
+            <Input
+              className="min-h-11"
+              aria-label="Target role"
+              autoComplete="organization-title"
+              aria-describedby="onboarding-role-error"
+              value={draft.role}
+              onChange={(event) => update({ role: event.target.value })}
+              onBlur={(event) => setRoleNote(event.currentTarget.value.trim() ? "" : messages.onboardingRoleMissing)}
+            />
+            <p id="onboarding-role-error" className="min-h-5 text-role-caption text-danger">{roleNote}</p>
           </section>
         ) : null}
 
         {draft.step === 4 ? (
           <section className="mt-4 space-y-3">
             <Text as="h2" role="heading">Location and remote preference</Text>
-            <Input className="min-h-11" aria-label="Location" value={draft.location} onChange={(event) => update({ location: event.target.value })} />
+            <Input className="min-h-11" aria-label="Location" autoComplete="address-level2" value={draft.location} onChange={(event) => update({ location: event.target.value })} />
             <div className="flex flex-wrap gap-2">
               {(["remote", "hybrid", "onsite"] as const).map((mode) => (
                 <button
@@ -260,7 +283,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
             </label>
             <label className="block text-role-caption text-ink-muted">
               Salary expectation
-              <Input className="mt-1 min-h-11" value={draft.salary} onChange={(event) => update({ salary: event.target.value })} placeholder="Not prefilled — no market data is available" />
+              <Input className="mt-1 min-h-11" inputMode="decimal" autoComplete="off" value={draft.salary} onChange={(event) => update({ salary: event.target.value })} placeholder="Not prefilled — no market data is available" />
             </label>
             <label className="block text-role-caption text-ink-muted">
               Deal-breakers
