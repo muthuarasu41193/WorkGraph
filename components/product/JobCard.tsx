@@ -9,7 +9,7 @@ import { TrustIndicator, type TrustIndicatorProps } from "@/components/product/T
 
 /**
  * Scanning card for a role. Compact and expanded share the same actions, which stay in the tab order
- * without opening the card. This is the new composite. The live feed still uses components/design-system/JobCard.
+ * without opening the card. This is the new composite. The profile jobs tab still uses components/design-system/JobCard.
  */
 export type ProductJobCardProps = {
   title: string
@@ -31,6 +31,10 @@ export type ProductJobCardProps = {
   onSave?: () => void
   onDismiss?: () => void
   onApply?: () => void
+  /** Names the destination. Defaults to Apply so existing callers stay unchanged. */
+  applyLabel?: string
+  /** Inline state such as saved or already in the tracker. */
+  statusNote?: string
   className?: string
 }
 
@@ -54,6 +58,8 @@ export function ProductJobCard({
   onSave,
   onDismiss,
   onApply,
+  applyLabel = "Apply",
+  statusNote,
   className,
 }: ProductJobCardProps) {
   if (loading) {
@@ -100,6 +106,7 @@ export function ProductJobCard({
           {description}
         </p>
       ) : null}
+      {statusNote ? <p className="mt-2 text-role-caption text-ink-muted">{statusNote}</p> : null}
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"
@@ -124,7 +131,7 @@ export function ProductJobCard({
           onClick={onApply}
           className="inline-flex min-h-11 items-center rounded-control bg-accent px-3 text-role-caption text-accent-ink hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50"
         >
-          Apply
+          {applyLabel}
         </button>
       </div>
     </article>

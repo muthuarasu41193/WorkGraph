@@ -30,7 +30,7 @@ export type JobCardData = {
   generatedSummary?: string | null;
 };
 
-const SOURCE_LABELS: Record<JobFeedSource, string> = {
+export const SOURCE_LABELS: Record<JobFeedSource, string> = {
   greenhouse: "Greenhouse",
   lever: "Lever",
   adzuna: "Adzuna",

@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils"
  */
 export type SourceAttributionProps = {
   source: string
-  href: string
+  /** Omitted when the listing has no public URL. */
+  href?: string
   attribution?: string
   loading?: boolean
   error?: string
@@ -25,14 +26,18 @@ export function SourceAttribution({ source, href, attribution, loading = false, 
   }
   return (
     <p className={cn("text-role-caption text-ink-muted", className)}>
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex min-h-11 items-center underline-offset-4 hover:text-ink hover:underline focus-visible:ring-2 focus-visible:ring-accent"
-      >
-        via {source}
-      </a>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 items-center underline-offset-4 hover:text-ink hover:underline focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          via {source}
+        </a>
+      ) : (
+        <span className="inline-flex min-h-11 items-center">via {source}</span>
+      )}
       {attribution ? <span className="mt-0.5 block text-ink-subtle">{attribution}</span> : null}
     </p>
   )
