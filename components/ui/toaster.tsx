@@ -48,6 +48,18 @@ export function Toaster() {
             {item.description ? (
               <p className="mt-0.5 text-role-caption text-ink-subtle">{item.description}</p>
             ) : null}
+            {item.onUndo ? (
+              <button
+                type="button"
+                className="mt-2 inline-flex min-h-11 items-center text-role-caption text-accent"
+                onClick={() => {
+                  item.onUndo?.()
+                  dismiss(item.id)
+                }}
+              >
+                {item.undoLabel ?? "Undo"}
+              </button>
+            ) : null}
           </div>
           <button
             type="button"

@@ -11,11 +11,13 @@ import {
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core"
+import { EmptyState } from "@/components/states/EmptyState"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Text } from "@/components/ui/text"
 import { toast } from "@/hooks/use-toast"
+import { enqueueOfflineAction } from "@/lib/offline-queue"
 import {
   APPLICATION_COLUMNS,
   APPLICATION_STATUSES,
@@ -117,12 +119,26 @@ export function TrackerBoard({
     window.dispatchEvent(new Event("wg-tracker-view"))
   }
 
-  async function move(id: string, status: ApplicationStatus) {
+  async function move(id: string, status: ApplicationStatus, announce = true) {
     const previous = rows
+    const previousStatus = rows.find((row) => row.id === id)?.status
     setRows((current) => current.map((row) => (row.id === id ? { ...row, status } : row)))
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      enqueueOfflineAction({ id, kind: "application-status", applicationId: id, status, label: "Move" })
+      if (announce) toast({ title: "Moved on this device", description: "This saves when you are back online." })
+      return
+    }
     try {
       const saved = await patchApplication(id, { status })
       setRows((current) => current.map((row) => (row.id === id ? saved : row)))
+      if (announce && previousStatus && previousStatus !== status) {
+        toast({
+          title: `Moved to ${APPLICATION_STATUS_LABELS[status]}`,
+          onUndo: () => {
+            void move(id, previousStatus, false)
+          },
+        })
+      }
     } catch {
       setRows(previous)
       toast({ title: "Could not move that application", description: "It is back in the previous stage.", variant: "error" })
@@ -342,13 +358,27 @@ export function TrackerBoard({
           </div>
         </div>
       ) : null}
-      {loadError ? <Text role="body" className="text-danger">{loadError}</Text> : null}
-      {!loadError && rows.length === 0 ? (
-        <div className="rounded-card border border-hairline p-4">
-          <Text role="body">Applications you log will show up here.</Text>
-          <Link href="/jobs" className="mt-2 inline-flex min-h-11 items-center text-accent">Find a role</Link>
-          <Text role="caption" className="mt-2 text-ink-muted">Or import a CSV with columns company, role, status, applied_date, job_url, notes.</Text>
+      {loadError ? (
+        <div className="space-y-2">
+          <Text role="body" className="text-danger">{loadError}</Text>
+          <Button type="button" className="min-h-11" onClick={() => window.location.reload()}>Try again</Button>
         </div>
+      ) : null}
+      {!loadError && rows.length === 0 ? (
+        <EmptyState
+          title="Applications you log will show up here"
+          reason="The tracker is empty because nothing has been logged on this account."
+          actionLabel="Find a role"
+          actionHref="/jobs"
+        />
+      ) : null}
+      {!loadError && rows.length > 0 && visible.length === 0 && statusFilter !== "all" ? (
+        <EmptyState
+          title="No applications in this stage"
+          reason={`${APPLICATION_STATUS_LABELS[statusFilter]} is the filter hiding applications.`}
+          actionLabel="Show all stages"
+          onAction={() => setStatusFilter("all")}
+        />
       ) : null}
       {rows.length > 0 && viewChoice === "board" ? board : null}
       {rows.length > 0 && viewChoice === "table" ? table : null}

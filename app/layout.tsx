@@ -6,6 +6,8 @@ import { SITE } from "@/lib/constants";
 import { metadataBaseUrl, routeShareMetadata } from "@/lib/seo";
 import { PageShell } from "@/components/layout/PageShell";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { OfflineBanner } from "@/components/states/OfflineBanner";
+import { Toaster } from "@/components/ui/toaster";
 import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
@@ -92,6 +94,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PageTransition>
             {children}
           </PageTransition>
+          <OfflineBanner />
+          <Toaster />
           <PageShell />
         </ThemeProvider>
       </body>

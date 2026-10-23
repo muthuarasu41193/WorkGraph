@@ -3,6 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 import { ProductJobCard } from "@/components/product/JobCard"
+import { EmptyState } from "@/components/states/EmptyState"
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -563,8 +564,21 @@ export function JobFeed({
         >
           {initial.error ? null : rows.length === 0 ? (
             <div className="p-4">
-              <Text role="body">No roles match these filters.</Text>
-              <button type="button" className="mt-2 min-h-11 text-role-body-small text-accent" onClick={clearAll}>Clear all filters</button>
+              {appliedChips[0] ? (
+                <EmptyState
+                  title="No roles match these filters"
+                  reason={`${appliedChips[0].label} is the filter hiding results.`}
+                  actionLabel={`Remove ${appliedChips[0].label}`}
+                  onAction={() => clearChip(appliedChips[0].id)}
+                />
+              ) : (
+                <EmptyState
+                  title="No roles are listed"
+                  reason="The index returned an empty page for this view."
+                  actionLabel="Reload the index"
+                  onAction={() => router.refresh()}
+                />
+              )}
             </div>
           ) : (
             <div className="relative" style={{ height: rows.length * ROW_HEIGHT }}>
