@@ -28,7 +28,7 @@ export function HomeJobMatchesSkeleton() {
 
 export default function HomeJobMatchesSection({
   jobs,
-  feedKind,
+  feedKind: _feedKind,
 }: {
   jobs: JobMatchPreviewExt[];
   feedKind: "live" | "demo";
@@ -44,7 +44,7 @@ export default function HomeJobMatchesSection({
             Recommended Jobs
           </h2>
           <p className="mt-0.5 text-role-caption text-fg-secondary">
-            {`Top roles ranked by AI match score${feedKind === "live" ? " · live catalog" : ""}.`}
+            Top roles ranked by skill overlap with your profile.
           </p>
         </div>
         <Button

@@ -17,6 +17,7 @@ type Props = {
   jobPipeline: JobPipelineCounts;
   profileCompleteness: number;
   hasResume?: boolean;
+  catalogUpdatedAt?: string | null;
 };
 
 /** Jobs tab content — loaded on demand so Home and other routes stay fast. */
@@ -32,18 +33,19 @@ export default function ProfileJobsView({
   jobPipeline,
   profileCompleteness,
   hasResume = false,
+  catalogUpdatedAt = null,
 }: Props) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHero
-        title="Job Discovery"
-        subtitle="Browse live listings ranked by AI match score for your skills and experience."
+        title="Jobs"
+        subtitle="Ranked by how your skills overlap each role."
       />
       <ProfileJobDashboard
         stats={jobPipeline}
         profileCompleteness={profileCompleteness}
-        liveListings={liveListings}
         matchedListings={matchedListings}
+        catalogUpdatedAt={catalogUpdatedAt}
       />
       <RecommendedJobsSection
         jobs={jobs}

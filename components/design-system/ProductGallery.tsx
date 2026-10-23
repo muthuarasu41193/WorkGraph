@@ -45,9 +45,10 @@ function Specimens() {
   return (
     <div>
       <Block title="JobCard">
-        <ProductJobCard {...JOB} onSave={() => undefined} onDismiss={() => undefined} onApply={() => undefined} />
+        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" onSave={() => undefined} onDismiss={() => undefined} onApply={() => undefined} />
         <ProductJobCard
           {...JOB}
+          applyLabel="Apply on Greenhouse"
           expanded
           saved
           trust={{ tone: "caution", reason: "No company domain listed" }}
@@ -55,8 +56,8 @@ function Specimens() {
           onDismiss={() => undefined}
           onApply={() => undefined}
         />
-        <ProductJobCard {...JOB} loading />
-        <ProductJobCard {...JOB} error="This listing could not be refreshed." disabled />
+        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" loading />
+        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" error="This listing could not be refreshed." disabled />
       </Block>
       <Block title="MatchScore">
         <MatchScore {...JOB.match} />

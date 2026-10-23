@@ -97,15 +97,14 @@ export default function TopNav() {
             </div>
             {liveListings > 0 ? (
               <span
-                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-positive-wash bg-positive-wash px-2"
-                aria-label={`${liveListings.toLocaleString()} live listings`}
+                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-hairline bg-surface px-2"
+                aria-label={`${liveListings.toLocaleString()} jobs in catalog`}
               >
-                <span className="wg-live-dot size-1.5 shrink-0 rounded-full bg-positive" aria-hidden />
-                <span className="text-role-caption font-medium tabular-nums text-positive">
+                <span className="text-role-caption font-medium tabular-nums text-ink">
                   {liveListings.toLocaleString()}
                 </span>
-                <span className="hidden text-role-caption font-medium text-positive md:inline">
-                  live
+                <span className="hidden text-role-caption font-medium text-ink-muted md:inline">
+                  in catalog
                 </span>
               </span>
             ) : null}

@@ -14,6 +14,21 @@
   padding: 0;
 }
 
+.jobs-feed {
+  min-width: 0;
+}
+
+.jobs-feed .filter-bar,
+.jobs-feed .filter-tags-bar,
+.jobs-feed .results-bar {
+  margin-inline: 0;
+  max-width: 100%;
+}
+
+.jobs-feed .filter-bar {
+  top: 0;
+}
+
 .filter-bar {
   display: flex;
   align-items: center;

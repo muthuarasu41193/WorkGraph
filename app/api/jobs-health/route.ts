@@ -51,7 +51,7 @@ export async function GET() {
     hint =
       "Table is readable but empty — run ingest (GitHub Action or python -m app.main ingest) against this project's Postgres, and confirm Vercel env points at the same Supabase project.";
   } else {
-    hint = "Looks healthy — profile should show live listings for signed-in users.";
+    hint = "Looks healthy — the signed-in jobs page should show catalog rows.";
   }
 
   return NextResponse.json({

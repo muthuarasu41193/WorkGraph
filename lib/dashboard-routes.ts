@@ -49,7 +49,7 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     label: "Jobs",
     shortLabel: "Jobs",
     icon: Briefcase,
-    description: "Browse live job listings matched to your profile",
+    description: "Browse catalog roles ranked against your profile",
   },
   {
     id: "resume-intelligence",

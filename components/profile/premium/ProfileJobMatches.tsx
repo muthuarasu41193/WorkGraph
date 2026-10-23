@@ -38,7 +38,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
             <>
               Browse{" "}
               <a href="#recommended-jobs" className="font-medium text-primary underline-offset-2 hover:underline">
-                {liveListings.toLocaleString()} live listings
+                {liveListings.toLocaleString()} jobs in catalog
               </a>{" "}
               below — ranked for your skills.
             </>

@@ -13,6 +13,7 @@ import { Text } from "@/components/ui/text"
 import { toast } from "@/hooks/use-toast"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
+import { buildJobSummary, jobSummaryLabel, sanitizeJobDescription } from "@/lib/job-summary"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { cn } from "@/lib/utils"
 
@@ -49,6 +50,8 @@ export function JobDecision({
   const router = useRouter()
   const collapsed = useSyncExternalStore(subscribeCollapse, () => window.localStorage.getItem("wg-shell-collapsed") === "1", () => false)
   const view = jobCardView(job)
+  const summary = buildJobSummary({ description: job.description, company: job.company })
+  const storedDescription = sanitizeJobDescription(job.description, job.company)
   const savedRaw = useSyncExternalStore(
     subscribeSaved,
     () => (userId ? window.localStorage.getItem(`wg-saved-catalog-jobs:${userId}`) ?? "" : ""),
@@ -181,8 +184,14 @@ export function JobDecision({
 
       <section className="mt-8 space-y-2">
         <Text as="h3" role="subheading">Role text we stored</Text>
+        {summary ? (
+          <Text role="body-small">
+            <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
+            {summary.text}
+          </Text>
+        ) : null}
         <Text role="caption" className="text-ink-subtle">This is the listing text from the ingest, not a generated summary.</Text>
-        <Text role="body" className="whitespace-pre-wrap">{job.description || "No description is stored for this listing."}</Text>
+        <Text role="body" className="whitespace-pre-wrap">{storedDescription || "No description is stored for this listing."}</Text>
         {job.applyUrl ? (
           <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-role-body text-accent">
             Read the full original posting

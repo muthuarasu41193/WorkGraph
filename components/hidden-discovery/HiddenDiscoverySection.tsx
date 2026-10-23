@@ -55,7 +55,7 @@ export default function HiddenDiscoverySection() {
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 id="hidden-discovery-heading" className="text-role-subheading font-semibold tracking-tight text-fg-primary">
-            Unlisted Jobs
+            Community posts
           </h1>
           <p className="mt-0.5 text-role-caption text-fg-secondary">
             Hiring posts from Reddit, Hacker News, and GitHub.

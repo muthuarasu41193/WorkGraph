@@ -21,6 +21,11 @@ export type MatchScoreProps = {
   onExpandedChange?: (expanded: boolean) => void
   /** When true, the percentage is hidden. Use this when the role was not scored. */
   unscored?: boolean
+  /**
+   * Accent fills the meter on the public feed. Neutral uses ink so a match
+   * score does not read as the apply stamp.
+   */
+  tone?: "accent" | "neutral"
   loading?: boolean
   error?: string
   className?: string
@@ -34,6 +39,7 @@ export function MatchScore({
   defaultExpanded = false,
   onExpandedChange,
   unscored = false,
+  tone = "accent",
   loading = false,
   error,
   className,
@@ -87,7 +93,10 @@ export function MatchScore({
           className="relative size-5 shrink-0 overflow-hidden rounded-control border border-hairline bg-surface-sunken"
           aria-hidden
         >
-          <span className="absolute inset-x-0 bottom-0 bg-accent" style={{ height: `${safeScore}%` }} />
+          <span
+            className={cn("absolute inset-x-0 bottom-0", tone === "neutral" ? "bg-ink" : "bg-accent")}
+            style={{ height: `${safeScore}%` }}
+          />
         </span>
         <span className="min-w-0 text-role-caption text-ink">
           <span className="font-medium tabular-nums">{safeScore}</span>

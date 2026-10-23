@@ -84,6 +84,7 @@ export type ProfileShellProps = {
   listingsBySource?: Partial<Record<string, number>>;
   feedKind?: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
+  catalogUpdatedAt?: string | null;
 };
 
 function ProfileShellInner({
@@ -99,6 +100,7 @@ function ProfileShellInner({
   listingsBySource = {},
   feedKind = "live",
   feedDemoHint,
+  catalogUpdatedAt = null,
 }: ProfileShellProps) {
   const wgEnabled = workgraphApiEnabled();
   const atsJobs = useMemo(
@@ -158,6 +160,7 @@ function ProfileShellInner({
           jobPipeline={jobPipeline ?? { applied: 0, interview: 0, offers: 0, saved: 0 }}
           profileCompleteness={profile.profile_completeness ?? 0}
           hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
+          catalogUpdatedAt={catalogUpdatedAt}
         />
       ),
       "hidden-jobs": <HiddenJobsSection />,
@@ -230,6 +233,7 @@ function ProfileShellInner({
       feedDemoHint,
       liveListings,
       matchedListings,
+      catalogUpdatedAt,
     ],
   );
 

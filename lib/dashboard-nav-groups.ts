@@ -54,7 +54,7 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         id: "jobs",
         label: "Find Jobs",
         icon: Search,
-        benefitHint: "Browse 19,000+ live opportunities",
+        benefitHint: "Browse roles in the catalog",
       },
       {
         id: "hidden-jobs",
@@ -64,9 +64,9 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
       },
       {
         id: "job-discovery",
-        label: "Unlisted Jobs",
+        label: "Community posts",
         icon: EyeOff,
-        benefitHint: "Exclusive unadvertised roles",
+        benefitHint: "Hiring posts from Reddit, Hacker News, and GitHub",
       },
     ],
   },

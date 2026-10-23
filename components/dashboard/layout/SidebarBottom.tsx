@@ -15,6 +15,8 @@ import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider
 import { signOutClient } from "@/lib/auth/client";
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
+import { LegalNav } from "@/components/legal/LegalDocument";
+import { toSentenceCase } from "@/lib/sentence-case";
 import { cn } from "@/lib/utils";
 import { FOCUS_RING } from "@/lib/focus-ring";
 import NavBenefitTooltip from "./NavBenefitTooltip";
@@ -62,7 +64,7 @@ export default function SidebarBottom({
     setIsMac(/Mac|iPhone|iPad/.test(navigator.platform));
   }, []);
 
-  const displayName = profile.full_name?.trim() || "Your account";
+  const displayName = toSentenceCase(profile.full_name ?? "") || "Your account";
   const roleLabel = profile.headline?.trim() || "Job seeker";
   const showCmdKHint = useMemo(
     () => !collapsed && shouldShowCmdKHint(profile.created_at),
@@ -203,6 +205,8 @@ export default function SidebarBottom({
           Press {isMac ? "⌘K" : "Ctrl+K"} to search
         </p>
       ) : null}
+
+      <LegalNav className="sidebar-legal mt-3" />
     </div>
   );
 }

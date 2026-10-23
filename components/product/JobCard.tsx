@@ -8,8 +8,9 @@ import { SourceAttribution, type SourceAttributionProps } from "@/components/pro
 import { TrustIndicator, type TrustIndicatorProps } from "@/components/product/TrustIndicator"
 
 /**
- * Scanning card for a role. Compact and expanded share the same actions, which stay in the tab order
- * without opening the card. This is the new composite. The profile jobs tab still uses components/design-system/JobCard.
+ * Scanning card for the public jobs feed. Compact and expanded share the same actions, which stay in the tab order
+ * without opening the card. The profile jobs tab composes MatchScore, SalaryDisplay, FreshnessIndicator, and
+ * SourceAttribution inside components/design-system/JobCard, which also carries the summary and resume detail.
  */
 export type ProductJobCardProps = {
   title: string
@@ -58,7 +59,7 @@ export function ProductJobCard({
   onSave,
   onDismiss,
   onApply,
-  applyLabel = "Apply",
+  applyLabel = "Apply on the listing",
   statusNote,
   className,
 }: ProductJobCardProps) {
