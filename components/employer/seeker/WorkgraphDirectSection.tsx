@@ -219,7 +219,7 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-emerald-600/40 px-1.5 text-xs text-emerald-700"
+                              className="h-5 gap-0.5 border-positive/40 px-1.5 text-xs text-positive"
                             >
                               <BadgeCheck className={iconClass()} />
                               Verified

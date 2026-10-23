@@ -160,7 +160,7 @@ export default function SideNav({
     }
 
     return (
-      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-slate-100 pt-2")}>
+      <div key={group.id} className={cn("mb-1", index > 0 && "mt-3 border-t border-hairline pt-2")}>
         <ul className="wg-nav-list">{group.items.map(renderNavItem)}</ul>
       </div>
     );
@@ -169,11 +169,11 @@ export default function SideNav({
   return (
     <aside
       className={cn(
-        "wg-dash-sidenav flex flex-col bg-white",
+        "wg-dash-sidenav flex flex-col bg-surface-raised",
         mobile
           ? "wg-dash-sidenav--mobile h-full w-full"
           : cn(
-              "sticky top-0 z-40 hidden h-dvh shrink-0 border-r border-slate-200 md:flex",
+              "sticky top-0 z-overlay hidden h-dvh shrink-0 border-r border-hairline md:flex",
               userCollapsed === true && "wg-dash-sidenav--collapsed",
               userCollapsed === false && "wg-dash-sidenav--expanded",
             ),

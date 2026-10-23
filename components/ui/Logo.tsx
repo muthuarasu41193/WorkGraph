@@ -20,16 +20,16 @@ export function Logo({ className, href = "/" }: LogoProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
-        className="shrink-0 transition-transform duration-200 group-hover:scale-105"
+        className="shrink-0 transition-transform duration-base group-hover:scale-105"
       >
-        <path d="M14 3L25 23H3L14 3Z" fill="var(--wg-text-primary)" className="dark:fill-white" />
+        <path d="M14 3L25 23H3L14 3Z" fill="var(--ink)" />
         <path
           d="M14 8L20.5 20H7.5L14 8Z"
           fill="var(--wg-primary)"
           className="opacity-90"
         />
       </svg>
-      <span className="font-heading text-xl font-bold tracking-tight text-fg-primary lowercase dark:text-white">
+      <span className="font-heading text-xl font-bold tracking-tight text-fg-primary lowercase">
         workgraph
       </span>
     </Link>

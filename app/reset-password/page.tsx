@@ -188,8 +188,8 @@ export default function ResetPasswordPage() {
         )}
 
         {message ? (
-          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
-            <AlertDescription className="text-center text-emerald-900">{message}</AlertDescription>
+          <Alert className="border-positive-wash bg-positive-wash text-positive">
+            <AlertDescription className="text-center text-positive">{message}</AlertDescription>
           </Alert>
         ) : null}
         {ready && error ? (

@@ -31,7 +31,7 @@ export default function SectionHeader({
               <WgIcon icon={Icon} size="inline" />
             </span>
           ) : null}
-          <h2 className="text-base font-semibold tracking-tight text-[var(--wg-color-text-primary)] sm:text-[1.0625rem]">
+          <h2 className="text-role-subheading text-ink">
             {title}
           </h2>
         </div>

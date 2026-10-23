@@ -29,11 +29,11 @@ export function ScrollProgress() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 top-0 z-[9999] h-[3px] bg-transparent"
+      className="pointer-events-none fixed inset-x-0 top-0 z-tooltip h-[3px] bg-transparent"
       aria-hidden
     >
       <div
-        className="h-full origin-left bg-brand transition-[width] duration-150 ease-out"
+        className="h-full origin-left bg-brand transition-[width] duration-base ease-exit"
         style={{ width: `${progress}%` }}
       />
     </div>

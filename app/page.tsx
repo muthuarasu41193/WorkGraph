@@ -18,7 +18,7 @@ const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"), {
 });
 
 const InterviewVault = dynamic(() => import("@/components/sections/InterviewVault"), {
-  loading: () => <SectionSkeleton className="bg-slate-950" />,
+  loading: () => <SectionSkeleton className="bg-ink" />,
 });
 
 const Testimonials = dynamic(() => import("@/components/sections/Testimonials"), {
@@ -43,7 +43,7 @@ export default async function HomePage() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-wg-primary focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-toast focus:rounded-lg focus:bg-wg-primary focus:px-4 focus:py-2 focus:text-accent-ink"
       >
         Skip to main content
       </a>

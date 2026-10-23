@@ -14,14 +14,14 @@ export default function StrengthsSection({ items }: Props) {
     <ExpandableCard
       title="Strengths"
       description="What aligns well with this role and why it matters."
-      icon={<ThumbsUp className="h-5 w-5 text-emerald-600" />}
+      icon={<ThumbsUp className="h-5 w-5 text-positive" />}
     >
       <ul className="space-y-4">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border border-emerald-200/60 bg-emerald-50/50 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
+          <li key={i} className="rounded-lg border border-positive-wash/60 bg-positive-wash/50 p-4">
             <div className="flex flex-wrap items-center gap-2">
               <h4 className="font-semibold">{item.title}</h4>
-              <Badge variant="outline" className="border-emerald-300 text-emerald-700 dark:text-emerald-400">
+              <Badge variant="outline" className="border-positive text-positive">
                 Match
               </Badge>
             </div>

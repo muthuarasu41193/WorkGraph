@@ -53,10 +53,10 @@ export default function SidebarBottom({
 }: Props) {
   const { profile } = useDashboardContext();
   const { navigate } = useDashboardNavigation();
-  const { theme, toggle: onToggleTheme } = useProfileTheme();
+  const { resolved, toggle: onToggleTheme } = useProfileTheme();
   const router = useRouter();
   const [isMac, setIsMac] = useState(true);
-  const isDark = theme === "dark";
+  const isDark = resolved === "dark";
 
   useEffect(() => {
     setIsMac(/Mac|iPhone|iPad/.test(navigator.platform));
@@ -104,7 +104,7 @@ export default function SidebarBottom({
         {isDark ? "Light mode" : "Dark mode"}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={handleSignOut} className="text-slate-600 focus:text-slate-800">
+      <DropdownMenuItem onClick={handleSignOut} className="text-ink-muted focus:text-ink">
         Sign Out
       </DropdownMenuItem>
     </DropdownMenuContent>
@@ -116,13 +116,13 @@ export default function SidebarBottom({
         {profile.photo_url ? (
           <AvatarImage src={profile.photo_url} alt={displayName} />
         ) : null}
-        <AvatarFallback className="bg-slate-100 text-xs font-medium text-slate-700">
+        <AvatarFallback className="bg-surface-sunken text-xs font-medium text-ink">
           {getInitials(profile.full_name)}
         </AvatarFallback>
       </Avatar>
       {profileSuccess ? (
         <span
-          className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-2 ring-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-positive-wash text-positive ring-2 ring-surface-raised"
           aria-label="Profile updated"
         >
           <Check className="size-2.5" strokeWidth={2.5} />
@@ -155,7 +155,7 @@ export default function SidebarBottom({
               <button
                 type="button"
                 className={cn(
-                  "mx-auto flex rounded-full transition-colors duration-150 ease-out hover:opacity-90",
+                  "mx-auto flex rounded-full transition-colors duration-base ease-exit hover:opacity-90",
                   FOCUS_RING,
                 )}
                 aria-label="Profile — Strengthen your presence"
@@ -199,7 +199,7 @@ export default function SidebarBottom({
       <div className="mt-1 flex items-center px-1">{themeToggle}</div>
 
       {showCmdKHint ? (
-        <p className="mt-1.5 px-2 text-center text-[11px] text-slate-300 dark:text-slate-500">
+        <p className="mt-1.5 px-2 text-center text-role-caption text-ink-subtle">
           Press {isMac ? "⌘K" : "Ctrl+K"} to search
         </p>
       ) : null}

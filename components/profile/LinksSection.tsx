@@ -109,7 +109,7 @@ export default function LinksSection({ profile, userId }: Props) {
   return (
     <section className="rounded-xl border border-border-default bg-surface p-6">
       {toast ? <p className="mb-3 text-sm text-info">{toast}</p> : null}
-      <h2 className="mb-1 text-[18px] font-semibold text-fg-primary">Links</h2>
+      <h2 className="mb-1 text-role-subheading font-semibold text-fg-primary">Links</h2>
       <p className="mb-4 text-xs font-normal text-fg-tertiary">
         Keep your public profiles up-to-date — they are included when you apply to jobs.
       </p>
@@ -131,7 +131,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => setEditing(row.key)}
-                  className="rounded-lg border border-border-default bg-surface px-3 py-1.5 text-xs font-medium text-fg-secondary transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
+                  className="rounded-lg border border-border-default bg-surface px-3 py-1.5 text-xs font-medium text-fg-secondary transition hover:shadow-overlay"
                 >
                   Edit
                 </button>
@@ -139,7 +139,7 @@ export default function LinksSection({ profile, userId }: Props) {
                 <button
                   type="button"
                   onClick={() => saveField(row.key)}
-                  className="rounded-lg bg-info px-3 py-1.5 text-xs font-medium text-white transition hover:bg-info-foreground"
+                  className="rounded-lg bg-info px-3 py-1.5 text-xs font-medium text-accent-ink transition hover:bg-info-foreground"
                 >
                   Save
                 </button>

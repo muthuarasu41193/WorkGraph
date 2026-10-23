@@ -65,13 +65,13 @@ function ExperienceItem({
             </p>
           </div>
           <ChevronDown
-            className={cn("h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
+            className={cn("h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-base", open && "rotate-180")}
           />
         </button>
 
         <div
           className={cn(
-            "grid transition-all duration-250 ease-out",
+            "grid transition-all duration-slow ease-exit",
             open ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
           )}
         >

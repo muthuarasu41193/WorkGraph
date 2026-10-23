@@ -42,7 +42,7 @@ export default function CircularProgress({
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            className="transition-[stroke-dashoffset] duration-700 ease-out"
+            className="transition-[stroke-dashoffset] duration-slow ease-exit"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">

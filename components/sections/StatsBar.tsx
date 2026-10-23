@@ -12,7 +12,7 @@ const STAT_KEYS = [
 
 export default function StatsBar({ counts }: { counts: SocialProofCounts }) {
   return (
-    <section aria-label="Platform statistics" className="bg-slate-950 py-10 sm:py-12">
+    <section aria-label="Platform statistics" className="bg-ink py-10 sm:py-12">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <dl className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:gap-6">
           {STAT_KEYS.map((stat) => {
@@ -29,7 +29,7 @@ export default function StatsBar({ counts }: { counts: SocialProofCounts }) {
                     </span>
                   )}
                 </dd>
-                <dd className="mt-1 text-sm font-medium text-white/70 sm:text-base">
+                <dd className="mt-1 text-sm font-medium text-accent-ink/70 sm:text-base">
                   {stat.label}
                 </dd>
               </div>

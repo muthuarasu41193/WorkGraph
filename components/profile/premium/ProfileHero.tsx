@@ -35,7 +35,7 @@ type Props = {
 };
 
 const inputClass =
-  "border-slate-200 bg-background focus-visible:ring-primary/20";
+  "border-hairline bg-background focus-visible:ring-primary/20";
 
 export default function ProfileHero({ profile, userId, openToWork = true }: Props) {
   const [photoUrl, setPhotoUrl] = useState(profile.photo_url);
@@ -135,8 +135,8 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
-              <Camera className={iconClass("inline", "text-white")} />
+            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-ink/40 opacity-0 transition-opacity group-hover:opacity-100">
+              <Camera className={iconClass("inline", "text-accent-ink")} />
               <span className="sr-only">{isUploading ? "Uploading" : "Upload photo"}</span>
             </span>
           </button>
@@ -149,7 +149,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
           />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--wg-color-text-tertiary)]">
+            <p className="text-xs font-semibold text-[var(--wg-color-text-tertiary)] text-role-caption">
               Professional profile
             </p>
 
@@ -165,7 +165,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
                 className={`${inputClass} mt-3 text-xl font-semibold`}
               />
             ) : (
-              <h1 className="mt-2 text-[1.625rem] font-bold leading-tight tracking-tight text-foreground">
+              <h1 className="text-role-title mt-2 text-ink">
                 {form.full_name || "Your name"}
               </h1>
             )}
@@ -233,7 +233,7 @@ export default function ProfileHero({ profile, userId, openToWork = true }: Prop
       </div>
 
       <div className="mt-6 border-t border-[var(--wg-color-border)] pt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[var(--wg-color-text-tertiary)]">
+        <p className="text-xs font-semibold text-[var(--wg-color-text-tertiary)] text-role-caption">
           Summary
         </p>
         {isEditing ? (

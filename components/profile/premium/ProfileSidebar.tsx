@@ -53,7 +53,7 @@ export default function ProfileSidebar() {
             </dd>
           </div>
         </dl>
-        <p className="mt-3 text-xs font-medium text-emerald-700 dark:text-emerald-400">{data.analytics.trend} vs last week</p>
+        <p className="mt-3 text-xs font-medium text-positive">{data.analytics.trend} vs last week</p>
       </Widget>
 
       <Widget title="Recruiter views" icon={Eye}>

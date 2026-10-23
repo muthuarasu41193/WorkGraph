@@ -13,12 +13,12 @@ export default function AchievementDiscoverySection({ items }: Props) {
     <ExpandableCard
       title="Achievement Discovery"
       description="Coaching questions to uncover genuine accomplishments you may have overlooked."
-      icon={<MessageCircleQuestion className="h-5 w-5 text-violet-600" />}
+      icon={<MessageCircleQuestion className="h-5 w-5 text-accent" />}
       defaultOpen={false}
     >
       <ul className="space-y-4">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border border-violet-200/50 bg-violet-50/30 p-4 dark:border-violet-900/30 dark:bg-violet-950/20">
+          <li key={i} className="rounded-lg border border-accent-wash/50 bg-accent-wash/30 p-4">
             <p className="font-medium">{item.question}</p>
             <p className="mt-2 text-sm text-muted-foreground">{item.context}</p>
             {item.relatedGap ? (

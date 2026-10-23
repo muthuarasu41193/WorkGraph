@@ -183,13 +183,13 @@ export default function SignupPage() {
         </form>
 
         {message ? (
-          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+          <Alert className="border-positive-wash bg-positive-wash text-positive">
             <AlertDescription className="space-y-3 text-center">
               <p>{message}</p>
-              <p className="text-xs leading-relaxed text-emerald-900/90">
+              <p className="text-xs leading-relaxed text-positive/90">
                 After you confirm your email, sign in with the same password to upload your resume.
               </p>
-              <Button asChild variant="outline" className="w-full rounded-full border-emerald-300 bg-surface text-emerald-950 hover:bg-emerald-50">
+              <Button asChild variant="outline" className="w-full rounded-full border-positive bg-surface text-positive hover:bg-positive-wash">
                 <Link href="/login?next=/create-profile">Go to sign in</Link>
               </Button>
             </AlertDescription>

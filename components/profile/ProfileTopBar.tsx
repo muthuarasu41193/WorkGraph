@@ -15,7 +15,7 @@ type Props = {
 
 export default function ProfileTopBar({ profileName }: Props) {
   return (
-    <header className="wg-profile-nav sticky top-0 z-40 bg-background/95 backdrop-blur-sm">
+    <header className="wg-profile-nav sticky top-0 z-overlay bg-background/95 backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex min-w-0 items-center gap-4">
           <Link href="/" className="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring">

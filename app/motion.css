@@ -1,11 +1,8 @@
 /* WorkGraph motion system — smooth transitions & micro-interactions */
 
 :root {
-  --wg-duration: 150ms;
-  --wg-ease: ease-out;
-  --wg-duration-theme: 200ms;
-  --wg-skeleton-base: var(--wg-slate-100);
-  --wg-skeleton-highlight: var(--wg-slate-200);
+  --wg-skeleton-base: var(--surface-sunken);
+  --wg-skeleton-highlight: var(--hairline);
 }
 
 [data-theme="dark"],
@@ -83,11 +80,11 @@
   }
 
   .wg-toast {
-    animation: wg-toast-in 280ms var(--wg-ease) both;
+    animation: wg-toast-in var(--duration-slow) var(--wg-ease) both;
   }
 
   .wg-toast[data-leaving="true"] {
-    animation: wg-toast-out 180ms var(--wg-ease) both;
+    animation: wg-toast-out var(--duration-base) var(--wg-ease) both;
   }
 
   /* Links: subtle underline on hover */
@@ -113,7 +110,7 @@
       var(--wg-skeleton-base) 90%
     );
     background-size: 200% 100%;
-    animation: wg-shimmer 1.8s var(--wg-ease) infinite;
+    animation: wg-shimmer var(--duration-slow) var(--wg-ease) infinite;
   }
 }
 

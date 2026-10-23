@@ -16,15 +16,15 @@ const SIZES = {
 };
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "text-emerald-600 dark:text-emerald-400";
-  if (score >= 60) return "text-amber-600 dark:text-amber-400";
-  return "text-rose-600 dark:text-rose-400";
+  if (score >= 80) return "text-positive ";
+  if (score >= 60) return "text-caution ";
+  return "text-danger ";
 }
 
 function ringColor(score: number): string {
-  if (score >= 80) return "stroke-emerald-500";
-  if (score >= 60) return "stroke-amber-500";
-  return "stroke-rose-500";
+  if (score >= 80) return "stroke-positive";
+  if (score >= 60) return "stroke-caution";
+  return "stroke-danger";
 }
 
 export default function ScoreRing({ score, size = "md", label, className }: Props) {
@@ -53,7 +53,7 @@ export default function ScoreRing({ score, size = "md", label, className }: Prop
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn("transition-all duration-700", ringColor(score))}
+          className={cn("transition-all duration-slow", ringColor(score))}
         />
       </svg>
       <span

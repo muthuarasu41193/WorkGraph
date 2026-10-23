@@ -24,13 +24,13 @@ export function IntelligenceSection({
             <h2 className="wg-section-heading mt-3 font-heading font-bold tracking-tight">
               Data-driven decisions at every step
             </h2>
-            <p className="mt-4 text-lg text-white/70">
+            <p className="mt-4 text-lg text-accent-ink/70">
               WorkGraph doesn&apos;t just find jobs — it quantifies your odds, surfaces market
               signals, and tells you exactly where to focus next.
             </p>
           </FadeIn>
 
-          <div className="grid divide-y divide-white/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:grid-cols-1 lg:divide-x-0 lg:divide-y">
+          <div className="grid divide-y divide-surface-raised/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0 lg:grid-cols-1 lg:divide-x-0 lg:divide-y">
             {METRICS.map((stat, index) => {
               const metric = displayCount(counts[stat.key]);
               return (
@@ -41,8 +41,8 @@ export function IntelligenceSection({
                         <span className="block text-xl leading-snug sm:text-2xl">{metric.display}</span>
                       )}
                     </p>
-                    <p className="mt-1 font-semibold text-white">{stat.label}</p>
-                    <p className="mt-1 text-sm text-white/50">{stat.detail}</p>
+                    <p className="mt-1 font-semibold text-accent-ink">{stat.label}</p>
+                    <p className="mt-1 text-sm text-accent-ink/50">{stat.detail}</p>
                   </div>
                 </FadeIn>
               );

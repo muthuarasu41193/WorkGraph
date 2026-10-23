@@ -127,7 +127,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
   return (
     <section className="rounded-xl border border-border-default bg-surface p-6">
       {toast ? (
-        <div className="fixed right-6 top-6 z-50 rounded-lg border border-wg-border bg-surface px-4 py-2 text-sm text-wg-heading shadow-md">
+        <div className="fixed right-6 top-6 z-modal rounded-lg border border-wg-border bg-surface px-4 py-2 text-sm text-wg-heading shadow-md">
           {toast}
         </div>
       ) : null}
@@ -137,7 +137,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
           type="button"
           onClick={() => fileRef.current?.click()}
           aria-label={isUploading ? "Uploading profile photo" : "Upload or change profile photo"}
-          className="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full ring-4 ring-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 sm:h-28 sm:w-28"
+          className="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full ring-4 ring-positive-wash focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-positive focus-visible:ring-offset-2 sm:h-28 sm:w-28"
         >
           {photoUrl ? (
             <Image
@@ -154,7 +154,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
             </div>
           )}
 
-          <div className="absolute inset-0 hidden items-center justify-center bg-black/35 text-center text-xs font-medium text-white group-hover:flex">
+          <div className="absolute inset-0 hidden items-center justify-center bg-scrim/35 text-center text-xs font-medium text-accent-ink group-hover:flex">
             <div className="flex flex-col items-center gap-1">
               <Camera className={iconClass()} />
               <span>{isUploading ? "Uploading..." : "Change Photo"}</span>
@@ -178,10 +178,10 @@ export default function ProfileHeader({ profile, userId }: Props) {
                   value={form.full_name}
                   onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
                   placeholder="Your full name"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+                  className="w-full rounded-lg border border-hairline px-3 py-2 text-lg font-semibold text-ink outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
                 />
               ) : (
-                <h1 className="font-bold tracking-tight text-fg-primary text-[clamp(1.5rem,4vw,1.875rem)]">{form.full_name || "Your Name"}</h1>
+                <h1 className="font-bold tracking-tight text-fg-primary text-role-display">{form.full_name || "Your Name"}</h1>
               )}
             </div>
 
@@ -219,7 +219,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               value={form.headline}
               onChange={(e) => setForm((prev) => ({ ...prev, headline: e.target.value }))}
               placeholder="Professional headline"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-2 w-full rounded-lg border border-hairline px-3 py-2 text-sm font-medium text-ink outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
             <p className="mt-1 text-base font-semibold text-fg-primary">{form.headline || "Add a professional headline"}</p>
@@ -230,7 +230,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               value={form.location}
               onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
               placeholder="Location"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-2 w-full rounded-lg border border-hairline px-3 py-2 text-sm font-medium text-ink outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : (
             <p className="mt-2 inline-flex items-center gap-1 text-sm font-normal text-fg-secondary">
@@ -245,7 +245,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
               onChange={(e) => setForm((prev) => ({ ...prev, summary: e.target.value }))}
               placeholder="Write a short professional summary"
               rows={3}
-              className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-900 outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="mt-3 w-full rounded-lg border border-hairline px-3 py-2 text-sm font-medium text-ink outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-ring/30"
             />
           ) : form.summary ? (
             <p className="mt-3 text-sm font-normal leading-6 text-fg-secondary">{form.summary}</p>
@@ -257,7 +257,7 @@ export default function ProfileHeader({ profile, userId }: Props) {
                 type="button"
                 onClick={() => void saveProfileBasics()}
                 disabled={isSaving}
-                className="rounded-md bg-info px-3 py-2 text-xs font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
+                className="rounded-md bg-info px-3 py-2 text-xs font-medium text-accent-ink disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 {isSaving ? "Saving..." : "Save changes"}
               </button>

@@ -18,13 +18,13 @@ const SIZE = {
 } as const;
 
 const BRAND_ICON_COLORS: Partial<Record<CompanyBrand, string>> = {
-  meta: "text-[#0668E1]",
-  amazon: "text-[#FF9900]",
-  stripe: "text-[#635BFF]",
-  netflix: "text-[#E50914]",
+  meta: "text-[var(--mark-meta)]",
+  amazon: "text-[var(--mark-amazon)]",
+  stripe: "text-[var(--mark-stripe)]",
+  netflix: "text-[var(--mark-netflix)]",
   apple: "text-fg-primary",
-  airbnb: "text-[#FF5A5F]",
-  databricks: "text-[#FF3621]",
+  airbnb: "text-[var(--mark-airbnb)]",
+  databricks: "text-[var(--mark-databricks)]",
   notion: "text-fg-primary",
 };
 
@@ -39,7 +39,7 @@ export function BrandLogo({ brand, size = "md", className, onDark }: BrandLogoPr
         "inline-flex shrink-0 items-center justify-center rounded-lg border",
         dims.box,
         onDark
-          ? "border-slate-800 bg-surface"
+          ? "border-ink-muted bg-surface"
           : "border-border-default bg-surface shadow-sm",
         className,
       )}

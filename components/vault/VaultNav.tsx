@@ -18,7 +18,7 @@ export default function VaultNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-modal border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
         <Link href="/interview-vault" className="flex items-center gap-2 shrink-0">
           <WorkGraphLogo className="h-7 w-auto" />

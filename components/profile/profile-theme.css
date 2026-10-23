@@ -83,7 +83,7 @@
 .wg-profile-app .wg-profile-kpi > div {
   background: var(--wg-color-surface);
   padding: 1rem 1.25rem;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--duration-base) ease;
 }
 
 .wg-profile-app .wg-profile-kpi > div:hover {
@@ -112,8 +112,8 @@
 }
 
 .wg-profile-app .bg-gradient-to-br,
-.wg-profile-app [class*="from-[#1a73e8]"],
-.wg-profile-app [class*="via-[#669df6]"] {
+.wg-profile-app [class*="from-ink"],
+.wg-profile-app [class*="via-ink"] {
   background: var(--wg-color-surface-variant) !important;
   background-image: none !important;
 }

@@ -99,7 +99,7 @@ export default function WaitlistClient({ signups = 0 }: { signups?: number }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="relative flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-white transition-colors duration-150 ease-out hover:bg-brand-700 active:scale-[0.98] disabled:opacity-70"
+                className="relative flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-colors duration-base ease-exit hover:bg-brand-700 active:scale-[0.98] disabled:opacity-70"
               >
                 <span className={loading ? "invisible" : undefined}>Join waitlist →</span>
                 {loading ? (

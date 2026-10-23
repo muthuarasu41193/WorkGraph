@@ -24,7 +24,7 @@ type SourceMeta = {
 function RemoteOkLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#059669" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--positive)" />
       <path d="M7 12h3.2l1.5 2.2L14.6 10 17 12h0" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="17" cy="12" r="1.3" fill="white" />
     </svg>
@@ -38,7 +38,7 @@ function RedditLogoMark() {
 function HackerNewsLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#FF6600" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--mark-hn)" />
       <path d="M8 7h2l2 4 2-4h2l-3 5.8V17h-2v-4.2L8 7Z" fill="white" />
     </svg>
   );
@@ -47,7 +47,7 @@ function HackerNewsLogo() {
 function ArbeitnowLogo() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="#0891B2" />
+      <rect x="2" y="2" width="20" height="20" rx="4" fill="var(--mark-remoteok)" />
       <path d="M8 17 12 7l4 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9.6 13h4.8" stroke="white" strokeWidth="2" strokeLinecap="round" />
     </svg>
@@ -76,8 +76,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Structured remote listings that people can jump into directly when they want a fast apply path.",
     ctaLabel: "Open RemoteOK",
     destinationUrl: "https://remoteok.com/",
-    brandShellClassName: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500/15",
-    badgeClassName: "bg-emerald-600/10 text-emerald-700",
+    brandShellClassName: "bg-positive-wash text-positive ring-1 ring-positive/15",
+    badgeClassName: "bg-positive/10 text-positive",
     fallback: {
       id: "community-remoteok-fallback",
       title: "Senior Frontend Engineer",
@@ -102,8 +102,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "A useful lane for remote-friendly and relocation-oriented openings, especially for candidates scanning Europe.",
     ctaLabel: "Open Arbeitnow",
     destinationUrl: "https://www.arbeitnow.com/jobs",
-    brandShellClassName: "bg-cyan-50 text-cyan-700 ring-1 ring-cyan-500/15",
-    badgeClassName: "bg-cyan-600/10 text-cyan-700",
+    brandShellClassName: "bg-accent-wash text-accent ring-1 ring-accent/15",
+    badgeClassName: "bg-accent/10 text-accent",
     fallback: {
       id: "community-arbeitnow-fallback",
       title: "Backend Engineer with visa support",
@@ -128,8 +128,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Curated job RSS feeds (Jobicy, We Work Remotely, and more) normalized into the same community lane as social posts.",
     ctaLabel: "Open listing",
     destinationUrl: "https://weworkremotely.com/",
-    brandShellClassName: "bg-stone-100 text-stone-800 ring-1 ring-stone-200/80",
-    badgeClassName: "bg-stone-100 text-stone-800 ring-1 ring-stone-200/80",
+    brandShellClassName: "bg-surface-sunken text-ink ring-1 ring-hairline/80",
+    badgeClassName: "bg-surface-sunken text-ink ring-1 ring-hairline/80",
     fallback: {
       id: "community-rss-fallback",
       title: "Remote role from RSS feed",
@@ -154,8 +154,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Useful for public hiring threads, referrals, freelance requests, and candidate-for-hire posts people can respond to directly.",
     ctaLabel: "Open Reddit lane",
     destinationUrl: "https://www.reddit.com/r/forhire/",
-    brandShellClassName: "bg-orange-50 text-orange-700 ring-1 ring-orange-500/15",
-    badgeClassName: "bg-orange-500/10 text-orange-700",
+    brandShellClassName: "bg-caution-wash text-caution ring-1 ring-caution/15",
+    badgeClassName: "bg-caution/10 text-caution",
     fallback: {
       id: "community-reddit-fallback",
       title: "Hiring thread for React and TypeScript roles",
@@ -180,8 +180,8 @@ const SOURCE_META: Record<CommunitySource, SourceMeta> = {
     description: "Great for official HN hiring threads, candidate threads, and smaller-team opportunities shared in public conversations.",
     ctaLabel: "Open Hacker News",
     destinationUrl: "https://news.ycombinator.com/",
-    brandShellClassName: "bg-orange-50 text-orange-700 ring-1 ring-orange-500/15",
-    badgeClassName: "bg-orange-500/10 text-orange-700",
+    brandShellClassName: "bg-caution-wash text-caution ring-1 ring-caution/15",
+    badgeClassName: "bg-caution/10 text-caution",
     fallback: {
       id: "community-hn-fallback",
       title: "Ask HN: Who is hiring?",
@@ -274,7 +274,7 @@ export default function ProfileSocialJobPosts({
     <section className="rounded-xl border border-border-default bg-surface p-4 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-fg-tertiary">Community jobs</p>
+          <p className="text-xs font-medium text-fg-tertiary text-role-caption">Community jobs</p>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-fg-primary">
             Community job posts — Reddit, RSS, RemoteOK, Arbeitnow, and Hacker News
           </h2>
@@ -328,7 +328,7 @@ export default function ProfileSocialJobPosts({
                     <Logo />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-fg-tertiary">{meta.eyebrow}</p>
+                    <p className="text-xs font-medium text-fg-tertiary text-role-caption">{meta.eyebrow}</p>
                     <h3 className="text-lg font-semibold text-fg-primary">{meta.label}</h3>
                   </div>
                 </div>
@@ -337,7 +337,7 @@ export default function ProfileSocialJobPosts({
                     {isLive ? "Live source" : "Community lane"}
                   </span>
                   {lowPriority ? (
-                    <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
+                    <span className="rounded-full bg-caution-wash px-2.5 py-1 text-xs font-medium text-caution">
                       Low priority
                     </span>
                   ) : null}
@@ -364,7 +364,7 @@ export default function ProfileSocialJobPosts({
                   </span>
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                      lowPriority ? "bg-amber-100 text-amber-800" : "bg-success-50 text-success"
+                      lowPriority ? "bg-caution-wash text-caution" : "bg-success-50 text-success"
                     }`}
                   >
                     {classificationLabel(post.classification)}
@@ -377,7 +377,7 @@ export default function ProfileSocialJobPosts({
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-[18px] bg-info px-4 py-2 text-sm font-medium text-white transition hover:bg-info-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
+                    className="inline-flex items-center gap-1.5 rounded-[18px] bg-info px-4 py-2 text-sm font-medium text-accent-ink transition hover:bg-info-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
                   >
                     {meta.ctaLabel}
                     {isLive ? <ExternalLink className={iconClass()} aria-hidden /> : <ArrowUpRight className={iconClass()} aria-hidden />}

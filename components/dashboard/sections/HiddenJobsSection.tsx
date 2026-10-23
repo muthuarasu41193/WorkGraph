@@ -37,7 +37,7 @@ export default function HiddenJobsSection() {
         <h1 id="hidden-jobs-heading" className="text-xl font-semibold tracking-tight text-fg-primary">
           Hidden Jobs
         </h1>
-        <p className="mt-0.5 text-[13px] text-fg-secondary">
+        <p className="mt-0.5 text-role-caption text-fg-secondary">
           Roles you dismissed from your feed. Restore any job to see it again under Jobs.
         </p>
       </header>
@@ -54,16 +54,16 @@ export default function HiddenJobsSection() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised">
           {hiddenJobs.map((job) => (
-            <li key={job.id} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
+            <li key={job.id} className="border-b border-hairline last:border-b-0">
               <div className="flex flex-col gap-2 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <h2 className="text-[14px] font-semibold tracking-tight text-fg-primary">{job.title}</h2>
-                      <Badge variant="outline" className="h-5 px-1.5 text-[11px]">{job.source}</Badge>
+                      <h2 className="text-role-body-small font-semibold tracking-tight text-fg-primary">{job.title}</h2>
+                      <Badge variant="outline" className="h-5 px-1.5 text-role-caption">{job.source}</Badge>
                     </div>
-                    <p className="text-[12.5px] text-fg-secondary">
+                    <p className="text-role-caption text-fg-secondary">
                       {job.company} · {job.location}
                     </p>
                   </div>

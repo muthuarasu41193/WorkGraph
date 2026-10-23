@@ -21,7 +21,7 @@ const AVATARS = [
   { initials: "JK", color: "bg-brand" },
   { initials: "SL", color: "bg-success" },
   { initials: "AR", color: "bg-warning" },
-  { initials: "KT", color: "bg-slate-700" },
+  { initials: "KT", color: "bg-surface-sunken" },
 ] as const;
 
 const DASHBOARD_STATS = [
@@ -139,13 +139,13 @@ function DashboardMockup() {
         aria-hidden
       />
 
-      <div className="relative overflow-hidden rounded-2xl border border-border-default bg-surface shadow-[0_24px_64px_-12px_rgba(10,10,10,0.18)]">
+      <div className="relative overflow-hidden rounded-2xl border border-border-default bg-surface shadow-overlay">
         {/* Browser chrome */}
         <div className="flex items-center gap-3 border-b border-border-default bg-surface-active px-4 py-3">
           <div className="flex items-center gap-1.5" aria-hidden>
-            <span className="size-2.5 rounded-full bg-[#FF5F57]" />
-            <span className="size-2.5 rounded-full bg-[#FFBD2E]" />
-            <span className="size-2.5 rounded-full bg-[#28CA41]" />
+            <span className="size-2.5 rounded-full bg-danger" />
+            <span className="size-2.5 rounded-full bg-caution" />
+            <span className="size-2.5 rounded-full bg-positive" />
           </div>
           <div className="flex-1 rounded-md border border-border-default bg-surface px-3 py-1 text-center text-xs text-fg-tertiary">
             app.workgraph.ai
@@ -222,7 +222,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
   return (
     <section
       aria-label="Hero"
-      className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-surface pb-20 pt-10 sm:pb-24 sm:pt-14 lg:pb-28 lg:pt-16"
+      className="relative overflow-hidden bg-gradient-to-b from-surface-sunken to-surface pb-20 pt-10 sm:pb-24 sm:pt-14 lg:pb-28 lg:pt-16"
     >
       {/* Grid overlay */}
       <div
@@ -254,7 +254,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
 
             <motion.h1
               variants={leftItem}
-              className="mt-6 font-heading font-bold leading-[1.05] tracking-heading text-fg-primary text-[clamp(2rem,8vw,4.5rem)]"
+              className="mt-6 font-heading font-bold tracking-heading text-fg-primary text-role-display"
             >
               Find Jobs That
               <br />
@@ -270,7 +270,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
 
             <motion.p
               variants={leftItem}
-              className="mt-6 max-w-[560px] text-[18px] leading-[1.65] text-fg-secondary sm:text-[20px]"
+              className="measure mt-6 text-role-body text-ink-muted"
             >
               WorkGraph surfaces hidden roles from Reddit, Twitter, Discord &amp; 50+
               private sources — then AI-matches you, preps you for interviews, and
@@ -289,7 +289,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
                       <div
                         key={avatar.initials}
                         className={cn(
-                          "flex size-9 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white",
+                          "flex size-9 items-center justify-center rounded-full border-2 border-surface-raised text-xs font-bold text-accent-ink",
                           avatar.color,
                         )}
                       >
@@ -314,7 +314,7 @@ export default function Hero({ counts }: { counts: SocialProofCounts }) {
             >
               <Button
                 size="lg"
-                className="h-12 rounded-full bg-brand px-7 text-base font-semibold text-white shadow-brand hover:bg-brand-700 hover:shadow-md sm:h-[52px]"
+                className="h-12 rounded-full bg-brand px-7 text-base font-semibold text-accent-ink shadow-brand hover:bg-brand-700 hover:shadow-md sm:h-[52px]"
                 asChild
               >
                 <Link href="/signup">

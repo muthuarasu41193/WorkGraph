@@ -55,7 +55,7 @@ export default function ProfileJobMatches({ jobs = [], liveListings = 0, feedKin
         {list.map((job) => (
           <Card
             key={job.id}
-            className="w-[min(100%,300px)] shrink-0 border-slate-200 shadow-sm transition-shadow hover:shadow-md"
+            className="w-[min(100%,300px)] shrink-0 border-hairline shadow-sm transition-shadow hover:shadow-md"
           >
             <CardContent className="p-4">
             <div className="flex items-start justify-between gap-3">

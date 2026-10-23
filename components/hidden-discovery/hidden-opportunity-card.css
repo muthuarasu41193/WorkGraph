@@ -108,7 +108,7 @@
   background: transparent;
   color: var(--wg-text-tertiary);
   cursor: pointer;
-  transition: all 150ms ease;
+  transition: all var(--duration-base) ease;
 }
 
 .hidden-opp-card__save:hover {
@@ -133,7 +133,7 @@
   color: var(--wg-text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 150ms ease;
+  transition: all var(--duration-base) ease;
 }
 
 .hidden-opp-card__open:hover {

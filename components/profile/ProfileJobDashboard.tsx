@@ -78,15 +78,15 @@ export default function ProfileJobDashboard({
   }, []);
 
   return (
-    <Card className="border-slate-200 shadow-none">
+    <Card className="border-hairline shadow-none">
       <CardContent className="p-0">
         <section aria-labelledby="job-dashboard-heading">
           <div className="mb-3 flex flex-wrap items-end justify-between gap-3 wg-section-fade" style={{ animationDelay: "0ms" }}>
             <div className="min-w-0 flex-1">
-              <h2 id="job-dashboard-heading" className="text-[17px] font-semibold tracking-tight text-fg-primary">
+              <h2 id="job-dashboard-heading" className="text-role-subheading font-semibold tracking-tight text-fg-primary">
                 Job Dashboard
               </h2>
-              <p className="mt-0.5 text-[13px] font-normal text-fg-secondary">
+              <p className="mt-0.5 text-role-caption font-normal text-fg-secondary">
                 Live ATS jobs matched to your profile
               </p>
             </div>
@@ -95,7 +95,7 @@ export default function ProfileJobDashboard({
                 type="button"
                 onClick={refreshListings}
                 disabled={isRefreshing}
-                className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-border-default px-5 text-sm font-medium text-fg-secondary transition hover:shadow-[0_1px_3px_rgba(0,0,0,0.10)] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
+                className="inline-flex h-10 items-center gap-2 rounded-[20px] border border-border-default px-5 text-sm font-medium text-fg-secondary transition hover:shadow-overlay disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
               >
                 {syncStatus === "error" ? (
                   <XCircle className={iconClass("inline", "text-brand wg-shake")} aria-hidden />
@@ -112,7 +112,7 @@ export default function ProfileJobDashboard({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "100ms" }}>
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 wg-section-fade" style={{ animationDelay: "var(--duration-fast)" }}>
             {isSectionLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
                 <article key={`dashboard-skel-${idx}`} className="rounded-[10px] border border-border-default bg-surface p-3.5 md:px-4 md:py-3.5">
@@ -129,7 +129,7 @@ export default function ProfileJobDashboard({
               <>
                 <article
                   onClick={() => triggerFilter("all")}
-                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-4 md:py-3.5 hover:border-border-strong hover:bg-slate-50"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-base ease-standard md:px-4 md:py-3.5 hover:border-border-strong hover:bg-surface-sunken"
                 >
                   <div className="flex items-start gap-3">
                     <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-info-50 text-info">
@@ -139,14 +139,14 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={liveListings} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Live Jobs Available</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Live Jobs Available</p>
                     </div>
                   </div>
                 </article>
 
                 <article
                   onClick={() => triggerFilter("matched")}
-                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 shadow-[0_0_0_2px_color-mix(in_srgb,var(--wg-success)_20%,transparent)] transition-all duration-200 ease-in md:px-4 md:py-3.5 hover:border-border-strong hover:bg-slate-50 wg-matched-live-pulse"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 shadow-overlay transition-all duration-base ease-standard md:px-4 md:py-3.5 hover:border-border-strong hover:bg-surface-sunken wg-matched-live-pulse"
                 >
                   <div className="flex items-start gap-3">
                     <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-success-50 text-success">
@@ -156,14 +156,14 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={matchedListings} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Matched to Your Profile</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Matched to Your Profile</p>
                     </div>
                   </div>
                 </article>
 
                 <article
                   onClick={() => triggerFilter("applied")}
-                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-4 md:py-3.5 hover:border-border-strong hover:bg-slate-50"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-base ease-standard md:px-4 md:py-3.5 hover:border-border-strong hover:bg-surface-sunken"
                 >
                   <div className="flex items-start gap-3">
                     <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-warning-50 text-warning">
@@ -173,7 +173,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={stats.applied} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Applications Sent</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Applications Sent</p>
                       {stats.interview > 0 ? (
                         <span className="mt-2 inline-flex items-center gap-1 rounded-lg bg-warning-50 px-2 py-1 text-xs font-medium text-warning">
                           <LoaderCircle className={iconClass()} />
@@ -186,7 +186,7 @@ export default function ProfileJobDashboard({
 
                 <article
                   onClick={() => triggerFilter("saved")}
-                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-200 ease-in md:px-4 md:py-3.5 hover:border-border-strong hover:bg-slate-50"
+                  className="cursor-pointer rounded-xl border border-border-default bg-surface p-4 transition-all duration-base ease-standard md:px-4 md:py-3.5 hover:border-border-strong hover:bg-surface-sunken"
                 >
                   <div className="flex items-start gap-3">
                     <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-brand-50 text-brand">
@@ -196,7 +196,7 @@ export default function ProfileJobDashboard({
                       <p className="text-2xl font-semibold leading-none tracking-tight text-fg-primary">
                         <AnimatedCount value={stats.saved} />
                       </p>
-                      <p className="mt-1.5 text-[13px] text-fg-secondary">Jobs Saved</p>
+                      <p className="mt-1.5 text-role-caption text-fg-secondary">Jobs Saved</p>
                     </div>
                   </div>
                 </article>

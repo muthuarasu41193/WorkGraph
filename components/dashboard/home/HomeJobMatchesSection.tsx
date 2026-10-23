@@ -39,11 +39,11 @@ export default function HomeJobMatchesSection({
         <div>
           <h2
             id="home-matches-heading"
-            className="text-[17px] font-semibold tracking-tight text-fg-primary"
+            className="text-role-subheading font-semibold tracking-tight text-fg-primary"
           >
             Recommended Jobs
           </h2>
-          <p className="mt-0.5 text-[13px] text-fg-secondary">
+          <p className="mt-0.5 text-role-caption text-fg-secondary">
             {`Top roles ranked by AI match score${feedKind === "live" ? " · live catalog" : ""}.`}
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function HomeJobMatchesSection({
           asChild
           variant="ghost"
           size="sm"
-          className="wg-touch-target text-red-600 hover:bg-red-50 hover:text-red-700 enabled:hover:scale-100"
+          className="wg-touch-target text-danger hover:bg-danger-wash hover:text-danger enabled:hover:scale-100"
         >
           <Link href={dashboardHref("jobs")}>
             View all jobs

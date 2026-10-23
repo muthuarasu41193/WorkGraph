@@ -248,7 +248,7 @@ function ContactForm() {
       <button
         type="submit"
         disabled={submitState === "loading"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-white transition-all duration-200 hover:bg-brand-700 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-all duration-base hover:bg-brand-700 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {submitState === "loading" ? (
           <>
@@ -276,7 +276,7 @@ export default function Contact() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">
+            <p className="text-xs font-bold text-brand text-role-caption">
               GET IN TOUCH
             </p>
             <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
@@ -292,7 +292,7 @@ export default function Contact() {
                 <a
                   key={card.label}
                   href={card.href}
-                  className="group flex items-center gap-4 rounded-xl border border-border-default bg-surface p-5 transition-all duration-200 hover:border-brand/30 hover:shadow-md"
+                  className="group flex items-center gap-4 rounded-xl border border-border-default bg-surface p-5 transition-all duration-base hover:border-brand/30 hover:shadow-md"
                 >
                   <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-brand-50">
                     <ContactInfoIcon type={card.icon} />

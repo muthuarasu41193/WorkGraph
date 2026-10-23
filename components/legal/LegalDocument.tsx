@@ -84,13 +84,13 @@ export function LegalDocument({
   const toc = tocFromSections(sections);
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <article className="measure prose-rhythm mx-auto px-4 py-12 md:px-6 md:py-16">
       <p className="rounded-lg border border-warning-50 bg-warning-50 px-3 py-2 text-sm font-semibold text-warning">
         Draft for counsel review. Do not treat this as an in-force legal document.
       </p>
       <header className="mt-8">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Legal</p>
-        <h1 className="mt-3 font-heading text-3xl font-bold tracking-tight text-fg-primary sm:text-4xl">
+        <p className="text-role-caption text-accent">Legal</p>
+        <h1 className="text-role-title mt-3 text-ink">
           {title}
         </h1>
         <p className="mt-3 text-sm text-fg-tertiary">
@@ -123,7 +123,7 @@ export function LegalDocument({
           <section key={section.id} aria-labelledby={section.id}>
             <h2
               id={section.id}
-              className="scroll-mt-24 font-heading text-xl font-bold tracking-tight text-fg-primary sm:text-2xl"
+              className="text-role-heading scroll-mt-24 text-ink"
             >
               <a href={`#${section.id}`} className="hover:text-brand">
                 {section.title}

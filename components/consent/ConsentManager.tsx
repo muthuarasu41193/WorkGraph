@@ -20,7 +20,7 @@ import {
 type View = "banner" | "preferences";
 
 const equalActionClass =
-  "h-11 w-full rounded-full px-5 text-sm font-semibold text-white transition-colors";
+  "h-11 w-full rounded-full px-5 text-sm font-semibold text-accent-ink transition-colors";
 
 export function ConsentManager() {
   const titleId = useId();
@@ -80,9 +80,9 @@ export function ConsentManager() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-2xl rounded-2xl border border-border-default bg-surface p-5 shadow-xl sm:inset-x-6"
+          className="fixed inset-x-4 bottom-4 z-modal mx-auto max-w-2xl rounded-2xl border border-border-default bg-surface p-5 shadow-xl sm:inset-x-6"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">Cookies</p>
+          <p className="text-xs font-bold text-brand text-role-caption">Cookies</p>
           <h2 id={titleId} className="mt-2 font-heading text-lg font-bold text-fg-primary">
             {view === "preferences" ? "Cookie preferences" : "We use cookies"}
           </h2>
@@ -126,7 +126,7 @@ export function ConsentManager() {
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
             <button
               type="button"
-              className={`${equalActionClass} bg-slate-800 hover:bg-slate-700`}
+              className={`${equalActionClass} bg-ink hover:bg-surface-sunken`}
               onClick={() => persist(rejectAllCategories())}
             >
               Reject all

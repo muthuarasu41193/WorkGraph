@@ -18,7 +18,7 @@ function Logo() {
       aria-label={`${SITE.name} home`}
     >
       <span
-        className="flex size-8 items-center justify-center rounded-lg bg-wg-primary text-sm font-bold text-white"
+        className="flex size-8 items-center justify-center rounded-lg bg-wg-primary text-sm font-bold text-accent-ink"
         aria-hidden
       >
         W
@@ -44,7 +44,7 @@ export function LandingNav() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-modal border-b border-border/80 bg-background/90 backdrop-blur-md">
       <nav
         className="mx-auto flex max-w-landing items-center justify-between px-4 py-3 md:px-6 min-[1025px]:px-8"
         aria-label="Main navigation"

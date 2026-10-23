@@ -150,7 +150,7 @@ export default function HiringSignalForm({ initial }: Props) {
       </div>
 
       {successMessage ? (
-        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100">
+        <Alert className="border-positive-wash bg-positive-wash text-positive">
           <AlertDescription>{successMessage}</AlertDescription>
         </Alert>
       ) : null}

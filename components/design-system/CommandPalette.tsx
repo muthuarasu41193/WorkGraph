@@ -207,9 +207,9 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
           ))}
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center px-3 py-8 text-center">
-              <Search className="mb-2 size-6 text-slate-300 dark:text-slate-600" aria-hidden />
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">No results</p>
-              <p className="mt-0.5 text-[13px] text-slate-500 dark:text-slate-400">
+              <Search className="mb-2 size-6 text-ink-subtle" aria-hidden />
+              <p className="text-sm font-medium text-ink">No results</p>
+              <p className="mt-0.5 text-role-caption text-ink-subtle">
                 Nothing matches &ldquo;{query}&rdquo;. Try another search.
               </p>
             </div>

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 export default function SettingsSection() {
-  const { theme, toggle } = useProfileTheme();
+  const { resolved, toggle } = useProfileTheme();
 
   return (
     <div className="space-y-8">
@@ -45,7 +45,7 @@ export default function SettingsSection() {
             </div>
             <Checkbox
               id="dark-mode"
-              checked={theme === "dark"}
+              checked={resolved === "dark"}
               onCheckedChange={() => toggle()}
             />
           </div>

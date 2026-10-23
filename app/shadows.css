@@ -1,73 +1,45 @@
-/* WorkGraph shadow system — subtle, layered elevation */
+/* Elevation. At most three levels: flat, raised, overlay. Values live in tokens.css. */
 
 :root {
-  --wg-shadow-xs:
-    0 1px 2px rgb(15 23 42 / 0.04);
-  --wg-shadow-sm:
-    0 1px 2px rgb(15 23 42 / 0.05),
-    0 1px 3px rgb(15 23 42 / 0.04);
-  --wg-shadow:
-    0 2px 4px rgb(15 23 42 / 0.06),
-    0 1px 2px rgb(15 23 42 / 0.04);
-  --wg-shadow-md:
-    0 4px 8px -2px rgb(15 23 42 / 0.08),
-    0 2px 4px -1px rgb(15 23 42 / 0.04);
-  --wg-shadow-lg:
-    0 10px 20px -4px rgb(15 23 42 / 0.1),
-    0 4px 8px -2px rgb(15 23 42 / 0.05);
-  --wg-shadow-brand:
-    0 4px 14px -2px rgb(225 29 46 / 0.35),
-    0 2px 6px -1px rgb(225 29 46 / 0.18);
-  --wg-shadow-none: 0 0 #0000;
-}
-
-.dark,
-[data-theme="dark"] {
-  --wg-shadow-xs:
-    0 1px 2px rgb(0 0 0 / 0.28);
-  --wg-shadow-sm:
-    0 1px 2px rgb(0 0 0 / 0.32),
-    0 1px 3px rgb(0 0 0 / 0.18);
-  --wg-shadow:
-    0 2px 4px rgb(0 0 0 / 0.36),
-    0 1px 2px rgb(0 0 0 / 0.2);
-  --wg-shadow-md:
-    0 4px 8px -2px rgb(0 0 0 / 0.4),
-    0 2px 4px -1px rgb(0 0 0 / 0.24);
-  --wg-shadow-lg:
-    0 10px 20px -4px rgb(0 0 0 / 0.48),
-    0 4px 8px -2px rgb(0 0 0 / 0.28);
-  --wg-shadow-brand:
-    0 4px 14px -2px rgb(232 61 77 / 0.4),
-    0 2px 6px -1px rgb(232 61 77 / 0.22);
+  --wg-shadow-xs: var(--shadow-flat);
+  --wg-shadow-sm: var(--shadow-flat);
+  --wg-shadow: var(--shadow-raised);
+  --wg-shadow-md: var(--shadow-raised);
+  --wg-shadow-lg: var(--shadow-overlay);
+  --wg-shadow-brand: var(--shadow-flat);
+  --wg-shadow-none: var(--shadow-flat);
 }
 
 @layer components {
   .wg-shadow-card {
-    box-shadow: var(--wg-shadow-sm);
+    box-shadow: var(--shadow-flat);
     transition:
-      box-shadow var(--wg-duration) var(--wg-ease),
-      border-color var(--wg-duration) var(--wg-ease);
+      box-shadow var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard);
   }
 
   .wg-shadow-card:hover {
-    box-shadow: var(--wg-shadow-sm);
+    box-shadow: var(--shadow-flat);
   }
 
   .wg-shadow-button {
-    box-shadow: var(--wg-shadow-sm);
-    transition: all var(--wg-duration) var(--wg-ease);
+    box-shadow: var(--shadow-flat);
+    transition:
+      color var(--duration-base) var(--ease-standard),
+      background-color var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard);
   }
 
   .wg-shadow-button:not(:disabled):hover {
-    box-shadow: var(--wg-shadow);
+    box-shadow: var(--shadow-raised);
   }
 
   .wg-shadow-overlay {
-    box-shadow: var(--wg-shadow-lg);
+    box-shadow: var(--shadow-overlay);
   }
 
   .wg-shadow-brand {
-    box-shadow: var(--wg-shadow-brand);
+    box-shadow: var(--shadow-flat);
   }
 }

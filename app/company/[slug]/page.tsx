@@ -55,7 +55,7 @@ export default async function PublicCompanyPage({ params }: Props) {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight">{profile.company_name}</h1>
               {profile.verification_status === "verified" ? (
-                <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-600">
+                <Badge className="gap-1 bg-positive hover:bg-positive">
                   <BadgeCheck className="h-3.5 w-3.5" />
                   {VERIFICATION_STATUS_LABELS.verified}
                 </Badge>

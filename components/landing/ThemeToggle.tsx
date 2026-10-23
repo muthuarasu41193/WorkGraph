@@ -7,9 +7,9 @@ import { useTheme } from "@/components/theme/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, toggle } = useTheme();
+  const { resolved, toggle } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const dark = theme === "dark";
+  const dark = resolved === "dark";
 
   useEffect(() => {
     setMounted(true);

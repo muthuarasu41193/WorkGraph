@@ -178,8 +178,8 @@ export default function LoginPage() {
         </form>
 
         {message ? (
-          <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
-            <AlertDescription className="text-center text-emerald-900">{message}</AlertDescription>
+          <Alert className="border-positive-wash bg-positive-wash text-positive">
+            <AlertDescription className="text-center text-positive">{message}</AlertDescription>
           </Alert>
         ) : null}
         {error ? (
@@ -188,7 +188,7 @@ export default function LoginPage() {
           </Alert>
         ) : null}
 
-        <Card className="border-slate-200 bg-muted/30 shadow-none">
+        <Card className="border-hairline bg-muted/30 shadow-none">
           <CardContent className="p-4 text-sm text-muted-foreground">
             <button
               type="button"
@@ -209,7 +209,7 @@ export default function LoginPage() {
                   {forgotBusy ? "Sending…" : "Send reset link"}
                 </Button>
                 {forgotSent ? (
-                  <p className="text-xs text-emerald-700">If an account exists, check your inbox for the reset link.</p>
+                  <p className="text-xs text-positive">If an account exists, check your inbox for the reset link.</p>
                 ) : null}
               </form>
             ) : null}

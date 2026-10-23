@@ -6,14 +6,16 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { BUTTON_PRESS, FOCUS_RING } from "@/lib/focus-ring"
 import { WG_ICON } from "@/lib/icon-styles"
+import type { PreviewState } from "@/lib/primitive"
 
 const buttonVariants = cva(
   cn(
     "group/button wg-touch-target relative inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-sm font-medium tracking-body whitespace-nowrap select-none",
-    "transition-colors duration-150 ease-out",
+    "transition-colors duration-base ease-exit",
     BUTTON_PRESS,
     FOCUS_RING,
     "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
+    "data-[preview=active]:scale-[0.98] data-[preview=focus]:ring-2 data-[preview=focus]:ring-accent data-[preview=focus]:ring-offset-2 data-[preview=focus]:ring-offset-surface",
     "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20",
     WG_ICON.childInline,
   ),
@@ -21,20 +23,20 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "border-transparent bg-brand text-white shadow-brand",
-          "enabled:hover:bg-brand-700 enabled:hover:shadow-md",
+          "border-transparent bg-brand text-accent-ink shadow-brand",
+          "enabled:hover:bg-brand-700 enabled:hover:shadow-md data-[preview=hover]:bg-brand-700 data-[preview=hover]:shadow-md",
         ),
         secondary: cn(
           "border-border-default bg-surface text-fg-secondary shadow-none",
-          "enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm",
-          "dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          "enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm data-[preview=hover]:border-border-strong data-[preview=hover]:bg-surface-hover",
+          " dark:bg-transparent  ",
         ),
         outline:
-          "border-border-default bg-surface text-fg-secondary shadow-none enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm aria-expanded:bg-surface-active aria-expanded:text-fg-secondary dark:border-slate-600 dark:bg-transparent dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          "border-border-default bg-surface text-fg-secondary shadow-none enabled:hover:border-border-strong enabled:hover:bg-surface-hover enabled:hover:shadow-sm data-[preview=hover]:border-border-strong data-[preview=hover]:bg-surface-hover aria-expanded:bg-surface-active aria-expanded:text-fg-secondary  dark:bg-transparent  ",
         ghost:
-          "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs aria-expanded:bg-surface-active dark:text-slate-200 dark:enabled:hover:bg-slate-800/60",
+          "border-transparent bg-transparent text-fg-secondary enabled:hover:bg-surface-hover enabled:hover:shadow-xs data-[preview=hover]:bg-surface-hover aria-expanded:bg-surface-active  ",
         destructive:
-          "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm",
+          "border-transparent bg-destructive/10 text-destructive enabled:hover:bg-destructive/20 enabled:hover:shadow-sm data-[preview=hover]:bg-destructive/20",
         link: "border-transparent bg-transparent text-brand shadow-none enabled:hover:scale-100 enabled:active:scale-100 enabled:hover:underline underline-offset-4",
       },
       size: {
@@ -42,7 +44,7 @@ const buttonVariants = cva(
           "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         premium: "h-auto gap-2 px-4 py-2.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-role-body-small in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         icon: "size-8 wg-touch-target",
         "icon-xs":
@@ -59,37 +61,49 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  loading = false,
-  children,
-  disabled,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-    loading?: boolean
-  }) {
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<"button"> &
+    VariantProps<typeof buttonVariants> & {
+      asChild?: boolean
+      loading?: boolean
+      preview?: PreviewState
+    }
+>(function Button(
+  {
+    className,
+    variant = "default",
+    size = "default",
+    asChild = false,
+    loading = false,
+    preview,
+    children,
+    disabled,
+    ...props
+  },
+  ref,
+) {
   const Comp = asChild ? Slot.Root : "button"
-  const isDisabled = Boolean(disabled || loading)
+  const showLoading = Boolean(loading || preview === "loading")
+  const isDisabled = Boolean(disabled || showLoading || preview === "disabled")
 
   return (
     <Comp
+      ref={ref}
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      data-loading={loading ? "true" : undefined}
-      aria-busy={loading || undefined}
+      data-preview={preview}
+      data-loading={showLoading ? "true" : undefined}
+      aria-busy={showLoading || undefined}
+      aria-invalid={preview === "error" ? true : props["aria-invalid"]}
       disabled={asChild ? undefined : isDisabled}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
       {asChild ? (
         children
-      ) : loading ? (
+      ) : showLoading ? (
         <>
           <span className="invisible inline-flex items-center justify-center gap-[inherit]">
             {children}
@@ -103,6 +117,6 @@ function Button({
       )}
     </Comp>
   )
-}
+})
 
 export { Button, buttonVariants }

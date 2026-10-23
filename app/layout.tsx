@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Newsreader, Public_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SITE } from "@/lib/constants";
@@ -10,20 +10,28 @@ import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const publicSans = Public_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
+  variable: "--font-public",
   display: "swap",
   preload: true,
 });
 
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display-face",
+  display: "swap",
+  preload: false,
+});
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   variable: "--font-jetbrains",
   display: "swap",
-  preload: true,
+  preload: false,
 });
 
 const SEO_TITLE = "WorkGraph — Find Jobs That Never Hit LinkedIn";
@@ -61,8 +69,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(plusJakarta.variable, jetbrainsMono.variable)} suppressHydrationWarning>
-      <body className={cn(plusJakarta.className, "min-h-dvh bg-background text-foreground antialiased")}>
+    <html lang="en" className={cn(publicSans.variable, newsreader.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+      <body className={cn(publicSans.className, "min-h-dvh bg-background text-foreground antialiased")}>
         <ThemeScript />
         <ThemeProvider>
           <JsonLd />

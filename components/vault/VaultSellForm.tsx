@@ -195,7 +195,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
               className={cn(
                 "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
                 step === s.id ? "border-primary bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted",
-                step > s.id && "border-green-500/50 text-green-700 dark:text-green-400",
+                step > s.id && "border-positive/50 text-positive ",
               )}
             >
               {step > s.id ? <Check className={iconClass()} /> : null}

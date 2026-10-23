@@ -75,11 +75,11 @@ function HighlightPills({ items }: { items: string[] }) {
 
 function ProfileMockup() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-overlay">
       <div className="h-20 bg-gradient-to-r from-brand/20 to-info/10" />
       <div className="px-5 pb-5">
         <div className="-mt-8 flex items-end gap-3">
-          <div className="flex size-16 items-center justify-center rounded-2xl border-4 border-white bg-slate-950 text-lg font-bold text-white shadow-md">
+          <div className="flex size-16 items-center justify-center rounded-2xl border-4 border-surface-raised bg-ink text-lg font-bold text-accent-ink shadow-md">
             RK
           </div>
           <div className="mb-1">
@@ -124,7 +124,7 @@ function JobFeedMockup() {
   ];
 
   return (
-    <div className="space-y-2.5 rounded-2xl border border-border-default bg-background p-4 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+    <div className="space-y-2.5 rounded-2xl border border-border-default bg-background p-4 shadow-overlay">
       <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">Live feed</p>
       {jobs.map((job) => (
         <div
@@ -156,7 +156,7 @@ function JobFeedMockup() {
 
 function InterviewMockup() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+    <div className="overflow-hidden rounded-2xl border border-border-default bg-surface shadow-overlay">
       <div className="border-b border-border-default bg-brand-50 px-4 py-3">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand">
           Interview Vault
@@ -187,7 +187,7 @@ function InterviewMockup() {
 
 function EarningsMockup() {
   return (
-    <div className="rounded-2xl border border-border-default bg-surface p-5 shadow-[0_16px_48px_-12px_rgba(10,10,10,0.12)]">
+    <div className="rounded-2xl border border-border-default bg-surface p-5 shadow-overlay">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-fg-tertiary">
@@ -246,7 +246,7 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
       {!isLast && (
         <div
           className={cn(
-            "absolute z-0 hidden lg:block",
+            "absolute z-base hidden lg:block",
             isEven
               ? "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-brand-200 to-transparent"
               : "left-1/2 top-full h-16 w-px -translate-x-1/2 bg-gradient-to-b from-brand-200 to-transparent",
@@ -277,7 +277,7 @@ function StepBlock({ step, index }: { step: Step; index: number }) {
             <h3 className="mt-2 font-heading text-2xl font-bold text-fg-primary sm:text-3xl">
               {step.title}
             </h3>
-            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-fg-secondary">
+            <p className="mt-4 max-w-lg text-role-body leading-relaxed text-fg-secondary">
               {step.description}
             </p>
             <HighlightPills items={step.highlights} />
@@ -316,7 +316,7 @@ export default function HowItWorks() {
     >
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand">The process</p>
+          <p className="text-xs font-bold text-brand text-role-caption">The process</p>
           <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
             From hidden job to hired — in 4 steps
           </h2>

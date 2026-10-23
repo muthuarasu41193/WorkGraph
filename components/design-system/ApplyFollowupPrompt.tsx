@@ -31,16 +31,16 @@ export default function ApplyFollowupPrompt({ onMarkApplied, onSaveForLater }: P
 
   return (
     <div
-      className="apply-followup pointer-events-auto fixed bottom-20 right-4 z-[120] w-full max-w-sm md:bottom-6"
+      className="apply-followup pointer-events-auto fixed bottom-20 right-4 z-toast w-full max-w-sm md:bottom-6"
       role="dialog"
       aria-labelledby="apply-followup-title"
       aria-describedby="apply-followup-desc"
     >
-      <div className="rounded-xl border border-slate-200 bg-surface p-4 shadow-lg">
-        <p id="apply-followup-title" className="text-sm font-semibold text-slate-900">
+      <div className="rounded-xl border border-hairline bg-surface p-4 shadow-lg">
+        <p id="apply-followup-title" className="text-sm font-semibold text-ink">
           Did you apply to this role?
         </p>
-        <p id="apply-followup-desc" className="mt-1 text-sm text-slate-500">
+        <p id="apply-followup-desc" className="mt-1 text-sm text-ink-subtle">
           {active.company} · {active.title}
         </p>
         <div className="mt-3 flex gap-2">

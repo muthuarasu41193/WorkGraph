@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils";
 type Props = { data: ATSAnalysis };
 
 const STATUS_STYLES = {
-  good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
-  warning: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-  critical: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
+  good: "bg-positive-wash text-positive  ",
+  warning: "bg-caution-wash text-caution  ",
+  critical: "bg-danger-wash text-danger  ",
 };
 
 export default function ATSAnalysisSection({ data }: Props) {

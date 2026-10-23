@@ -56,7 +56,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-        className={cn("text-[13px] leading-snug text-fg-secondary", className)}
+        className={cn("text-role-caption leading-snug text-fg-secondary", className)}
       {...props}
     />
   )
