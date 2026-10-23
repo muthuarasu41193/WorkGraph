@@ -72,7 +72,7 @@ export const APPLICATION_COLUMNS: {
   { id: "screening", label: "Screening", description: "Recruiter or ATS review" },
   { id: "interview", label: "Interview", description: "Active interview loop" },
   { id: "offer", label: "Offer", description: "Offers received" },
-  { id: "rejected", label: "Rejected", description: "Closed or declined" },
+  { id: "rejected", label: "Rejected", description: "The employer closed this application, or you declined it." },
 ];
 
 export function isApplicationStatus(value: string): value is ApplicationStatus {

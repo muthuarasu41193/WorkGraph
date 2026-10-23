@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -25,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CONTACT_INFO, CONTACT_SUBJECTS } from "@/lib/constants";
+import { messages } from "@/lib/messages";
 
 type ContactFormData = {
   name: string;
@@ -88,7 +88,7 @@ function ContactForm() {
       setSubmitState("success");
       reset();
     } catch {
-      setServerError("Network error. Please check your connection and try again.");
+      setServerError(messages.contactFailed);
       setSubmitState("error");
     }
   };
@@ -98,14 +98,14 @@ function ContactForm() {
       <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[20px] border border-border-default bg-surface p-10 text-center shadow-lg">
         <CheckCircle2 className="size-14 text-success" aria-hidden />
         <p className="mt-4 font-heading text-xl font-bold text-fg-primary">
-          Message sent! We&apos;ll reply within 24 hours.
+          {messages.contactSent} {messages.contactSentNext}
         </p>
         <button
           type="button"
           onClick={() => setSubmitState("idle")}
           className="mt-6 text-sm font-semibold text-brand transition-colors hover:text-brand-700"
         >
-          Send another message
+          {messages.contactAnother}
         </button>
       </div>
     );
@@ -253,10 +253,10 @@ function ContactForm() {
         {submitState === "loading" ? (
           <>
             <Loader2 className="size-5 animate-spin" aria-hidden />
-            Sending...
+            {messages.contactSending}
           </>
         ) : (
-          "Send Message →"
+          messages.contactSend
         )}
       </button>
     </form>
@@ -277,14 +277,13 @@ export default function Contact() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-xs font-bold text-brand text-role-caption">
-              GET IN TOUCH
+              {messages.contactEyebrow}
             </p>
             <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
-              Let&apos;s talk about your job search
+              {messages.contactHeading}
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-fg-secondary">
-              Have questions about WorkGraph? Want to partner with us? Or just want to say hi? We
-              respond within 24 hours.
+              {messages.contactBody}
             </p>
 
             <div className="mt-10 space-y-4">

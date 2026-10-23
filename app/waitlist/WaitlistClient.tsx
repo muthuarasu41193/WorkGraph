@@ -7,12 +7,13 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { messages } from "@/lib/messages";
 import { displayCount } from "@/lib/social-proof";
 
 const WAITLIST_EXPECTATIONS = [
-  "Early access to hidden job discovery across 50+ sources",
-  "AI match scoring and Interview Vault previews",
-  "Priority onboarding when your spot opens up",
+  "Search the live job index without an account.",
+  "A match note appears when a profile is available to compare.",
+  "We email this address when there is something to say. A date is not promised.",
 ] as const;
 
 export default function WaitlistClient({ signups = 0 }: { signups?: number }) {
@@ -101,7 +102,7 @@ export default function WaitlistClient({ signups = 0 }: { signups?: number }) {
                 disabled={loading}
                 className="relative flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-colors duration-base ease-exit hover:bg-brand-700 active:scale-[0.98] disabled:opacity-70"
               >
-                <span className={loading ? "invisible" : undefined}>Join waitlist →</span>
+                <span className={loading ? "invisible" : undefined}>{messages.announceCta}</span>
                 {loading ? (
                   <Loader2 className="absolute size-5 animate-spin" aria-hidden />
                 ) : null}

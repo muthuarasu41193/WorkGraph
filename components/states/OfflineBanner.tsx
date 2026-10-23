@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react"
 import { toast } from "@/hooks/use-toast"
+import { messages } from "@/lib/messages"
 import { readOfflineQueue, subscribeOfflineQueue, writeOfflineQueue } from "@/lib/offline-queue"
 
 let replaying = false
@@ -28,8 +29,8 @@ export function OfflineBanner() {
 
   return (
     <div className="fixed inset-x-0 top-0 z-toast border-b border-hairline bg-surface-raised px-4 py-2 text-role-caption text-ink" role="status">
-      You are offline. Saved changes wait on this device until the connection returns.
-      {queued !== "0" ? ` ${queued} waiting.` : ""}
+      {messages.statesOffline}
+      {queued !== "0" ? ` ${messages.statesOfflineWaiting(queued)}` : ""}
     </div>
   )
 }
@@ -51,8 +52,8 @@ async function replay() {
       if (!res.ok) remaining.push(item)
     }
     writeOfflineQueue(remaining)
-    if (remaining.length === 0) toast({ title: "Saved the waiting updates", variant: "success" })
-    else toast({ title: "Some waiting updates did not save", description: "Open the tracker and move the stage again.", variant: "error" })
+    if (remaining.length === 0) toast({ title: messages.statesSavedWaiting, variant: "success" })
+    else toast({ title: messages.statesWaitingFailed, description: messages.statesWaitingFailedNext, variant: "error" })
   } finally {
     replaying = false
   }

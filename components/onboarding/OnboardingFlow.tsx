@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Text } from "@/components/ui/text"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
+import { messages } from "@/lib/messages"
 import {
   ONBOARDING_KEY,
   onboardingSteps,
@@ -68,7 +69,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
     const res = await fetch(`/api/jobs?q=${encodeURIComponent(trimmed)}&page_size=3&rank_profile=0&signals=0`)
     const data = (await res.json()) as { ok?: boolean; jobs?: RecommendedJobCard[] }
     if (!res.ok || !data.ok) {
-      setJobsError("Could not load jobs. You can still continue.")
+      setJobsError(messages.onboardingJobsFailed)
       setJobs([])
       return
     }
@@ -117,9 +118,9 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
   }
 
   const missing = [
-    !draft.extracted ? "Add a resume to improve match accuracy." : null,
-    !draft.role.trim() ? "Add a target role to fill the job feed." : null,
-    !draft.location.trim() ? "Add a location so the feed can start nearer to you." : null,
+    !draft.extracted ? messages.onboardingResumeGap : null,
+    !draft.role.trim() ? messages.onboardingRoleGap : null,
+    !draft.location.trim() ? messages.onboardingLocationGap : null,
     !draft.authorization.trim() ? "Add work authorization to keep it with this draft when you apply." : null,
     !draft.salary.trim() ? "Add a salary note for yourself. Listings here do not include pay, and there is no market figure to prefill." : null,
   ].filter((item): item is string => Boolean(item))
