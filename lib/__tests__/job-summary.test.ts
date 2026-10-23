@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { getApplyLabel } from "../job-apply";
+import { getApplyLabel, jobSourceName } from "../job-apply";
 import { buildJobSummary, sanitizeJobDescription } from "../job-summary";
 import { matchReason } from "../job-match-reason";
 
@@ -42,19 +42,41 @@ describe("buildJobSummary", () => {
 });
 
 describe("getApplyLabel", () => {
-  it("uses one Apply on {source} pattern", () => {
+  it("uses the board name, the employer on their own site, or the apply host", () => {
     assert.equal(getApplyLabel("greenhouse"), "Apply on Greenhouse");
     assert.equal(getApplyLabel("lever", "Acme"), "Apply on Lever");
-    assert.equal(getApplyLabel(null, "Firstwork"), "Apply on Firstwork");
+    assert.equal(jobSourceName("lever", "Acme"), "Lever");
+    assert.equal(getApplyLabel("workgraph", "Firstwork"), "Apply on Firstwork");
+    assert.equal(getApplyLabel("company", "Firstwork"), "Apply on Firstwork");
+    assert.equal(
+      getApplyLabel("other", "Firstwork", "https://boards.greenhouse.io/firstwork/jobs/1"),
+      "Apply on greenhouse.io",
+    );
+    assert.equal(
+      getApplyLabel(null, "Firstwork", "https://www.greenhouse.io/job/1"),
+      "Apply on greenhouse.io",
+    );
+    assert.equal(jobSourceName("other", "Firstwork", "https://boards.greenhouse.io/firstwork/jobs/1"), "greenhouse.io");
   });
 
-  it("does not use Apply Now or Apply on Company Site", () => {
-    for (const source of [undefined, null, "", "other", "workgraph", "company", "unknown-board"]) {
-      const label = getApplyLabel(source, "Northwind");
+  it("does not use Apply Now, Apply on Company Site, or Apply on the company site", () => {
+    const labels = [
+      getApplyLabel(undefined, "Northwind"),
+      getApplyLabel(null, "Northwind"),
+      getApplyLabel("", "Northwind"),
+      getApplyLabel("other", "Northwind"),
+      getApplyLabel("workgraph", "Northwind"),
+      getApplyLabel("company", "Northwind"),
+      getApplyLabel("unknown-board", "Northwind", "https://jobs.example.com/role"),
+      getApplyLabel("other", "Northwind", "https://careers.acme.com/role"),
+    ];
+    for (const label of labels) {
       assert.equal(label.includes("Apply Now"), false);
-      assert.equal(label.includes("Company Site"), false);
+      assert.equal(/company site/i.test(label), false);
       assert.match(label, /^Apply on /);
     }
+    assert.equal(getApplyLabel("unknown-board", "Northwind", "https://jobs.example.com/role"), "Apply on Unknown Board");
+    assert.equal(getApplyLabel("other", "Northwind", "https://careers.acme.com/role"), "Apply on acme.com");
   });
 });
 

@@ -59,7 +59,7 @@ export function ProductJobCard({
   onSave,
   onDismiss,
   onApply,
-  applyLabel = "Apply",
+  applyLabel = "Apply on the listing",
   statusNote,
   className,
 }: ProductJobCardProps) {

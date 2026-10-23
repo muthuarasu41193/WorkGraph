@@ -137,7 +137,7 @@ export default function JobCard({
 }: Props) {
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
-  const sourceName = jobSourceName(job.source, job.company);
+  const sourceName = jobSourceName(job.source, job.company, applyHref);
   const salary = salaryFigure(job.salaryRange);
   const freshnessLabel = formatJobFreshness(job.postedAtIso);
   const chips = [job.workMode, job.employmentType, job.experience, job.location].filter(isUsefulChip);
