@@ -19,7 +19,7 @@ function FooterLink({
   return (
     <Link
       href={href}
-      className="inline-flex items-center text-sm text-fg-tertiary transition-all duration-base hover:translate-x-1 hover:text-brand"
+      className="inline-flex min-h-11 items-center text-sm text-fg-tertiary transition-colors duration-base hover:text-brand"
     >
       {children}
     </Link>
@@ -88,7 +88,7 @@ function NewsletterStrip({ signups }: { signups: number }) {
           />
           <button
             type="submit"
-            className="shrink-0 rounded-lg bg-surface px-6 py-3 text-sm font-semibold text-brand transition-all duration-base hover:scale-[1.02] hover:bg-brand-50"
+            className="inline-flex min-h-11 shrink-0 items-center rounded-lg bg-surface px-6 py-3 text-sm font-semibold text-brand transition-colors duration-base hover:bg-brand-50"
           >
             {submitted ? "Subscribed!" : "Subscribe"}
           </button>
@@ -134,7 +134,7 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
                 ))}
                 <span className="inline-flex items-center gap-4">
                   <span aria-hidden>·</span>
-                  <CookiePreferencesButton className="hover:translate-x-1 hover:no-underline" />
+                  <CookiePreferencesButton className="hover:no-underline" />
                 </span>
               </div>
             </div>

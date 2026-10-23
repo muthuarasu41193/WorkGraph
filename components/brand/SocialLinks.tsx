@@ -28,7 +28,7 @@ export function SocialLinks({ className, iconClassName }: SocialLinksProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={social.label}
-            className="text-fg-tertiary transition-all duration-base hover:scale-110 hover:text-brand"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-fg-tertiary transition-colors duration-base hover:text-brand"
           >
             <SocialBrandIcon brand={brand} className={cn("size-5", iconClassName)} />
           </a>

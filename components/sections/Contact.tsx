@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { motion, useReducedMotion } from "framer-motion";
 import {
   AtSign,
   CheckCircle2,
@@ -248,7 +247,7 @@ function ContactForm() {
       <button
         type="submit"
         disabled={submitState === "loading"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-all duration-base hover:bg-brand-700 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-colors duration-base hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {submitState === "loading" ? (
           <>
@@ -264,18 +263,11 @@ function ContactForm() {
 }
 
 export default function Contact() {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
     <section id="contact" aria-label="Contact" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div>
             <p className="text-xs font-bold text-brand text-role-caption">
               {messages.contactEyebrow}
             </p>
@@ -307,16 +299,11 @@ export default function Contact() {
             </div>
 
             <SocialLinks className="mt-8" />
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div>
             <ContactForm />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

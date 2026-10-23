@@ -290,7 +290,7 @@ function PricingCard({
       <Link
         href={tier.cta.href}
         className={cn(
-          "mt-8 inline-flex w-full items-center justify-center rounded-full font-semibold transition-all duration-base ease-standard hover:scale-[1.02]",
+          "mt-8 inline-flex min-h-11 w-full items-center justify-center rounded-full font-semibold transition-colors duration-base ease-standard",
           tier.cta.style === "outline" &&
             "border-2 border-brand bg-transparent py-3 text-brand hover:bg-brand-50",
           tier.cta.style === "primary" &&
@@ -383,7 +383,7 @@ function EnterpriseCta() {
       </p>
       <Link
         href="#contact"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-all duration-base hover:scale-[1.02] hover:bg-surface-active"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-colors duration-base hover:bg-surface-active"
       >
         Contact Sales →
       </Link>

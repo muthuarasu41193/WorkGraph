@@ -391,7 +391,7 @@ export default function CreateProfilePage() {
                         )}
                       >
                         <input {...getInputProps()} />
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border transition-transform duration-base group-hover:scale-105">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-background shadow-md ring-1 ring-border">
                           <FileText className="h-6 w-6 text-primary" aria-hidden />
                         </div>
                         <p className="mt-5 text-md font-semibold text-foreground">

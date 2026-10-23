@@ -100,7 +100,7 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       initial={prefersReducedMotion ? false : { opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex h-full flex-col rounded-2xl border border-border-default bg-surface p-8 transition-all duration-base ease-standard hover:scale-[1.02] hover:border-brand hover:shadow-overlay"
+      className="group flex h-full flex-col rounded-2xl border border-border-default bg-surface p-8 transition-colors duration-base ease-standard hover:border-brand"
     >
       <div className="flex items-start justify-between gap-3">
         <div

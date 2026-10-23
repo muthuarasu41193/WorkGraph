@@ -17,7 +17,7 @@ export function DelayedSkeleton({ children, label = "Loading" }: { children: Rea
   }
 
   return (
-    <div aria-busy="true" aria-label={label}>
+    <div className="wg-skeleton-in" aria-busy="true" aria-label={label}>
       {children}
     </div>
   )
