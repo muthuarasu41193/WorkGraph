@@ -35,6 +35,7 @@ import {
 } from "../../lib/job-listing-filters";
 import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
 import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
+import { sanitizeJobDescription } from "../../lib/job-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -2112,6 +2113,7 @@ export default function RecommendedJobsSection({
                 primaryJobType: meta.primaryJobType ?? meta.jobTypes[0] ?? null,
                 locationMode: meta.locationMode,
                 salary: meta.salary,
+                profileSkillCount: skillHints.length,
               })}
               index={i}
               saved={isSaved}
@@ -2141,9 +2143,9 @@ export default function RecommendedJobsSection({
                 <div className="space-y-3">
                   <div
                     className="measure prose-rhythm max-h-[200px] overflow-auto text-role-body text-ink-muted"
-                    title={job.description?.trim() || job.matchLabel}
+                    title={sanitizeJobDescription(job.description ?? "", job.company) || job.matchLabel}
                   >
-                    {job.description?.trim() ? job.description : job.matchLabel}
+                    {sanitizeJobDescription(job.description ?? "", job.company) || job.matchLabel}
                   </div>
                   <ul className="space-y-1 text-sm">
                     {reqs.map((r) => (
@@ -2179,7 +2181,7 @@ export default function RecommendedJobsSection({
                     jobId={job.id}
                     jobTitle={job.title}
                     company={job.company}
-                    jobDescription={job.description?.trim() || job.matchLabel || job.title}
+                    jobDescription={sanitizeJobDescription(job.description ?? "", job.company) || job.title}
                     hasResume={hasResume}
                     triggerClassName="analyze-btn w-full justify-center"
                   />
@@ -2394,9 +2396,9 @@ export default function RecommendedJobsSection({
                 </p>
                 <p
                   className="measure prose-rhythm max-h-[45vh] overflow-auto text-role-body text-ink-muted"
-                  title={job.description?.trim() || job.matchLabel}
+                  title={sanitizeJobDescription(job.description ?? "", job.company) || job.matchLabel}
                 >
-                  {job.description?.trim() ? job.description : job.matchLabel}
+                  {sanitizeJobDescription(job.description ?? "", job.company) || job.matchLabel}
                 </p>
                 {job.applyUrl ? (
                   <JobApplyButton
@@ -2412,7 +2414,7 @@ export default function RecommendedJobsSection({
                   jobId={job.id}
                   jobTitle={job.title}
                   company={job.company}
-                  jobDescription={job.description?.trim() || job.matchLabel || job.title}
+                  jobDescription={sanitizeJobDescription(job.description ?? "", job.company) || job.title}
                   hasResume={hasResume}
                   triggerClassName="analyze-btn w-full justify-center"
                 />

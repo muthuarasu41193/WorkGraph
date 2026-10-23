@@ -29,7 +29,7 @@ export default function JobApplyButton({
   followupDelayMs = 45_000,
 }: Props) {
   const scheduleFollowup = useApplyFollowupStore((s) => s.schedule);
-  const label = getApplyLabel(source);
+  const label = getApplyLabel(source, company);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
