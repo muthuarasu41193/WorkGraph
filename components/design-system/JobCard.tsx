@@ -3,6 +3,10 @@
 import { useState, type ReactNode } from "react";
 import { Bookmark } from "lucide-react";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
+import { FreshnessIndicator } from "@/components/product/FreshnessIndicator";
+import { MatchScore } from "@/components/product/MatchScore";
+import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay";
+import { SourceAttribution } from "@/components/product/SourceAttribution";
 import { type JobCardData } from "@/lib/job-card-data";
 import { formatJobFreshness } from "@/lib/job-freshness";
 import { jobSourceName } from "@/lib/job-apply";
@@ -34,12 +38,6 @@ function companyInitials(name: string): string {
   const parts = cleaned.split(/\s+/).filter(Boolean);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
-}
-
-function neutralMatchClass(percent: number): string {
-  if (percent >= 75) return "border-hairline bg-surface-sunken text-ink";
-  if (percent >= 40) return "border-hairline bg-surface text-ink-muted";
-  return "border-hairline bg-surface text-ink-subtle";
 }
 
 function isUsefulChip(value?: string): value is string {
@@ -81,20 +79,10 @@ function JobChip({ children }: { children: string }) {
   );
 }
 
-function MatchMark({ percent, reason }: { percent: number; reason: string }) {
-  return (
-    <div className="shrink-0 text-right">
-      <span
-        className={cn(
-          "text-role-caption inline-flex whitespace-nowrap rounded-control border px-2 py-0.5 font-semibold leading-tight tabular-nums",
-          neutralMatchClass(percent),
-        )}
-      >
-        {percent}% match
-      </span>
-      <p className="mt-1 max-w-40 text-role-caption font-normal text-ink-muted">{reason}</p>
-    </div>
-  );
+function salaryFigure(range?: string): SalaryFigure {
+  const label = range?.trim();
+  if (!label || label.toLowerCase() === "see listing") return { kind: "undisclosed" };
+  return { kind: "stated", label };
 }
 
 function BookmarkButton({ saved, onSave }: { saved: boolean; onSave: () => void }) {
@@ -150,18 +138,18 @@ export default function JobCard({
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
   const sourceName = jobSourceName(job.source, job.company);
-  const salaryText = job.salaryRange?.trim() || "Salary not disclosed";
-  const freshness = formatJobFreshness(job.postedAtIso);
-  const meta = [salaryText, `via ${sourceName}`, freshness].filter((part): part is string => Boolean(part));
+  const salary = salaryFigure(job.salaryRange);
+  const freshnessLabel = formatJobFreshness(job.postedAtIso);
   const chips = [job.workMode, job.employmentType, job.experience, job.location].filter(isUsefulChip);
   const summary = buildJobSummary({
     description: job.description,
     company: job.company,
     generatedSummary: job.generatedSummary,
   });
-  const matchedCount = job.matchedSkills?.length ?? 0;
+  const matched = job.matchedSkills ?? [];
+  const missing = job.missingSkills ?? [];
   const reason =
-    job.matchPercent !== undefined ? matchReason(matchedCount, job.profileSkillCount ?? 0) : null;
+    job.matchPercent !== undefined ? matchReason(matched.length, job.profileSkillCount ?? 0) : null;
 
   function renderApply(extraClass?: string) {
     if (!canApply || !applyHref) return null;
@@ -205,13 +193,40 @@ export default function JobCard({
               {job.title}
             </h3>
             {job.matchPercent !== undefined && reason ? (
-              <MatchMark percent={job.matchPercent} reason={reason} />
+              <div
+                className="max-w-56 shrink-0"
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+              >
+                <MatchScore
+                  score={job.matchPercent}
+                  reason={reason}
+                  tone="neutral"
+                  requirements={[
+                    ...matched.map((label) => ({ label, met: true })),
+                    ...missing.map((label) => ({ label, met: false })),
+                  ]}
+                />
+              </div>
             ) : null}
           </div>
           <p className="font-sans text-role-caption mt-0.5 truncate text-ink-muted" title={job.company}>
             {job.company}
           </p>
-          <p className="text-role-caption mt-1 text-ink-muted">{meta.join(" · ")}</p>
+          <div
+            className="mt-1 flex flex-wrap items-baseline gap-x-2"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <SalaryDisplay salary={salary} />
+            <SourceAttribution source={sourceName} href={applyHref || undefined} />
+            {freshnessLabel ? (
+              <FreshnessIndicator
+                status={freshnessLabel.includes("may no longer be open") ? "stale" : "unknown"}
+                label={freshnessLabel}
+              />
+            ) : null}
+          </div>
           {chips.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {chips.map((chip) => (
@@ -224,18 +239,6 @@ export default function JobCard({
               <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
               {summary.text}
             </p>
-          ) : null}
-          {job.missingSkills && job.missingSkills.length > 0 ? (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {job.missingSkills.map((skill) => (
-                <span
-                  key={skill}
-                  className="text-role-caption rounded-control border border-hairline bg-surface-raised px-1.5 py-0.5 leading-tight text-ink-subtle"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
           ) : null}
         </div>
       </div>

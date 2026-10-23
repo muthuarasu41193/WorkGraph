@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
+import { salaryText } from "../../components/product/SalaryDisplay"
 import { namedApplyLabel, parseMatchPercent, relaxQuery, remotePolicy, sortFeedJobs } from "../job-feed"
 import type { RecommendedJobCard } from "../job-dashboard"
 
@@ -43,6 +44,12 @@ describe("job feed helpers", () => {
     assert.equal(remotePolicy("Berlin, Germany"), "Listed location")
     assert.equal(remotePolicy("Remote - US"), "Remote")
     assert.equal(remotePolicy("Location TBD"), "Remote policy not listed")
+  })
+
+  it("keeps a stated salary and names an undisclosed one", () => {
+    assert.equal(salaryText({ kind: "stated", label: "$120k–$150k" }), "$120k–$150k")
+    assert.equal(salaryText({ kind: "stated", label: "  " }), "Salary not disclosed")
+    assert.equal(salaryText({ kind: "undisclosed" }), "Salary not disclosed")
   })
 
   it("sorts by parsed match and leaves unscored rows last", () => {

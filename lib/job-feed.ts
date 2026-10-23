@@ -54,6 +54,10 @@ export function remotePolicy(location: string): string {
 
 export function namedApplyLabel(source: string | null | undefined, hasUrl: boolean): string {
   if (!hasUrl) return "Apply on the company site"
+  const key = String(source ?? "").trim().toLowerCase()
+  if (key === "" || key === "company" || key === "workgraph" || key === "other") {
+    return "Apply on the company site"
+  }
   const label = getApplyLabel(source)
   if (label === "Apply Now" || label === "Apply on Company Site") return "Apply on the company site"
   return label

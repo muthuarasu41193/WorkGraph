@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 export type SalaryFigure = {
-  kind: "range" | "single" | "undisclosed" | "converted"
+  kind: "range" | "single" | "undisclosed" | "converted" | "stated"
   min?: number
   max?: number
   amount?: number
@@ -11,6 +11,8 @@ export type SalaryFigure = {
   convertedFrom?: string
   rateDate?: string
   originalLabel?: string
+  /** Present when kind is stated. A figure that was already formatted from real listing data. */
+  label?: string
 }
 
 /**
@@ -34,6 +36,7 @@ function money(amount: number, currency = "USD") {
 
 export function salaryText(salary: SalaryFigure): string {
   if (salary.kind === "undisclosed") return "Salary not disclosed"
+  if (salary.kind === "stated") return salary.label?.trim() || "Salary not disclosed"
   const period = salary.period ? ` ${salary.period}` : ""
   if (salary.kind === "range") {
     return `${money(salary.min ?? 0, salary.currency)}–${money(salary.max ?? 0, salary.currency)}${period}`

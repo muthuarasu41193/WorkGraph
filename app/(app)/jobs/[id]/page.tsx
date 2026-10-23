@@ -6,6 +6,7 @@ import { fetchLiveJobByPublicId, mapJobRowToCard } from "@/lib/jobs-catalog"
 import { loadUserProfile } from "@/lib/load-profile"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { Text } from "@/components/ui/text"
+import { sanitizeJobDescription } from "@/lib/job-summary"
 import Link from "next/link"
 
 export const dynamic = "force-dynamic"
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const company = row.company || "Company"
   return {
     title: `${title} at ${company}`,
-    description: (row.description || `${title} at ${company}`).slice(0, 180),
+    description: (sanitizeJobDescription(row.description || "", company) || `${title} at ${company}`).slice(0, 180),
   }
 }
 
