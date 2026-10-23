@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   EARLY_STAGE_COPY,
@@ -9,19 +7,12 @@ import {
   type TestimonialRow,
 } from "@/lib/social-proof";
 
-function TestimonialCard({ item, index }: { item: TestimonialRow; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const prefersReducedMotion = useReducedMotion();
+function TestimonialCard({ item }: { item: TestimonialRow }) {
   const disclosure = teamMemberDisclosure(item.is_employee);
   const initial = item.author_name.trim().charAt(0).toUpperCase() || "?";
 
   return (
-    <motion.article
-      ref={ref}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+    <article
       className={cn(
         "group break-inside-avoid rounded-2xl border border-border-default bg-surface p-6 shadow-sm transition-all duration-base hover:border-brand/20 hover:shadow-overlay",
       )}
@@ -57,7 +48,7 @@ function TestimonialCard({ item, index }: { item: TestimonialRow; index: number 
       <blockquote className="mt-4 text-md leading-relaxed text-fg-secondary">
         &ldquo;{item.quote}&rdquo;
       </blockquote>
-    </motion.article>
+    </article>
   );
 }
 
@@ -80,8 +71,8 @@ export default function Testimonials({ items }: { items: TestimonialRow[] }) {
 
         {consented.length > 0 ? (
           <div className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6">
-            {consented.map((item, index) => (
-              <TestimonialCard key={item.id} item={item} index={index} />
+            {consented.map((item) => (
+              <TestimonialCard key={item.id} item={item} />
             ))}
           </div>
         ) : (

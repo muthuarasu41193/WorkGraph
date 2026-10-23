@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import VaultNav from "@/components/vault/VaultNav";
 import WorkGraphProviders from "@/components/providers/WorkGraphProviders";
-import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/layout/Footer";
 import { routeShareMetadata } from "@/lib/seo";
 
@@ -34,7 +33,6 @@ export default function InterviewVaultLayout({ children }: { children: React.Rea
         <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
         <Footer />
       </div>
-      <Toaster />
     </WorkGraphProviders>
   );
 }

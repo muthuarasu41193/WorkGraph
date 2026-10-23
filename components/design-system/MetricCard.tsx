@@ -72,7 +72,7 @@ export default function MetricCard({
             <p className="text-xs text-[var(--dash-text-secondary)]">{trendLabel}</p>
           ) : null}
         </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)] transition-transform group-hover:scale-105">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
           <WgIcon icon={Icon} size="standalone" />
         </span>
       </div>

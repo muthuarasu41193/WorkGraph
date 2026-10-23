@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { PullToRefresh } from "@/components/states/PullToRefresh"
 import { TrackerBoard } from "@/components/tracker/TrackerBoard"
 import { listApplicationsForUser } from "@/lib/applications-server"
 import { getSessionUser } from "@/lib/auth/session-server"
@@ -27,5 +28,9 @@ export default async function TrackerPage({
     loadError = "Applications could not be loaded. You can try the page again."
   }
 
-  return <TrackerBoard initial={applications} loadError={loadError} initialSelectedId={first(raw.application) ?? null} />
+  return (
+    <PullToRefresh>
+      <TrackerBoard initial={applications} loadError={loadError} initialSelectedId={first(raw.application) ?? null} />
+    </PullToRefresh>
+  )
 }

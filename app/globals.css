@@ -152,6 +152,9 @@ html,
 body {
   margin: 0;
   padding: 0;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
   max-width: 100%;
   overflow-x: clip;
   font-family: var(--wg-font-sans);
@@ -160,6 +163,12 @@ body {
 }
 
 @media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+
   .wg-touch-target {
     position: relative;
   }
@@ -169,8 +178,8 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     transform: translate(-50%, -50%);
   }
 }
@@ -374,12 +383,10 @@ body {
   50% { opacity: 0.65; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-\[hero-bob_6s_ease-in-out_infinite\],
-  .animate-\[hero-bounce_2s_ease-in-out_infinite\],
-  .animate-\[hero-badge-pulse_3s_ease-in-out_infinite\] {
-    animation: none !important;
-  }
+.animate-\[hero-bob_6s_ease-in-out_infinite\],
+.animate-\[hero-bounce_2s_ease-in-out_infinite\],
+.animate-\[hero-badge-pulse_3s_ease-in-out_infinite\] {
+  animation: none;
 }
 
 @keyframes wg-bookmark-bounce {
@@ -410,7 +417,35 @@ body {
 }
 
 .wg-section-fade {
-  animation: wg-fade-up var(--duration-slow) ease both;
+  animation: none;
+}
+
+@keyframes wg-toast-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.wg-toast {
+  animation: wg-toast-in var(--duration-slow) ease-exit both;
+}
+
+@keyframes wg-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.wg-skeleton-in {
+  animation: wg-fade-in var(--duration-base) ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: var(--duration-fast) !important;
+    transition-property: opacity, color, background-color, border-color, outline-color, box-shadow !important;
+  }
 }
 
 .wg-bookmark-bounce {

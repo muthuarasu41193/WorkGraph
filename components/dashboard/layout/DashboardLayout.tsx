@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Toaster } from "@/components/ui/toaster";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
 import { LegalNav } from "@/components/legal/LegalDocument";
@@ -46,7 +45,6 @@ function DashboardLayoutInner({ children }: Props) {
       </div>
 
       <MobileNav />
-      <Toaster />
     </div>
   );
 }

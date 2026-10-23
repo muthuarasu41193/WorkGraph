@@ -9,6 +9,8 @@ export type ToastRecord = {
   title: string;
   description?: string;
   variant?: ToastVariant;
+  undoLabel?: string;
+  onUndo?: () => void;
 };
 
 type ToastState = {
@@ -24,7 +26,7 @@ export const useToastStore = create<ToastState>((set) => ({
     set((state) => ({ toasts: [...state.toasts, { ...toast, id }] }));
     window.setTimeout(() => {
       set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
-    }, 3000);
+    }, toast.onUndo ? 5000 : 3000);
   },
   dismiss: (id) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
 }));

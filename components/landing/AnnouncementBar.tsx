@@ -10,7 +10,7 @@ export function AnnouncementBar() {
     >
       <div className="mx-auto flex max-w-landing flex-wrap items-center justify-center gap-2">
         <span
-          className="inline-block size-2 animate-pulse-soft rounded-full bg-success"
+          className="inline-block size-2 rounded-full bg-success"
           aria-hidden
         />
         <span>{ANNOUNCEMENT.message}</span>

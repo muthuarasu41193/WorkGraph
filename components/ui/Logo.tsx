@@ -20,7 +20,7 @@ export function Logo({ className, href = "/" }: LogoProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
-        className="shrink-0 transition-transform duration-base group-hover:scale-105"
+        className="shrink-0"
       >
         <path d="M14 3L25 23H3L14 3Z" fill="var(--ink)" />
         <path

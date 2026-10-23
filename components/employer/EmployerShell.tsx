@@ -7,7 +7,6 @@ import { Building2, LayoutDashboard, Plus, Radio, Users } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -84,7 +83,6 @@ export default function EmployerShell({ companyName, children }: Props) {
 
         <main className="min-w-0 flex-1">{children}</main>
       </div>
-      <Toaster />
     </div>
   );
 }

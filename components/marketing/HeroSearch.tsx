@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Text } from "@/components/ui/text"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
+import { messages } from "@/lib/messages"
 
 export function HeroSearch() {
   const router = useRouter()
@@ -30,7 +31,7 @@ export function HeroSearch() {
         .then(async (res) => {
           const data = (await res.json()) as { ok?: boolean; jobs?: RecommendedJobCard[] }
           if (!res.ok || !data.ok) {
-            setError("Could not load jobs.")
+            setError(messages.heroSearchFailed)
             setJobs([])
             return
           }
@@ -38,7 +39,7 @@ export function HeroSearch() {
           setJobs(data.jobs ?? [])
         })
         .catch(() => {
-          setError("Could not load jobs.")
+          setError(messages.heroSearchFailed)
           setJobs([])
         })
     }, 180)
@@ -58,7 +59,7 @@ export function HeroSearch() {
         <Button type="submit" className="min-h-11">Search jobs</Button>
       </form>
       {error ? <Text role="body-small" className="text-danger">{error}</Text> : null}
-      {jobs && jobs.length === 0 ? <Text role="body-small">No roles matched that search.</Text> : null}
+      {jobs && jobs.length === 0 ? <Text role="body-small">{messages.heroSearchEmpty}</Text> : null}
       <div className="space-y-3">
         {(jobs ?? []).map((job) => {
           const view = jobCardView(job)

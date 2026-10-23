@@ -1,3 +1,4 @@
+import { messages } from "@/lib/messages"
 import { getSiteUrl } from "./site-url";
 
 export const SITE = {
@@ -11,15 +12,15 @@ export const SITE = {
 
 export const NAV_ITEMS = [
   { label: "Features", href: "/#features" },
-  { label: "How it Works", href: "/#how-it-works" },
+  { label: "How it works", href: "/#how-it-works" },
   { label: "Interview Vault", href: "/interview-vault" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/#contact" },
 ] as const;
 
 export const NAV_ANNOUNCEMENT = {
-  message: "We launched this month. Be one of the first.",
-  cta: "Join waitlist →",
+  message: messages.announceMessage,
+  cta: messages.announceCta,
   href: "/waitlist",
 } as const;
 
@@ -116,7 +117,7 @@ export const CTA = {
 export const FOOTER_LINKS = {
   product: [
     { label: "Features", href: "/#features" },
-    { label: "How it Works", href: "/#how-it-works" },
+    { label: "How it works", href: "/#how-it-works" },
     { label: "Interview Vault", href: "/interview-vault" },
     { label: "Pricing", href: "/#pricing" },
   ],

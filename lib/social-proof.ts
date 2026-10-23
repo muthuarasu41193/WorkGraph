@@ -4,7 +4,7 @@
  */
 
 export const MIN_DISPLAY_THRESHOLD = 25;
-export const EARLY_STAGE_COPY = "We launched this month. Be one of the first.";
+export const EARLY_STAGE_COPY = "No public count is available yet.";
 export const CACHE_TTL_MS = 10 * 60 * 1000;
 export const TEAM_MEMBER_DISCLOSURE = "WorkGraph team member";
 

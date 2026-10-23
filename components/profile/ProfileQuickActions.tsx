@@ -26,7 +26,7 @@ export default function ProfileQuickActions({ userFirstName }: { userFirstName: 
             >
               <FileUp className={iconClass("inline", "shrink-0")} aria-hidden />
               Upload new resume
-              <ArrowRight className={iconClass("inline", "shrink-0 opacity-70 transition group-hover:translate-x-0.5")} aria-hidden />
+              <ArrowRight className={iconClass("inline", "shrink-0 opacity-70")} aria-hidden />
             </Link>
             <a
               href="#ats-score"

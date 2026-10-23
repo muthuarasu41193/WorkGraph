@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
-import { motion, useReducedMotion } from "framer-motion";
 import {
   AtSign,
   CheckCircle2,
@@ -25,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CONTACT_INFO, CONTACT_SUBJECTS } from "@/lib/constants";
+import { messages } from "@/lib/messages";
 
 type ContactFormData = {
   name: string;
@@ -88,7 +87,7 @@ function ContactForm() {
       setSubmitState("success");
       reset();
     } catch {
-      setServerError("Network error. Please check your connection and try again.");
+      setServerError(messages.contactFailed);
       setSubmitState("error");
     }
   };
@@ -98,14 +97,14 @@ function ContactForm() {
       <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[20px] border border-border-default bg-surface p-10 text-center shadow-lg">
         <CheckCircle2 className="size-14 text-success" aria-hidden />
         <p className="mt-4 font-heading text-xl font-bold text-fg-primary">
-          Message sent! We&apos;ll reply within 24 hours.
+          {messages.contactSent} {messages.contactSentNext}
         </p>
         <button
           type="button"
           onClick={() => setSubmitState("idle")}
           className="mt-6 text-sm font-semibold text-brand transition-colors hover:text-brand-700"
         >
-          Send another message
+          {messages.contactAnother}
         </button>
       </div>
     );
@@ -248,15 +247,15 @@ function ContactForm() {
       <button
         type="submit"
         disabled={submitState === "loading"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-all duration-base hover:bg-brand-700 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-base font-semibold text-accent-ink transition-colors duration-base hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {submitState === "loading" ? (
           <>
             <Loader2 className="size-5 animate-spin" aria-hidden />
-            Sending...
+            {messages.contactSending}
           </>
         ) : (
-          "Send Message →"
+          messages.contactSend
         )}
       </button>
     </form>
@@ -264,27 +263,19 @@ function ContactForm() {
 }
 
 export default function Contact() {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
     <section id="contact" aria-label="Contact" className="bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div>
             <p className="text-xs font-bold text-brand text-role-caption">
-              GET IN TOUCH
+              {messages.contactEyebrow}
             </p>
             <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
-              Let&apos;s talk about your job search
+              {messages.contactHeading}
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-fg-secondary">
-              Have questions about WorkGraph? Want to partner with us? Or just want to say hi? We
-              respond within 24 hours.
+              {messages.contactBody}
             </p>
 
             <div className="mt-10 space-y-4">
@@ -308,16 +299,11 @@ export default function Contact() {
             </div>
 
             <SocialLinks className="mt-8" />
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div>
             <ContactForm />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

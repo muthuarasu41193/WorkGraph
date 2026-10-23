@@ -1,3 +1,5 @@
+import { messages } from "@/lib/messages"
+
 export type ShellDest = {
   href: string
   label: string
@@ -11,21 +13,21 @@ export type ShellDest = {
  * Jobs, tracker, and onboarding are new routes inside this shell.
  */
 export const SHELL_DESTINATIONS: ShellDest[] = [
-  { href: "/jobs", label: "Jobs", short: "Jobs", tab: true },
-  { href: "/tracker", label: "Tracker", short: "Tracker", tab: true },
-  { href: "/interview-vault", label: "Prep", short: "Prep", tab: true },
-  { href: "/insights", label: "Insights", short: "Insights", tab: true },
-  { href: "/profile", label: "Profile", short: "Profile", tab: true },
-  { href: "/profile?view=settings", label: "Settings", short: "Settings", tab: false },
+  { href: "/jobs", label: messages.shellJobs, short: messages.shellJobs, tab: true },
+  { href: "/tracker", label: messages.shellTracker, short: messages.shellTracker, tab: true },
+  { href: "/interview-vault", label: messages.shellPrep, short: messages.shellPrep, tab: true },
+  { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: true },
+  { href: "/profile", label: messages.shellProfile, short: messages.shellProfile, tab: true },
+  { href: "/profile?view=settings", label: messages.shellSettings, short: messages.shellSettings, tab: false },
 ]
 
 export function shellTitle(pathname: string): string {
-  if (pathname.startsWith("/jobs/")) return "Job"
-  if (pathname.startsWith("/jobs")) return "Jobs"
-  if (pathname.startsWith("/tracker")) return "Tracker"
-  if (pathname.startsWith("/onboarding")) return "Onboarding"
-  if (pathname.startsWith("/insights")) return "Insights"
-  return "WorkGraph"
+  if (pathname.startsWith("/jobs/")) return messages.shellJob
+  if (pathname.startsWith("/jobs")) return messages.shellJobs
+  if (pathname.startsWith("/tracker")) return messages.shellTracker
+  if (pathname.startsWith("/onboarding")) return messages.shellOnboarding
+  if (pathname.startsWith("/insights")) return messages.shellInsights
+  return messages.shellHome
 }
 
 export function shellActive(pathname: string, href: string, search = ""): boolean {

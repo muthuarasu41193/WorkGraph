@@ -320,7 +320,7 @@ export default function ProfileSocialJobPosts({
           return (
             <article
               key={meta.label}
-              className="flex h-full flex-col rounded-2xl border border-border-default bg-surface p-5 transition hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
+              className="flex h-full flex-col rounded-2xl border border-border-default bg-surface p-5 transition-colors duration-base hover:border-border-strong"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">

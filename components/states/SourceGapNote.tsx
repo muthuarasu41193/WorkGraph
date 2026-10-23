@@ -1,0 +1,12 @@
+import { Text } from "@/components/ui/text"
+import { messages } from "@/lib/messages"
+
+export function SourceGapNote({ source }: { source: string }) {
+  return (
+    <div className="rounded-card border border-hairline bg-caution-wash px-3 py-2" role="status">
+      <Text role="caption" className="text-ink">
+        {messages.statesSourceGap(source)}
+      </Text>
+    </div>
+  )
+}
