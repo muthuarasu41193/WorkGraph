@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Building2, LayoutDashboard, Plus, Radio, Users } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
+import { SkipLink } from "@/components/a11y/SkipLink";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ export default function EmployerShell({ companyName, children }: Props) {
 
   return (
     <div className="min-h-[100dvh] bg-background">
+      <SkipLink />
       <header className="sticky top-0 z-overlay border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-4">
@@ -81,7 +83,7 @@ export default function EmployerShell({ companyName, children }: Props) {
           </p>
         </aside>
 
-        <main className="min-w-0 flex-1">{children}</main>
+        <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 outline-none">{children}</main>
       </div>
     </div>
   );

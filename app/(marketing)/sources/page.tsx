@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Where jobs come from" }
 export default function SourcesPage() {
   const sources = Object.entries(SOURCE_LABELS)
   return (
-    <main className="measure px-4 py-8">
+    <main id="main-content" tabIndex={-1} className="measure px-4 py-8">
       <Text as="h1" role="title">Where jobs come from</Text>
       <Text role="body" className="mt-3 text-ink-muted">
         These are ingest sources for the public jobs index. A name here is not a customer, a partner logo, or a claim that the employer has a relationship with WorkGraph.

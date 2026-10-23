@@ -1,119 +1,50 @@
 "use client";
 
-import { Bell, Moon, Shield, User } from "lucide-react";
-import { iconClass } from "@/lib/icon-styles";
-import PageHero from "@/components/design-system/PageHero";
 import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider";
-import { Button } from "@/components/ui/button";
+import PageHero from "@/components/design-system/PageHero";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Text } from "@/components/ui/text";
 
 export default function SettingsSection() {
   const { resolved, toggle } = useProfileTheme();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <PageHero
         title="Settings"
-        subtitle="Manage your account preferences, notifications, and privacy."
+        subtitle="Dark mode is saved on this device. Other preferences on this page are not stored."
       />
 
-      <div className="space-y-6">
-        <section className="wg-dash-section-card p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <User className={iconClass()} />
-            </span>
-            <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Appearance</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">Customize how WorkGraph looks</p>
-            </div>
+      <section className="rounded-card border border-hairline bg-surface-raised p-4">
+        <Text as="h2" role="subheading">Appearance</Text>
+        <div className="mt-3 flex items-center justify-between gap-4">
+          <div>
+            <Label htmlFor="dark-mode">Dark mode</Label>
+            <Text role="caption" className="text-ink-muted">Uses the theme already stored in this browser.</Text>
           </div>
-          <Separator className="my-4" />
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Moon className={iconClass("inline", "text-[var(--dash-text-secondary)]")} />
-              <div>
-                <Label htmlFor="dark-mode" className="text-sm font-medium">
-                  Dark mode
-                </Label>
-                <p className="text-xs text-[var(--dash-text-secondary)]">
-                  Switch between light and dark themes
-                </p>
-              </div>
-            </div>
-            <Checkbox
-              id="dark-mode"
-              checked={resolved === "dark"}
-              onCheckedChange={() => toggle()}
-            />
-          </div>
-        </section>
+          <Checkbox
+            id="dark-mode"
+            checked={resolved === "dark"}
+            onCheckedChange={() => toggle()}
+            aria-label="Dark mode"
+          />
+        </div>
+      </section>
 
-        <section className="wg-dash-section-card p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <Bell className={iconClass()} />
-            </span>
-            <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Notifications</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">
-                Control how you receive career updates
-              </p>
-            </div>
-          </div>
-          <Separator className="my-4" />
-          <div className="space-y-4">
-            {[
-              { id: "job-matches", label: "New job matches", desc: "When AI finds roles matching your profile" },
-              { id: "hidden-jobs", label: "Hidden job alerts", desc: "When new hidden opportunities are discovered" },
-              { id: "application-updates", label: "Application updates", desc: "Status changes on your applications" },
-            ].map((item) => (
-              <div key={item.id} className="flex items-center justify-between gap-4">
-                <div>
-                  <Label htmlFor={item.id} className="text-sm font-medium">
-                    {item.label}
-                  </Label>
-                  <p className="text-xs text-[var(--dash-text-secondary)]">{item.desc}</p>
-                </div>
-                <Checkbox id={item.id} defaultChecked />
-              </div>
-            ))}
-          </div>
-        </section>
+      <section className="rounded-card border border-hairline bg-surface-raised p-4">
+        <Text as="h2" role="subheading">Notifications</Text>
+        <Text role="body-small" className="mt-2 text-ink-muted">
+          Job match alerts, hidden-job alerts, and application alerts are not stored. This page does not send them.
+        </Text>
+      </section>
 
-        <section className="wg-dash-section-card p-6">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]">
-              <Shield className={iconClass()} />
-            </span>
-            <div>
-              <h2 className="text-sm font-semibold text-[var(--dash-text)]">Privacy & Data</h2>
-              <p className="text-xs text-[var(--dash-text-secondary)]">
-                Control your data and profile visibility
-              </p>
-            </div>
-          </div>
-          <Separator className="my-4" />
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <Label htmlFor="recruiter-visibility" className="text-sm font-medium">
-                  Recruiter visibility
-                </Label>
-                <p className="text-xs text-[var(--dash-text-secondary)]">
-                  Allow recruiters to discover your profile
-                </p>
-              </div>
-              <Checkbox id="recruiter-visibility" defaultChecked />
-            </div>
-            <Button variant="outline" size="sm" className="wg-dash-compact-btn">
-              Export my data
-            </Button>
-          </div>
-        </section>
-      </div>
+      <section className="rounded-card border border-hairline bg-surface-raised p-4">
+        <Text as="h2" role="subheading">Privacy</Text>
+        <Text role="body-small" className="mt-2 text-ink-muted">
+          Recruiter visibility is not stored. Nothing on this page shares your profile with recruiters. Export is not available from here.
+        </Text>
+      </section>
     </div>
   );
 }

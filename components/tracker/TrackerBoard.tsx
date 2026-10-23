@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import {
   DndContext,
+  KeyboardSensor,
   PointerSensor,
   useDraggable,
   useDroppable,
@@ -93,7 +94,10 @@ export function TrackerBoard({
   loadError: string | null
   initialSelectedId: string | null
 }) {
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor),
+  )
   const viewChoice = useSyncExternalStore(subscribeView, viewSnapshot, () => "board" as const)
   const [rows, setRows] = useState(initial)
   const [selected, setSelected] = useState<string[]>([])
@@ -298,6 +302,7 @@ export function TrackerBoard({
 
   const table = (
     <div className="overflow-x-auto rounded-card border border-hairline">
+      <p className="px-2 pt-2 text-role-caption text-ink-muted md:sr-only">The table scrolls sideways. Each row has a stage menu.</p>
       <table className="w-full min-w-[40rem] text-left text-role-caption">
         <thead className="bg-surface-sunken">
           <tr>
@@ -520,7 +525,7 @@ function Column({ status, active, children }: { status: ApplicationStatus; activ
   const { setNodeRef } = useDroppable({ id: columnDroppableId(status), data: { type: "column", status } })
   return (
     <section ref={setNodeRef} className={cn("min-h-40 rounded-card border bg-surface p-2", active ? "border-accent ring-2 ring-accent" : "border-hairline")}>
-      <Text role="caption" className="text-ink-muted">{APPLICATION_STATUS_LABELS[status]}</Text>
+      <Text role="caption" className="text-ink-muted">{APPLICATION_STATUS_LABELS[status]}{active ? " · drop here" : ""}</Text>
       <div className="mt-2 space-y-2">{children}</div>
     </section>
   )

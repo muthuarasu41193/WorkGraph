@@ -3,6 +3,7 @@
 import { useRef, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { AIProvenance } from "@/components/product/AIProvenance"
 import { ProductJobCard } from "@/components/product/JobCard"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -229,6 +230,7 @@ export function OnboardingFlow({ userId }: { userId: string | null }) {
           <section className="mt-4 space-y-3">
             <Text as="h2" role="heading">Review what was extracted</Text>
             <Text role="body-small">Every value below was extracted. Edits stay on this device. The original extraction was already written to your profile by the parser. Open your profile if you want those edits saved there.</Text>
+            <AIProvenance label="Extracted" summary="A parser filled these fields. They are not facts until you review them." href="/trust#match" hrefLabel="How extracted text is marked" />
             <Field label="Name" autoComplete="name" value={draft.extracted.full_name} onChange={(full_name) => update({ extracted: { ...draft.extracted!, full_name } })} />
             <Field label="Headline" value={draft.extracted.headline} onChange={(headline) => update({ extracted: { ...draft.extracted!, headline } })} />
             <Field label="Summary" value={draft.extracted.summary} onChange={(summary) => update({ extracted: { ...draft.extracted!, summary } })} />

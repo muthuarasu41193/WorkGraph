@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SkipLink } from "@/components/a11y/SkipLink";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { CookiePreferencesButton } from "@/components/consent/CookiePreferencesButton";
 import { LEGAL_NAV } from "@/lib/legal";
@@ -24,7 +25,9 @@ export function AuthSplitShell({
   wide,
 }: AuthSplitShellProps) {
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-background antialiased lg:flex-row">
+    <>
+    <SkipLink />
+    <main id="main-content" tabIndex={-1} className="flex min-h-[100dvh] flex-col bg-background antialiased outline-none lg:flex-row">
       <header className="wg-auth-panel relative shrink-0 border-b px-6 py-8 lg:hidden">
         <div className="pointer-events-none absolute inset-0 wg-auth-grid opacity-[0.35]" aria-hidden />
         <div className="relative flex items-center gap-3">
@@ -91,5 +94,6 @@ export function AuthSplitShell({
         </div>
       </section>
     </main>
+    </>
   );
 }

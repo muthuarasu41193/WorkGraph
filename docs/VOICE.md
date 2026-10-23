@@ -24,6 +24,14 @@ Rejection, a long silence, a low match, a missing skill, and AI-displacement con
 - A skill gap is a difference between a listing and a profile. Name the difference. Offer to add the skill or look at a closer role.
 - AI-displacement content states what changed in the work and one concrete next step. It does not predict that the reader will be replaced.
 
+## No dark patterns
+
+- No fake urgency, countdown, or “only a few left”.
+- No pre-checked optional consent. Strictly necessary cookies stay on because sign-in needs them, and that row says so.
+- Rejecting cookies is as visible as accepting them. Do not hide it or shame the person who rejects them.
+- When a paid subscription exists, cancellation is one control and the label is “Cancel subscription”. Do not add that button until a real subscription can be cancelled.
+- Do not invent stats, testimonials, customer logos, press mentions, user counts, or security certifications.
+
 ## What this pass did not move
 
 `components/product/JobCard.tsx`, `components/product/MatchScore.tsx`, `components/jobs/JobDecision.tsx`, and most of `components/jobs/JobFeed.tsx` are owned by another change. Their strings stay in those files. Do not treat a match percentage as a hiring probability when you do edit them.

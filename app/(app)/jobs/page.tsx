@@ -1,6 +1,9 @@
 import { cookies } from "next/headers"
+import Link from "next/link"
 import { JobFeed, type AppliedRef } from "@/components/jobs/JobFeed"
 import { PullToRefresh } from "@/components/states/PullToRefresh"
+import { Text } from "@/components/ui/text"
+import { thinCoverageNote } from "@/lib/credibility"
 import { getSessionUser } from "@/lib/auth/session-server"
 import { listApplicationsForUser } from "@/lib/applications-server"
 import { JOB_FEED_PAGE_SIZE, parseFeedSort, relaxQuery } from "@/lib/job-feed"
@@ -79,23 +82,32 @@ export default async function JobsPage({
   }
 
   const jobs: RecommendedJobCard[] = result.jobs ?? []
+  const coverage = result.jobs ? thinCoverageNote(result.total) : null
   return (
-    <PullToRefresh>
-      <JobFeed
-        key={params.toString()}
-        initial={{
-          jobs,
-          total: result.jobs ? result.total : 0,
-          hasMore: result.hasMore,
-          error: result.jobs ? null : "Jobs could not be loaded. Refresh the page to try again.",
-          relaxedQuery,
-          originalQuery,
-        }}
-        userId={user?.id ?? null}
-        applications={applications}
-        skills={skills}
-        search={params.toString()}
-      />
-    </PullToRefresh>
+    <main>
+      <PullToRefresh>
+        {coverage ? (
+          <div className="border-b border-hairline px-4 py-3">
+            <Text role="body-small">{coverage}</Text>
+            <Link href="/jobs" className="inline-flex min-h-11 items-center text-role-body-small text-accent">Search without these filters</Link>
+          </div>
+        ) : null}
+        <JobFeed
+          key={params.toString()}
+          initial={{
+            jobs,
+            total: result.jobs ? result.total : 0,
+            hasMore: result.hasMore,
+            error: result.jobs ? null : "Jobs could not be loaded. Refresh the page to try again.",
+            relaxedQuery,
+            originalQuery,
+          }}
+          userId={user?.id ?? null}
+          applications={applications}
+          skills={skills}
+          search={params.toString()}
+        />
+      </PullToRefresh>
+    </main>
   )
 }

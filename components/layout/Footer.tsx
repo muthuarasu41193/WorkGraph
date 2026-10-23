@@ -109,10 +109,10 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
             <div>
               <Logo className="[&_span]:text-accent-ink [&_svg_path:first-child]:fill-accent-ink" />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-fg-tertiary">
-                Find jobs that never hit LinkedIn.
+                Search the live job index.
               </p>
               <SocialLinks className="mt-6" />
-              <p className="mt-6 text-sm text-fg-tertiary">Made with ❤️ for job seekers</p>
+              <p className="mt-6 text-sm text-fg-tertiary">Feedback goes to a person through the contact form.</p>
             </div>
 
             <FooterColumn title="Product" links={FOOTER_LINKS.product} />

@@ -45,5 +45,9 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
   const profile = user ? await loadUserProfile(user.id) : null
   const skills = profile?.skills ?? []
   const job = mapJobRowToCard(row, skills, { skills, headline: profile?.headline, summary: profile?.summary })
-  return <JobDecision job={job} userId={user?.id ?? null} />
+  return (
+    <main>
+      <JobDecision job={job} userId={user?.id ?? null} />
+    </main>
+  )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { FreshnessIndicator, type FreshnessIndicatorProps } from "@/components/product/FreshnessIndicator"
 import { MatchScore, type MatchScoreProps } from "@/components/product/MatchScore"
@@ -36,6 +37,8 @@ export type ProductJobCardProps = {
   applyLabel?: string
   /** Inline state such as saved or already in the tracker. */
   statusNote?: string
+  /** Hover or focus on the card. The feed uses this to prefetch the detail route. */
+  onIntent?: () => void
   className?: string
 }
 
@@ -61,6 +64,7 @@ export function ProductJobCard({
   onApply,
   applyLabel = "Apply on the listing",
   statusNote,
+  onIntent,
   className,
 }: ProductJobCardProps) {
   if (loading) {
@@ -75,7 +79,11 @@ export function ProductJobCard({
   }
 
   return (
-    <article className={cn("rounded-card border border-hairline bg-surface-raised p-3 shadow-flat", disabled && "opacity-60", className)}>
+    <article
+      className={cn("rounded-card border border-hairline bg-surface-raised p-3 shadow-flat", disabled && "opacity-60", className)}
+      onMouseEnter={onIntent}
+      onFocus={onIntent}
+    >
       {error ? (
         <p className="mb-2 rounded-control bg-danger-wash px-2 py-1 text-role-caption text-danger" role="alert">
           {error}
@@ -83,12 +91,15 @@ export function ProductJobCard({
       ) : null}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-role-body-small line-clamp-2 font-semibold text-ink" title={title}>
+          <h2 className="text-role-body line-clamp-2 font-semibold text-ink" title={title}>
             {title}
-          </h3>
+          </h2>
           <p className="text-role-caption truncate text-ink" title={company}>
             {company}
-            {companyVerified ? <span className="text-positive"> · Company domain verified</span> : <span className="text-ink-muted"> · Company not verified</span>}
+            {" · "}
+            <Link href="/trust#verified-employer" className={companyVerified ? "text-positive" : "text-ink-muted"}>
+              {companyVerified ? "Company domain verified" : "Company not verified"}
+            </Link>
           </p>
           <p className="text-role-caption truncate text-ink-subtle" title={`${location} · ${remoteType}`}>
             {location} · {remoteType}
@@ -113,7 +124,7 @@ export function ProductJobCard({
           type="button"
           disabled={disabled}
           onClick={onSave}
-          className="inline-flex min-h-11 items-center rounded-control border border-hairline px-3 text-role-caption hover:bg-surface-sunken focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50"
+          className="inline-flex min-h-11 min-w-20 items-center rounded-control border border-hairline px-3 text-role-caption hover:bg-surface-sunken focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50"
           aria-pressed={saved}
         >
           {saved ? "Saved" : "Save"}

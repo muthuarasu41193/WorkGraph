@@ -52,9 +52,9 @@ const jetbrainsMono = localFont({
   preload: false,
 });
 
-const SEO_TITLE = "WorkGraph — Find Jobs That Never Hit LinkedIn";
+const SEO_TITLE = "WorkGraph — Search the live job index";
 const SEO_DESCRIPTION =
-  "AI-powered job intelligence platform. Discover hidden jobs from Reddit, Discord & 50+ private sources. AI match scoring, Interview Vault, and earn by selling your guides.";
+  "Search the live job index. A match note is an estimate when a profile is available to compare. Interview vault guides are separate from the index.";
 
 const share = routeShareMetadata("./");
 

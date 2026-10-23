@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SkipLink } from "@/components/a11y/SkipLink";
 import VaultNav from "@/components/vault/VaultNav";
 import WorkGraphProviders from "@/components/providers/WorkGraphProviders";
 import Footer from "@/components/layout/Footer";
@@ -29,8 +30,9 @@ export default function InterviewVaultLayout({ children }: { children: React.Rea
   return (
     <WorkGraphProviders>
       <div className="min-h-dvh bg-background">
+        <SkipLink />
         <VaultNav />
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-8 outline-none">{children}</main>
         <Footer />
       </div>
     </WorkGraphProviders>
