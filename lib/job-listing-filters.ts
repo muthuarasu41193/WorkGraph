@@ -3,7 +3,7 @@
  */
 
 import type { JobFeedSource, RecommendedJobCard } from "./job-dashboard";
-import { scoreJobCard, type ProfileMatchInput } from "./job-match";
+import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "./job-match";
 
 export type JobListingFilterState = {
   q: string;
@@ -52,13 +52,18 @@ export type DerivedJobMeta = {
 export type EnrichedJobRow = {
   job: RecommendedJobCard;
   meta: DerivedJobMeta;
+  /** Display match percent. */
   score: number;
+  /** Rank key. Stale jobs sort below an otherwise equal match. */
+  rank?: number;
 };
 
 export type JobListingFilterOptions = {
   profile?: ProfileMatchInput;
   requireProfileOverlap?: boolean;
+  /** @deprecated Use minMatchPercent. Kept so older callers still compile. */
   minProfileScore?: number;
+  minMatchPercent?: number;
 };
 
 const JOB_TYPE_KEYWORDS: Record<string, string[]> = {
@@ -242,8 +247,8 @@ function matchesProfileOverlap(
   const skills = options.profile?.skills ?? [];
   if (skills.length === 0) return true;
   const relevance = scoreJobCard(job, options.profile ?? { skills: [] });
-  const minScore = options.minProfileScore ?? 8;
-  return relevance.matchedSkills.length > 0 || relevance.score >= minScore;
+  const minPercent = options.minMatchPercent ?? PROFILE_MATCH_MIN_PERCENT;
+  return relevance.matchPercent >= minPercent;
 }
 
 function passesClientOnlyFilters(

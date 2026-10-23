@@ -9,7 +9,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { fetchLiveJobsCatalog, mapJobRowToCard } from "./jobs-catalog";
-import { rankJobRows, scoreJobRow, type ProfileMatchInput } from "./job-match";
+import { PROFILE_MATCH_MIN_PERCENT, rankJobRows, scoreJobRow, type ProfileMatchInput } from "./job-match";
 import {
   fetchLiveHiringSignalJobCards,
   mergeHiringSignalJobCards,
@@ -161,16 +161,11 @@ function isCommunitySource(source: JobFeedSource): source is (typeof COMMUNITY_S
   return (COMMUNITY_SOURCES as readonly string[]).includes(source);
 }
 
-const PROFILE_MATCH_MIN_SCORE = 8;
-
-/** Count jobs whose title/description overlap the user's profile skills. */
+/** Count jobs at or above the profile-match floor (40%). */
 export function countProfileMatchedJobs(rows: JobRow[], profile: ProfileMatchInput): number {
   const hasSkills = profile.skills.some((s) => s.trim().length > 0);
   if (!hasSkills || rows.length === 0) return 0;
-  return rows.filter((row) => {
-    const scored = scoreJobRow(row, profile);
-    return scored.matchedSkills.length > 0 || scored.score >= PROFILE_MATCH_MIN_SCORE;
-  }).length;
+  return rows.filter((row) => scoreJobRow(row, profile).matchPercent >= PROFILE_MATCH_MIN_PERCENT).length;
 }
 
 function normalizeSource(raw: string): JobFeedSource {

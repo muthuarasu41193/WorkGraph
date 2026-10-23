@@ -7,5 +7,6 @@ export function formatJobFreshness(iso: string | null | undefined, now = Date.no
   if (days < 0) return null;
   if (days === 0) return "Posted today";
   if (days === 1) return "Posted yesterday";
+  if (days > 30) return `Posted ${days} days ago, may no longer be open`;
   return `Posted ${days} days ago`;
 }

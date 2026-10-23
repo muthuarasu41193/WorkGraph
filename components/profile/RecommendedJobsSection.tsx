@@ -34,7 +34,7 @@ import {
   type JobListingFilterState,
 } from "../../lib/job-listing-filters";
 import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
-import { scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
+import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
 import { sanitizeJobDescription } from "../../lib/job-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -591,11 +591,12 @@ function passesDateFilter(iso: string | null | undefined, windowId: "any" | "1" 
   return t >= cutoff;
 }
 
-function getMatchScore(job: RecommendedJobCard, profile: ProfileMatchInput): number {
-  return scoreJobCard(job, profile).matchPercent;
+function getMatchScore(job: RecommendedJobCard, profile: ProfileMatchInput): { percent: number; rank: number } {
+  const scored = scoreJobCard(job, profile);
+  return { percent: scored.matchPercent, rank: scored.score };
 }
 
-const MIN_PROFILE_RELEVANCE_SCORE = 8;
+const MIN_PROFILE_RELEVANCE_PERCENT = PROFILE_MATCH_MIN_PERCENT;
 
 export default function RecommendedJobsSection({
   jobs: initialJobs,
@@ -686,8 +687,8 @@ export default function RecommendedJobsSection({
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [mobileDetailJobId, setMobileDetailJobId] = useState<string | null>(null);
-  /** When true (e.g. "Matched to your profile" dashboard card), hide jobs with no profile overlap. */
-  const [showProfileMatchesOnly, setShowProfileMatchesOnly] = useState(false);
+  /** Hide catalog rows under the 40% profile floor until the reader browses all jobs. */
+  const [showProfileMatchesOnly, setShowProfileMatchesOnly] = useState(() => skillHints.length > 0);
   const deferredSearchInput = useDeferredValue(searchInput);
   const query = searchInput.trim();
   const isSearching = deferredSearchInput !== searchInput;
@@ -822,7 +823,7 @@ export default function RecommendedJobsSection({
     () => ({
       profile: profileMatch,
       requireProfileOverlap: showProfileMatchesOnly && profileMatchActive && isLiveFeed,
-      minProfileScore: MIN_PROFILE_RELEVANCE_SCORE,
+      minMatchPercent: MIN_PROFILE_RELEVANCE_PERCENT,
     }),
     [profileMatch, showProfileMatchesOnly, profileMatchActive, isLiveFeed]
   );
@@ -834,11 +835,15 @@ export default function RecommendedJobsSection({
           ? filterPoolJobs
           : pageJobs
         : initialJobs;
-      const enriched = sourceJobs.map((job) => ({
-        job,
-        meta: deriveJobMeta(job),
-        score: getMatchScore(job, profileMatch),
-      }));
+      const enriched = sourceJobs.map((job) => {
+        const match = getMatchScore(job, profileMatch);
+        return {
+          job,
+          meta: deriveJobMeta(job),
+          score: match.percent,
+          rank: match.rank,
+        };
+      });
 
       const filtered =
         useServerJobs && !needsClientFilterPool
@@ -853,7 +858,7 @@ export default function RecommendedJobsSection({
         }
         if (sortBy === "salary_desc") return (b.meta.salary?.maxK ?? -1) - (a.meta.salary?.maxK ?? -1);
         if (sortBy === "salary_asc") return (a.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER) - (b.meta.salary?.minK ?? Number.MAX_SAFE_INTEGER);
-        return b.score - a.score;
+        return (b.rank ?? b.score) - (a.rank ?? a.score);
       });
       return rows;
     } catch (error) {
@@ -2290,7 +2295,7 @@ export default function RecommendedJobsSection({
         <EmptyState
           icon={SearchX}
           title="No jobs indexed yet"
-          description="Live listings will appear here once the job ingest pipeline populates ATS sources."
+          description="Jobs will appear here once the ingest pipeline adds rows to the catalog."
         />
       ) : null}
 

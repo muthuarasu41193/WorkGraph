@@ -42,33 +42,6 @@ const SKILL_ALIASES: Record<string, string[]> = {
   salesforce: ["salesforce"],
 };
 
-const STOPWORDS = new Set([
-  "and",
-  "the",
-  "for",
-  "with",
-  "your",
-  "our",
-  "you",
-  "will",
-  "this",
-  "that",
-  "from",
-  "have",
-  "are",
-  "job",
-  "role",
-  "team",
-  "work",
-  "years",
-  "year",
-  "experience",
-  "preferred",
-  "required",
-  "responsibilities",
-  "qualifications",
-]);
-
 function normalizeWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
@@ -99,82 +72,117 @@ function textIncludesTerm(haystack: string, term: string): boolean {
   return haystack.includes(term);
 }
 
-function extractRoleTerms(headline: string | null | undefined, summary: string | null | undefined): string[] {
-  const blob = normalizeWhitespace([headline, summary].filter(Boolean).join(" "));
-  if (!blob) return [];
-  const terms = new Set<string>();
-  for (const word of blob.split(/\W+/u)) {
-    if (word.length < 4 || STOPWORDS.has(word)) continue;
-    terms.add(word);
-  }
-  const titleLike = blob.match(
-    /\b(senior|staff|principal|lead|junior|engineer|developer|designer|manager|architect|analyst|scientist|consultant|specialist)\b/gi
-  );
-  for (const t of titleLike ?? []) {
-    const w = t.toLowerCase();
-    if (!STOPWORDS.has(w)) terms.add(w);
-  }
-  return [...terms].slice(0, 24);
-}
+export const PROFILE_MATCH_MIN_PERCENT = 40;
+const STALE_AFTER_DAYS = 30;
+
+const TITLE_FAMILIES: { id: string; terms: string[] }[] = [
+  { id: "recruiting", terms: ["recruit", "talent acquisition", "talent", "sourcer", "sourcing", "talent partner", "staffing"] },
+  { id: "engineering", terms: ["engineer", "developer", "sre", "devops"] },
+  { id: "design", terms: ["designer"] },
+  { id: "product", terms: ["product manager", "product owner"] },
+  { id: "data", terms: ["data scientist", "data analyst", "data engineer"] },
+  { id: "sales", terms: ["account executive", "sales"] },
+  { id: "marketing", terms: ["marketing"] },
+  { id: "people", terms: ["human resources", "people partner", "people operations"] },
+];
+
+const SENIORITY_TOKENS = ["junior", "senior", "staff", "principal", "lead", "chief", "director", "vp", "head"];
+
+export type JobMatchSubScores = {
+  skillOverlap: number;
+  titleFamily: number;
+  seniority: number;
+  freshness: number;
+};
 
 export type JobMatchScore = {
+  /** Rank key. Skill overlap and title family dominate; stale jobs are pushed down. */
   score: number;
   matchedSkills: string[];
   matchPercent: number;
+  subScores: JobMatchSubScores;
 };
 
-export function scoreJobRow(row: JobRow, profile: ProfileMatchInput): JobMatchScore {
+function bestTitleFamily(text: string): string | null {
+  let best: { id: string; hits: number } | null = null;
+  for (const family of TITLE_FAMILIES) {
+    const hits = family.terms.filter((term) => textIncludesTerm(text, term)).length;
+    if (hits > 0 && (!best || hits > best.hits)) best = { id: family.id, hits };
+  }
+  return best?.id ?? null;
+}
+
+function seniorityTokens(text: string): Set<string> {
+  const found = new Set<string>();
+  for (const token of SENIORITY_TOKENS) {
+    if (textIncludesTerm(text, token)) found.add(token);
+  }
+  return found;
+}
+
+function postedAgeDays(postedAt: string | null | undefined, now: number): number | null {
+  if (!postedAt) return null;
+  const then = new Date(postedAt).getTime();
+  if (Number.isNaN(then)) return null;
+  return Math.floor((now - then) / 86_400_000);
+}
+
+export function scoreJobRow(row: JobRow, profile: ProfileMatchInput, now = Date.now()): JobMatchScore {
   const skills = profile.skills.map((s) => s.trim()).filter(Boolean);
   const titleHay = normalizeWhitespace(row.title ?? "");
   const descHay = normalizeWhitespace(row.description ?? "");
   const hay = `${titleHay} ${descHay}`.trim();
 
   const matchedSkills: string[] = [];
-  let score = 0;
+  let skillOverlap = 0;
 
   for (const skill of skills) {
     const variants = skillVariants(skill);
     let best = 0;
     for (const variant of variants) {
-      if (textIncludesTerm(titleHay, variant)) best = Math.max(best, 14);
-      else if (textIncludesTerm(hay, variant)) best = Math.max(best, 6);
+      if (textIncludesTerm(titleHay, variant)) best = Math.max(best, 24);
+      else if (textIncludesTerm(hay, variant)) best = Math.max(best, 10);
     }
     if (best > 0) {
-      score += best;
+      skillOverlap += best;
       matchedSkills.push(skill);
     }
   }
+  skillOverlap = Math.min(70, skillOverlap);
 
-  for (const term of extractRoleTerms(profile.headline, profile.summary)) {
-    if (textIncludesTerm(titleHay, term)) score += 5;
-    else if (textIncludesTerm(hay, term)) score += 2;
+  const profileFamilyText = normalizeWhitespace([profile.headline, ...skills].filter(Boolean).join(" "));
+  const profileFamily = bestTitleFamily(profileFamilyText);
+  const jobFamily = bestTitleFamily(titleHay);
+  const titleFamily = profileFamily && jobFamily && profileFamily === jobFamily ? 22 : 0;
+
+  const profileSeniority = seniorityTokens(profileFamilyText);
+  const jobSeniority = seniorityTokens(titleHay);
+  let seniority = 0;
+  for (const token of profileSeniority) {
+    if (jobSeniority.has(token)) seniority = 4;
   }
 
-  const postedAt = row.posted_at ? new Date(row.posted_at).getTime() : NaN;
-  if (!Number.isNaN(postedAt)) {
-    const days = Math.floor((Date.now() - postedAt) / 86400000);
-    if (days <= 7) score += 4;
-    else if (days <= 30) score += 2;
+  const ageDays = postedAgeDays(row.posted_at, now);
+  const stale = ageDays !== null && ageDays > STALE_AFTER_DAYS;
+  let freshness = 0;
+  if (ageDays !== null) {
+    if (stale) freshness = -40;
+    else if (ageDays <= 7) freshness = 4;
+    else freshness = 2;
   }
 
-  if (skills.length > 0 && matchedSkills.length === 0) {
-    score = Math.min(score, 2);
-  } else if (matchedSkills.length >= 3) {
-    score += 6;
-  } else if (matchedSkills.length >= 2) {
-    score += 3;
-  }
+  const matchPercent = Math.max(
+    0,
+    Math.min(98, Math.round(skillOverlap + titleFamily + seniority - (stale ? 5 : 0))),
+  );
+  const score = skillOverlap * 2 + titleFamily + seniority + freshness;
 
-  const maxRealistic = 12 * Math.min(skills.length, 8) + 24;
-  const matchPercent =
-    skills.length === 0
-      ? 72
-      : Math.max(
-          48,
-          Math.min(98, Math.round(52 + (score / Math.max(maxRealistic, 1)) * 44))
-        );
-
-  return { score, matchedSkills, matchPercent };
+  return {
+    score,
+    matchedSkills,
+    matchPercent,
+    subScores: { skillOverlap, titleFamily, seniority, freshness },
+  };
 }
 
 export function rankJobRows(
@@ -197,7 +205,8 @@ export function rankJobRows(
 /** Score a job card already mapped for the UI (re-score with full profile context). */
 export function scoreJobCard(
   job: { title: string; description: string; postedAtIso?: string | null },
-  profile: ProfileMatchInput
+  profile: ProfileMatchInput,
+  now = Date.now(),
 ): JobMatchScore {
   return scoreJobRow(
     {
@@ -214,7 +223,8 @@ export function scoreJobCard(
       classification: null,
       is_community: false,
     },
-    profile
+    profile,
+    now,
   );
 }
 
