@@ -23,6 +23,7 @@ export const formCheckboxClasses = cn(
   "border border-hairline bg-surface-raised transition-colors duration-base ease-standard",
   FOCUS_RING,
   "disabled:cursor-not-allowed disabled:opacity-50",
+  "aria-invalid:border-danger aria-invalid:bg-danger-wash",
   "data-checked:border-accent data-checked:bg-accent data-checked:text-accent-ink",
   "dark:border-border-default dark:bg-surface",
 )
