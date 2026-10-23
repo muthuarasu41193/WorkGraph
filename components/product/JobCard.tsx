@@ -91,7 +91,7 @@ export function ProductJobCard({
       ) : null}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-role-body-small line-clamp-2 font-semibold text-ink" title={title}>
+          <h2 className="text-role-body line-clamp-2 font-semibold text-ink" title={title}>
             {title}
           </h2>
           <p className="text-role-caption truncate text-ink" title={company}>

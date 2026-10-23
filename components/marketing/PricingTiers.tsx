@@ -32,9 +32,13 @@ export function PricingTiers() {
                 <li>{limitLabel(limits.interviewQuestionsPerWeek, "interview questions per week")}</li>
                 <li>{NOTES[tier]}</li>
               </ul>
-              <Link href="/signup" className="mt-4 inline-flex min-h-11 items-center text-role-body-small text-accent">
-                Create an account
-              </Link>
+              {tier === "free" ? (
+                <Link href="/signup" className="mt-4 inline-flex min-h-11 items-center text-role-body-small text-accent">
+                  Create a free account
+                </Link>
+              ) : (
+                <Text role="body-small" className="mt-4 text-ink-muted">No checkout is published, so this tier cannot be bought here.</Text>
+              )}
             </article>
           )
         })}

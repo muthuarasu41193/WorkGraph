@@ -27,7 +27,7 @@ import { sanitizeJobDescription } from "@/lib/job-summary"
 import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
-const ROW_HEIGHT = 300
+const ROW_HEIGHT = 320
 const UNDO_MS = 5000
 
 export type AppliedRef = { company: string; role: string; job_url: string | null }
