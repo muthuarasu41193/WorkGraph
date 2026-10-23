@@ -314,6 +314,21 @@ export function hasActiveCatalogFilters(filters?: JobsCatalogFilters): boolean {
   );
 }
 
+/** One live listing by the public id used in /jobs/[id] (external id, then numeric id). */
+export async function fetchLiveJobByPublicId(supabase: SupabaseClient, publicId: string): Promise<JobRow | null> {
+  const id = publicId.trim()
+  if (!id) return null
+  const external = await supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false).eq("external_id", id).limit(1)
+  if (!external.error) {
+    const row = (external.data ?? [])[0] as JobRow | undefined
+    if (row) return row
+  }
+  if (!/^\d+$/.test(id)) return null
+  const byId = await supabase.from("jobs").select(JOB_SELECT_COLUMNS).eq("is_community", false).eq("id", Number(id)).limit(1)
+  if (byId.error) return null
+  return ((byId.data ?? [])[0] as JobRow | undefined) ?? null
+}
+
 /** Single page of live listings — used by the Jobs tab API (fast, no bulk download). */
 export async function fetchLiveJobsPage(
   supabase: SupabaseClient,
