@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
+import { LegalNav } from "@/components/legal/LegalDocument";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import MobileNav from "./MobileNav";
@@ -35,7 +36,12 @@ function DashboardLayoutInner({ children }: Props) {
         <TopNav />
 
         <div className="wg-dash-main min-w-0 max-w-full px-4 py-4 md:px-5 min-[1025px]:px-6 min-[1025px]:py-5">
-          <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">{children}</div>
+          <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">
+            {children}
+            <div className="mt-8 border-t border-hairline pt-4 md:hidden">
+              <LegalNav />
+            </div>
+          </div>
         </div>
       </div>
 

@@ -6,7 +6,6 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import {
   ArrowUpRight,
   ArrowRight,
-  ArrowUp,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -639,11 +638,6 @@ export default function RecommendedJobsSection({
   const hasCompanySizeParam = searchParams.has("companySize");
   const initialIndustries = parseCsvSet(searchParams.get("industry"), INDUSTRY_OPTIONS);
   const initialBenefits = parseCsvSet(searchParams.get("benefits"), BENEFIT_OPTIONS);
-  const hint =
-    skillHints.length > 0
-      ? `Sorted by fit to your resume — skills, headline, and summary matched against each role (${skillHints.slice(0, 4).join(", ")}${skillHints.length > 4 ? "…" : ""}).`
-      : "Add skills, headline, and summary on your profile so we can rank roles that fit your background.";
-
   const [searchInput, setSearchInput] = useState(searchParams.get("q") ?? "");
   const [dateWindow, setDateWindow] = useState<"any" | "1" | "7" | "30">(initialDateWindow);
   const [sources, setSources] = useState<Set<JobFeedSource>>(initialSources);
@@ -681,7 +675,6 @@ export default function RecommendedJobsSection({
   );
   const [savedJobs, setSavedJobs] = useState<Set<string>>(() => new Set());
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [isInitialLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [pageJobs, setPageJobs] = useState<RecommendedJobCard[]>(() => initialJobs.slice(0, PAGE_SIZE));
@@ -1284,13 +1277,6 @@ export default function RecommendedJobsSection({
     }
   }, [currentPage, totalPages]);
 
-  useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 400);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   const skeletonCount = viewMode === "grid" ? 6 : 3;
   const showSkeleton = (isInitialLoading || isPageLoading) && listingPipeline.length === 0 && visibleJobs.length === 0;
   const showPageLoadingOverlay = isPageLoading && visibleJobs.length > 0;
@@ -1452,29 +1438,6 @@ export default function RecommendedJobsSection({
 
   return (
     <section id="recommended-jobs" className="scroll-mt-28">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-4 wg-section-fade" style={{ animationDelay: "0ms" }}>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-fg-tertiary text-role-caption">Job board</p>
-          <h2 className="mt-1 text-role-subheading font-semibold text-fg-primary sm:text-role-subheading">
-            {isLiveFeed
-              ? profileMatchActive
-                ? "Jobs matching your profile"
-                : "Browse live job listings"
-              : "No live jobs indexed yet"}
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm font-normal leading-relaxed text-fg-secondary">{hint}</p>
-        </div>
-        <span
-          className={`rounded-[20px] px-3 py-1 text-xs font-medium uppercase tracking-wide ring-1 ${
-            isLiveFeed
-              ? "border-0 bg-info-50 text-info-foreground ring-border-default"
-              : "border-border-default bg-warning-50 text-fg-secondary ring-border-default"
-          }`}
-        >
-          {isLiveFeed ? "Live feed" : "No data"}
-        </span>
-      </div>
-
       {!isLiveFeed && feedDemoHint ? (
         <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-sm text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "var(--duration-fast)" }}>
           <span className="mt-0.5 shrink-0 text-caution">
@@ -1501,7 +1464,7 @@ export default function RecommendedJobsSection({
       <section className="mb-3 rounded-xl border border-border-default bg-surface px-6 py-5 lg:hidden">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-fg-primary">Your Match Profile</h3>
+            <h3 className="font-sans text-role-subheading text-ink">Your Match Profile</h3>
             <p className="mt-1 text-sm text-fg-tertiary">Based on your profile, we match jobs by:</p>
           </div>
           <button
@@ -1545,27 +1508,8 @@ export default function RecommendedJobsSection({
         </div>
       ) : null}
 
-      {liveListings > 0 ? (
-        <p className="mb-3 text-sm text-fg-secondary">
-          {showProfileMatchesOnly ? (
-            <>
-              <span className="font-semibold text-info">{totalMatched.toLocaleString()}</span> jobs match your
-              profile
-              {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""}.
-            </>
-          ) : (
-            <>
-              <span className="font-semibold text-info">{totalMatched.toLocaleString()}</span> jobs in catalog
-              {liveListings > totalMatched ? ` · ${liveListings.toLocaleString()} indexed in Postgres` : ""} — ranked by
-              profile fit when skills are set.
-            </>
-          )}{" "}
-          Browse by page below.
-        </p>
-      ) : null}
-
       {(initialJobs.length > 0 || isLiveFeed) ? (
-        <>
+        <div className="jobs-feed min-w-0">
           <div className="mb-2 md:hidden">
             <Button
               type="button"
@@ -1579,7 +1523,7 @@ export default function RecommendedJobsSection({
             </Button>
           </div>
 
-          <section className="filter-bar wg-no-scrollbar -mx-4 hidden sm:-mx-6 md:block md:-mx-8">
+          <section className="filter-bar wg-no-scrollbar hidden md:block">
             <div className="filter-search-wrap">
               <Search className="filter-search-icon text-fg-tertiary" aria-hidden />
               <input
@@ -1712,13 +1656,13 @@ export default function RecommendedJobsSection({
           </section>
 
           {query.trim() && !isSearching && !isPageLoading && userFiltersActive && listingPipeline.length === 0 ? (
-            <p className="-mx-4 hidden border-b border-hairline px-5 py-2 text-xs text-ink-subtle sm:-mx-6 md:block md:-mx-8">
+            <p className="hidden border-b border-hairline px-5 py-2 text-role-caption text-ink-subtle md:block">
               No results for &quot;{query.trim()}&quot;.
             </p>
           ) : null}
 
           {hasActiveFilters ? (
-            <div className="filter-tags-bar -mx-4 sm:-mx-6 md:-mx-8">
+            <div className="filter-tags-bar">
               {activeFilterChips.map((chip) => (
                 <span key={chip.key} className="filter-tag wg-chip-enter">
                   {chip.label}
@@ -1740,8 +1684,6 @@ export default function RecommendedJobsSection({
           <p className="sr-only" aria-live="polite">
             {activeFilterCount === 0 ? "No active filters." : `${activeFilterCount} active filters applied.`}
           </p>
-        </>
-      ) : null}
 
       <Sheet open={isMobileFiltersOpen} onOpenChange={setIsMobileFiltersOpen}>
         <SheetContent side="bottom" className="md:hidden">
@@ -2072,7 +2014,7 @@ export default function RecommendedJobsSection({
       </Sheet>
 
       {(listingPipeline.length > 0 || isPageLoading || userFiltersActive || liveListings > 0) ? (
-        <div className="results-bar -mx-4 sm:-mx-6 md:-mx-8">
+        <div className="results-bar">
           <div className="results-bar__meta" aria-live="polite">
             <span className="results-bar__count">{totalMatched.toLocaleString()} jobs</span>
             <span aria-hidden>·</span>
@@ -2398,9 +2340,9 @@ export default function RecommendedJobsSection({
       </div>
 
       {skillHints.length > 0 ? (
-        <aside className="right-sidebar hidden lg:sticky lg:top-[calc(var(--dash-topnav-h,56px)+36px)] lg:mt-9 lg:block lg:self-start">
+        <aside className="right-sidebar hidden lg:sticky lg:top-[var(--dash-topnav-h,52px)] lg:block lg:self-start">
           <section className="sidebar-card">
-            <h3 className="card-title">Your Skills</h3>
+            <h3 className="card-title font-sans">Your Skills</h3>
             <div className="flex flex-wrap gap-1.5">
               {skillHints.map((skill) => (
                 <span
@@ -2423,11 +2365,13 @@ export default function RecommendedJobsSection({
         </aside>
       ) : null}
       </div>
+        </div>
+      ) : null}
 
       {mobileDetailJobId ? (
         <div className="fixed inset-0 z-modal bg-surface p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-fg-primary">Job Details</h3>
+            <h3 className="font-sans text-role-subheading text-ink">Job Details</h3>
             <button type="button" onClick={() => setMobileDetailJobId(null)}>
               <X className="h-5 w-5 text-fg-secondary" />
             </button>
@@ -2476,17 +2420,6 @@ export default function RecommendedJobsSection({
             );
           })()}
         </div>
-      ) : null}
-
-      {showScrollTop ? (
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-toast inline-flex h-12 w-12 items-center justify-center rounded-full border border-border-default bg-surface text-fg-secondary transition hover:bg-surface-hover hover:shadow-md"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
       ) : null}
 
       <ApplyFollowupPrompt onMarkApplied={markJobApplied} onSaveForLater={saveJobForLater} />

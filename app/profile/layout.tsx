@@ -9,7 +9,6 @@ import { loadUserProfile } from "../../lib/load-profile";
 import { supabaseConfigured } from "../../lib/supabase-enabled";
 import { createServerSupabaseClient } from "../../lib/supabase";
 import { loadSemanticJobMatches } from "../../lib/workgraph-dashboard";
-import { LegalNav } from "@/components/legal/LegalDocument";
 import "../../components/profile/profile-theme.css";
 
 export const dynamic = "force-dynamic";
@@ -68,12 +67,10 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           feedKind={jobDashboard.feedKind}
           feedDemoHint={jobDashboard.feedDemoHint}
           communityPosts={jobDashboard.communityPosts}
+          catalogUpdatedAt={jobDashboard.catalogUpdatedAt ?? null}
           homeDashboard={homeDashboard}
         />
         {children}
-        <div className="border-t border-border-default bg-background px-4 py-4">
-          <LegalNav className="mx-auto max-w-6xl" />
-        </div>
       </div>
     </WorkGraphProviders>
   );

@@ -102,6 +102,11 @@ export type ProfileJobsPayload = {
   feedKind: "live" | "demo";
   /** Present when live listings exist but rows could not be loaded. */
   feedDemoHint?: FeedDemoHint | null;
+  /**
+   * Newest jobs.created_at, the last time a row was written by ingest.
+   * Null when the catalog has no timestamp. Not a fabricated "updated" time.
+   */
+  catalogUpdatedAt?: string | null;
 };
 
 export type JobRow = {
@@ -436,6 +441,18 @@ async function loadProfileJobDashboardCore(
   };
 }
 
+/** Latest ingest write. Display-only; does not affect ranking. */
+export async function fetchCatalogUpdatedAt(supabase: SupabaseClient): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("created_at")
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if (error || !data || data.length === 0) return null;
+  const value = (data[0] as { created_at?: unknown }).created_at;
+  return typeof value === "string" && value.trim() ? value : null;
+}
+
 export async function loadProfileJobDashboard(
   supabase: SupabaseClient,
   userId: string,
@@ -446,7 +463,11 @@ export async function loadProfileJobDashboard(
     headline: profile.headline,
     summary: profile.summary ?? null,
   };
-  const payload = await loadProfileJobDashboardCore(supabase, userId, profile);
-  return withHiringSignalsInFeed(supabase, matchProfile, payload);
+  const [payload, catalogUpdatedAt] = await Promise.all([
+    loadProfileJobDashboardCore(supabase, userId, profile),
+    fetchCatalogUpdatedAt(supabase),
+  ]);
+  const withSignals = await withHiringSignalsInFeed(supabase, matchProfile, payload);
+  return { ...withSignals, catalogUpdatedAt };
 }
 
