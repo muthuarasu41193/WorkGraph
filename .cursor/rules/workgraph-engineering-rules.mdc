@@ -26,3 +26,4 @@ Before modifying a major subsystem (auth, profile/resume, jobs, hidden jobs, ATS
 - Treat AI output as untrusted. Present career scores as estimates, not hiring probabilities. Never infer or expose protected characteristics.
 - Users must be able to delete their data; they should be able to export major personal data. Every major feature needs tests.
 - Avoid N+1 queries and unnecessary API calls. Cache expensive, safely scoped computations.
+Before any change, read docs/ARCHITECTURE_NOTES.md (production truth).
