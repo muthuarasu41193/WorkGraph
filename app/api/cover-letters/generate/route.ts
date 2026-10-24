@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { generateCoverLetter } from "@/lib/cover-letters/service";
-import { requireCoverLetterSession } from "@/lib/cover-letters/session";
-import { logRouteError } from "@/lib/security/log";
+import { requireCoverLetterSession, type CoverLetterSession } from "@/lib/cover-letters/session";
+import { logErrorCode, logRouteError } from "@/lib/security/log";
+import { canUse, type Entitlement } from "@/lib/subscription/entitlements";
+import { recordUsage } from "@/lib/subscription/usage";
 import {
   coverLetterGenerateSchema,
   isValidationError,
@@ -14,12 +16,53 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export async function POST(request: Request) {
+type GenerateInput = {
+  jobTitle: string;
+  company: string;
+  jobDescription: string;
+  resumeText: string;
+};
+
+export type CoverLetterGenerateDeps = {
+  requireSession: (request: Request) => Promise<CoverLetterSession>;
+  canUseFeature: (userId: string, feature: "cover_letter") => Promise<Entitlement>;
+  generate: (input: GenerateInput) => Promise<string>;
+  record: (userId: string, feature: "cover_letter") => Promise<void>;
+};
+
+function limitResponse(decision: Entitlement) {
+  if (decision.reason === "limit_reached") {
+    return NextResponse.json(
+      {
+        error: "limit_reached",
+        used: decision.used,
+        limit: decision.limit,
+        resetsAt: decision.resetsAt,
+        upgradeUrl: "/pricing",
+      },
+      { status: 402 },
+    );
+  }
+  return NextResponse.json(
+    { error: "Could not generate a cover letter. Please try again." },
+    { status: 503 },
+  );
+}
+
+export async function handleCoverLetterGenerate(
+  request: Request,
+  deps: Partial<CoverLetterGenerateDeps> = {},
+): Promise<Response> {
+  const requireSession = deps.requireSession ?? requireCoverLetterSession;
+  const canUseFeature = deps.canUseFeature ?? ((userId: string) => canUse(userId, "cover_letter"));
+  const generate = deps.generate ?? generateCoverLetter;
+  const record = deps.record ?? ((userId: string) => recordUsage(userId, "cover_letter"));
+
   try {
     const rawBody = await request.json().catch(() => ({}));
     const body = parseWithSchema(coverLetterGenerateSchema, rawBody);
 
-    const auth = await requireCoverLetterSession(request);
+    const auth = await requireSession(request);
     if (!auth.ok) return auth.response;
 
     const { data: profile, error: profileError } = await auth.supabase
@@ -41,13 +84,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const decision = await canUseFeature(auth.userId, "cover_letter");
+    if (!decision.allowed) return limitResponse(decision);
+
     try {
-      const letter = await generateCoverLetter({
+      const letter = await generate({
         jobTitle: body.jobTitle,
         company: body.company,
         jobDescription: body.jobDescription,
         resumeText,
       });
+      try {
+        await record(auth.userId, "cover_letter");
+      } catch (error) {
+        logErrorCode("cover-letters/generate", "usage_record_failed");
+        logRouteError("cover-letters/generate", error);
+      }
       return NextResponse.json({ letter });
     } catch (err) {
       logRouteError("cover-letters/generate", err);
@@ -65,4 +117,8 @@ export async function POST(request: Request) {
       fallback: "Could not generate a cover letter. Please try again.",
     });
   }
+}
+
+export async function POST(request: Request) {
+  return handleCoverLetterGenerate(request);
 }

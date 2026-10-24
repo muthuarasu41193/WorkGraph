@@ -10,18 +10,37 @@ export type SubscriptionStatus = {
   tier: SubscriptionTier;
   isActive: boolean;
   expiresAt?: Date;
+  /** True when the profile row could not be read. A missing profile stays false. */
+  readFailed?: boolean;
 };
 
 export const LIMITS = {
-  free: { coverLettersPerMonth: 3, interviewQuestionsPerWeek: 5 },
-  premium: { coverLettersPerMonth: -1, interviewQuestionsPerWeek: -1 },
-  pro: { coverLettersPerMonth: -1, interviewQuestionsPerWeek: -1 },
+  free: { coverLettersPerMonth: 3, interviewQuestionsPerWeek: 5, tailoringPerMonth: 2 },
+  premium: { coverLettersPerMonth: -1, interviewQuestionsPerWeek: -1, tailoringPerMonth: -1 },
+  pro: { coverLettersPerMonth: -1, interviewQuestionsPerWeek: -1, tailoringPerMonth: -1 },
 } as const;
 
 const TIERS = new Set<SubscriptionTier>(["free", "premium", "pro"]);
 
-function inactiveFree(): SubscriptionStatus {
-  return { tier: "free", isActive: false };
+function inactiveFree(readFailed = false): SubscriptionStatus {
+  return readFailed
+    ? { tier: "free", isActive: false, readFailed: true }
+    : { tier: "free", isActive: false };
+}
+
+/** Map a profile read to a tier. `failed` means the database read errored, not that the row is missing. */
+export function resolveSubscriptionStatus(
+  row: { subscription_tier?: unknown; subscription_expires_at?: unknown } | null,
+  failed: boolean,
+  now = new Date(),
+): SubscriptionStatus {
+  if (failed) return inactiveFree(true);
+  if (!row) return inactiveFree();
+
+  const tier = parseTier(row.subscription_tier);
+  const expiresAt = parseExpiresAt(row.subscription_expires_at);
+  const isActive = tier !== "free" && (!expiresAt || expiresAt > now);
+  return expiresAt ? { tier, isActive, expiresAt } : { tier, isActive };
 }
 
 function parseTier(value: unknown): SubscriptionTier {
@@ -43,7 +62,7 @@ function parseExpiresAt(value: unknown): Date | undefined {
 export async function checkSubscription(userId: string): Promise<SubscriptionStatus> {
   const parsedId = uuidSchema.safeParse(userId);
   if (!parsedId.success) return inactiveFree();
-  if (!supabaseConfigured()) return inactiveFree();
+  if (!supabaseConfigured()) return inactiveFree(true);
 
   try {
     const supabase = createServerSupabaseClient(await cookies());
@@ -55,17 +74,13 @@ export async function checkSubscription(userId: string): Promise<SubscriptionSta
 
     if (error) {
       logRouteError("subscription/check", error);
-      return inactiveFree();
+      return inactiveFree(true);
     }
-    if (!data) return inactiveFree();
 
-    const tier = parseTier((data as Record<string, unknown>).subscription_tier);
-    const expiresAt = parseExpiresAt((data as Record<string, unknown>).subscription_expires_at);
-    const isActive = tier !== "free" && (!expiresAt || expiresAt > new Date());
-
-    return expiresAt ? { tier, isActive, expiresAt } : { tier, isActive };
+    const row = data as { subscription_tier?: unknown; subscription_expires_at?: unknown } | null;
+    return resolveSubscriptionStatus(row, false);
   } catch (error) {
     logRouteError("subscription/check", error);
-    return inactiveFree();
+    return inactiveFree(true);
   }
 }
