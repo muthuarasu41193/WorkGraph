@@ -32,12 +32,21 @@ describe("privacy draft data", () => {
 
   it("names hosting, payments, email, and jobs-API subprocessors with region", () => {
     const names = SUBPROCESSORS.map((row) => row.name);
-    for (const required of ["Supabase", "Vercel", "Stripe", "Resend", "Adzuna"]) {
+    for (const required of ["Supabase", "Vercel", "Resend", "Adzuna"]) {
       assert.ok(
         names.some((name) => name.includes(required)),
         `expected a named subprocessor for ${required}, got ${names.join(", ")}`,
       );
     }
+    const payment = SUBPROCESSORS.find((row) => /payment provider/i.test(row.name));
+    assert.ok(payment, `expected a payment provider entry, got ${names.join(", ")}`);
+    assert.equal(payment.name, "Payment provider (to be named at checkout)");
+    assert.match(
+      payment.purpose,
+      /Payment processing for paid plans and Interview Vault purchases\. Receives payment details only, never resume data\./,
+    );
+    assert.equal(payment.purpose, payment.function);
+    assert.equal(/stripe/i.test(`${payment.name} ${payment.purpose}`), false);
     for (const row of SUBPROCESSORS) {
       assert.ok(row.function.length > 0);
       assert.ok(row.region.length > 0);
