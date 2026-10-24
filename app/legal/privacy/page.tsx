@@ -131,11 +131,16 @@ export default function PrivacyPolicyPage() {
               <p>
                 We use the following providers to operate WorkGraph. Resume files and profile text
                 stay in our controlled stores except where a listed AI or hosting provider must
-                process them to run a feature you use.
+                process them to run a feature you use. The payment provider is named at checkout
+                and receives payment details only, never resume data.
               </p>
               <LegalTable
-                headers={["Provider", "Function", "Hosting region"]}
-                rows={SUBPROCESSORS.map((row) => [row.name, row.function, row.region])}
+                headers={["Provider", "Purpose", "Hosting region"]}
+                rows={SUBPROCESSORS.map((row) => [
+                  row.name,
+                  "purpose" in row ? row.purpose : row.function,
+                  row.region,
+                ])}
               />
             </>
           ),
