@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { FileText, Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
+import { coverLetterLimitNotice, parseCoverLetterLimitPayload } from "@/lib/subscription/limit-notice";
 import { LIMITS } from "@/lib/validation/primitives";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   const [saving, setSaving] = useState(false);
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [limitNotice, setLimitNotice] = useState<{ limit: number; resetsAt: string } | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [savedLetters, setSavedLetters] = useState<SavedLetterSummary[]>([]);
 
@@ -74,6 +77,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   async function generate() {
     setGenerating(true);
     setError(null);
+    setLimitNotice(null);
     setSavedId(null);
     setWarnings([]);
     try {
@@ -88,6 +92,13 @@ export function CoverLetterSection({ hasResume }: Props) {
         }),
       });
       const data = (await readApiJson(res)) as { letter?: string; warnings?: unknown };
+      if (res.status === 402) {
+        const notice = parseCoverLetterLimitPayload(data);
+        if (notice) {
+          setLimitNotice(notice);
+          return;
+        }
+      }
       if (!res.ok || typeof data.letter !== "string" || !data.letter.trim()) {
         setError(apiErrorMessage(data) ?? "Could not generate a cover letter.");
         return;
@@ -231,6 +242,16 @@ export function CoverLetterSection({ hasResume }: Props) {
           <Button type="button" onClick={() => void generate()} disabled={!canGenerate} loading={generating}>
             Generate Cover Letter
           </Button>
+          {limitNotice ? (
+            <Alert>
+              <AlertDescription>
+                {coverLetterLimitNotice(limitNotice.limit, limitNotice.resetsAt)}{" "}
+                <Link href="/pricing" className="underline underline-offset-2">
+                  See plans
+                </Link>
+              </AlertDescription>
+            </Alert>
+          ) : null}
           {error ? (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>

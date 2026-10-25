@@ -95,6 +95,20 @@ describe("cover letter generate route", () => {
           warnings: ["Check these claims before sending: 45%"],
         };
       },
+      canUseFeature: async (userId) => {
+        assert.equal(userId, SESSION_USER);
+        return {
+          allowed: true,
+          used: 0,
+          limit: 3,
+          resetsAt: null,
+          tier: "free",
+          reason: "ok",
+        };
+      },
+      record: async (userId) => {
+        assert.equal(userId, SESSION_USER);
+      },
     };
 
     const response = await handleCoverLetterGenerate(request(validBody), deps);
