@@ -1,7 +1,11 @@
 /* LEGAL REVIEW REQUIRED — DO NOT SHIP WITHOUT COUNSEL SIGN-OFF. */
 
 export const LEGAL_VERSION = "0.1.0-draft";
-export const LEGAL_LAST_UPDATED = "16 September 2026";
+export const LEGAL_LAST_UPDATED = "25 October 2026";
+
+/** Same backup window as the retention strings below. */
+export const BACKUP_RETENTION_SENTENCE =
+  "Encrypted backups typically rotate out within 30 days after deletion unless a legal hold applies.";
 export const PRIVACY_EMAIL = "privacy@getworkgraph.com";
 
 export const LEGAL_NAV = [

@@ -3,7 +3,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalDocument, LegalTable } from "@/components/legal/LegalDocument";
+import { accountDataRights } from "@/lib/account/privacy-copy";
 import {
+  BACKUP_RETENTION_SENTENCE,
   DATA_CATEGORIES,
   LEGAL_LAST_UPDATED,
   LEGAL_VERSION,
@@ -26,6 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPolicyPage() {
+  const rights = accountDataRights();
   return (
     <LegalDocument
       title={TITLE}
@@ -173,8 +176,7 @@ export default function PrivacyPolicyPage() {
           content: (
             <>
               <p>
-                Production systems follow the periods below. Encrypted backups typically rotate out
-                within 30 days after deletion unless a legal hold applies.
+                Production systems follow the periods below. {BACKUP_RETENTION_SENTENCE}
               </p>
               <LegalTable
                 headers={["Category", "Retention period"]}
@@ -195,8 +197,29 @@ export default function PrivacyPolicyPage() {
               <p>How to exercise them:</p>
               <ol className="list-decimal space-y-2 pl-5">
                 <li>
-                  Use in-product controls where they exist (profile edit, resume delete, application
-                  tracker delete, account deletion in settings).
+                  <strong>Download my data.</strong> {rights.export}
+                </li>
+                <li>
+                  <strong>Delete my account.</strong> {rights.deletion}
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    {rights.removed.map((item) => (
+                      <li key={item}>Deleted: {item}</li>
+                    ))}
+                    {rights.unlinked.map((item) => (
+                      <li key={item}>Unlinked and kept: {item}</li>
+                    ))}
+                    {rights.kept.map((item) => (
+                      <li key={item}>Kept: {item}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-2">{rights.payments}</p>
+                  <p className="mt-2">{rights.consent}</p>
+                  <p className="mt-2">{rights.cascade}</p>
+                  <p className="mt-2">{rights.backup}</p>
+                </li>
+                <li>
+                  Profile fields can be edited on your profile. An application can be deleted in the
+                  tracker. There is no separate control that deletes a resume while keeping the account.
                 </li>
                 <li>
                   Email{" "}
@@ -237,9 +260,10 @@ export default function PrivacyPolicyPage() {
               </p>
               <p>
                 <strong>Right to object:</strong> email {PRIVACY_EMAIL} with the subject line
-                &quot;Object to automated matching&quot;. We will disable personalized match scoring
-                on your account where technically feasible and confirm when it is off. Objecting does
-                not stop you from using the tracker or vault with manually added jobs.
+                &quot;Object to automated matching&quot;. There is no switch that turns matching off
+                while the account stays open. Deleting the account removes the profile, resume text,
+                and stored scores used for matching. You can use the tracker with manually added jobs
+                without uploading a resume.
               </p>
             </>
           ),

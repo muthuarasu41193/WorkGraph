@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text"
 import { jobCardView, parseMatchPercent } from "@/lib/job-feed"
 import { fetchLiveJobsPage, mapJobRowToCard } from "@/lib/jobs-catalog"
 import { countedAtLabel } from "@/lib/credibility"
+import { accountDataRights } from "@/lib/account/privacy-copy"
 import { getSessionUser } from "@/lib/auth/session-server"
 import { getConsentedTestimonials, getIndexStats } from "@/lib/social-proof-server"
 import { createServerSupabaseClient } from "@/lib/supabase"
@@ -39,8 +40,13 @@ function IndexNumbers({ stats }: { stats: IndexStats }) {
   )
 }
 
-export default async function HomePage() {
-  const [testimonials, stats, session, demo] = await Promise.all([
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const [raw, testimonials, stats, session, demo] = await Promise.all([
+    searchParams,
     getConsentedTestimonials(),
     getIndexStats(),
     getSessionUser(),
@@ -50,12 +56,20 @@ export default async function HomePage() {
       return row ? mapJobRowToCard(row, []) : null
     })(),
   ])
+  const accountDeleted = raw.accountDeleted === "1"
   const countedAt = new Date().toISOString()
   const view = demo ? jobCardView(demo) : null
   const score = demo ? parseMatchPercent(demo.matchLabel) : null
 
   return (
     <main id="main-content" tabIndex={-1}>
+      {accountDeleted ? (
+        <section className="mx-auto max-w-6xl px-4 pt-6" role="status">
+          <div className="rounded-card border border-hairline bg-surface-raised p-4">
+            <Text role="body">{accountDataRights().deletedBanner}</Text>
+          </div>
+        </section>
+      ) : null}
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
           <Text as="h1" role="display">Search the live index</Text>

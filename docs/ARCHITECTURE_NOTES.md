@@ -34,6 +34,7 @@ Do not add or wire FastAPI, Ollama, MinIO, Typesense, BullMQ, SuperTokens, a sep
 | Subscriptions | `/pricing`, homepage pricing block; cover-letter generation enforces the free monthly cap | `lib/subscription/index.ts`, `lib/subscription/entitlements.ts`, `lib/subscription/usage.ts` | `profiles.subscription_tier`, `profiles.subscription_expires_at`, `feature_usage` |
 | Consent | Cookie banner; `POST /api/consent` | `lib/consent.ts`, `lib/consent-log.ts`, `lib/consent-log-server.ts` | `consent_log` (service role insert) |
 | Legal | `/legal/privacy`, `/terms`, `/cookies`, `/acceptable-use`, `/dpa` | `lib/legal.ts` | none (`testimonials` is marketing copy, not a legal store) |
+| Account export and deletion | Settings → Your data; `GET /api/account/export`; `POST /api/account/delete` | `lib/account/` | Every table in `lib/account/data-map.ts`. Storage `resumes` and `avatars` |
 
 Transactional email, when configured, is Resend over HTTP in `lib/email/workgraph-mail.ts` (`RESEND_API_KEY`, `WORKGRAPH_EMAIL_FROM`). It is not a second AI processor.
 
@@ -74,19 +75,20 @@ Service role bypasses all of these policies. “Own” means `auth.uid()` matche
 | `resume_intelligence_feedback` | Rating and comment on a report | User id; comment | SELECT, INSERT own. No UPDATE/DELETE |
 | `workgraph_embeddings` | 256-d hash vectors and content hashes. Not raw resume text | Resume-derived for user-owned rows | SELECT if `owner_user_id` is null or own. INSERT, UPDATE, DELETE only as owner (cannot insert a null owner) |
 | `cover_letters` | Saved letter, job title, company, job description | **Yes** | SELECT, INSERT, DELETE own. No UPDATE |
-| `feature_usage` | One row per cover letter, tailoring, Talent Intelligence, or ATS use. The service role inserts it after the session user is authenticated. The client never supplies `user_id` | User id and feature name | RLS on. SELECT own (`auth.uid() = user_id`). No INSERT, UPDATE, or DELETE policy for `authenticated`. **Prompt 4:** include this table in account delete and export. `lib/account/` does not exist yet |
+| `feature_usage` | One row per cover letter, tailoring, Talent Intelligence, or ATS use. The service role inserts it after the session user is authenticated. The client never supplies `user_id` | User id and feature name | RLS on. SELECT own (`auth.uid() = user_id`). No INSERT, UPDATE, or DELETE policy for `authenticated`. **Prompt 4:** included in account delete and export in `lib/account/` |
+| `payments` | WorkGraph Pass charges. No card or UPI data. `user_id` is set null on account deletion | User id and payment ids | RLS on. SELECT own. No client write policy. Export the row. Keep it for tax and accounting |
 | `testimonials` | Consented marketing quotes | Author name and title | SELECT for anon and authenticated where `consent_given_at` is not null. No client write policy |
 | `consent_log` | Consent categories, anonymous id, optional user id, ISO country. No full IP | Quasi-identifier | RLS on. `REVOKE ALL` from `anon` and `authenticated`. No policies. Service role only |
 
 Storage (not `public` tables): `resumes` is private; authenticated SELECT, INSERT, DELETE only when the first folder is `auth.uid()`. `avatars` is public SELECT; authenticated INSERT and UPDATE in the owner folder.
 
-`auth.users` is Supabase Auth, not created by these migrations. Most user tables cascade on delete from it. There is no app-level account-delete path that calls that delete (see gaps).
+`auth.users` is Supabase Auth, not created by these migrations. Most user tables cascade on delete from it. `POST /api/account/delete` (`lib/account/`) removes the user's storage objects, deletes or unlinks rows in `lib/account/data-map.ts`, then calls `auth.admin.deleteUser`. Payments keep the row and set `user_id` null. `consent_log` has no foreign key; deletion sets `user_id` null and keeps the audit row. `hidden_job_analytics.user_id` is set null. Service-role queries in that module filter by the session user id.
 
 `canUse()` in `lib/subscription/entitlements.ts` is the gate for `cover_letter`, `tailoring`, `talent_intelligence`, and `ats_score`. A paid tier that has not expired is unlimited. Free cover letters use `LIMITS.free.coverLettersPerMonth` (3) per UTC calendar month. Free tailoring uses `LIMITS.free.tailoringPerMonth` (2). Talent Intelligence and ATS have no free quota in the helper yet, and their routes do not call it. Job search, matching, the tracker, and hidden jobs do not call it. A database error denies the paid feature. Cover-letter generation checks `canUse()` before Groq and inserts `feature_usage` only after a letter is produced.
 
 ## 5. Migrations
 
-Add `supabase/migrations/YYYYMMDDHHMMSS_short_name.sql`. Make it idempotent (`create table if not exists`, `add column if not exists`, `drop policy if exists` before `create policy`). Enable RLS. Default to owner-only policies. Do not edit an old migration file. Nothing in CI applies the folder: run the new file yourself in the **Supabase Dashboard → SQL Editor**. When `lib/account/` exists, also add the table to its delete and export paths.
+Add `supabase/migrations/YYYYMMDDHHMMSS_short_name.sql`. Make it idempotent (`create table if not exists`, `add column if not exists`, `drop policy if exists` before `create policy`). Enable RLS. Default to owner-only policies. Do not edit an old migration file. Nothing in CI applies the folder: run the new file yourself in the **Supabase Dashboard → SQL Editor**. Add every new user-owned table to `lib/account/data-map.ts` so export, deletion, and the coverage test include it.
 
 ## 6. Commands
 
@@ -96,7 +98,7 @@ Add `supabase/migrations/YYYYMMDDHHMMSS_short_name.sql`. Make it idempotent (`cr
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | `eslint .` then `npm run check:tokens` |
 | `npm run check:tokens` | `node scripts/check-design-tokens.mjs` |
-| `npm test` | `node --import tsx --test` on an **explicit** list in `package.json` (`lib/hidden-opportunities/__tests__`, `lib/talent-intelligence/__tests__`, `lib/__tests__`, `lib/validation/__tests__`, `lib/resume-intelligence/__tests__`, `lib/embeddings/__tests__`, `lib/security/__tests__`, `lib/subscription/__tests__`). A new `__tests__` folder does not run until that script lists it |
+| `npm test` | `node --import tsx --test` on an **explicit** list in `package.json` (`lib/hidden-opportunities/__tests__`, `lib/talent-intelligence/__tests__`, `lib/__tests__`, `lib/validation/__tests__`, `lib/resume-intelligence/__tests__`, `lib/embeddings/__tests__`, `lib/security/__tests__`, `lib/subscription/__tests__`, `lib/account/__tests__`). A new `__tests__` folder does not run until that script lists it |
 | `npm run build` | `next build` |
 
 Node `>=20.16.0`. CI (`.github/workflows/verify-build.yml`) runs config check, tokens, typecheck, test, and build on pushes and PRs to `main`.
@@ -104,9 +106,9 @@ Node `>=20.16.0`. CI (`.github/workflows/verify-build.yml`) runs config check, t
 ## 7. Known gaps (checked in code)
 
 - There is still no checkout. `/pricing` displays `LIMITS` and does not sell a plan. An operator sets `subscription_tier` with the service role (see migration `20261024183000_subscription_guard_and_usage.sql`).
-- **Prompt 4:** `public.feature_usage` must be added to account delete and export when `lib/account/` is built. Rows are the session user's feature name and timestamp. No delete/export module exists yet.
+- **Prompt 4:** `public.feature_usage` is included in account delete and export in `lib/account/`. Rows are the session user's feature name and timestamp.
 - `lib/cover-letters/service.ts` asks Groq for a “compelling” letter and has **no** anti-invention instruction. Parse and Talent Intelligence prompts do.
-- No account deletion or data export. There is no `lib/account/` and no `deleteUser` call. `app/legal/privacy/page.tsx` tells people to use “account deletion in settings.” `components/settings/SettingsSection.tsx` has theme, a note that alerts are not stored, and “Export is not available from here.”
+- Account export is `GET /api/account/export`. Account deletion is `POST /api/account/delete` with the confirmation `DELETE`, then sign-out and `/?accountDeleted=1`. Settings → Your data starts both. Downloads are limited to 5 per hour per account.
 - `lib/saved-searches.ts` is `localStorage` key `wg-saved-searches` only. Settings states that match, hidden-job, and application alerts are not stored and are not sent.
 - `jobCardView()` in `lib/job-feed.ts` always returns `salary: { kind: "undisclosed" }`. `public.jobs` has no salary column, so this is not hiding a stored figure.
 - Freshness thresholds differ. `lib/job-feed.ts` `STALE_AFTER_DAYS` is **60** (`days >= 60`). `lib/job-match.ts` uses a private `STALE_AFTER_DAYS` of **30** (`ageDays > 30`). `lib/job-freshness.ts` has **no** `STALE_AFTER_DAYS` constant; `formatJobFreshness` says “may no longer be open” when `days > 30`.
@@ -122,6 +124,6 @@ Node `>=20.16.0`. CI (`.github/workflows/verify-build.yml`) runs config check, t
 - AI must not invent experience, employers, titles, dates, numbers, skills, or credentials. Validate output with Zod, cap length, drop unknown keys, never render it as raw HTML. Scores are estimates, not hiring probabilities.
 - Resume upload cap stays 4 MB (`lib/upload-limits.ts`).
 - Scope every user-data read and write to the session user. Service role does not skip that filter.
-- New tables: migration as in section 5, RLS on, owner-only, and included in account delete/export once `lib/account/` exists.
+- New tables: migration as in section 5, RLS on, owner-only, and added to `lib/account/data-map.ts`.
 - Additive only. Do not delete, rename, or rewrite existing features, routes, tables, or columns. Never log resume text, emails, phones, tokens, or secrets.
 - UI reuses `components/ui`, `components/product`, and `components/design-system` and the design tokens (`npm run check:tokens`). The brand accent is red; do not use red or amber except for real warnings and errors.

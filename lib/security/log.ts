@@ -18,6 +18,11 @@ const ERROR_CODES = new Set([
   "entitlement_unavailable",
   "usage_count_failed",
   "usage_record_failed",
+  "account_export_failed",
+  "account_delete_failed",
+  "account_storage_failed",
+  "account_auth_delete_failed",
+  "account_unconfigured",
 ]);
 
 /**
