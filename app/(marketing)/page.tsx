@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text"
 import { jobCardView, parseMatchPercent } from "@/lib/job-feed"
 import { fetchLiveJobsPage, mapJobRowToCard } from "@/lib/jobs-catalog"
 import { countedAtLabel } from "@/lib/credibility"
+import { getSessionUser } from "@/lib/auth/session-server"
 import { getConsentedTestimonials, getIndexStats } from "@/lib/social-proof-server"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import type { IndexStats } from "@/lib/social-proof-server"
@@ -39,9 +40,10 @@ function IndexNumbers({ stats }: { stats: IndexStats }) {
 }
 
 export default async function HomePage() {
-  const [testimonials, stats, demo] = await Promise.all([
+  const [testimonials, stats, session, demo] = await Promise.all([
     getConsentedTestimonials(),
     getIndexStats(),
+    getSessionUser(),
     (async () => {
       const page = await fetchLiveJobsPage(createServerSupabaseClient(await cookies()), { page: 1, pageSize: 1 })
       const row = page.rows?.[0]
@@ -127,7 +129,7 @@ export default async function HomePage() {
       <section id="pricing" className="mx-auto max-w-6xl px-4 py-8">
         <Text as="h2" role="title">Pricing</Text>
         <div className="mt-4">
-          <PricingTiers />
+          <PricingTiers signedIn={Boolean(session)} />
         </div>
         <Link href="/pricing" className="mt-4 inline-flex min-h-11 items-center text-accent">Pricing details</Link>
       </section>

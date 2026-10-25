@@ -35,12 +35,12 @@ export const SUBPROCESSORS = [
     region: "United States / global edge",
   },
   {
-    name: "Payment provider (to be named at checkout)",
+    name: "Razorpay",
     purpose:
-      "Payment processing for paid plans and Interview Vault purchases. Receives payment details only, never resume data.",
+      "Payment processing for the WorkGraph Pass. Receives payment details only, never resume data.",
     function:
-      "Payment processing for paid plans and Interview Vault purchases. Receives payment details only, never resume data.",
-    region: "Disclosed at checkout",
+      "Payment processing for the WorkGraph Pass. Receives payment details only, never resume data.",
+    region: "India",
   },
   {
     name: "Resend",
@@ -85,6 +85,15 @@ export const DATA_CATEGORIES = [
     purpose: "Provide tracker, marketplace, and hiring-signal features you use",
     lawfulBasis: "Contract",
     retention: "Until you delete the records or the account; backups up to 30 days",
+  },
+  {
+    category: "Payment records",
+    examples:
+      "Plan, amount, currency, Razorpay order and payment ids, status, and pass expiry. Not card numbers, UPI ids, or resume content.",
+    purpose: "Take a one-time WorkGraph Pass payment, grant access until expiry, and keep accounting records",
+    lawfulBasis: "Contract; legal obligation to keep tax and accounting records",
+    retention:
+      "Kept after account deletion with the user id removed, for tax and accounting. Card and UPI details are not stored.",
   },
   {
     category: "Device / analytics",

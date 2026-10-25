@@ -128,6 +128,24 @@ export default function TermsOfServicePage() {
           ),
         },
         {
+          id: "payments-and-refunds",
+          title: "Payments and refunds",
+          content: (
+            <>
+              <p>
+                WorkGraph Pass is a one-time payment processed by Razorpay. It does not auto-renew.
+                Razorpay receives the payment details you enter at checkout. We do not send resume
+                files or resume text to Razorpay. Access lasts until the expiry date shown after
+                payment and in settings.
+              </p>
+              <p>
+                TODO(founder): Write the refund policy here before charging customers. State whether
+                a WorkGraph Pass is refundable, the time window, and how a person requests a refund.
+              </p>
+            </>
+          ),
+        },
+        {
           id: "contact",
           title: "Contact",
           content: (

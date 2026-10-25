@@ -23,6 +23,8 @@ export interface Profile {
   profile_completeness: number;
   created_at: string;
   updated_at: string;
+  subscription_tier?: "free" | "premium" | "pro" | null;
+  subscription_expires_at?: string | null;
 }
 
 export interface WorkExperience {

@@ -54,7 +54,7 @@ export default function TrustPage() {
       <section id="subscription" className="space-y-2">
         <Text as="h2" role="heading">Subscription</Text>
         <Text role="body-small">
-          There is no published checkout price and no subscription to cancel in the product today. When a paid subscription exists, the control will be one button labelled Cancel subscription.
+          WorkGraph Pass is a one-time payment. It does not auto-renew, so there is no cancel-subscription button. Pro is a profile flag with no public price.
         </Text>
         <Link href="/pricing" className="inline-flex min-h-11 items-center text-accent">See the tiers</Link>
       </section>

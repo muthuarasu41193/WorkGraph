@@ -6,6 +6,7 @@ import { FileText, Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { coverLetterLimitNotice, parseCoverLetterLimitPayload } from "@/lib/subscription/limit-notice";
+import { PASS_UPGRADE_LABEL, upgradeHrefFromPayload } from "@/lib/subscription/upgrade";
 import { LIMITS } from "@/lib/validation/primitives";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   const [saving, setSaving] = useState(false);
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [upgradeHref, setUpgradeHref] = useState<string | null>(null);
   const [limitNotice, setLimitNotice] = useState<{ limit: number; resetsAt: string } | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [savedLetters, setSavedLetters] = useState<SavedLetterSummary[]>([]);
@@ -77,6 +79,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   async function generate() {
     setGenerating(true);
     setError(null);
+    setUpgradeHref(null);
     setLimitNotice(null);
     setSavedId(null);
     setWarnings([]);
@@ -96,6 +99,7 @@ export function CoverLetterSection({ hasResume }: Props) {
         const notice = parseCoverLetterLimitPayload(data);
         if (notice) {
           setLimitNotice(notice);
+          setUpgradeHref(upgradeHrefFromPayload(data));
           return;
         }
       }
@@ -242,12 +246,12 @@ export function CoverLetterSection({ hasResume }: Props) {
           <Button type="button" onClick={() => void generate()} disabled={!canGenerate} loading={generating}>
             Generate Cover Letter
           </Button>
-          {limitNotice ? (
+          {limitNotice && upgradeHref ? (
             <Alert>
               <AlertDescription>
                 {coverLetterLimitNotice(limitNotice.limit, limitNotice.resetsAt)}{" "}
-                <Link href="/pricing" className="underline underline-offset-2">
-                  See plans
+                <Link href={upgradeHref} className="underline underline-offset-2">
+                  {PASS_UPGRADE_LABEL}
                 </Link>
               </AlertDescription>
             </Alert>

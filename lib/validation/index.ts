@@ -47,4 +47,6 @@ export {
   coverLetterSaveSchema,
   coverLetterIdSchema,
 } from "./cover-letters";
+
+export { razorpayOrderBodySchema, razorpayVerifyBodySchema } from "./billing";
 export type { CoverLetterGenerateInput, CoverLetterSaveInput } from "./cover-letters";

@@ -131,8 +131,10 @@ export default function PrivacyPolicyPage() {
               <p>
                 We use the following providers to operate WorkGraph. Resume files and profile text
                 stay in our controlled stores except where a listed AI or hosting provider must
-                process them to run a feature you use. The payment provider is named at checkout
-                and receives payment details only, never resume data.
+                process them to run a feature you use. Razorpay is the payment processor for the
+                WorkGraph Pass. Razorpay receives payment details only, never resume data. Payment
+                records stay in our database after account deletion with the user id removed, for
+                tax and accounting. We do not store card or UPI details.
               </p>
               <LegalTable
                 headers={["Provider", "Purpose", "Hosting region"]}

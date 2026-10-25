@@ -37,6 +37,14 @@ function mapRow(data: Record<string, unknown>): Profile {
     ats_score: typeof data.ats_score === "number" ? data.ats_score : null,
     ats_feedback: data.ats_feedback as Profile["ats_feedback"],
     profile_completeness: typeof data.profile_completeness === "number" ? data.profile_completeness : 0,
+    subscription_tier:
+      data.subscription_tier === "free" ||
+      data.subscription_tier === "premium" ||
+      data.subscription_tier === "pro"
+        ? data.subscription_tier
+        : null,
+    subscription_expires_at:
+      typeof data.subscription_expires_at === "string" ? data.subscription_expires_at : null,
     created_at: typeof data.created_at === "string" ? data.created_at : new Date().toISOString(),
     updated_at: typeof data.updated_at === "string" ? data.updated_at : new Date().toISOString(),
   };

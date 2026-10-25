@@ -5,6 +5,16 @@ export function logRouteError(route: string, error: unknown): void {
 }
 
 const ERROR_CODES = new Set([
+  "billing_unconfigured",
+  "razorpay_order_failed",
+  "razorpay_signature_invalid",
+  "razorpay_webhook_invalid",
+  "payment_not_found",
+  "payment_forbidden",
+  "payment_unlinked",
+  "grant_failed",
+  "amount_mismatch",
+  "unknown_plan",
   "entitlement_unavailable",
   "usage_count_failed",
   "usage_record_failed",
