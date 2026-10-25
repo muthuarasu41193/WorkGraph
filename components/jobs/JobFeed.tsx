@@ -19,6 +19,7 @@ import {
   sortFeedJobs,
   type FeedSort,
 } from "@/lib/job-feed"
+import { attachMissingSkills } from "@/lib/job-requirements"
 import { dismissedSnapshot, readDismissedJobs, subscribeDismissedJobs, writeDismissedJobs } from "@/lib/dismissed-jobs"
 import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
@@ -27,7 +28,7 @@ import { sanitizeJobDescription } from "@/lib/job-summary"
 import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
-const ROW_HEIGHT = 320
+const ROW_HEIGHT = 420
 const UNDO_MS = 5000
 
 export type AppliedRef = { company: string; role: string; job_url: string | null }
@@ -128,12 +129,14 @@ export function JobFeed({
   applications,
   skills,
   search,
+  tailorHref = null,
 }: {
   initial: JobFeedInitial
   userId: string | null
   applications: AppliedRef[]
   skills: string[]
   search: string
+  tailorHref?: string | null
 }) {
   const router = useRouter()
   const wide = useSyncExternalStore(subscribeWide, wideSnapshot, () => false)
@@ -607,7 +610,7 @@ export function JobFeed({
             <div className="relative" style={{ height: rows.length * ROW_HEIGHT }}>
               {visible.map((row, index) => {
                 const absolute = start + index
-                const view = jobCardView(row.job)
+                const view = jobCardView(attachMissingSkills(row.job, skills))
                 const saved = savedIds.has(row.job.id)
                 const applied = isApplied(row.job, applications) || (row.job.applyUrl ? trackedUrls.includes(row.job.applyUrl) : false)
                 const notes = [saved ? "Saved on this device" : null, applied ? "In your tracker" : null].filter(Boolean).join(" · ")
@@ -642,6 +645,7 @@ export function JobFeed({
                         freshness={view.freshness}
                         source={view.source}
                         trust={view.trust}
+                        tailorHref={tailorHref}
                         applyLabel={view.applyLabel}
                         statusNote={notes || undefined}
                         saved={saved}

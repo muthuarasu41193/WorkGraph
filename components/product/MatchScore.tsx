@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { AIProvenance } from "@/components/product/AIProvenance"
+import { TAILOR_PLACEHOLDER_HREF } from "@/lib/job-requirements"
 import { cn } from "@/lib/utils"
 
 export type MatchRequirement = {
@@ -30,6 +32,41 @@ export type MatchScoreProps = {
   loading?: boolean
   error?: string
   className?: string
+  /** Set only when the viewer has a resume. /pricing when free tailoring is used up. */
+  tailorHref?: string | null
+}
+
+export function MissingSkillsLine({
+  skills,
+  tailorHref,
+}: {
+  skills: string[]
+  tailorHref?: string | null
+}) {
+  if (skills.length === 0) return null
+  const tailorClass = "inline-flex min-h-11 items-center text-role-caption text-ink underline underline-offset-2"
+  return (
+    <div className="space-y-1">
+      <p className="text-role-caption text-ink">Missing: {skills.join(", ")}</p>
+      <Link
+        href="/trust#match"
+        className="inline-flex min-h-11 items-center text-role-caption text-ink-muted underline underline-offset-2"
+      >
+        Based on words in the posting. Estimate.
+      </Link>
+      {tailorHref ? (
+        tailorHref === TAILOR_PLACEHOLDER_HREF ? (
+          <a href={tailorHref} className={tailorClass} onClick={(event) => event.preventDefault()}>
+            Tailor for this job
+          </a>
+        ) : (
+          <Link href={tailorHref} className={tailorClass}>
+            Tailor for this job
+          </Link>
+        )
+      ) : null}
+    </div>
+  )
 }
 
 export function MatchScore({
@@ -44,10 +81,12 @@ export function MatchScore({
   loading = false,
   error,
   className,
+  tailorHref,
 }: MatchScoreProps) {
   const [openUncontrolled, setOpen] = useState(defaultExpanded)
   const open = expanded ?? openUncontrolled
   const safeScore = Math.max(0, Math.min(100, Math.round(score)))
+  const missing = requirements.filter((item) => !item.met).map((item) => item.label)
 
   if (loading) {
     return <div className={cn("h-11 w-56 rounded-control bg-surface-sunken", className)} aria-hidden />
@@ -68,12 +107,13 @@ export function MatchScore({
         {requirements.length > 0 ? (
           <ul className="mt-1 space-y-1">
             {requirements.map((item) => (
-              <li key={item.label} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
+              <li key={`${item.met ? "met" : "miss"}-${item.label}`} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
                 {item.met ? "Met" : "Not met"}: {item.label}
               </li>
             ))}
           </ul>
         ) : null}
+        <MissingSkillsLine skills={missing} tailorHref={tailorHref} />
       </div>
     )
   }
@@ -112,7 +152,7 @@ export function MatchScore({
           {requirements.length > 0 ? (
             <ul className="mt-1 space-y-1">
               {requirements.map((item) => (
-                <li key={item.label} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
+                <li key={`${item.met ? "met" : "miss"}-${item.label}`} className={cn("text-role-caption", item.met ? "text-positive" : "text-ink-muted")}>
                   {item.met ? "Met" : "Not met"}: {item.label}
                 </li>
               ))}
@@ -120,6 +160,7 @@ export function MatchScore({
           ) : null}
         </div>
       ) : null}
+      <MissingSkillsLine skills={missing} tailorHref={tailorHref} />
     </div>
   )
 }

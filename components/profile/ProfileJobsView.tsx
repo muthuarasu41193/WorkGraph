@@ -18,6 +18,7 @@ type Props = {
   profileCompleteness: number;
   hasResume?: boolean;
   catalogUpdatedAt?: string | null;
+  tailorHref?: string | null;
 };
 
 /** Jobs tab content — loaded on demand so Home and other routes stay fast. */
@@ -34,6 +35,7 @@ export default function ProfileJobsView({
   profileCompleteness,
   hasResume = false,
   catalogUpdatedAt = null,
+  tailorHref = null,
 }: Props) {
   return (
     <div className="space-y-4">
@@ -57,6 +59,7 @@ export default function ProfileJobsView({
         liveListings={liveListings}
         matchedListings={matchedListings}
         hasResume={hasResume}
+        tailorHref={tailorHref}
       />
     </div>
   );

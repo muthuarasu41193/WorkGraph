@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { attachMissingSkillsToJobs } from "../../../lib/job-requirements";
 import { LIVE_JOBS_CLIENT_FILTER_CAP, LIVE_JOBS_MAX_API_PAGE_SIZE, loadLiveJobCardsPage } from "../../../lib/jobs-catalog";
 import { createServerSupabaseClient } from "../../../lib/supabase";
 import { parseJobSearchQuery } from "../../../lib/validation";
@@ -48,9 +49,14 @@ export async function GET(request: Request) {
     );
   }
 
+  const pageJobs =
+    jobs.length <= LIVE_JOBS_MAX_API_PAGE_SIZE
+      ? attachMissingSkillsToJobs(jobs, parsed.profileSkills)
+      : jobs;
+
   return NextResponse.json({
     ok: true,
-    jobs,
+    jobs: pageJobs,
     total,
     page,
     page_size: pageSize,
