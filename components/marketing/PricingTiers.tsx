@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Text } from "@/components/ui/text"
 import { LIMITS, type SubscriptionTier } from "@/lib/subscription"
 
-const REFUND = "Paid vault transactions, when enabled, are processed by Stripe. Payouts, refunds, and revenue share will be described in-product at checkout."
+const REFUND = "Payments, when enabled, are processed by a licensed payment provider named at checkout. Payouts, refunds, and revenue share will be described in-product at checkout."
 
 const ORDER: SubscriptionTier[] = ["free", "premium", "pro"]
 
@@ -29,7 +29,6 @@ export function PricingTiers() {
               <Text role="body" className="mt-2">No public price</Text>
               <ul className="mt-3 space-y-2 text-role-body-small">
                 <li>{limitLabel(limits.coverLettersPerMonth, "cover letters per month")}</li>
-                <li>{limitLabel(limits.interviewQuestionsPerWeek, "interview questions per week")}</li>
                 <li>{NOTES[tier]}</li>
               </ul>
               {tier === "free" ? (

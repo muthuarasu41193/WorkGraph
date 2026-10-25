@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { NextResponse } from "next/server";
 
-import { handleCoverLetterGenerate } from "../../../app/api/cover-letters/generate/route.ts";
+import { handleCoverLetterGenerate } from "../../cover-letters/handle-generate.ts";
 import { coverLetterLimitNotice, parseCoverLetterLimitPayload } from "../limit-notice.ts";
 import type { Entitlement } from "../entitlements.ts";
 
@@ -87,7 +87,7 @@ describe("cover letter generation gate", () => {
       }),
       generate: async () => {
         generated = true;
-        return "letter";
+        return { letter: "letter", warnings: [] };
       },
     });
     assert.equal(response.status, 401);
@@ -120,7 +120,7 @@ describe("cover letter generation gate", () => {
       },
       generate: async () => {
         generated = true;
-        return "letter";
+        return { letter: "letter", warnings: [] };
       },
       record: async () => {
         recorded = true;
@@ -157,7 +157,7 @@ describe("cover letter generation gate", () => {
         order.push("generate");
         assert.equal(input.resumeText, "Shipped billing APIs.");
         assert.equal(input.jobTitle, "Engineer");
-        return "Dear hiring team, I shipped billing APIs.";
+        return { letter: "Dear hiring team, I shipped billing APIs.", warnings: [] };
       },
       record: async (userId, feature) => {
         order.push("record");
@@ -213,7 +213,7 @@ describe("cover letter generation gate", () => {
       }),
       generate: async () => {
         generated = true;
-        return "letter";
+        return { letter: "letter", warnings: [] };
       },
     });
     assert.equal(response.status, 503);
@@ -236,7 +236,7 @@ describe("cover letter generation gate", () => {
           supabase: supabaseWithResume("Shipped billing APIs.") as never,
         }),
         canUseFeature: async () => allowed(),
-        generate: async () => "Dear hiring team",
+        generate: async () => ({ letter: "Dear hiring team", warnings: [] }),
         record: async () => {
           const error = new Error("person@example.com resume row");
           error.name = "PostgrestError";

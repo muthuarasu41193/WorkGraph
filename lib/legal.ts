@@ -35,9 +35,12 @@ export const SUBPROCESSORS = [
     region: "United States / global edge",
   },
   {
-    name: "Stripe",
-    function: "Payment processing for Interview Vault purchases when payments are enabled",
-    region: "United States",
+    name: "Payment provider (to be named at checkout)",
+    purpose:
+      "Payment processing for paid plans and Interview Vault purchases. Receives payment details only, never resume data.",
+    function:
+      "Payment processing for paid plans and Interview Vault purchases. Receives payment details only, never resume data.",
+    region: "Disclosed at checkout",
   },
   {
     name: "Resend",

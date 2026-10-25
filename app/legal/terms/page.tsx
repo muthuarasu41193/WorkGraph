@@ -82,8 +82,8 @@ export default function TermsOfServicePage() {
           title: "Interview Vault marketplace",
           content: (
             <p>
-              Paid vault transactions, when enabled, are processed by Stripe. Payouts, refunds, and
-              revenue share will be described in-product at checkout. Guides must be your own
+              Payments, when enabled, are processed by a licensed payment provider named at checkout.
+              Payouts, refunds, and revenue share will be described in-product at checkout. Guides must be your own
               experience; do not post confidential employer materials you are not allowed to share.
               We may remove listings that appear fraudulent or that violate Acceptable Use.
             </p>

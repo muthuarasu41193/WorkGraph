@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Text } from "@/components/ui/text";
 import SavedCoverLetterCard from "./SavedCoverLetterCard";
 
 const JOB_DESCRIPTION_MAX = 2000;
@@ -34,6 +35,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   const [company, setCompany] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [letter, setLetter] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -77,6 +79,7 @@ export function CoverLetterSection({ hasResume }: Props) {
     setError(null);
     setLimitNotice(null);
     setSavedId(null);
+    setWarnings([]);
     try {
       const headers = await withSupabaseAuthHeaders({ "Content-Type": "application/json" });
       const res = await fetch("/api/cover-letters/generate", {
@@ -88,7 +91,7 @@ export function CoverLetterSection({ hasResume }: Props) {
           jobDescription: jobDescription.trim(),
         }),
       });
-      const data = (await readApiJson(res)) as { letter?: string };
+      const data = (await readApiJson(res)) as { letter?: string; warnings?: unknown };
       if (res.status === 402) {
         const notice = parseCoverLetterLimitPayload(data);
         if (notice) {
@@ -101,6 +104,11 @@ export function CoverLetterSection({ hasResume }: Props) {
         return;
       }
       setLetter(data.letter);
+      setWarnings(
+        Array.isArray(data.warnings)
+          ? data.warnings.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+          : [],
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not generate a cover letter.");
     } finally {
@@ -186,6 +194,9 @@ export function CoverLetterSection({ hasResume }: Props) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Text role="body-small" className="text-muted-foreground">
+            Written only from your resume. Review before sending.
+          </Text>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="cl-job-title">Job title</Label>
@@ -274,7 +285,15 @@ export function CoverLetterSection({ hasResume }: Props) {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            <Text role="body-small" className="text-muted-foreground">
+              Written only from your resume. Review before sending.
+            </Text>
+            {warnings.map((warning) => (
+              <Alert key={warning} variant="destructive">
+                <AlertDescription>{warning}</AlertDescription>
+              </Alert>
+            ))}
             <p className="whitespace-pre-wrap text-sm leading-6">{letter}</p>
           </CardContent>
         </Card>
