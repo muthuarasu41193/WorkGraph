@@ -44,7 +44,7 @@ export default function TrustPage() {
       <section id="match" className="space-y-2">
         <Text as="h2" role="heading">Match estimate</Text>
         <Text role="body-small">
-          A match percent is an estimate from skill overlap, title family, and a small seniority term. Older postings are ranked lower. It is not a chance of an interview or an offer. When no profile is available, the percent is hidden.
+          A match percent is an estimate from skill overlap, title family, and a small seniority term. Older postings are ranked lower. It is not a chance of an interview or an offer. When no profile is available, the percent is hidden. A missing-skill line lists words from the posting that are not on the profile. That list is an estimate from those words, not a verified requirements checklist.
         </Text>
         <Text role="body-small">
           Salary estimates from other people’s pay are not shown. A card says salary is not disclosed unless the listing itself stored a figure. There is no sample size to quote.

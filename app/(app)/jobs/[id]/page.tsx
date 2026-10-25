@@ -3,6 +3,8 @@ import { cookies } from "next/headers"
 import { JobDecision } from "@/components/jobs/JobDecision"
 import { getSessionUser } from "@/lib/auth/session-server"
 import { fetchLiveJobByPublicId, mapJobRowToCard } from "@/lib/jobs-catalog"
+import { MISSING_SKILLS_DETAIL_LIMIT, attachMissingSkills } from "@/lib/job-requirements"
+import { tailorHrefForUser } from "@/lib/job-tailor-link"
 import { loadUserProfile } from "@/lib/load-profile"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { Text } from "@/components/ui/text"
@@ -44,10 +46,15 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
   const user = await getSessionUser()
   const profile = user ? await loadUserProfile(user.id) : null
   const skills = profile?.skills ?? []
-  const job = mapJobRowToCard(row, skills, { skills, headline: profile?.headline, summary: profile?.summary })
+  const job = attachMissingSkills(
+    mapJobRowToCard(row, skills, { skills, headline: profile?.headline, summary: profile?.summary }),
+    skills,
+    MISSING_SKILLS_DETAIL_LIMIT,
+  )
+  const tailorHref = await tailorHrefForUser(user?.id ?? null, profile)
   return (
     <main>
-      <JobDecision job={job} userId={user?.id ?? null} />
+      <JobDecision job={job} userId={user?.id ?? null} tailorHref={tailorHref} />
     </main>
   )
 }

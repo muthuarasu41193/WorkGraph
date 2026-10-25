@@ -8,6 +8,8 @@ import { getSessionUser } from "@/lib/auth/session-server"
 import { listApplicationsForUser } from "@/lib/applications-server"
 import { JOB_FEED_PAGE_SIZE, parseFeedSort, relaxQuery } from "@/lib/job-feed"
 import { fetchLiveJobsPage, loadLiveJobCardsPage, mapJobRowToCard } from "@/lib/jobs-catalog"
+import { attachMissingSkillsToJobs } from "@/lib/job-requirements"
+import { tailorHrefForUser } from "@/lib/job-tailor-link"
 import { loadUserProfile } from "@/lib/load-profile"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { parseJobSearchQuery } from "@/lib/validation"
@@ -35,6 +37,7 @@ export default async function JobsPage({
   const user = await getSessionUser()
   const profile = user ? await loadUserProfile(user.id) : null
   const skills = profile?.skills ?? []
+  const tailorHrefPromise = tailorHrefForUser(user?.id ?? null, profile)
   const supabase = createServerSupabaseClient(await cookies())
   const rank = sort === "match" && skills.length > 0
 
@@ -81,7 +84,8 @@ export default async function JobsPage({
     }
   }
 
-  const jobs: RecommendedJobCard[] = result.jobs ?? []
+  const jobs: RecommendedJobCard[] = attachMissingSkillsToJobs(result.jobs ?? [], skills)
+  const tailorHref = await tailorHrefPromise
   const coverage = result.jobs ? thinCoverageNote(result.total) : null
   return (
     <main>
@@ -105,6 +109,7 @@ export default async function JobsPage({
           userId={user?.id ?? null}
           applications={applications}
           skills={skills}
+          tailorHref={tailorHref}
           search={params.toString()}
         />
       </PullToRefresh>

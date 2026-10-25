@@ -5,6 +5,7 @@ import ProfileShell from "../../components/profile/premium/ProfileShell";
 import WorkGraphProviders from "../../components/providers/WorkGraphProviders";
 import { getSessionUser } from "../../lib/auth/session-server";
 import { loadProfileJobDashboard } from "../../lib/job-dashboard";
+import { tailorHrefForUser } from "@/lib/job-tailor-link";
 import { loadUserProfile } from "../../lib/load-profile";
 import { supabaseConfigured } from "../../lib/supabase-enabled";
 import { createServerSupabaseClient } from "../../lib/supabase";
@@ -31,6 +32,8 @@ export default async function ProfileLayout({ children }: { children: React.Reac
     feedDemoHint: "empty_table",
   };
 
+  const tailorHrefPromise = tailorHrefForUser(sessionUser.id, profile);
+
   if (supabaseConfigured()) {
     const supabase = createServerSupabaseClient(await cookies());
     jobDashboard = await loadProfileJobDashboard(supabase, sessionUser.id, {
@@ -40,7 +43,10 @@ export default async function ProfileLayout({ children }: { children: React.Reac
     });
   }
 
-  const semanticJobMatches = await loadSemanticJobMatches(profile, 12);
+  const [semanticJobMatches, tailorHref] = await Promise.all([
+    loadSemanticJobMatches(profile, 12),
+    tailorHrefPromise,
+  ]);
 
   const homeDashboard = (
     <HomeDashboard
@@ -68,6 +74,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
           feedDemoHint={jobDashboard.feedDemoHint}
           communityPosts={jobDashboard.communityPosts}
           catalogUpdatedAt={jobDashboard.catalogUpdatedAt ?? null}
+          tailorHref={tailorHref}
           homeDashboard={homeDashboard}
         />
         {children}
