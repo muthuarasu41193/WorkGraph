@@ -219,7 +219,12 @@ function ProfileShellInner({
           />
         </div>
       ),
-      settings: <SettingsSection />,
+      settings: (
+        <SettingsSection
+          subscriptionTier={profile.subscription_tier ?? null}
+          subscriptionExpiresAt={profile.subscription_expires_at ?? null}
+        />
+      ),
     }),
     [
       homeDashboard,

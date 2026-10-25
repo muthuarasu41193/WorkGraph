@@ -1,13 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useProfileTheme } from "@/components/profile/theme/ProfileThemeProvider";
 import PageHero from "@/components/design-system/PageHero";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
+import { activePassSentence, describePass } from "@/lib/billing/display";
 
-export default function SettingsSection() {
+export default function SettingsSection({
+  subscriptionTier = null,
+  subscriptionExpiresAt = null,
+}: {
+  subscriptionTier?: string | null;
+  subscriptionExpiresAt?: string | null;
+}) {
   const { resolved, toggle } = useProfileTheme();
+  const pass = describePass(subscriptionTier, subscriptionExpiresAt);
 
   return (
     <div className="space-y-6">
@@ -15,6 +24,25 @@ export default function SettingsSection() {
         title="Settings"
         subtitle="Dark mode is saved on this device. Other preferences on this page are not stored."
       />
+
+      <section className="rounded-card border border-hairline bg-surface-raised p-4">
+        <Text as="h2" role="subheading">WorkGraph Pass</Text>
+        <Text role="body-small" className="mt-2">
+          {pass.kind === "active"
+            ? activePassSentence(pass.untilLabel)
+            : pass.kind === "expired"
+              ? `No active WorkGraph Pass. The previous pass ended ${pass.untilLabel}.`
+              : pass.kind === "pro"
+                ? "Pro is on this profile. It is not sold here and has no public price."
+                : "No active WorkGraph Pass."}
+        </Text>
+        <Text role="caption" className="mt-2 text-ink-muted">
+          One-time payment. Does not auto-renew. This page does not change the pass.
+        </Text>
+        <Link href="/pricing" className="mt-3 inline-flex min-h-11 items-center text-role-body-small text-accent">
+          Pricing
+        </Link>
+      </section>
 
       <section className="rounded-card border border-hairline bg-surface-raised p-4">
         <Text as="h2" role="subheading">Appearance</Text>

@@ -38,13 +38,10 @@ describe("privacy draft data", () => {
         `expected a named subprocessor for ${required}, got ${names.join(", ")}`,
       );
     }
-    const payment = SUBPROCESSORS.find((row) => /payment provider/i.test(row.name));
-    assert.ok(payment, `expected a payment provider entry, got ${names.join(", ")}`);
-    assert.equal(payment.name, "Payment provider (to be named at checkout)");
-    assert.match(
-      payment.purpose,
-      /Payment processing for paid plans and Interview Vault purchases\. Receives payment details only, never resume data\./,
-    );
+    const payment = SUBPROCESSORS.find((row) => row.name === "Razorpay");
+    assert.ok(payment, `expected Razorpay, got ${names.join(", ")}`);
+    assert.match(payment.purpose, /Receives payment details only, never resume data/);
+    assert.match(payment.function, /never resume data/);
     assert.equal(payment.purpose, payment.function);
     assert.equal(/stripe/i.test(`${payment.name} ${payment.purpose}`), false);
     for (const row of SUBPROCESSORS) {
