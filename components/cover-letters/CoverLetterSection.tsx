@@ -5,11 +5,8 @@ import Link from "next/link";
 import { FileText, Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
-import {
-  PASS_UPGRADE_LABEL,
-  limitNoticeFromPayload,
-  upgradeHrefFromPayload,
-} from "@/lib/subscription/upgrade";
+import { coverLetterLimitNotice, parseCoverLetterLimitPayload } from "@/lib/subscription/limit-notice";
+import { PASS_UPGRADE_LABEL, upgradeHrefFromPayload } from "@/lib/subscription/upgrade";
 import { LIMITS } from "@/lib/validation/primitives";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -46,7 +43,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [upgradeHref, setUpgradeHref] = useState<string | null>(null);
-  const [limitNotice, setLimitNotice] = useState<string | null>(null);
+  const [limitNotice, setLimitNotice] = useState<{ limit: number; resetsAt: string } | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [savedLetters, setSavedLetters] = useState<SavedLetterSummary[]>([]);
 
@@ -99,9 +96,12 @@ export function CoverLetterSection({ hasResume }: Props) {
       });
       const data = (await readApiJson(res)) as { letter?: string; warnings?: unknown };
       if (res.status === 402) {
-        setLimitNotice(limitNoticeFromPayload(data) ?? "You've reached the free limit for this feature.");
-        setUpgradeHref(upgradeHrefFromPayload(data));
-        return;
+        const notice = parseCoverLetterLimitPayload(data);
+        if (notice) {
+          setLimitNotice(notice);
+          setUpgradeHref(upgradeHrefFromPayload(data));
+          return;
+        }
       }
       if (!res.ok || typeof data.letter !== "string" || !data.letter.trim()) {
         setError(apiErrorMessage(data) ?? "Could not generate a cover letter.");
@@ -249,7 +249,7 @@ export function CoverLetterSection({ hasResume }: Props) {
           {limitNotice && upgradeHref ? (
             <Alert>
               <AlertDescription>
-                {limitNotice}{" "}
+                {coverLetterLimitNotice(limitNotice.limit, limitNotice.resetsAt)}{" "}
                 <Link href={upgradeHref} className="underline underline-offset-2">
                   {PASS_UPGRADE_LABEL}
                 </Link>

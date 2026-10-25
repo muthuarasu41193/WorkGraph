@@ -15,6 +15,9 @@ const ERROR_CODES = new Set([
   "grant_failed",
   "amount_mismatch",
   "unknown_plan",
+  "entitlement_unavailable",
+  "usage_count_failed",
+  "usage_record_failed",
 ]);
 
 /**
