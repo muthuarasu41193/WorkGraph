@@ -14,6 +14,7 @@ import { toast } from "@/hooks/use-toast"
 import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
 import { AIProvenance } from "@/components/product/AIProvenance"
+import { JobTailoringPanel } from "@/components/jobs/JobTailoringPanel"
 import { buildJobSummary, jobSummaryLabel, sanitizeJobDescription } from "@/lib/job-summary"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { cn } from "@/lib/utils"
@@ -206,6 +207,8 @@ export function JobDecision({
           <Text role="body-small">No original posting URL is stored.</Text>
         )}
       </section>
+
+      <JobTailoringPanel jobId={job.id} userId={userId} />
 
       <section className="mt-8 space-y-2">
         <Text as="h3" role="subheading">Company</Text>

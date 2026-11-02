@@ -1,4 +1,4 @@
-/** Client-safe copy for the cover-letter monthly cap. No server or database imports. */
+/** Client-safe copy for free monthly caps. No server or database imports. */
 
 export function formatUtcResetDate(iso: string): string {
   const date = new Date(iso);
@@ -16,6 +16,11 @@ export function coverLetterLimitNotice(limit: number, resetsAt: string): string 
   return `You've used your ${count} free cover letters this month. They reset on ${formatUtcResetDate(resetsAt)}.`;
 }
 
+export function tailoringLimitNotice(limit: number, resetsAt: string): string {
+  const count = Number.isInteger(limit) && limit > 0 ? limit : 2;
+  return `You've used your ${count} free tailorings this month. They reset on ${formatUtcResetDate(resetsAt)}.`;
+}
+
 export function parseCoverLetterLimitPayload(
   data: unknown,
 ): { limit: number; resetsAt: string } | null {
@@ -26,3 +31,6 @@ export function parseCoverLetterLimitPayload(
   if (typeof row.resetsAt !== "string" || row.resetsAt.trim().length === 0) return null;
   return { limit: row.limit, resetsAt: row.resetsAt };
 }
+
+/** Same 402 shape as cover letters — reuse the parser. */
+export const parseTailoringLimitPayload = parseCoverLetterLimitPayload;
