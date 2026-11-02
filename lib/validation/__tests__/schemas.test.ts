@@ -173,6 +173,24 @@ describe("applications", () => {
     assert.equal(applicationIdSchema.safeParse("not-a-uuid").success, false);
     assert.equal(applicationIdSchema.safeParse("3b8c0d2e-1f2a-4b5c-8d9e-0a1b2c3d4e5f").success, true);
   });
+
+  it("accepts mark_followed_up on update", () => {
+    const data = parseWithSchema(applicationUpdateSchema, { mark_followed_up: true });
+    assert.equal(data.mark_followed_up, true);
+  });
+
+  it("rejects non-boolean mark_followed_up", () => {
+    assert.throws(
+      () => parseWithSchema(applicationUpdateSchema, { mark_followed_up: "yes" }),
+      ValidationError,
+    );
+  });
+
+  it("does not inject next_step_date null when the field is omitted", () => {
+    const data = parseWithSchema(applicationUpdateSchema, { notes: "hello" });
+    assert.equal(data.notes, "hello");
+    assert.equal("next_step_date" in data && data.next_step_date !== undefined, false);
+  });
 });
 
 describe("saved jobs", () => {

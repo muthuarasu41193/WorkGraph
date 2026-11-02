@@ -52,14 +52,22 @@ export const applicationUpdateSchema = z
     salary_offered: nullableTrimmed(120),
     contact_person: nullableTrimmed(200),
     next_step: nullableTrimmed(500),
+    // Keep omitted next_step_date as undefined so PATCH does not clear scheduled follow-ups.
     next_step_date: z
       .union([isoDateSchema, z.literal(""), z.null()])
       .optional()
-      .transform((value) => (value === "" || value == null ? null : value)),
+      .transform((value) => {
+        if (value === undefined) return undefined;
+        return value === "" || value === null ? null : value;
+      }),
+    mark_followed_up: z.boolean().optional(),
   })
-  .refine((value) => Object.keys(value).length > 0, {
-    message: "Provide at least one field to update.",
-  });
+  .refine(
+    (value) => Object.entries(value).some(([, entry]) => entry !== undefined),
+    {
+      message: "Provide at least one field to update.",
+    },
+  );
 
 export type ApplicationUpdateInput = z.infer<typeof applicationUpdateSchema>;
 

@@ -12,6 +12,7 @@ import {
   type ApplicationTimelineEvent,
   type ApplicationUpdate,
 } from "@/lib/applications";
+import { applyMarkFollowedUp, defaultNextStepOnCreate } from "@/lib/applications-followup";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 
@@ -58,6 +59,7 @@ export async function createApplicationForUser(input: ApplicationInsert): Promis
   const status: ApplicationStatus = input.status && isApplicationStatus(input.status) ? input.status : "applied";
   const applied_date = input.applied_date ?? new Date().toISOString().slice(0, 10);
   const timeline = buildInitialTimeline(status, applied_date);
+  const followUpDefaults = defaultNextStepOnCreate(applied_date, input.next_step, input.next_step_date);
 
   const { data, error } = await supabase
     .from("applications")
@@ -71,8 +73,8 @@ export async function createApplicationForUser(input: ApplicationInsert): Promis
       notes: input.notes?.trim() || null,
       salary_offered: input.salary_offered?.trim() || null,
       contact_person: input.contact_person?.trim() || null,
-      next_step: input.next_step?.trim() || null,
-      next_step_date: input.next_step_date || null,
+      next_step: followUpDefaults.next_step,
+      next_step_date: followUpDefaults.next_step_date,
       timeline,
     })
     .select("*")
@@ -82,9 +84,14 @@ export async function createApplicationForUser(input: ApplicationInsert): Promis
   return mapApplicationRow(data as Record<string, unknown>);
 }
 
+export type ApplicationUpdateInput = ApplicationUpdate & {
+  /** When true, append a follow_up timeline entry and reschedule (or stop) the next nudge. */
+  mark_followed_up?: boolean;
+};
+
 export async function updateApplicationForUser(
   id: string,
-  patch: ApplicationUpdate,
+  patch: ApplicationUpdateInput,
 ): Promise<Application> {
   const { user, supabase } = await requireUser();
 
@@ -136,6 +143,14 @@ export async function updateApplicationForUser(
       at: new Date().toISOString(),
     });
     updates.timeline = timeline;
+  }
+
+  if (patch.mark_followed_up === true) {
+    const marked = applyMarkFollowedUp({ ...current, timeline });
+    timeline = marked.timeline;
+    updates.timeline = timeline;
+    updates.next_step = marked.next_step;
+    updates.next_step_date = marked.next_step_date;
   }
 
   const { data, error } = await supabase
