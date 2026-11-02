@@ -111,6 +111,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Records of cover letter, tailoring, Talent Intelligence, and ATS use",
   },
   {
+    table: "job_alerts",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Saved job search alerts, including the search query and frequency",
+  },
+  {
     table: "signal_connections",
     ownerColumn: "seeker_id",
     export: true,

@@ -122,6 +122,8 @@ export type JobRow = {
   kind: string | null;
   classification: string | null;
   is_community: boolean | null;
+  /** Set when Prompt 6 scam/payment heuristics flag a listing. Optional until that column ships. */
+  payment_requested?: boolean | null;
 };
 
 const JOB_SELECT_COLUMNS =
