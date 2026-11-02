@@ -161,6 +161,9 @@ export function JobFeed({
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [naming, setNaming] = useState(false)
   const [searchName, setSearchName] = useState("")
+  const [alerting, setAlerting] = useState(false)
+  const [alertName, setAlertName] = useState("")
+  const [savingAlert, setSavingAlert] = useState(false)
   const [pendingDismiss, setPendingDismiss] = useState<Record<string, string>>({})
   const [trackJob, setTrackJob] = useState<RecommendedJobCard | null>(null)
   const [trackedUrls, setTrackedUrls] = useState<string[]>([])
@@ -566,6 +569,80 @@ export function JobFeed({
           </form>
         ) : (
           <button type="button" className="min-h-11 px-2 text-role-caption text-ink" onClick={() => setNaming(true)}>Save this search</button>
+        )}
+        {userId ? (
+          alerting ? (
+            <form
+              className="flex flex-wrap gap-2"
+              onSubmit={(event) => {
+                event.preventDefault()
+                const name = alertName.trim()
+                if (!name || savingAlert) return
+                setSavingAlert(true)
+                void (async () => {
+                  try {
+                    const res = await fetch("/api/alerts", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        name: name.slice(0, 80),
+                        query: currentParams().toString().slice(0, 500),
+                        frequency: "weekly",
+                        discreet: true,
+                        min_match: 40,
+                      }),
+                    })
+                    const json = (await res.json()) as { ok?: boolean; error?: string }
+                    if (!res.ok || !json.ok) {
+                      toast({ title: json.error ?? "Could not save alert", variant: "error" })
+                      return
+                    }
+                    setAlertName("")
+                    setAlerting(false)
+                    toast({ title: "Saved as alert", variant: "success" })
+                  } finally {
+                    setSavingAlert(false)
+                  }
+                })()
+              }}
+            >
+              <Input
+                className="min-h-11"
+                aria-label="Alert name"
+                value={alertName}
+                onChange={(event) => setAlertName(event.target.value)}
+              />
+              <Button type="submit" className="min-h-11" loading={savingAlert}>
+                Save alert
+              </Button>
+              <button
+                type="button"
+                className="min-h-11 px-2 text-role-caption text-ink-muted"
+                onClick={() => {
+                  setAlerting(false)
+                  setAlertName("")
+                }}
+              >
+                Cancel
+              </button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              className="min-h-11 px-2 text-role-caption text-ink"
+              onClick={() => setAlerting(true)}
+            >
+              Save as alert
+            </button>
+          )
+        ) : (
+          <button
+            type="button"
+            className="min-h-11 px-2 text-role-caption text-ink-muted"
+            onClick={() => router.push("/login?next=/jobs")}
+          >
+            Sign in to save alerts
+          </button>
         )}
       </div>
       <Text role="body-small" aria-live="polite">{initial.error ? initial.error : `${initial.total.toLocaleString("en-US")} roles`}</Text>

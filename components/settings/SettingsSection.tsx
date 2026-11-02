@@ -152,7 +152,12 @@ export default function SettingsSection({
       <section className="rounded-card border border-hairline bg-surface-raised p-4">
         <Text as="h2" role="subheading">Notifications</Text>
         <Text role="body-small" className="mt-2 text-ink-muted">
-          Job match alerts, hidden-job alerts, and application alerts are not stored. This page does not send them.
+          Manage saved job alerts on{" "}
+          <Link href="/alerts" className="text-accent underline-offset-2 hover:underline">
+            /alerts
+          </Link>
+          . Alerts go only to your email when discreet mode is on. Hidden-job and application alerts are not stored
+          here yet.
         </Text>
       </section>
 

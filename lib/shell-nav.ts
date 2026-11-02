@@ -18,6 +18,7 @@ export const SHELL_DESTINATIONS: ShellDest[] = [
   { href: "/interview-vault", label: messages.shellPrep, short: messages.shellPrep, tab: true },
   { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: true },
   { href: "/profile", label: messages.shellProfile, short: messages.shellProfile, tab: true },
+  { href: "/alerts", label: "Alerts", short: "Alerts", tab: false },
   { href: "/profile?view=settings", label: messages.shellSettings, short: messages.shellSettings, tab: false },
 ]
 
@@ -25,6 +26,7 @@ export function shellTitle(pathname: string): string {
   if (pathname.startsWith("/jobs/")) return messages.shellJob
   if (pathname.startsWith("/jobs")) return messages.shellJobs
   if (pathname.startsWith("/tracker")) return messages.shellTracker
+  if (pathname.startsWith("/alerts")) return "Alerts"
   if (pathname.startsWith("/onboarding")) return messages.shellOnboarding
   if (pathname.startsWith("/insights")) return messages.shellInsights
   return messages.shellHome
