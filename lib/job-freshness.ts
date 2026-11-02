@@ -1,12 +1,11 @@
+import { postedAgeDays, STALE_AFTER_DAYS } from "./job-staleness";
+
 /** Plain-language posted time. Unknown dates are omitted rather than invented. */
 export function formatJobFreshness(iso: string | null | undefined, now = Date.now()): string | null {
-  if (!iso) return null;
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return null;
-  const days = Math.floor((now - then) / 86_400_000);
-  if (days < 0) return null;
+  const days = postedAgeDays(iso, now);
+  if (days == null || days < 0) return null;
   if (days === 0) return "Posted today";
   if (days === 1) return "Posted yesterday";
-  if (days > 30) return `Posted ${days} days ago, may no longer be open`;
+  if (days > STALE_AFTER_DAYS) return `Posted ${days} days ago, may no longer be open`;
   return `Posted ${days} days ago`;
 }

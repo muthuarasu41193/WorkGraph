@@ -72,6 +72,19 @@ describe("job feed helpers", () => {
     assert.equal(salaryText({ kind: "undisclosed" }), "Salary not disclosed")
   })
 
+  it("sorts stated pay high to low and leaves missing pay last", () => {
+    const sorted = sortFeedJobs(
+      [
+        job({ id: "none", matchLabel: "1% match · a", description: "Competitive salary" }),
+        job({ id: "hour", matchLabel: "1% match · a", description: "Pay is $60/hr" }),
+        job({ id: "high", matchLabel: "1% match · a", description: "$120,000-$150,000" }),
+        job({ id: "also-none", matchLabel: "1% match · a", description: "Team of 12 engineers" }),
+      ],
+      "salary",
+    )
+    assert.deepEqual(sorted.map((row) => row.id), ["high", "hour", "none", "also-none"])
+  })
+
   it("sorts by parsed match and leaves unscored rows last", () => {
     const sorted = sortFeedJobs(
       [job({ id: "a", matchLabel: "10% match · a" }), job({ id: "b", matchLabel: "No score" }), job({ id: "c", matchLabel: "80% match · c" })],

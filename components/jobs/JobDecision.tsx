@@ -139,7 +139,7 @@ export function JobDecision({
   return (
     <article className="mx-auto max-w-3xl px-4 pb-28 pt-4">
       {view.stale ? (
-        <div className="mb-4 rounded-card border border-caution bg-caution-wash p-3">
+        <div className="mb-4 rounded-card border border-hairline bg-surface-sunken p-3">
           <Text role="body">This posting may be closed. It was posted {job.postedAgo}. Applying is turned off.</Text>
           <Link href={similar} className="mt-2 inline-flex min-h-11 items-center text-role-body-small text-accent">
             Similar live roles
@@ -217,7 +217,12 @@ export function JobDecision({
 
       <section className="mt-8 space-y-2">
         <Text as="h3" role="subheading">Pay</Text>
-        <Text role="body-small">Salary is not on this listing, and there is no market comparison to show.</Text>
+        <SalaryDisplay salary={view.salary} />
+        <Text role="body-small">
+          {view.salary.kind === "undisclosed"
+            ? "The posting does not state a pay figure. We do not estimate one."
+            : "We show pay only when the posting states it. This is not an estimate and it is not a verified offer."}
+        </Text>
       </section>
 
       <section className="mt-8 space-y-2">
