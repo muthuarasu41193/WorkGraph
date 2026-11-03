@@ -7,6 +7,10 @@
     {
       "path": "/api/sync-community-jobs",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/alert-digest",
+      "schedule": "30 2 * * *"
     }
   ]
 }
