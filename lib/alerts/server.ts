@@ -112,6 +112,13 @@ export async function assertAlertFrequencyAllowed(
   }
 }
 
+/** Max 10 alerts per user — enforced in the API (not only by DB constraints). */
+export function rejectIfAlertLimitReached(count: number | null | undefined): void {
+  if ((count ?? 0) >= ALERT_MAX_PER_USER) {
+    throw new AlertsApiError(`You can save up to ${ALERT_MAX_PER_USER} alerts.`, 400);
+  }
+}
+
 export async function listAlertsForUser(): Promise<JobAlert[]> {
   const { user, supabase } = await requireUser();
   const { data, error } = await supabase
@@ -134,9 +141,7 @@ export async function createAlertForUser(input: AlertCreateInput): Promise<JobAl
     .eq("user_id", user.id);
 
   if (countError) throw new AlertsApiError("Could not create alert. Please try again.", 500);
-  if ((count ?? 0) >= ALERT_MAX_PER_USER) {
-    throw new AlertsApiError(`You can save up to ${ALERT_MAX_PER_USER} alerts.`, 400);
-  }
+  rejectIfAlertLimitReached(count);
 
   const query = normalizeAlertQuery(input.query);
   const { data, error } = await supabase
