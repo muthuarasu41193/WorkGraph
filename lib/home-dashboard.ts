@@ -12,6 +12,7 @@ export type HomeStatCards = {
   matchedToday: number;
   hiddenJobsFound: number;
   pendingApplications: number;
+  followUpsDue: number;
   vaultEarningsInr: number;
   vaultEarningsCurrency: string;
 };
@@ -196,6 +197,7 @@ export function buildHomeStats(
   hiddenTotal: number,
   wallet: WalletSummary | null,
   vaultEarningsInrOverride?: number | null,
+  followUpsDue = 0,
 ): HomeStatCards {
   const vaultEarningsInr =
     vaultEarningsInrOverride ??
@@ -205,6 +207,7 @@ export function buildHomeStats(
     matchedToday: countJobsMatchedToday(jobs, topMatches),
     hiddenJobsFound: hiddenTotal,
     pendingApplications: pipeline.applied,
+    followUpsDue,
     vaultEarningsInr,
     vaultEarningsCurrency: "INR",
   };
@@ -230,6 +233,7 @@ export type BuildHomeDashboardInput = {
   hiddenTotal: number;
   wallet: WalletSummary | null;
   vaultEarningsInr?: number | null;
+  followUpsDue?: number;
 };
 
 export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDashboardData {
@@ -245,6 +249,7 @@ export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDash
     input.hiddenTotal,
     input.wallet,
     input.vaultEarningsInr,
+    input.followUpsDue ?? 0,
   );
 
   return {

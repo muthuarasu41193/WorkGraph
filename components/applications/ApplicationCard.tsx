@@ -8,6 +8,7 @@ import { iconClass } from "@/lib/icon-styles";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { FollowUpBadge, FollowUpSuggestion } from "@/components/applications/FollowUpBadge";
 import { companyLogoUrl, type Application } from "@/lib/applications";
 
 type Props = {
@@ -78,6 +79,8 @@ export default function ApplicationCard({ application, onOpen }: Props) {
                 </dd>
               </div>
             </dl>
+            <FollowUpBadge application={application} />
+            <FollowUpSuggestion application={application} className="mt-1" />
           </div>
         </div>
       </CardContent>

@@ -10,7 +10,7 @@ export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
 export type ApplicationTimelineEvent = {
   id: string;
-  type: "created" | "status_change" | "note" | "updated";
+  type: "created" | "status_change" | "note" | "updated" | "follow_up";
   status?: ApplicationStatus;
   label: string;
   at: string;
@@ -52,6 +52,7 @@ export type ApplicationUpdate = Partial<
     company: string;
     role: string;
     status: ApplicationStatus;
+    mark_followed_up?: boolean;
   }
 >;
 

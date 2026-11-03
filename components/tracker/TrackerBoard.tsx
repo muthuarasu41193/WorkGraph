@@ -21,6 +21,7 @@ import { Text } from "@/components/ui/text"
 import { toast } from "@/hooks/use-toast"
 import { messages } from "@/lib/messages"
 import { enqueueOfflineAction } from "@/lib/offline-queue"
+import { FollowUpBadge, FollowUpSuggestion } from "@/components/applications/FollowUpBadge"
 import {
   APPLICATION_COLUMNS,
   APPLICATION_STATUSES,
@@ -30,6 +31,14 @@ import {
   type Application,
   type ApplicationStatus,
 } from "@/lib/applications"
+import {
+  canScheduleAnotherFollowUp,
+  countFollowUpsNeedingAttention,
+  draftFollowUpMessage,
+  followUpState,
+  needsFollowUp,
+  todayDateOnly,
+} from "@/lib/applications-followup"
 import { cn } from "@/lib/utils"
 
 const VIEW_KEY = "wg-tracker-view"
@@ -103,6 +112,7 @@ export function TrackerBoard({
   const [selected, setSelected] = useState<string[]>([])
   const [detailId, setDetailId] = useState<string | null>(initialSelectedId)
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | "all">("all")
+  const [needsFollowUpOnly, setNeedsFollowUpOnly] = useState(false)
   const [sortKey, setSortKey] = useState<"updated" | "company" | "role">("updated")
   const [quickCompany, setQuickCompany] = useState("")
   const [quickRole, setQuickRole] = useState("")
@@ -113,18 +123,25 @@ export function TrackerBoard({
   const [roleError, setRoleError] = useState("")
   const [errorSummary, setErrorSummary] = useState("")
   const [logging, setLogging] = useState(false)
+  const [draftOpen, setDraftOpen] = useState(false)
+  const [markingFollowUp, setMarkingFollowUp] = useState(false)
   const companyRef = useRef<HTMLInputElement>(null)
   const roleRef = useRef<HTMLInputElement>(null)
 
+  const today = todayDateOnly()
+  const followUpCount = useMemo(() => countFollowUpsNeedingAttention(rows, today), [rows, today])
   const detail = rows.find((row) => row.id === detailId) ?? null
   const visible = useMemo(() => {
-    const filtered = statusFilter === "all" ? rows : rows.filter((row) => row.status === statusFilter)
+    let filtered = statusFilter === "all" ? rows : rows.filter((row) => row.status === statusFilter)
+    if (needsFollowUpOnly) {
+      filtered = filtered.filter((row) => needsFollowUp(followUpState(row, today)))
+    }
     return [...filtered].sort((a, b) => {
       if (sortKey === "company") return a.company.localeCompare(b.company)
       if (sortKey === "role") return a.role.localeCompare(b.role)
       return b.updated_at.localeCompare(a.updated_at)
     })
-  }, [rows, sortKey, statusFilter])
+  }, [rows, sortKey, statusFilter, needsFollowUpOnly, today])
 
   function setView(next: "board" | "table") {
     window.localStorage.setItem(VIEW_KEY, next)
@@ -387,6 +404,17 @@ export function TrackerBoard({
         <p className="min-h-5 w-full text-role-caption text-danger" role="status">{errorSummary}</p>
       </form>
       <div className="flex flex-wrap gap-2">
+        {followUpCount > 0 ? (
+          <Button
+            type="button"
+            variant={needsFollowUpOnly ? "secondary" : "outline"}
+            className="min-h-11"
+            aria-pressed={needsFollowUpOnly}
+            onClick={() => setNeedsFollowUpOnly((value) => !value)}
+          >
+            Needs follow-up ({followUpCount})
+          </Button>
+        ) : null}
         <label className="text-role-caption text-ink-muted">
           Filter
           <select className="ml-2 min-h-11 bg-surface" value={statusFilter} aria-label="Filter by stage" onChange={(event) => setStatusFilter(event.target.value as ApplicationStatus | "all")}>
@@ -435,12 +463,19 @@ export function TrackerBoard({
           actionHref="/jobs"
         />
       ) : null}
-      {!loadError && rows.length > 0 && visible.length === 0 && statusFilter !== "all" ? (
+      {!loadError && rows.length > 0 && visible.length === 0 && (statusFilter !== "all" || needsFollowUpOnly) ? (
         <EmptyState
           title={messages.trackerFilterTitle}
-          reason={messages.trackerFilterReason(APPLICATION_STATUS_LABELS[statusFilter])}
+          reason={
+            needsFollowUpOnly && statusFilter === "all"
+              ? "No applications need a follow-up right now."
+              : messages.trackerFilterReason(APPLICATION_STATUS_LABELS[statusFilter === "all" ? "applied" : statusFilter])
+          }
           actionLabel={messages.trackerShowAll}
-          onAction={() => setStatusFilter("all")}
+          onAction={() => {
+            setStatusFilter("all")
+            setNeedsFollowUpOnly(false)
+          }}
         />
       ) : null}
       {rows.length > 0 && viewChoice === "board" ? board : null}
@@ -483,8 +518,10 @@ export function TrackerBoard({
             <div>
               <Text as="h2" role="subheading">{detail.role}</Text>
               <Text role="body-small" className="text-ink-muted">{detail.company}</Text>
+              <FollowUpBadge application={detail} today={today} />
+              <FollowUpSuggestion application={detail} today={today} className="mt-1" />
             </div>
-            <Button type="button" variant="outline" className="min-h-11" onClick={() => setDetailId(null)}>Close</Button>
+            <Button type="button" variant="outline" className="min-h-11" onClick={() => { setDetailId(null); setDraftOpen(false) }}>Close</Button>
           </div>
           <Text role="body-small" className="mt-3">{stageAge(detail)}</Text>
           {(daysBetween(detail.updated_at) ?? 0) >= 21 ? (
@@ -495,6 +532,57 @@ export function TrackerBoard({
           <Text role="body-small">Next step date: {detail.next_step_date || "None recorded"}{detail.next_step && /interview/i.test(detail.next_step) ? "" : ". Interview rounds are not stored separately."}</Text>
           <Text role="body-small">Contact: {detail.contact_person || "None recorded"}</Text>
           <Text role="body-small">Documents used: none are stored on this application.</Text>
+          <div className="mt-4 space-y-2">
+            <Text as="h3" role="subheading">Follow-up</Text>
+            <Text role="caption" className="text-ink-muted">Drafts are a short template — not AI. Nothing moves stages automatically.</Text>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" className="min-h-11" onClick={() => setDraftOpen((open) => !open)}>
+                Draft follow-up
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="min-h-11"
+                disabled={markingFollowUp || !canScheduleAnotherFollowUp(detail.timeline)}
+                onClick={() => {
+                  setMarkingFollowUp(true)
+                  void patchApplication(detail.id, { mark_followed_up: true })
+                    .then((saved) => {
+                      setRows((current) => current.map((row) => (row.id === saved.id ? saved : row)))
+                      toast({
+                        title: "Follow-up recorded",
+                        description: saved.next_step_date
+                          ? `Next nudge set for ${saved.next_step_date}.`
+                          : "Two follow-ups recorded — nudges stopped for this card.",
+                        variant: "success",
+                      })
+                    })
+                    .catch(() => toast({ title: "Could not mark followed up", variant: "error" }))
+                    .finally(() => setMarkingFollowUp(false))
+                }}
+              >
+                {markingFollowUp ? "Saving…" : "Mark followed up"}
+              </Button>
+            </div>
+            {draftOpen ? (
+              <div className="space-y-2 rounded-card border border-hairline bg-surface p-3">
+                <Textarea readOnly className="min-h-32 resize-none" value={draftFollowUpMessage(detail)} />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(draftFollowUpMessage(detail)).then(
+                      () => toast({ title: "Copied", description: "Follow-up draft copied to clipboard.", variant: "success" }),
+                      () => toast({ title: "Copy failed", description: "Select the text and copy manually.", variant: "error" }),
+                    )
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+            ) : null}
+          </div>
           <Text as="h3" role="subheading" className="mt-4">Timeline</Text>
           {detail.timeline.length === 0 ? <Text role="caption">No timeline events are stored.</Text> : (
             <ul className="mt-2 space-y-1">
@@ -561,6 +649,8 @@ function TrackerCard({
       <p className="text-role-caption text-ink-muted">
         {application.next_step_date ? `Next step date ${application.next_step_date}` : "No next step date"}
       </p>
+      <FollowUpBadge application={application} />
+      <FollowUpSuggestion application={application} className="mt-1" />
       {quiet ? <p className="text-role-caption text-ink-muted">{messages.trackerQuiet}</p> : null}
       <label className="mt-1 block text-role-caption text-ink-subtle">
         Stage
