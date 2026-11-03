@@ -3,6 +3,7 @@
  */
 
 import type { JobRow } from "./job-dashboard";
+import { isJobStale, postedAgeDays } from "./job-staleness";
 
 export type ProfileMatchInput = {
   skills: string[];
@@ -10,7 +11,7 @@ export type ProfileMatchInput = {
   summary?: string | null;
 };
 
-const SKILL_ALIASES: Record<string, string[]> = {
+export const SKILL_ALIASES: Record<string, string[]> = {
   javascript: ["javascript", "js", "ecmascript", "node.js", "nodejs", "node"],
   typescript: ["typescript", "ts"],
   react: ["react", "reactjs", "react.js", "react native", "react-native"],
@@ -46,7 +47,7 @@ function normalizeWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function skillVariants(skill: string): string[] {
+export function skillVariants(skill: string): string[] {
   const base = normalizeWhitespace(skill);
   if (!base) return [];
   const alias = SKILL_ALIASES[base];
@@ -73,7 +74,6 @@ function textIncludesTerm(haystack: string, term: string): boolean {
 }
 
 export const PROFILE_MATCH_MIN_PERCENT = 40;
-const STALE_AFTER_DAYS = 30;
 
 const TITLE_FAMILIES: { id: string; terms: string[] }[] = [
   { id: "recruiting", terms: ["recruit", "talent acquisition", "talent", "sourcer", "sourcing", "talent partner", "staffing"] },
@@ -101,6 +101,11 @@ export type JobMatchScore = {
   matchedSkills: string[];
   matchPercent: number;
   subScores: JobMatchSubScores;
+  /**
+   * Skills the posting names that the profile does not show.
+   * scoreJobRow does not set this. Rank and matchPercent ignore it.
+   */
+  missingSkills?: string[];
 };
 
 function bestTitleFamily(text: string): string | null {
@@ -118,13 +123,6 @@ function seniorityTokens(text: string): Set<string> {
     if (textIncludesTerm(text, token)) found.add(token);
   }
   return found;
-}
-
-function postedAgeDays(postedAt: string | null | undefined, now: number): number | null {
-  if (!postedAt) return null;
-  const then = new Date(postedAt).getTime();
-  if (Number.isNaN(then)) return null;
-  return Math.floor((now - then) / 86_400_000);
 }
 
 export function scoreJobRow(row: JobRow, profile: ProfileMatchInput, now = Date.now()): JobMatchScore {
@@ -163,7 +161,7 @@ export function scoreJobRow(row: JobRow, profile: ProfileMatchInput, now = Date.
   }
 
   const ageDays = postedAgeDays(row.posted_at, now);
-  const stale = ageDays !== null && ageDays > STALE_AFTER_DAYS;
+  const stale = isJobStale(row.posted_at, now);
   let freshness = 0;
   if (ageDays !== null) {
     if (stale) freshness = -40;

@@ -85,6 +85,7 @@ export type ProfileShellProps = {
   feedKind?: "live" | "demo";
   feedDemoHint?: FeedDemoHint | null;
   catalogUpdatedAt?: string | null;
+  tailorHref?: string | null;
 };
 
 function ProfileShellInner({
@@ -101,6 +102,7 @@ function ProfileShellInner({
   feedKind = "live",
   feedDemoHint,
   catalogUpdatedAt = null,
+  tailorHref = null,
 }: ProfileShellProps) {
   const wgEnabled = workgraphApiEnabled();
   const atsJobs = useMemo(
@@ -161,6 +163,7 @@ function ProfileShellInner({
           profileCompleteness={profile.profile_completeness ?? 0}
           hasResume={Boolean(profile.resume_raw_text && profile.resume_raw_text.length >= 120)}
           catalogUpdatedAt={catalogUpdatedAt}
+          tailorHref={tailorHref}
         />
       ),
       "hidden-jobs": <HiddenJobsSection />,
@@ -239,6 +242,7 @@ function ProfileShellInner({
       liveListings,
       matchedListings,
       catalogUpdatedAt,
+      tailorHref,
     ],
   );
 

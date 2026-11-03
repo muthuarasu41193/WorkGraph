@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Text } from "@/components/ui/text"
+import { STATED_PAY_RULE, TRUST_SIGNAL_NOTE } from "@/lib/credibility"
+import { STALE_AFTER_DAYS } from "@/lib/job-staleness"
 
 export const metadata: Metadata = {
   title: "What we checked",
@@ -15,7 +17,58 @@ export default function TrustPage() {
         <Text role="body" className="mt-3 text-ink-muted">
           A label is only used when the check below is the one that produced it. Missing checks are omitted, not implied.
         </Text>
+        <Text role="body-small" className="mt-2 text-ink-muted">{TRUST_SIGNAL_NOTE}</Text>
       </div>
+
+      <section id="stated-pay" className="space-y-2">
+        <Text as="h2" role="heading">Stated pay</Text>
+        <Text role="body-small">{STATED_PAY_RULE}</Text>
+        <Text role="body-small">
+          A card shows a range or an amount only when the posting writes a currency or a pay unit, such as LPA, per annum, or per hour. The line ends with “stated in posting”. Competitive, “as per industry standards”, years of experience, and team sizes stay as “Salary not disclosed”.
+        </Text>
+      </section>
+
+      <section id="asks-for-payment" className="space-y-2">
+        <Text as="h2" role="heading">Asks for payment</Text>
+        <Text role="body-small">
+          This label appears when the posting asks for a fee, a deposit, registration charges, or payment to apply. It is the only trust label drawn in the warning colour. A sentence that says no fees are charged does not trigger it.
+        </Text>
+      </section>
+
+      <section id="off-platform-contact" className="space-y-2">
+        <Text as="h2" role="heading">Off-platform contact only</Text>
+        <Text role="body-small">
+          This label appears when the only contact is WhatsApp, Telegram, or a personal mailbox such as Gmail, and no company apply link is stored. It is most common on community posts. A company career link or a work email keeps the label off. It is not a warning colour.
+        </Text>
+      </section>
+
+      <section id="may-be-closed" className="space-y-2">
+        <Text as="h2" role="heading">May be closed</Text>
+        <Text role="body-small">
+          The same rule is used on the jobs list, the job page, and match ranking. A posting is treated as likely closed after {STALE_AFTER_DAYS} full days. Day {STALE_AFTER_DAYS} is still current. The posted date is not a check that the role is open. “Hide likely-closed jobs” on the jobs page is off until you turn it on.
+        </Text>
+      </section>
+
+      <section id="always-open-wording" className="space-y-2">
+        <Text as="h2" role="heading">Always-open wording</Text>
+        <Text role="body-small">
+          This label appears when the posting says “talent pool”, “future openings”, or “always hiring”. That is not a dated opening.
+        </Text>
+      </section>
+
+      <section id="company-name-missing" className="space-y-2">
+        <Text as="h2" role="heading">Company name missing</Text>
+        <Text role="body-small">
+          The company name is missing on the listing, or the stored name is the placeholder “Company”.
+        </Text>
+      </section>
+
+      <section id="no-apply-link" className="space-y-2">
+        <Text as="h2" role="heading">No apply link</Text>
+        <Text role="body-small">
+          No apply link is stored for the listing. A card shows at most two of these labels. Each one has a Why control with the sentence above.
+        </Text>
+      </section>
 
       <section id="verified-employer" className="space-y-2">
         <Text as="h2" role="heading">Verified employer</Text>
@@ -44,10 +97,10 @@ export default function TrustPage() {
       <section id="match" className="space-y-2">
         <Text as="h2" role="heading">Match estimate</Text>
         <Text role="body-small">
-          A match percent is an estimate from skill overlap, title family, and a small seniority term. Older postings are ranked lower. It is not a chance of an interview or an offer. When no profile is available, the percent is hidden.
+          A match percent is an estimate from skill overlap, title family, and a small seniority term. Older postings are ranked lower. It is not a chance of an interview or an offer. When no profile is available, the percent is hidden. A missing-skill line lists words from the posting that are not on the profile. That list is an estimate from those words, not a verified requirements checklist.
         </Text>
         <Text role="body-small">
-          Salary estimates from other people’s pay are not shown. A card says salary is not disclosed unless the listing itself stored a figure. There is no sample size to quote.
+          {STATED_PAY_RULE} There is no sample size to quote.
         </Text>
       </section>
 

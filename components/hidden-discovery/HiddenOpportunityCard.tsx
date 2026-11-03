@@ -2,8 +2,10 @@
 
 import { Bookmark, Github } from "lucide-react";
 import { RedditLogo } from "@/components/icons/RedditLogo";
+import { TrustIndicator } from "@/components/product/TrustIndicator";
 import { iconClass } from "@/lib/icon-styles";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
+import { trustPropsForListing } from "@/lib/job-feed";
 import "./hidden-opportunity-card.css";
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -54,6 +56,15 @@ export default function HiddenOpportunityCard({
   const meta = [opportunity.company, opportunity.author, formatPostedDate(opportunity.postedAt)]
     .filter(Boolean)
     .join(" · ");
+  const trust = trustPropsForListing({
+    title: opportunity.title,
+    company: opportunity.company,
+    description: opportunity.title,
+    applyUrl: opportunity.url,
+    postedAtIso: opportunity.postedAt,
+    source: opportunity.source,
+    isCommunity: true,
+  });
 
   return (
     <article
@@ -71,6 +82,7 @@ export default function HiddenOpportunityCard({
       <div className="hidden-opp-card__main">
         <h2 className="hidden-opp-card__title">{opportunity.title}</h2>
         <p className="hidden-opp-card__meta">{meta}</p>
+        {trust ? <TrustIndicator {...trust} className="mt-1" /> : null}
       </div>
 
       <div className="hidden-opp-card__actions">
