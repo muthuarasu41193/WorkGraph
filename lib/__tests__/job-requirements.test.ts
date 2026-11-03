@@ -13,6 +13,8 @@ import {
   missingSkills,
   profileHasResume,
   tailorLinkHref,
+  extractJobRequirements,
+  jobRequirementTexts,
 } from "../job-requirements";
 
 const NOW = Date.parse("2026-10-23T12:00:00.000Z");
@@ -155,5 +157,25 @@ describe("tailor link", () => {
     assert.equal(profileHasResume({ resume_raw_text: "x".repeat(120), resume_url: null }), true);
     assert.equal(tailorLinkHref({ hasResume: true, entitlement: "limit_reached" }), "/pricing");
     assert.equal(tailorLinkHref({ hasResume: true, entitlement: "ok" }), TAILOR_PLACEHOLDER_HREF);
+  });
+});
+
+describe("extractJobRequirements", () => {
+  it("pulls required skills and qualifications without inventing", () => {
+    const text = `
+Backend Engineer
+Requirements:
+- Python
+- PostgreSQL
+Preferred:
+- Kubernetes
+Qualifications:
+- 5+ years building APIs
+`;
+    const reqs = extractJobRequirements(text, { title: "Backend Engineer", company: "Acme" });
+    const labels = jobRequirementTexts(reqs).map((s) => s.toLowerCase());
+    assert.ok(labels.some((s) => s.includes("python")));
+    assert.ok(labels.some((s) => s.includes("kubernetes") || s.includes("postgresql") || s.includes("apis")));
+    assert.ok(reqs.every((r) => r.text.length > 0));
   });
 });

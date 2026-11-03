@@ -48,6 +48,9 @@ export {
   coverLetterIdSchema,
 } from "./cover-letters";
 
+export { tailoringRequestSchema } from "./tailoring";
+export type { TailoringRequestInput } from "./tailoring";
+
 export { razorpayOrderBodySchema, razorpayVerifyBodySchema } from "./billing";
 export type { CoverLetterGenerateInput, CoverLetterSaveInput } from "./cover-letters";
 
