@@ -260,6 +260,38 @@ describe("job-listing-filters", () => {
       assert.equal(Array.isArray(result), true);
     });
   });
+
+  it("keeps only jobs whose posting states pay, and hides likely-closed roles", () => {
+    const stated = row(
+      baseJob({
+        id: "stated",
+        description: "Compensation: $120,000-$150,000 per year",
+        postedAtIso: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+      }),
+    );
+    const silent = row(
+      baseJob({
+        id: "silent",
+        description: "Competitive pay as per industry standards",
+        postedAtIso: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+      }),
+    );
+    const closed = row(
+      baseJob({
+        id: "closed",
+        description: "Compensation: $90,000 per year",
+        postedAtIso: new Date(Date.now() - 45 * 86_400_000).toISOString(),
+      }),
+    );
+
+    const paid = applyClientOnlyJobListingFilters(jobsFrom(stated, silent), emptyState({ payStatedOnly: true }));
+    assert.deepEqual(paid.map((item) => item.job.id), ["stated"]);
+
+    const open = applyClientOnlyJobListingFilters(jobsFrom(stated, closed), emptyState({ hideLikelyClosed: true }));
+    assert.deepEqual(open.map((item) => item.job.id), ["stated"]);
+    assert.equal(hasClientOnlyJobFilters(emptyState({ payStatedOnly: true })), true);
+    assert.equal(hasClientOnlyJobFilters(emptyState({ hideLikelyClosed: true })), true);
+  });
 });
 
 function jobsFrom(...rows: EnrichedJobRow[]): EnrichedJobRow[] {

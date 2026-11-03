@@ -13,7 +13,7 @@ export type FreshnessIndicatorProps = {
 
 const STATUS_CLASS = {
   verified: "text-positive",
-  stale: "text-caution",
+  stale: "text-ink",
   unknown: "text-ink",
 } as const
 

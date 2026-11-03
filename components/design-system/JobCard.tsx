@@ -6,9 +6,12 @@ import JobApplyButton from "@/components/design-system/JobApplyButton";
 import { FreshnessIndicator } from "@/components/product/FreshnessIndicator";
 import { MatchScore } from "@/components/product/MatchScore";
 import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay";
+import { TrustIndicator } from "@/components/product/TrustIndicator";
 import { SourceAttribution } from "@/components/product/SourceAttribution";
 import { type JobCardData } from "@/lib/job-card-data";
 import { formatJobFreshness } from "@/lib/job-freshness";
+import { trustPropsForListing } from "@/lib/job-feed";
+import { parseStatedSalary } from "@/lib/salary-parse";
 import { jobSourceName } from "@/lib/job-apply";
 import { matchReason } from "@/lib/job-match-reason";
 import { AIProvenance } from "@/components/product/AIProvenance";
@@ -82,8 +85,10 @@ function JobChip({ children }: { children: string }) {
   );
 }
 
-function salaryFigure(range?: string): SalaryFigure {
-  const label = range?.trim();
+function salaryFigure(job: JobCardData): SalaryFigure {
+  const parsed = parseStatedSalary(job.description ?? "");
+  if (parsed.kind === "range" || parsed.kind === "single") return parsed;
+  const label = job.salaryRange?.trim();
   if (!label || label.toLowerCase() === "see listing") return { kind: "undisclosed" };
   return { kind: "stated", label };
 }
@@ -142,7 +147,16 @@ export default function JobCard({
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
   const sourceName = jobSourceName(job.source, job.company, applyHref);
-  const salary = salaryFigure(job.salaryRange);
+  const salary = salaryFigure(job);
+  const trust = trustPropsForListing({
+    title: job.title,
+    company: job.company,
+    description: job.description,
+    applyUrl: job.applyUrl,
+    postedAtIso: job.postedAtIso,
+    source: job.source,
+    isCommunity: job.source === "reddit" || job.source === "hackernews" || job.source === "rss",
+  });
   const freshnessLabel = formatJobFreshness(job.postedAtIso);
   const chips = [job.workMode, job.employmentType, job.experience, job.location].filter(isUsefulChip);
   const summary = buildJobSummary({
@@ -229,6 +243,7 @@ export default function JobCard({
                 label={freshnessLabel}
               />
             ) : null}
+            {trust ? <TrustIndicator {...trust} /> : null}
           </div>
           {chips.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">

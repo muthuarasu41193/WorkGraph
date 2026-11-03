@@ -3,7 +3,9 @@
  */
 
 import type { JobFeedSource, RecommendedJobCard } from "./job-dashboard";
+import { isJobStale } from "./job-staleness";
 import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "./job-match";
+import { parseStatedSalary } from "./salary-parse";
 
 export type JobListingFilterState = {
   q: string;
@@ -27,6 +29,10 @@ export type JobListingFilterState = {
   benefits: Set<string>;
   visaSponsorshipOnly: boolean;
   easyApplyOnly: boolean;
+  /** Keep only roles whose posting states a pay figure. Off by default. */
+  payStatedOnly?: boolean;
+  /** Hide roles older than the shared staleness threshold. Off by default. */
+  hideLikelyClosed?: boolean;
 };
 
 export type DerivedJobMeta = {
@@ -270,6 +276,9 @@ function passesClientOnlyFilters(
     return false;
   }
 
+  if (state.payStatedOnly && parseStatedSalary(job.description).kind === "undisclosed") return false;
+  if (state.hideLikelyClosed && isJobStale(job.postedAtIso)) return false;
+
   if (state.salaryFilterActive) {
     if (!meta.salary) return false;
     if (meta.salary.currency !== state.currency) return false;
@@ -331,6 +340,8 @@ export function hasClientOnlyJobFilters(state: JobListingFilterState): boolean {
       state.benefits.size > 0 ||
       state.visaSponsorshipOnly ||
       state.easyApplyOnly ||
+      state.payStatedOnly ||
+      state.hideLikelyClosed ||
       state.skillsPick.size > 0
   );
 }
