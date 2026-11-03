@@ -41,9 +41,9 @@ export const SUBPROCESSORS = [
   {
     name: "Razorpay",
     purpose:
-      "Payment processing for the WorkGraph Pass. Receives payment details only, never resume data.",
+      "Payment processing for the WorkGraph Pass and Interview Vault unlocks. Receives payment details only, never resume data.",
     function:
-      "Payment processing for the WorkGraph Pass. Receives payment details only, never resume data.",
+      "Payment processing for the WorkGraph Pass and Interview Vault unlocks. Receives payment details only, never resume data.",
     region: "India",
   },
   {
@@ -93,8 +93,9 @@ export const DATA_CATEGORIES = [
   {
     category: "Payment records",
     examples:
-      "Plan, amount, currency, Razorpay order and payment ids, status, and pass expiry. Not card numbers, UPI ids, or resume content.",
-    purpose: "Take a one-time WorkGraph Pass payment, grant access until expiry, and keep accounting records",
+      "Plan or vault experience id, amount, currency, Razorpay order and payment ids, status, pass expiry when applicable, and vault purchase verification status. Not card numbers, UPI ids, or resume content.",
+    purpose:
+      "Take one-time WorkGraph Pass and Interview Vault payments, grant access, and keep accounting records. Seller payouts are handled manually by WorkGraph for now.",
     lawfulBasis: "Contract; legal obligation to keep tax and accounting records",
     retention:
       "Kept after account deletion with the user id removed, for tax and accounting. Card and UPI details are not stored.",

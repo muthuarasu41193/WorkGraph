@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { Lock, Star, Unlock } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -20,6 +20,9 @@ import {
   type VaultReview,
 } from "@/lib/vault";
 
+const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+const REFUND_TERMS_HREF = "/legal/terms#payments-and-refunds";
+
 type Props = {
   experience: VaultExperience;
   preview: string;
@@ -30,6 +33,45 @@ type Props = {
   related: VaultExperienceListItem[];
   isLoggedIn: boolean;
 };
+
+type CheckoutPayload = {
+  kind?: string;
+  experienceId?: string;
+  orderId?: string;
+  amount?: number;
+  currency?: string;
+  keyId?: string;
+};
+
+type RazorpaySuccess = {
+  razorpay_order_id?: string;
+  razorpay_payment_id?: string;
+  razorpay_signature?: string;
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on: (event: "payment.failed", handler: () => void) => void;
+};
+
+type RazorpayCheckout = {
+  Razorpay?: new (options: Record<string, unknown>) => RazorpayInstance;
+};
+
+function checkoutCtor(): RazorpayCheckout["Razorpay"] | undefined {
+  return (window as Window & RazorpayCheckout).Razorpay;
+}
+
+async function waitForCheckout(timeoutMs: number): Promise<boolean> {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (checkoutCtor()) return true;
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, 50);
+    });
+  }
+  return Boolean(checkoutCtor());
+}
 
 function StarRating({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
   return (
@@ -64,10 +106,68 @@ export default function VaultExperienceDetail({
 }: Props) {
   const [unlocked, setUnlocked] = useState(initialUnlocked);
   const [purchasing, setPurchasing] = useState(false);
+  const [loadScript, setLoadScript] = useState(false);
   const [reviews, setReviews] = useState(initialReviews);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
+
+  async function verifyPayment(response: RazorpaySuccess) {
+    const res = await fetch("/api/billing/razorpay/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+      }),
+    });
+    const data = (await res.json()) as { ok?: boolean; unlocked?: boolean; error?: string };
+    if (!res.ok || !data.ok) {
+      throw new Error(typeof data.error === "string" ? data.error : "Payment could not be verified.");
+    }
+    setUnlocked(true);
+    toast({
+      title: "Unlocked!",
+      description: "You now have full access to this experience.",
+      variant: "success",
+    });
+    window.location.reload();
+  }
+
+  function openCheckout(checkout: CheckoutPayload) {
+    const Ctor = checkoutCtor();
+    if (!Ctor || !checkout.orderId || !checkout.keyId || checkout.amount == null || !checkout.currency) {
+      throw new Error("Checkout could not load. Try again.");
+    }
+    const expectedPaise = Math.round(experience.price_inr * 100);
+    if (checkout.amount !== expectedPaise || checkout.currency !== "INR") {
+      throw new Error("Checkout could not be started.");
+    }
+    const instance = new Ctor({
+      key: checkout.keyId,
+      amount: checkout.amount,
+      currency: checkout.currency,
+      name: "WorkGraph",
+      description: `${experience.company} — ${experience.role}`,
+      order_id: checkout.orderId,
+      handler: (response: RazorpaySuccess) => {
+        void verifyPayment(response).finally(() => setPurchasing(false));
+      },
+      modal: {
+        ondismiss: () => setPurchasing(false),
+      },
+    });
+    instance.on("payment.failed", () => {
+      toast({
+        title: "Could not unlock",
+        description: "Payment was not completed.",
+        variant: "error",
+      });
+      setPurchasing(false);
+    });
+    instance.open();
+  }
 
   async function handleUnlock() {
     if (!isLoggedIn) {
@@ -75,25 +175,41 @@ export default function VaultExperienceDetail({
       return;
     }
     setPurchasing(true);
+    setLoadScript(true);
     try {
-      const res = await fetch(`/api/vault/experiences/${experience.id}/purchase`, { method: "POST" });
-      const data = (await res.json()) as { ok?: boolean; unlocked?: boolean; error?: string };
-      if (!res.ok || !data.unlocked) {
+      const [res] = await Promise.all([
+        fetch(`/api/vault/experiences/${experience.id}/purchase`, { method: "POST" }),
+        waitForCheckout(8000),
+      ]);
+      const data = (await res.json()) as {
+        ok?: boolean;
+        unlocked?: boolean;
+        error?: string;
+        checkout?: CheckoutPayload;
+      };
+      if (!res.ok) {
+        throw new Error(data.error ?? "Could not start checkout.");
+      }
+      if (data.unlocked) {
+        setUnlocked(true);
+        toast({
+          title: "Unlocked!",
+          description: "You now have full access to this experience.",
+          variant: "success",
+        });
+        window.location.reload();
+        return;
+      }
+      if (!data.checkout) {
         throw new Error(data.error ?? "Payment verification is required before this content can be unlocked.");
       }
-      setUnlocked(true);
-      toast({
-        title: "Unlocked!",
-        description: "You now have full access to this experience.",
-        variant: "success",
-      });
+      openCheckout(data.checkout);
     } catch (err) {
       toast({
         title: "Could not unlock",
         description: err instanceof Error ? err.message : "Purchase failed",
         variant: "error",
       });
-    } finally {
       setPurchasing(false);
     }
   }
@@ -127,6 +243,7 @@ export default function VaultExperienceDetail({
 
   return (
     <div className="space-y-8">
+      {loadScript ? <Script src={CHECKOUT_SRC} strategy="afterInteractive" /> : null}
       <header className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -173,9 +290,18 @@ export default function VaultExperienceDetail({
                 <Lock className="h-8 w-8 text-muted-foreground" />
                 <p className="text-sm font-medium">Premium content locked</p>
                 {!isOwner ? (
-                  <Button onClick={() => void handleUnlock()} disabled={purchasing}>
-                    {purchasing ? "Processing…" : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
-                  </Button>
+                  <>
+                    <Button onClick={() => void handleUnlock()} disabled={purchasing}>
+                      {purchasing ? "Processing…" : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
+                    </Button>
+                    <p className="max-w-xs text-center text-xs text-muted-foreground">
+                      Refunds follow the{" "}
+                      <Link href={REFUND_TERMS_HREF} className="underline underline-offset-2 hover:text-foreground">
+                        Terms payments section
+                      </Link>
+                      .
+                    </p>
+                  </>
                 ) : (
                   <p className="text-xs text-muted-foreground">You own this listing</p>
                 )}

@@ -99,7 +99,7 @@ export async function insertCreatedPayment(row: {
 export async function claimCreatedPayment(
   paymentRowId: string,
   providerPaymentId: string,
-  grantedUntil: string,
+  grantedUntil: string | null,
 ): Promise<PaymentRecord | null> {
   const { data, error } = await admin()
     .from("payments")

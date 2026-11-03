@@ -138,7 +138,7 @@ export function PassCheckout({
         fetch("/api/billing/razorpay/order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ planId: option.id }),
+          body: JSON.stringify({ kind: "pass", planId: option.id }),
         }),
         waitForCheckout(8000),
       ]);
