@@ -39,6 +39,8 @@ export type ProductJobCardProps = {
   statusNote?: string
   /** Hover or focus on the card. The feed uses this to prefetch the detail route. */
   onIntent?: () => void
+  /** Shown beside missing skills when the viewer has a resume. */
+  tailorHref?: string | null
   className?: string
 }
 
@@ -65,6 +67,7 @@ export function ProductJobCard({
   applyLabel = "Apply on the listing",
   statusNote,
   onIntent,
+  tailorHref,
   className,
 }: ProductJobCardProps) {
   if (loading) {
@@ -89,23 +92,21 @@ export function ProductJobCard({
           {error}
         </p>
       ) : null}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="text-role-body line-clamp-2 font-semibold text-ink" title={title}>
-            {title}
-          </h2>
-          <p className="text-role-caption truncate text-ink" title={company}>
-            {company}
-            {" · "}
-            <Link href="/trust#verified-employer" className={companyVerified ? "text-positive" : "text-ink-muted"}>
-              {companyVerified ? "Company domain verified" : "Company not verified"}
-            </Link>
-          </p>
-          <p className="text-role-caption truncate text-ink-subtle" title={`${location} · ${remoteType}`}>
-            {location} · {remoteType}
-          </p>
-        </div>
-        <MatchScore {...match} />
+      <div className="min-w-0">
+        <h2 className="text-role-body line-clamp-2 font-semibold text-ink" title={title}>
+          {title}
+        </h2>
+        <p className="text-role-caption truncate text-ink" title={company}>
+          {company}
+          {" · "}
+          <Link href="/trust#verified-employer" className={companyVerified ? "text-positive" : "text-ink-muted"}>
+            {companyVerified ? "Company domain verified" : "Company not verified"}
+          </Link>
+        </p>
+        <p className="text-role-caption truncate text-ink-subtle" title={`${location} · ${remoteType}`}>
+          {location} · {remoteType}
+        </p>
+        <MatchScore className="mt-2" {...match} tailorHref={tailorHref} />
       </div>
       <div className="mt-2 space-y-1">
         <SalaryDisplay salary={salary} />

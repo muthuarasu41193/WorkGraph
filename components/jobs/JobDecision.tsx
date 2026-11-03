@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FreshnessIndicator } from "@/components/product/FreshnessIndicator"
-import { MatchScore } from "@/components/product/MatchScore"
+import { MatchScore, MissingSkillsLine } from "@/components/product/MatchScore"
 import { SalaryDisplay } from "@/components/product/SalaryDisplay"
 import { SourceAttribution } from "@/components/product/SourceAttribution"
 import { TrustIndicator } from "@/components/product/TrustIndicator"
@@ -44,9 +44,11 @@ function readIds(): string[] {
 export function JobDecision({
   job,
   userId,
+  tailorHref = null,
 }: {
   job: RecommendedJobCard
   userId: string | null
+  tailorHref?: string | null
 }) {
   const router = useRouter()
   const collapsed = useSyncExternalStore(subscribeCollapse, () => window.localStorage.getItem("wg-shell-collapsed") === "1", () => false)
@@ -152,7 +154,7 @@ export function JobDecision({
         <SalaryDisplay salary={view.salary} />
         <Text role="body-small" className="text-ink-muted">{job.location} · {view.remoteType}</Text>
         <FreshnessIndicator {...view.freshness} />
-        <MatchScore {...view.match} />
+        <MatchScore {...view.match} tailorHref={tailorHref} />
         <div className="pt-2">
           {view.stale || !job.applyUrl ? (
             <Button type="button" className="min-h-11" disabled>
@@ -175,9 +177,7 @@ export function JobDecision({
         ) : (
           <Text role="body-small">Not scored against a profile, or none of the profile skills appear in this listing.</Text>
         )}
-        <Text role="body-small" className="text-ink-muted">
-          Unmet requirements are not listed. This posting does not include a separate requirements checklist.
-        </Text>
+        <MissingSkillsLine skills={job.missingSkills ?? []} tailorHref={tailorHref} />
         <AIProvenance summary="The match line is an estimate when a profile was compared. It is not a hiring decision." />
         <Link href="/interview-vault" className="inline-flex min-h-11 items-center text-role-body-small text-accent">
           Prepare with the interview vault

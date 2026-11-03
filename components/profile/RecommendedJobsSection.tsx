@@ -35,7 +35,11 @@ import {
 } from "../../lib/job-listing-filters";
 import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
 import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
+<<<<<<< HEAD
 import { parseStatedSalary, statedSalaryFilterMeta } from "../../lib/salary-parse";
+=======
+import { extractJobSkills, missingSkills } from "../../lib/job-requirements";
+>>>>>>> origin/main
 import { sanitizeJobDescription } from "../../lib/job-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -502,6 +506,7 @@ type Props = {
   liveListings?: number;
   matchedListings?: number;
   hasResume?: boolean;
+  tailorHref?: string | null;
 };
 
 function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
@@ -555,6 +560,7 @@ export default function RecommendedJobsSection({
   liveListings = 0,
   matchedListings = 0,
   hasResume = false,
+  tailorHref = null,
 }: Props) {
   const profileMatch = useMemo<ProfileMatchInput>(
     () => ({
@@ -830,6 +836,17 @@ export default function RecommendedJobsSection({
     const start = (currentPage - 1) * PAGE_SIZE;
     return listingPipeline.slice(start, start + PAGE_SIZE);
   }, [useServerJobs, needsClientFilterPool, listingPipeline, currentPage]);
+
+  const missingByJobId = useMemo(() => {
+    const map = new Map<string, string[]>();
+    for (const { job } of visibleJobs) {
+      map.set(
+        job.id,
+        job.missingSkills ?? missingSkills(extractJobSkills(job.title, job.description), skillHints),
+      );
+    }
+    return map;
+  }, [visibleJobs, skillHints]);
 
   const totalMatched = useServerJobs
     ? needsClientFilterPool
@@ -2054,6 +2071,7 @@ export default function RecommendedJobsSection({
             label: skill,
             status: "ok" as const,
           }));
+          const missing = missingByJobId.get(job.id) ?? [];
 
           return (
             <JobCard
@@ -2066,10 +2084,12 @@ export default function RecommendedJobsSection({
                 locationMode: meta.locationMode,
                 salary: meta.salary,
                 profileSkillCount: skillHints.length,
+                missingSkills: missing,
               })}
               index={i}
               saved={isSaved}
               hasResume={hasResume}
+              tailorHref={tailorHref}
               onSave={(id) => {
                 if (!userId) return;
                 const nowSaved = toggleSavedJobId(userId, id);

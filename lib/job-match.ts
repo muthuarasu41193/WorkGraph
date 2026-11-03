@@ -11,7 +11,7 @@ export type ProfileMatchInput = {
   summary?: string | null;
 };
 
-const SKILL_ALIASES: Record<string, string[]> = {
+export const SKILL_ALIASES: Record<string, string[]> = {
   javascript: ["javascript", "js", "ecmascript", "node.js", "nodejs", "node"],
   typescript: ["typescript", "ts"],
   react: ["react", "reactjs", "react.js", "react native", "react-native"],
@@ -47,7 +47,7 @@ function normalizeWhitespace(value: string): string {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function skillVariants(skill: string): string[] {
+export function skillVariants(skill: string): string[] {
   const base = normalizeWhitespace(skill);
   if (!base) return [];
   const alias = SKILL_ALIASES[base];
@@ -101,6 +101,11 @@ export type JobMatchScore = {
   matchedSkills: string[];
   matchPercent: number;
   subScores: JobMatchSubScores;
+  /**
+   * Skills the posting names that the profile does not show.
+   * scoreJobRow does not set this. Rank and matchPercent ignore it.
+   */
+  missingSkills?: string[];
 };
 
 function bestTitleFamily(text: string): string | null {

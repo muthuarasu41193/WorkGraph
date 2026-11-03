@@ -28,6 +28,10 @@ Words from the headline and summary ("recruiting", "engineering", "teams", "mana
 
 Skill overlap (up to 70) and title-family agreement (22 when the headline and skills share a family with the job title) outrank seniority (4, and only when both sides use the same seniority word). Jobs older than 30 days lose 40 rank points and 5 display points, and the card says the posting may no longer be open. Results under 40% are hidden from the profile-match view. 7 of 26 fixture rows stay visible under that floor.
 
+## Missing skills
+
+After a page of jobs is already chosen, the card lists skills the posting names that the profile does not show. `extractJobSkills` in `lib/job-requirements.ts` finds whole words from `SKILL_ALIASES` plus the curated `COMMON_NON_TECH_SKILLS` list (stakeholder management, financial modeling, and similar phrases). `missingSkills` drops a skill when the profile already shows it, using the same variants as scoring, so “Node.js” and “nodejs” count as one skill. The list keeps first-seen order, at most 5 names on a card and 10 on the job page. An empty profile produces no list. The line is an estimate from words in the posting, not a hiring probability. It does not change `matchPercent`, rank, the 40% floor, or any weight, and it does not add a database query or a model call. Ranking still scores the candidate set without this extraction.
+
 ## Before, top 20
 
 | # | Title | % | raw score |
