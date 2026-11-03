@@ -133,14 +133,20 @@ export default function TermsOfServicePage() {
           content: (
             <>
               <p>
-                WorkGraph Pass is a one-time payment processed by Razorpay. It does not auto-renew.
-                Razorpay receives the payment details you enter at checkout. We do not send resume
-                files or resume text to Razorpay. Access lasts until the expiry date shown after
-                payment and in settings.
+                WorkGraph Pass and Interview Vault unlocks are one-time payments processed by
+                Razorpay. Passes do not auto-renew. Razorpay receives the payment details you enter
+                at checkout. We do not send resume files or resume text to Razorpay. Pass access
+                lasts until the expiry date shown after payment and in settings. Vault content
+                unlocks only after payment is verified.
+              </p>
+              <p>
+                Seller earnings on the Interview Vault are tracked from verified purchases.
+                Payouts are handled manually by WorkGraph for now.
               </p>
               <p>
                 TODO(founder): Write the refund policy here before charging customers. State whether
-                a WorkGraph Pass is refundable, the time window, and how a person requests a refund.
+                a WorkGraph Pass or vault unlock is refundable, the time window, and how a person
+                requests a refund.
               </p>
             </>
           ),

@@ -1,5 +1,8 @@
 import { cookies } from "next/headers";
 import { getSessionUser } from "@/lib/auth/session-server";
+import { isBillingError } from "@/lib/billing/errors";
+import { createVaultCheckoutSession } from "@/lib/billing/handlers";
+import { productionOrderDeps } from "@/lib/billing/server";
 import {
   buildFullContent,
   buildPreviewContent,
@@ -183,12 +186,22 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
   return { experience: publicExperience, preview, full_content, unlocked, is_owner };
 }
 
+export type VaultCheckoutPayload = {
+  kind: "vault";
+  experienceId: string;
+  orderId: string;
+  amount: number;
+  currency: "INR";
+  keyId: string;
+};
+
 export type VaultPurchaseResult = {
   ok: true;
   unlocked: boolean;
   payment_status: "pending" | "verified";
   entitlement: "granted" | "pending";
   message: string;
+  checkout?: VaultCheckoutPayload;
 };
 
 export async function createDraftExperience(input: VaultExperienceInsert = {}): Promise<VaultExperience> {
@@ -277,7 +290,7 @@ export async function getSellerDraft(userId: string): Promise<VaultExperience | 
 }
 
 export async function purchaseExperience(experienceId: string): Promise<VaultPurchaseResult> {
-  const { user, supabase } = await requireUser();
+  const { user } = await requireUser();
 
   const experience = await getExperienceById(experienceId);
   if (!experience || experience.status !== "published") {
@@ -301,29 +314,24 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
   if (existing?.payment_status === "verified") {
     throw new VaultApiError("Already purchased", 400);
   }
-  if (existing?.payment_status === "pending") {
-    throw new VaultApiError(
-      "Payment verification is required before this content can be unlocked.",
-      402,
-    );
-  }
 
-  const { error } = await supabase.from("vault_purchases").insert({
-    experience_id: experienceId,
-    buyer_id: user.id,
-    amount_inr: experience.price_inr,
-    payment_status: "pending",
-  });
-
-  if (error) {
+  try {
+    const checkout = await createVaultCheckoutSession(user.id, experienceId, productionOrderDeps());
+    return {
+      ok: true,
+      unlocked: false,
+      payment_status: "pending",
+      entitlement: "pending",
+      message: "Complete payment to unlock this experience.",
+      checkout,
+    };
+  } catch (error) {
+    if (isBillingError(error)) {
+      throw new VaultApiError(error.message, error.status);
+    }
     logRouteError("vault/purchase", error);
-    throw new VaultApiError("Could not record purchase intent.", 500);
+    throw new VaultApiError("Could not start checkout.", 500);
   }
-
-  throw new VaultApiError(
-    "Payment verification is required before this content can be unlocked.",
-    402,
-  );
 }
 
 export async function listReviewsForExperience(experienceId: string): Promise<VaultReview[]> {
@@ -409,6 +417,7 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
       .from("vault_purchases")
       .select("experience_id, amount_inr, created_at")
       .in("experience_id", experienceIds)
+      .eq("payment_status", "verified")
       .order("created_at", { ascending: true });
 
     if (error) throw new VaultApiError(error.message, 500);
@@ -506,6 +515,6 @@ export async function requestVaultWithdrawal(userId: string): Promise<{ ok: true
   }
   return {
     ok: true,
-    message: `Withdrawal request for ₹${dashboard.total_earnings_inr.toLocaleString("en-IN")} submitted. Payouts are processed within 5–7 business days.`,
+    message: `Withdrawal request for ₹${dashboard.total_earnings_inr.toLocaleString("en-IN")} submitted. Payouts are handled manually by WorkGraph for now.`,
   };
 }

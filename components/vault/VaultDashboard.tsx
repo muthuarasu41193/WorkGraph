@@ -45,12 +45,12 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
   const stats = [
     {
-      label: "Total earnings",
+      label: "Sales",
       value: formatCurrencyAmount(totalEarningsDisplay, currency),
       icon: Wallet,
     },
     { label: "Total views", value: dashboard.total_views.toLocaleString("en-IN"), icon: Eye },
-    { label: "Total sales", value: dashboard.total_sales.toLocaleString("en-IN"), icon: ShoppingBag },
+    { label: "Verified purchases", value: dashboard.total_sales.toLocaleString("en-IN"), icon: ShoppingBag },
   ];
 
   return (
@@ -59,6 +59,9 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Seller Dashboard</h1>
           <p className="mt-1 text-sm text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sales are the sum of verified unlocks. Payouts are handled manually by WorkGraph for now.
+          </p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/interview-vault/sell">+ New experience</Link>
@@ -128,11 +131,12 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
               </Link>
             </p>
           )}
-          {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).
-            </p>
-          ) : null}
+          <p className="mt-3 text-xs text-muted-foreground">
+            Payouts are handled manually by WorkGraph for now.
+            {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500
+              ? ` Minimum withdrawal amount is ₹500 (${formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).`
+              : null}
+          </p>
         </CardContent>
       </Card>
     </div>

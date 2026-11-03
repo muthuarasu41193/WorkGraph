@@ -26,7 +26,7 @@ export type GrantDeps = {
   claimCreated: (
     paymentRowId: string,
     providerPaymentId: string,
-    grantedUntil: string,
+    grantedUntil: string | null,
   ) => Promise<PaymentRecord | null>;
   readExpiry: (userId: string) => Promise<Date | null>;
   /** Set premium. Must not move an existing expiry earlier than `expiresAt`. */

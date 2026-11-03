@@ -2,16 +2,28 @@ import { NextResponse } from "next/server";
 
 import { logErrorCode, logRouteError } from "@/lib/security/log";
 import { isValidationError, parseJsonBody, publicErrorResponse } from "@/lib/validation";
-import { razorpayOrderBodySchema, razorpayVerifyBodySchema } from "@/lib/validation/billing";
+import {
+  isVaultOrderBody,
+  razorpayOrderBodySchema,
+  razorpayVerifyBodySchema,
+} from "@/lib/validation/billing";
 
 import { BillingError, isBillingError } from "./errors";
 import type { GrantResult } from "./grant";
+import type { VaultGrantResult } from "./grant-vault";
 import { getPlan } from "./plans";
 import { verifyPaymentSignature, verifyWebhookSignature } from "./signature";
+import type { VaultListingForOrder, VaultPurchaseForOrder } from "./vault-order";
+import { resolveVaultOrderAmount } from "./vault-order";
 
 const SIGN_IN = "Sign in to buy a WorkGraph Pass.";
+const SIGN_IN_VAULT = "Sign in to unlock this experience.";
 
 type SessionUser = { id: string };
+
+export type GrantPaymentResult =
+  | (GrantResult & { kind?: "pass" })
+  | VaultGrantResult;
 
 export type CreateOrderDeps = {
   getSessionUser: (request: Request) => Promise<SessionUser | null>;
@@ -30,22 +42,38 @@ export type CreateOrderDeps = {
     currency: string;
     providerOrderId: string;
   }) => Promise<void>;
+  loadVaultListing: (experienceId: string) => Promise<VaultListingForOrder | null>;
+  loadVaultPurchase: (experienceId: string, buyerId: string) => Promise<VaultPurchaseForOrder>;
+  ensurePendingVaultPurchase: (input: {
+    experienceId: string;
+    buyerId: string;
+    amountInr: number;
+    existingPurchaseId: string | null;
+  }) => Promise<string>;
+  attachVaultOrderReference: (input: {
+    purchaseId: string;
+    buyerId: string;
+    providerOrderId: string;
+  }) => Promise<void>;
   newId?: () => string;
 };
 
 export type VerifyDeps = {
   getSessionUser: (request: Request) => Promise<SessionUser | null>;
   keySecret: () => string;
-  grant: (
-    input: { providerOrderId: string; providerPaymentId: string; expectedUserId?: string },
-  ) => Promise<GrantResult>;
+  grant: (input: {
+    providerOrderId: string;
+    providerPaymentId: string;
+    expectedUserId?: string;
+  }) => Promise<GrantPaymentResult>;
 };
 
 export type WebhookDeps = {
   webhookSecret: () => string;
-  grant: (
-    input: { providerOrderId: string; providerPaymentId: string },
-  ) => Promise<GrantResult>;
+  grant: (input: {
+    providerOrderId: string;
+    providerPaymentId: string;
+  }) => Promise<GrantPaymentResult>;
 };
 
 function billingResponse(error: unknown, route: string): NextResponse {
@@ -57,53 +85,149 @@ function billingResponse(error: unknown, route: string): NextResponse {
     return publicErrorResponse(error, { fallback: "Invalid request." });
   }
   logRouteError(route, error);
-  return publicErrorResponse(error, { fallback: "Could not complete the payment." });
+  return NextResponse.json(
+    { error: "Could not complete the payment." },
+    { status: 500 },
+  );
+}
+
+async function createPassOrder(
+  userId: string,
+  planId: string,
+  deps: CreateOrderDeps,
+): Promise<NextResponse> {
+  const plan = getPlan(planId);
+  if (!plan) {
+    throw new BillingError("That plan is not available.", 400, "unknown_plan");
+  }
+  const keyId = deps.keyId().trim();
+  if (!keyId) {
+    throw new BillingError("Payments are not available right now.", 503, "billing_unconfigured");
+  }
+
+  const id = (deps.newId ?? (() => crypto.randomUUID()))();
+  const created = await deps.createOrder({
+    amountPaise: plan.amountPaise,
+    currency: plan.currency,
+    receipt: id,
+    notes: { user_id: userId, plan_id: plan.id },
+  });
+  if (created.amount !== plan.amountPaise || created.currency !== plan.currency) {
+    throw new BillingError("Could not start the payment. Please try again.", 502, "amount_mismatch");
+  }
+
+  await deps.insertPayment({
+    id,
+    userId,
+    planId: plan.id,
+    amountPaise: plan.amountPaise,
+    currency: plan.currency,
+    providerOrderId: created.id,
+  });
+
+  return NextResponse.json({
+    kind: "pass",
+    orderId: created.id,
+    amount: plan.amountPaise,
+    currency: plan.currency,
+    keyId,
+  });
+}
+
+export type VaultCheckoutSession = {
+  kind: "vault";
+  experienceId: string;
+  orderId: string;
+  amount: number;
+  currency: "INR";
+  keyId: string;
+};
+
+export type VaultCheckoutDeps = Pick<
+  CreateOrderDeps,
+  | "keyId"
+  | "createOrder"
+  | "insertPayment"
+  | "loadVaultListing"
+  | "loadVaultPurchase"
+  | "ensurePendingVaultPurchase"
+  | "attachVaultOrderReference"
+  | "newId"
+>;
+
+/** Create a Razorpay order for a vault unlock. Amount comes from the listing price. */
+export async function createVaultCheckoutSession(
+  userId: string,
+  experienceId: string,
+  deps: VaultCheckoutDeps,
+): Promise<VaultCheckoutSession> {
+  const keyId = deps.keyId().trim();
+  if (!keyId) {
+    throw new BillingError("Payments are not available right now.", 503, "billing_unconfigured");
+  }
+
+  const listing = await deps.loadVaultListing(experienceId);
+  const purchase = await deps.loadVaultPurchase(experienceId, userId);
+  const resolved = resolveVaultOrderAmount({ buyerId: userId, listing, purchase });
+
+  const purchaseId = await deps.ensurePendingVaultPurchase({
+    experienceId: resolved.experienceId,
+    buyerId: userId,
+    amountInr: Math.round(resolved.amountPaise / 100),
+    existingPurchaseId: resolved.existingPurchaseId,
+  });
+
+  const id = (deps.newId ?? (() => crypto.randomUUID()))();
+  const created = await deps.createOrder({
+    amountPaise: resolved.amountPaise,
+    currency: resolved.currency,
+    receipt: id,
+    notes: { user_id: userId, plan_id: resolved.planId },
+  });
+  if (created.amount !== resolved.amountPaise || created.currency !== resolved.currency) {
+    throw new BillingError("Could not start the payment. Please try again.", 502, "amount_mismatch");
+  }
+
+  await deps.attachVaultOrderReference({
+    purchaseId,
+    buyerId: userId,
+    providerOrderId: created.id,
+  });
+
+  await deps.insertPayment({
+    id,
+    userId,
+    planId: resolved.planId,
+    amountPaise: resolved.amountPaise,
+    currency: resolved.currency,
+    providerOrderId: created.id,
+  });
+
+  return {
+    kind: "vault",
+    experienceId: resolved.experienceId,
+    orderId: created.id,
+    amount: resolved.amountPaise,
+    currency: resolved.currency,
+    keyId,
+  };
 }
 
 export async function handleCreateOrder(request: Request, deps: CreateOrderDeps): Promise<NextResponse> {
   const route = "billing/razorpay/order";
   try {
+    const body = await parseJsonBody(request, razorpayOrderBodySchema);
     const user = await deps.getSessionUser(request);
     if (!user) {
-      return NextResponse.json({ error: SIGN_IN }, { status: 401 });
+      const message = isVaultOrderBody(body) ? SIGN_IN_VAULT : SIGN_IN;
+      return NextResponse.json({ error: message }, { status: 401 });
     }
 
-    const body = await parseJsonBody(request, razorpayOrderBodySchema);
-    const plan = getPlan(body.planId);
-    if (!plan) {
-      throw new BillingError("That plan is not available.", 400, "unknown_plan");
+    if (isVaultOrderBody(body)) {
+      const checkout = await createVaultCheckoutSession(user.id, body.experienceId, deps);
+      return NextResponse.json(checkout);
     }
-    const keyId = deps.keyId().trim();
-    if (!keyId) {
-      throw new BillingError("Payments are not available right now.", 503, "billing_unconfigured");
-    }
-
-    const id = (deps.newId ?? (() => crypto.randomUUID()))();
-    const created = await deps.createOrder({
-      amountPaise: plan.amountPaise,
-      currency: plan.currency,
-      receipt: id,
-      notes: { user_id: user.id, plan_id: plan.id },
-    });
-    if (created.amount !== plan.amountPaise || created.currency !== plan.currency) {
-      throw new BillingError("Could not start the payment. Please try again.", 502, "amount_mismatch");
-    }
-
-    await deps.insertPayment({
-      id,
-      userId: user.id,
-      planId: plan.id,
-      amountPaise: plan.amountPaise,
-      currency: plan.currency,
-      providerOrderId: created.id,
-    });
-
-    return NextResponse.json({
-      orderId: created.id,
-      amount: plan.amountPaise,
-      currency: plan.currency,
-      keyId,
-    });
+    return await createPassOrder(user.id, body.planId, deps);
   } catch (error) {
     return billingResponse(error, route);
   }
@@ -135,7 +259,19 @@ export async function handleVerifyPayment(request: Request, deps: VerifyDeps): P
       providerPaymentId: body.razorpay_payment_id,
       expectedUserId: user.id,
     });
-    return NextResponse.json({ ok: true, grantedUntil: result.grantedUntil });
+    if (result.kind === "vault") {
+      return NextResponse.json({
+        ok: true,
+        kind: "vault",
+        unlocked: true,
+        experienceId: result.experienceId,
+      });
+    }
+    return NextResponse.json({
+      ok: true,
+      kind: "pass",
+      grantedUntil: result.grantedUntil,
+    });
   } catch (error) {
     return billingResponse(error, route);
   }
