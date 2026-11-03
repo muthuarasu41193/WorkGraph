@@ -1,3 +1,5 @@
+import { recordEvent } from "@/lib/metrics/record";
+
 import { getPlan } from "./plans";
 import { BillingError } from "./errors";
 
@@ -108,5 +110,9 @@ export async function grantPass(
   }
 
   await deps.writePremium(payment.userId, grantedUntil);
+  await recordEvent("pass_purchased", payment.userId, {
+    plan_id: plan.id,
+    amount_paise: plan.amountPaise,
+  });
   return { grantedUntil, applied: true };
 }

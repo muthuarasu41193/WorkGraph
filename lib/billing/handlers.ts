@@ -4,6 +4,8 @@ import { logErrorCode, logRouteError } from "@/lib/security/log";
 import { isValidationError, parseJsonBody, publicErrorResponse } from "@/lib/validation";
 import { razorpayOrderBodySchema, razorpayVerifyBodySchema } from "@/lib/validation/billing";
 
+import { recordEvent } from "@/lib/metrics/record";
+
 import { BillingError, isBillingError } from "./errors";
 import type { GrantResult } from "./grant";
 import { getPlan } from "./plans";
@@ -96,6 +98,11 @@ export async function handleCreateOrder(request: Request, deps: CreateOrderDeps)
       amountPaise: plan.amountPaise,
       currency: plan.currency,
       providerOrderId: created.id,
+    });
+
+    await recordEvent("pass_checkout_started", user.id, {
+      plan_id: plan.id,
+      amount_paise: plan.amountPaise,
     });
 
     return NextResponse.json({

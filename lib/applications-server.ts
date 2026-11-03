@@ -13,6 +13,7 @@ import {
   type ApplicationUpdate,
 } from "@/lib/applications";
 import { applyMarkFollowedUp, defaultNextStepOnCreate } from "@/lib/applications-followup";
+import { recordEvent } from "@/lib/metrics/record";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 
@@ -81,6 +82,7 @@ export async function createApplicationForUser(input: ApplicationInsert): Promis
     .single();
 
   if (error) throw new ApplicationsApiError("Could not create application. Please try again.", 500);
+  await recordEvent("application_added", user.id, { status });
   return mapApplicationRow(data as Record<string, unknown>);
 }
 
@@ -162,6 +164,9 @@ export async function updateApplicationForUser(
     .single();
 
   if (error) throw new ApplicationsApiError("Could not update application. Please try again.", 500);
+  if (patch.mark_followed_up === true) {
+    await recordEvent("follow_up_marked", user.id);
+  }
   return mapApplicationRow(data as Record<string, unknown>);
 }
 

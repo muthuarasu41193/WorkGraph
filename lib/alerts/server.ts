@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 import { getSessionUser } from "@/lib/auth/session-server";
+import { recordEvent } from "@/lib/metrics/record";
 import { checkSubscription } from "@/lib/subscription";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
@@ -218,6 +219,9 @@ export async function updateAlertForUser(id: string, patch: AlertUpdateInput): P
     throw new AlertsApiError("Could not update alert. Please try again.", 500);
   }
   if (!data) throw new AlertsApiError("Alert not found", 404);
+  if (patch.frequency === "off") {
+    await recordEvent("digest_unsubscribed", user.id);
+  }
   return mapAlertRow(data as Record<string, unknown>);
 }
 
