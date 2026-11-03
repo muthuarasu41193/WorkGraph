@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FreshnessIndicator } from "@/components/product/FreshnessIndicator"
-import { MatchScore } from "@/components/product/MatchScore"
+import { MatchScore, MissingSkillsLine } from "@/components/product/MatchScore"
 import { SalaryDisplay } from "@/components/product/SalaryDisplay"
 import { SourceAttribution } from "@/components/product/SourceAttribution"
 import { TrustIndicator } from "@/components/product/TrustIndicator"
@@ -45,9 +45,11 @@ function readIds(): string[] {
 export function JobDecision({
   job,
   userId,
+  tailorHref = null,
 }: {
   job: RecommendedJobCard
   userId: string | null
+  tailorHref?: string | null
 }) {
   const router = useRouter()
   const collapsed = useSyncExternalStore(subscribeCollapse, () => window.localStorage.getItem("wg-shell-collapsed") === "1", () => false)
@@ -140,7 +142,7 @@ export function JobDecision({
   return (
     <article className="mx-auto max-w-3xl px-4 pb-28 pt-4">
       {view.stale ? (
-        <div className="mb-4 rounded-card border border-caution bg-caution-wash p-3">
+        <div className="mb-4 rounded-card border border-hairline bg-surface-sunken p-3">
           <Text role="body">This posting may be closed. It was posted {job.postedAgo}. Applying is turned off.</Text>
           <Link href={similar} className="mt-2 inline-flex min-h-11 items-center text-role-body-small text-accent">
             Similar live roles
@@ -153,7 +155,7 @@ export function JobDecision({
         <SalaryDisplay salary={view.salary} />
         <Text role="body-small" className="text-ink-muted">{job.location} · {view.remoteType}</Text>
         <FreshnessIndicator {...view.freshness} />
-        <MatchScore {...view.match} />
+        <MatchScore {...view.match} tailorHref={tailorHref} />
         <div className="pt-2">
           {view.stale || !job.applyUrl ? (
             <Button type="button" className="min-h-11" disabled>
@@ -176,9 +178,7 @@ export function JobDecision({
         ) : (
           <Text role="body-small">Not scored against a profile, or none of the profile skills appear in this listing.</Text>
         )}
-        <Text role="body-small" className="text-ink-muted">
-          Unmet requirements are not listed. This posting does not include a separate requirements checklist.
-        </Text>
+        <MissingSkillsLine skills={job.missingSkills ?? []} tailorHref={tailorHref} />
         <AIProvenance summary="The match line is an estimate when a profile was compared. It is not a hiring decision." />
         <Link href="/interview-vault" className="inline-flex min-h-11 items-center text-role-body-small text-accent">
           Prepare with the interview vault
@@ -220,7 +220,12 @@ export function JobDecision({
 
       <section className="mt-8 space-y-2">
         <Text as="h3" role="subheading">Pay</Text>
-        <Text role="body-small">Salary is not on this listing, and there is no market comparison to show.</Text>
+        <SalaryDisplay salary={view.salary} />
+        <Text role="body-small">
+          {view.salary.kind === "undisclosed"
+            ? "The posting does not state a pay figure. We do not estimate one."
+            : "We show pay only when the posting states it. This is not an estimate and it is not a verified offer."}
+        </Text>
       </section>
 
       <section className="mt-8 space-y-2">

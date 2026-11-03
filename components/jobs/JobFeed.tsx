@@ -19,6 +19,7 @@ import {
   sortFeedJobs,
   type FeedSort,
 } from "@/lib/job-feed"
+import { attachMissingSkills } from "@/lib/job-requirements"
 import { dismissedSnapshot, readDismissedJobs, subscribeDismissedJobs, writeDismissedJobs } from "@/lib/dismissed-jobs"
 import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
@@ -27,7 +28,7 @@ import { sanitizeJobDescription } from "@/lib/job-summary"
 import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
-const ROW_HEIGHT = 320
+const ROW_HEIGHT = 420
 const UNDO_MS = 5000
 
 export type AppliedRef = { company: string; role: string; job_url: string | null }
@@ -128,12 +129,14 @@ export function JobFeed({
   applications,
   skills,
   search,
+  tailorHref = null,
 }: {
   initial: JobFeedInitial
   userId: string | null
   applications: AppliedRef[]
   skills: string[]
   search: string
+  tailorHref?: string | null
 }) {
   const router = useRouter()
   const wide = useSyncExternalStore(subscribeWide, wideSnapshot, () => false)
@@ -161,6 +164,9 @@ export function JobFeed({
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [naming, setNaming] = useState(false)
   const [searchName, setSearchName] = useState("")
+  const [alerting, setAlerting] = useState(false)
+  const [alertName, setAlertName] = useState("")
+  const [savingAlert, setSavingAlert] = useState(false)
   const [pendingDismiss, setPendingDismiss] = useState<Record<string, string>>({})
   const [trackJob, setTrackJob] = useState<RecommendedJobCard | null>(null)
   const [trackedUrls, setTrackedUrls] = useState<string[]>([])
@@ -176,8 +182,16 @@ export function JobFeed({
       seen.add(job.id)
       return true
     })
-    return sortFeedJobs(merged, sort === "salary" || sort === "verified" ? "newest" : sort)
-  }, [initial.jobs, extra, dismissedIds, sort])
+    const hideClosed = params.get("hideClosed") === "1"
+    const payStated = params.get("pay") === "stated"
+    const filtered = merged.filter((job) => {
+      const view = jobCardView(job)
+      if (hideClosed && view.stale) return false
+      if (payStated && view.salary.kind === "undisclosed") return false
+      return true
+    })
+    return sortFeedJobs(filtered, sort === "verified" ? "newest" : sort)
+  }, [initial.jobs, extra, dismissedIds, sort, params])
 
   const rows = jobs.map((job) => ({ job, pending: Object.prototype.hasOwnProperty.call(pendingDismiss, job.id) }))
 
@@ -235,6 +249,8 @@ export function JobFeed({
     { id: "today", label: "Posted today", active: params.get("date") === "1", params: (p) => { const n = new URLSearchParams(p); if (n.get("date") === "1") n.delete("date"); else n.set("date", "1"); return n } },
     { id: "week", label: "Past 7 days", active: params.get("date") === "7", params: (p) => { const n = new URLSearchParams(p); if (n.get("date") === "7") n.delete("date"); else n.set("date", "7"); return n } },
     { id: "month", label: "Past 30 days", active: params.get("date") === "30", params: (p) => { const n = new URLSearchParams(p); if (n.get("date") === "30") n.delete("date"); else n.set("date", "30"); return n } },
+    { id: "pay", label: "Only jobs with pay stated", active: params.get("pay") === "stated", params: (p) => { const n = new URLSearchParams(p); if (n.get("pay") === "stated") n.delete("pay"); else n.set("pay", "stated"); return n } },
+    { id: "hideClosed", label: "Hide likely-closed jobs", active: params.get("hideClosed") === "1", params: (p) => { const n = new URLSearchParams(p); if (n.get("hideClosed") === "1") n.delete("hideClosed"); else n.set("hideClosed", "1"); return n } },
   ]
 
   const appliedChips = [
@@ -244,6 +260,8 @@ export function JobFeed({
     params.get("loc") ? { id: "loc", label: params.get("loc") } : null,
     params.get("company") ? { id: "company", label: params.get("company") } : null,
     params.get("type") ? { id: "type", label: params.get("type") } : null,
+    params.get("pay") === "stated" ? { id: "pay", label: "Only jobs with pay stated" } : null,
+    params.get("hideClosed") === "1" ? { id: "hideClosed", label: "Hide likely-closed jobs" } : null,
     ...(params.get("src") ?? "").split(",").filter(Boolean).map((source) => ({ id: `src:${source}`, label: formatJobSource(source as RecommendedJobCard["source"]) })),
   ].filter((chip): chip is { id: string; label: string | null } => Boolean(chip && chip.label))
 
@@ -260,7 +278,7 @@ export function JobFeed({
 
   function clearAll() {
     const next = currentParams()
-    for (const key of ["q", "src", "date", "locMode", "loc", "company", "type"]) next.delete(key)
+    for (const key of ["q", "src", "date", "locMode", "loc", "company", "type", "pay", "hideClosed"]) next.delete(key)
     setQuery("")
     pushParams(next)
   }
@@ -518,7 +536,7 @@ export function JobFeed({
           window.dispatchEvent(new Event("wg-jobs-rail"))
         }}>{railClosed ? "Show filters" : "Hide filters"}</Button>
       </div>
-      {sort === "salary" ? <Text role="caption" className="text-ink-muted">Salary is not on these listings, so this sort leaves the posted order unchanged.</Text> : null}
+      {sort === "salary" ? <Text role="caption" className="text-ink-muted">Salary sort uses the figure written in the posting. Roles that do not state pay stay at the end. Currencies and hourly rates are not converted.</Text> : null}
       {sort === "match" && skills.length === 0 ? <Text role="caption" className="text-ink-muted">Best match needs skills on your profile. Showing newest posted.</Text> : null}
       {initial.relaxedQuery && initial.originalQuery ? (
         <Text role="body-small">No exact matches for “{initial.originalQuery}”. Showing results for “{initial.relaxedQuery}”.</Text>
@@ -567,8 +585,88 @@ export function JobFeed({
         ) : (
           <button type="button" className="min-h-11 px-2 text-role-caption text-ink" onClick={() => setNaming(true)}>Save this search</button>
         )}
+        {userId ? (
+          alerting ? (
+            <form
+              className="flex flex-wrap gap-2"
+              onSubmit={(event) => {
+                event.preventDefault()
+                const name = alertName.trim()
+                if (!name || savingAlert) return
+                setSavingAlert(true)
+                void (async () => {
+                  try {
+                    const res = await fetch("/api/alerts", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        name: name.slice(0, 80),
+                        query: currentParams().toString().slice(0, 500),
+                        frequency: "weekly",
+                        discreet: true,
+                        min_match: 40,
+                      }),
+                    })
+                    const json = (await res.json()) as { ok?: boolean; error?: string }
+                    if (!res.ok || !json.ok) {
+                      toast({ title: json.error ?? "Could not save alert", variant: "error" })
+                      return
+                    }
+                    setAlertName("")
+                    setAlerting(false)
+                    toast({ title: "Saved as alert", variant: "success" })
+                  } finally {
+                    setSavingAlert(false)
+                  }
+                })()
+              }}
+            >
+              <Input
+                className="min-h-11"
+                aria-label="Alert name"
+                value={alertName}
+                onChange={(event) => setAlertName(event.target.value)}
+              />
+              <Button type="submit" className="min-h-11" loading={savingAlert}>
+                Save alert
+              </Button>
+              <button
+                type="button"
+                className="min-h-11 px-2 text-role-caption text-ink-muted"
+                onClick={() => {
+                  setAlerting(false)
+                  setAlertName("")
+                }}
+              >
+                Cancel
+              </button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              className="min-h-11 px-2 text-role-caption text-ink"
+              onClick={() => setAlerting(true)}
+            >
+              Save as alert
+            </button>
+          )
+        ) : (
+          <button
+            type="button"
+            className="min-h-11 px-2 text-role-caption text-ink-muted"
+            onClick={() => router.push("/login?next=/jobs")}
+          >
+            Sign in to save alerts
+          </button>
+        )}
       </div>
-      <Text role="body-small" aria-live="polite">{initial.error ? initial.error : `${initial.total.toLocaleString("en-US")} roles`}</Text>
+      <Text role="body-small" aria-live="polite">
+        {initial.error
+          ? initial.error
+          : params.get("pay") === "stated" || params.get("hideClosed") === "1"
+            ? `${jobs.length.toLocaleString("en-US")} loaded roles match these trust filters. The index still has ${initial.total.toLocaleString("en-US")} roles.`
+            : `${initial.total.toLocaleString("en-US")} roles`}
+      </Text>
       <p id="job-feed-keys" className="text-role-caption text-ink-muted">j and k move. Enter opens. s saves. x dismisses.</p>
       <p className="sr-only" aria-live="polite">{focusAnnouncement}</p>
       <div className={cn("grid min-h-0 flex-1 gap-3", railClosed ? (preview && wide ? "xl:grid-cols-[minmax(0,1fr)_22rem]" : "") : preview && wide ? "xl:grid-cols-[16rem_minmax(0,1fr)_22rem]" : "xl:grid-cols-[16rem_minmax(0,1fr)]")}>
@@ -607,7 +705,7 @@ export function JobFeed({
             <div className="relative" style={{ height: rows.length * ROW_HEIGHT }}>
               {visible.map((row, index) => {
                 const absolute = start + index
-                const view = jobCardView(row.job)
+                const view = jobCardView(attachMissingSkills(row.job, skills))
                 const saved = savedIds.has(row.job.id)
                 const applied = isApplied(row.job, applications) || (row.job.applyUrl ? trackedUrls.includes(row.job.applyUrl) : false)
                 const notes = [saved ? "Saved on this device" : null, applied ? "In your tracker" : null].filter(Boolean).join(" · ")
@@ -642,6 +740,7 @@ export function JobFeed({
                         freshness={view.freshness}
                         source={view.source}
                         trust={view.trust}
+                        tailorHref={tailorHref}
                         applyLabel={view.applyLabel}
                         statusNote={notes || undefined}
                         saved={saved}

@@ -35,6 +35,8 @@ import {
 } from "../../lib/job-listing-filters";
 import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
 import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
+import { extractJobSkills, missingSkills } from "../../lib/job-requirements";
+import { parseStatedSalary, statedSalaryFilterMeta } from "../../lib/salary-parse";
 import { sanitizeJobDescription } from "../../lib/job-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -266,62 +268,8 @@ function normalizeText(...parts: Array<string | null | undefined>): string {
     .toLowerCase();
 }
 
-function parseMoneyToK(rawValue: string, suffix: string | undefined, period: "year" | "hour"): number {
-  const value = Number(rawValue.replace(/,/g, ""));
-  if (Number.isNaN(value)) return 0;
-  const normalizedSuffix = suffix?.toLowerCase();
-  if (normalizedSuffix === "m") return Math.round(value * 1000);
-  if (normalizedSuffix === "k") return Math.round(value);
-  if (period === "hour") return Math.round(value);
-  if (value >= 1000) return Math.round(value / 1000);
-  return Math.round(value);
-}
-
 function inferSalary(text: string): SalaryMeta | null {
-  const period: "year" | "hour" = /(per hour|hourly|\/\s*(?:h|hr|hour)\b)/i.test(text) ? "hour" : "year";
-  const currencyRange =
-    /\b(?:salary|compensation|pay(?:\s*range)?|hourly(?:\s+rate)?)\b[\s:]{0,12}(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:-|to|–|—)\s*(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
-      text
-    ) ??
-    /([$€£₹])\s*(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:-|to|–|—)\s*(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
-      text
-    );
-
-  if (currencyRange) {
-    const currencySymbol = currencyRange[1] || currencyRange[4] || "$";
-    const currency =
-      currencySymbol === "€" ? "EUR" : currencySymbol === "£" ? "GBP" : currencySymbol === "₹" ? "INR" : "USD";
-    const minK = parseMoneyToK(currencyRange[2], currencyRange[3], period);
-    const maxK = parseMoneyToK(currencyRange[5], currencyRange[6], period);
-    if (minK > 0 && maxK > 0) {
-      return {
-        minK: Math.min(minK, maxK),
-        maxK: Math.max(minK, maxK),
-        currency,
-        period,
-      };
-    }
-  }
-
-  const singleSalary =
-    /\b(?:salary|compensation|pay(?:\s*range)?|hourly(?:\s+rate)?)\b[\s:]{0,12}(?:([$€£₹])\s*)?(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?/i.exec(
-      text
-    ) ?? /([$€£₹])\s*(\d[\d,]*(?:\.\d+)?)\s*([kKmM])?\s*(?:per year|annual|annually|per hour|hourly|\/\s*(?:h|hr|hour)\b)/i.exec(text);
-
-  if (!singleSalary) return null;
-
-  const currencySymbol = singleSalary[1] || "$";
-  const currency =
-    currencySymbol === "€" ? "EUR" : currencySymbol === "£" ? "GBP" : currencySymbol === "₹" ? "INR" : "USD";
-  const amountK = parseMoneyToK(singleSalary[2], singleSalary[3], period);
-  if (amountK <= 0) return null;
-
-  return {
-    minK: amountK,
-    maxK: amountK,
-    currency,
-    period,
-  };
+  return statedSalaryFilterMeta(parseStatedSalary(text));
 }
 
 function mapYearsToExperience(maxYears: number): ExperienceFilterOption {
@@ -555,6 +503,7 @@ type Props = {
   liveListings?: number;
   matchedListings?: number;
   hasResume?: boolean;
+  tailorHref?: string | null;
 };
 
 function demoBannerCopy(hint: FeedDemoHint): { title: string; body: string } {
@@ -608,6 +557,7 @@ export default function RecommendedJobsSection({
   liveListings = 0,
   matchedListings = 0,
   hasResume = false,
+  tailorHref = null,
 }: Props) {
   const profileMatch = useMemo<ProfileMatchInput>(
     () => ({
@@ -883,6 +833,17 @@ export default function RecommendedJobsSection({
     const start = (currentPage - 1) * PAGE_SIZE;
     return listingPipeline.slice(start, start + PAGE_SIZE);
   }, [useServerJobs, needsClientFilterPool, listingPipeline, currentPage]);
+
+  const missingByJobId = useMemo(() => {
+    const map = new Map<string, string[]>();
+    for (const { job } of visibleJobs) {
+      map.set(
+        job.id,
+        job.missingSkills ?? missingSkills(extractJobSkills(job.title, job.description), skillHints),
+      );
+    }
+    return map;
+  }, [visibleJobs, skillHints]);
 
   const totalMatched = useServerJobs
     ? needsClientFilterPool
@@ -2107,6 +2068,7 @@ export default function RecommendedJobsSection({
             label: skill,
             status: "ok" as const,
           }));
+          const missing = missingByJobId.get(job.id) ?? [];
 
           return (
             <JobCard
@@ -2119,10 +2081,12 @@ export default function RecommendedJobsSection({
                 locationMode: meta.locationMode,
                 salary: meta.salary,
                 profileSkillCount: skillHints.length,
+                missingSkills: missing,
               })}
               index={i}
               saved={isSaved}
               hasResume={hasResume}
+              tailorHref={tailorHref}
               onSave={(id) => {
                 if (!userId) return;
                 const nowSaved = toggleSavedJobId(userId, id);

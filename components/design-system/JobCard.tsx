@@ -6,9 +6,12 @@ import JobApplyButton from "@/components/design-system/JobApplyButton";
 import { FreshnessIndicator } from "@/components/product/FreshnessIndicator";
 import { MatchScore } from "@/components/product/MatchScore";
 import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay";
+import { TrustIndicator } from "@/components/product/TrustIndicator";
 import { SourceAttribution } from "@/components/product/SourceAttribution";
 import { type JobCardData } from "@/lib/job-card-data";
 import { formatJobFreshness } from "@/lib/job-freshness";
+import { trustPropsForListing } from "@/lib/job-feed";
+import { parseStatedSalary } from "@/lib/salary-parse";
 import { jobSourceName } from "@/lib/job-apply";
 import { matchReason } from "@/lib/job-match-reason";
 import { AIProvenance } from "@/components/product/AIProvenance";
@@ -29,6 +32,8 @@ type Props = {
   onApplyClick?: () => void;
   /** Kept so callers can still pass it. Analyze Resume renders on the detail panel, not the card. */
   hasResume?: boolean;
+  /** Shown beside missing skills when the viewer has a resume. */
+  tailorHref?: string | null;
   className?: string;
   children?: ReactNode;
 };
@@ -80,8 +85,10 @@ function JobChip({ children }: { children: string }) {
   );
 }
 
-function salaryFigure(range?: string): SalaryFigure {
-  const label = range?.trim();
+function salaryFigure(job: JobCardData): SalaryFigure {
+  const parsed = parseStatedSalary(job.description ?? "");
+  if (parsed.kind === "range" || parsed.kind === "single") return parsed;
+  const label = job.salaryRange?.trim();
   if (!label || label.toLowerCase() === "see listing") return { kind: "undisclosed" };
   return { kind: "stated", label };
 }
@@ -133,13 +140,23 @@ export default function JobCard({
   onSave,
   onClick,
   onApplyClick,
+  tailorHref,
   className,
   children,
 }: Props) {
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
   const sourceName = jobSourceName(job.source, job.company, applyHref);
-  const salary = salaryFigure(job.salaryRange);
+  const salary = salaryFigure(job);
+  const trust = trustPropsForListing({
+    title: job.title,
+    company: job.company,
+    description: job.description,
+    applyUrl: job.applyUrl,
+    postedAtIso: job.postedAtIso,
+    source: job.source,
+    isCommunity: job.source === "reddit" || job.source === "hackernews" || job.source === "rss",
+  });
   const freshnessLabel = formatJobFreshness(job.postedAtIso);
   const chips = [job.workMode, job.employmentType, job.experience, job.location].filter(isUsefulChip);
   const summary = buildJobSummary({
@@ -189,31 +206,30 @@ export default function JobCard({
       <div className="flex items-start gap-2.5">
         <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-sans text-role-body-small line-clamp-2 min-w-0 flex-1 font-semibold text-ink" title={job.title}>
-              {job.title}
-            </h3>
-            {job.matchPercent !== undefined && reason ? (
-              <div
-                className="max-w-56 shrink-0"
-                onClick={(event) => event.stopPropagation()}
-                onKeyDown={(event) => event.stopPropagation()}
-              >
-                <MatchScore
-                  score={job.matchPercent}
-                  reason={reason}
-                  tone="neutral"
-                  requirements={[
-                    ...matched.map((label) => ({ label, met: true })),
-                    ...missing.map((label) => ({ label, met: false })),
-                  ]}
-                />
-              </div>
-            ) : null}
-          </div>
+          <h3 className="font-sans text-role-body-small line-clamp-2 min-w-0 font-semibold text-ink" title={job.title}>
+            {job.title}
+          </h3>
           <p className="font-sans text-role-caption mt-0.5 truncate text-ink-muted" title={job.company}>
             {job.company}
           </p>
+          {job.matchPercent !== undefined && reason ? (
+            <div
+              className="mt-1"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <MatchScore
+                score={job.matchPercent}
+                reason={reason}
+                tone="neutral"
+                tailorHref={tailorHref}
+                requirements={[
+                  ...matched.map((label) => ({ label, met: true })),
+                  ...missing.filter((label) => !matched.includes(label)).map((label) => ({ label, met: false })),
+                ]}
+              />
+            </div>
+          ) : null}
           <div
             className="mt-1 flex flex-wrap items-baseline gap-x-2"
             onClick={(event) => event.stopPropagation()}
@@ -227,6 +243,7 @@ export default function JobCard({
                 label={freshnessLabel}
               />
             ) : null}
+            {trust ? <TrustIndicator {...trust} /> : null}
           </div>
           {chips.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">

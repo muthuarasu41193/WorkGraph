@@ -37,6 +37,7 @@ function money(amount: number, currency = "USD") {
 export function salaryText(salary: SalaryFigure): string {
   if (salary.kind === "undisclosed") return "Salary not disclosed"
   if (salary.kind === "stated") return salary.label?.trim() || "Salary not disclosed"
+  if ((salary.kind === "range" || salary.kind === "single") && salary.label?.trim()) return salary.label.trim()
   const period = salary.period ? ` ${salary.period}` : ""
   if (salary.kind === "range") {
     return `${money(salary.min ?? 0, salary.currency)}–${money(salary.max ?? 0, salary.currency)}${period}`
@@ -45,6 +46,10 @@ export function salaryText(salary: SalaryFigure): string {
     return `${money(salary.amount ?? 0, salary.currency)}${period} converted`
   }
   return `${money(salary.amount ?? 0, salary.currency)}${period}`
+}
+
+function showsStatedPosting(salary: SalaryFigure): boolean {
+  return (salary.kind === "range" || salary.kind === "single") && Boolean(salary.label?.trim())
 }
 
 export function SalaryDisplay({ salary, loading = false, error, className }: SalaryDisplayProps) {
@@ -60,13 +65,21 @@ export function SalaryDisplay({ salary, loading = false, error, className }: Sal
   }
   return (
     <p className={cn("text-role-body-small text-ink", className)}>
-      <span className="font-medium tabular-nums">{salaryText(salary)}</span>
+      <span className="font-medium tabular-nums">
+        {salaryText(salary)}
+        {showsStatedPosting(salary) ? " (stated in posting)" : ""}
+      </span>
       {salary.kind === "converted" ? (
         <span className="mt-0.5 block text-role-caption text-ink-muted">
           Converted from {salary.originalLabel ?? salary.convertedFrom}. Rate date {salary.rateDate}. This is not an estimate from other salaries.
         </span>
       ) : null}
-      {salary.kind === "stated" || salary.kind === "range" || salary.kind === "single" ? (
+      {showsStatedPosting(salary) ? (
+        <span className="mt-0.5 block text-role-caption text-ink-muted">
+          We show pay only when the posting states it. This is not an estimate.
+        </span>
+      ) : null}
+      {salary.kind === "stated" || ((salary.kind === "range" || salary.kind === "single") && !salary.label?.trim()) ? (
         <span className="mt-0.5 block text-role-caption text-ink-muted">
           This is the figure stored on the listing. It is not an estimate from other salaries.
         </span>

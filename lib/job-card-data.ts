@@ -201,7 +201,7 @@ export function recommendedJobToCardData(
     isEasyApply: options.isEasyApply,
     description: job.description,
     matchedSkills: job.matchedSkills,
-    missingSkills: options.missingSkills,
+    missingSkills: options.missingSkills ?? job.missingSkills,
     postedAtIso: job.postedAtIso,
     profileSkillCount: options.profileSkillCount,
     generatedSummary: options.generatedSummary ?? null,

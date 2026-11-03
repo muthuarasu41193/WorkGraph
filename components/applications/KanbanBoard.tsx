@@ -27,6 +27,12 @@ import {
   type Application,
   type ApplicationStatus,
 } from "@/lib/applications";
+import {
+  countFollowUpsNeedingAttention,
+  followUpState,
+  needsFollowUp,
+  todayDateOnly,
+} from "@/lib/applications-followup";
 import type { useApplications } from "@/hooks/use-applications";
 
 type ApplicationsApi = Pick<
@@ -98,12 +104,24 @@ export default function KanbanBoard({
   const [addOpen, setAddOpen] = useState(false);
   const [selected, setSelected] = useState<Application | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [needsFollowUpOnly, setNeedsFollowUpOnly] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
     }),
   );
+
+  const today = todayDateOnly();
+  const followUpCount = useMemo(
+    () => countFollowUpsNeedingAttention(applications, today),
+    [applications, today],
+  );
+
+  const visibleApplications = useMemo(() => {
+    if (!needsFollowUpOnly) return applications;
+    return applications.filter((app) => needsFollowUp(followUpState(app, today)));
+  }, [applications, needsFollowUpOnly, today]);
 
   const byStatus = useMemo(() => {
     const map: Record<ApplicationStatus, Application[]> = {
@@ -113,11 +131,11 @@ export default function KanbanBoard({
       offer: [],
       rejected: [],
     };
-    for (const app of applications) {
+    for (const app of visibleApplications) {
       map[app.status].push(app);
     }
     return map;
-  }, [applications]);
+  }, [visibleApplications]);
 
   const activeApplication = activeId ? applications.find((a) => a.id === activeId) : null;
 
@@ -161,6 +179,17 @@ export default function KanbanBoard({
     setDrawerOpen(true);
   }
 
+  const drawerApplication = useMemo(() => {
+    if (!selected) return null;
+    return applications.find((app) => app.id === selected.id) ?? selected;
+  }, [applications, selected]);
+
+  async function handleDrawerUpdate(id: string, patch: Parameters<typeof updateApplication>[1]) {
+    const saved = await updateApplication(id, patch);
+    setSelected(saved);
+    return saved;
+  }
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -170,10 +199,23 @@ export default function KanbanBoard({
             Drag cards across stages · {applications.length} total applications
           </p>
         </div>
-        <Button type="button" onClick={() => setAddOpen(true)}>
-          <Plus className={iconClass()} />
-          Add Application
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {followUpCount > 0 ? (
+            <Button
+              type="button"
+              variant={needsFollowUpOnly ? "secondary" : "outline"}
+              size="sm"
+              aria-pressed={needsFollowUpOnly}
+              onClick={() => setNeedsFollowUpOnly((value) => !value)}
+            >
+              Needs follow-up ({followUpCount})
+            </Button>
+          ) : null}
+          <Button type="button" onClick={() => setAddOpen(true)}>
+            <Plus className={iconClass()} />
+            Add Application
+          </Button>
+        </div>
       </div>
 
       {applications.length === 0 ? (
@@ -225,10 +267,10 @@ export default function KanbanBoard({
       />
 
       <ApplicationDetailDrawer
-        application={selected}
+        application={drawerApplication}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
-        onUpdate={updateApplication}
+        onUpdate={handleDrawerUpdate}
         onDelete={deleteApplication}
       />
     </>

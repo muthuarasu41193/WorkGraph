@@ -1,12 +1,19 @@
 "use client";
 
-import { Briefcase, EyeOff, Target } from "lucide-react";
+import { Briefcase, EyeOff, MessageCircle, Target } from "lucide-react";
 import InsightCard from "@/components/design-system/InsightCard";
 import type { HomeStatCards } from "@/lib/home-dashboard";
 import { dashboardHref } from "@/lib/dashboard-routes";
 
 export default function HomeStatCards({ stats }: { stats: HomeStatCards }) {
   const cards = [
+    {
+      title: "Follow-ups due",
+      score: stats.followUpsDue.toLocaleString("en-IN"),
+      description: "Gentle nudges on your application board",
+      icon: MessageCircle,
+      href: dashboardHref("applications"),
+    },
     {
       title: "New Jobs Matched",
       score: stats.matchedToday.toLocaleString("en-IN"),

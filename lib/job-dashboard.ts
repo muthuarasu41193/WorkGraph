@@ -80,6 +80,11 @@ export type RecommendedJobCard = {
   isCommunity: boolean;
   /** Profile skills that appear in title/description (lowercase for stable keys) */
   matchedSkills: string[];
+  /**
+   * Skills the posting names that this profile does not show.
+   * Set only for jobs already chosen for a page. Not a rank input.
+   */
+  missingSkills?: string[];
   /** Official apply URL when row comes from ATS ingest */
   applyUrl?: string | null;
 };
@@ -122,6 +127,8 @@ export type JobRow = {
   kind: string | null;
   classification: string | null;
   is_community: boolean | null;
+  /** Set when Prompt 6 scam/payment heuristics flag a listing. Optional until that column ships. */
+  payment_requested?: boolean | null;
 };
 
 const JOB_SELECT_COLUMNS =

@@ -14,6 +14,8 @@ import {
   loadHiddenJobsFeed,
   loadWalletSnapshot,
 } from "@/lib/home-dashboard";
+import { listApplicationsForUser } from "@/lib/applications-server";
+import { countFollowUpsNeedingAttention } from "@/lib/applications-followup";
 import type { JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
 import type { Profile } from "@/lib/types";
 import { getVaultHomeStats } from "@/lib/vault-server";
@@ -61,10 +63,16 @@ async function HomeStatsAndMatches(props: HomeDashboardProps) {
   const vaultHomePromise = supabaseConfigured()
     ? getVaultHomeStats(props.profile.id)
     : Promise.resolve({ views: 0, earningsInr: 0, rating: 0, ratingCount: 0 });
-  const [hidden, wallet, vaultHome] = await Promise.all([
+  const followUpsPromise = supabaseConfigured()
+    ? listApplicationsForUser()
+        .then((apps) => countFollowUpsNeedingAttention(apps))
+        .catch(() => 0)
+    : Promise.resolve(0);
+  const [hidden, wallet, vaultHome, followUpsDue] = await Promise.all([
     loadHiddenJobsFeed(5),
     loadWalletSnapshot(),
     vaultHomePromise,
+    followUpsPromise,
   ]);
   const data = buildHomeDashboardData({
     profile: props.profile,
@@ -76,6 +84,7 @@ async function HomeStatsAndMatches(props: HomeDashboardProps) {
     hiddenTotal: hidden.total,
     wallet,
     vaultEarningsInr: vaultHome.earningsInr,
+    followUpsDue,
   });
 
   return (

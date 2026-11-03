@@ -29,6 +29,7 @@ function remember(item: Item) {
 const QUICK: Item[] = [
   { id: "qa-jobs", label: "Search jobs", hint: "Quick action", href: "/jobs" },
   { id: "qa-tracker", label: "Open tracker", hint: "Quick action", href: "/tracker" },
+  { id: "qa-alerts", label: "Job alerts", hint: "Quick action", href: "/alerts" },
   { id: "qa-onboarding", label: "Continue onboarding", hint: "Quick action", href: "/onboarding" },
   { id: "qa-help", label: "Keyboard shortcuts", hint: "Quick action", action: "help" },
 ]
