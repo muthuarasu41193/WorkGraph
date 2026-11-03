@@ -48,6 +48,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Consent audit rows (your user id is removed; the audit row stays)",
   },
   {
+    table: "product_events",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "anonymise",
+    label: "Product funnel events (the link to your account is removed; the event row stays)",
+  },
+  {
     table: "payments",
     ownerColumn: "user_id",
     export: true,

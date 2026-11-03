@@ -18,6 +18,7 @@ import {
   type VaultListFilters,
   type VaultReview,
 } from "@/lib/vault";
+import { recordEvent } from "@/lib/metrics/record";
 import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
 import { logRouteError } from "@/lib/security/log";
 import { createServerSupabaseClient } from "@/lib/supabase";
@@ -288,6 +289,7 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
   }
 
   if (isVaultListingFree(experience.price_inr)) {
+    await recordEvent("vault_purchased", user.id, { amount_inr: 0, free: true });
     return {
       ok: true,
       unlocked: true,

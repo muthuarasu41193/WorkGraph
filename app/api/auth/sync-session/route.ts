@@ -66,5 +66,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: userError?.message ?? "Session invalid." }, { status: 401 });
   }
 
+  // Password signup returns a session immediately; treat a very new account as signup.
+  const createdAtMs = user.created_at ? Date.parse(user.created_at) : NaN;
+  if (Number.isFinite(createdAtMs) && Date.now() - createdAtMs < 15 * 60 * 1000) {
+    const { recordSignupOnce } = await import("@/lib/metrics/record");
+    await recordSignupOnce(user.id);
+  }
+
   return NextResponse.json({ ok: true, userId: user.id });
 }

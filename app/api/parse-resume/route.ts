@@ -11,6 +11,7 @@ import {
   toLegacyProfileFields,
   toStoredResumeIntelligence,
 } from "../../../lib/resume-intelligence";
+import { recordEvent } from "@/lib/metrics/record";
 import {
   isValidationError,
   parseAiParsedResume,
@@ -180,6 +181,10 @@ export async function POST(request: Request) {
     } catch {
       // Additive snapshot; profile save is the production path.
     }
+
+    await recordEvent("resume_uploaded", userId, {
+      profile_completeness,
+    });
 
     return NextResponse.json(
       {

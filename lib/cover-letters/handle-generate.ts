@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { recordEvent } from "@/lib/metrics/record";
 import { logErrorCode, logRouteError } from "@/lib/security/log";
 import { canUse, type Entitlement } from "@/lib/subscription/entitlements";
 import { recordUsage } from "@/lib/subscription/usage";
@@ -123,6 +124,9 @@ export async function handleCoverLetterGenerate(
         logErrorCode("cover-letters/generate", "usage_record_failed");
         logRouteError("cover-letters/generate", error);
       }
+      await recordEvent("cover_letter", auth.userId, {
+        warning_count: warnings.length,
+      });
       return NextResponse.json({ letter: generated.letter, warnings });
     } catch (err) {
       logRouteError("cover-letters/generate", err);

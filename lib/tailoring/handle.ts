@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requireCoverLetterSession, type CoverLetterSession } from "@/lib/cover-letters/session";
 import { fetchLiveJobByPublicId } from "@/lib/jobs-catalog";
+import { recordEvent } from "@/lib/metrics/record";
 import { logErrorCode, logRouteError } from "@/lib/security/log";
 import { canUse, type Entitlement } from "@/lib/subscription/entitlements";
 import { recordUsage } from "@/lib/subscription/usage";
@@ -157,6 +158,11 @@ export async function handleTailoringRequest(
         logErrorCode("tailoring", "usage_record_failed");
         logRouteError("tailoring", error);
       }
+
+      await recordEvent("tailoring_run", auth.userId, {
+        suggestion_count: result.suggestions.length,
+        gap_count: result.gaps.length,
+      });
 
       return NextResponse.json({
         suggestions: result.suggestions.map((item) => ({

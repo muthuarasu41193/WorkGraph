@@ -40,10 +40,16 @@ export async function GET(request: Request) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
       console.error("[auth/callback] exchangeCodeForSession:", error.message);
       return loginWith(error.message || "exchange_failed");
+    }
+
+    const userId = data.user?.id ?? data.session?.user?.id;
+    if (userId) {
+      const { recordSignupOnce } = await import("@/lib/metrics/record");
+      await recordSignupOnce(userId);
     }
   } catch (e) {
     const message = e instanceof Error ? e.message : "callback_failed";
