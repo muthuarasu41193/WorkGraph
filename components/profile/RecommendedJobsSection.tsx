@@ -35,11 +35,8 @@ import {
 } from "../../lib/job-listing-filters";
 import { LIVE_JOBS_CLIENT_FILTER_CAP } from "../../lib/jobs-catalog";
 import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "../../lib/job-match";
-<<<<<<< HEAD
-import { parseStatedSalary, statedSalaryFilterMeta } from "../../lib/salary-parse";
-=======
 import { extractJobSkills, missingSkills } from "../../lib/job-requirements";
->>>>>>> origin/main
+import { parseStatedSalary, statedSalaryFilterMeta } from "../../lib/salary-parse";
 import { sanitizeJobDescription } from "../../lib/job-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
