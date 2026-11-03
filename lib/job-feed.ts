@@ -79,18 +79,27 @@ export type JobCardView = {
   stale: boolean
 }
 
+function matchRequirements(job: RecommendedJobCard): { label: string; met: boolean }[] {
+  const matched = new Set(job.matchedSkills)
+  return [
+    ...job.matchedSkills.map((label) => ({ label, met: true })),
+    ...(job.missingSkills ?? []).filter((label) => !matched.has(label)).map((label) => ({ label, met: false })),
+  ]
+}
+
 export function jobCardView(job: RecommendedJobCard): JobCardView {
   const days = postedAgeDays(job.postedAtIso)
   const stale = days != null && days >= STALE_AFTER_DAYS
   const score = parseMatchPercent(job.matchLabel)
   const reason = job.matchLabel.replace(/^\d+% match ·\s*/, "") || "Not scored against a profile"
+  const requirements = matchRequirements(job)
   const match: MatchScoreProps =
     score == null
-      ? { score: 0, unscored: true, reason, requirements: job.matchedSkills.map((skill) => ({ label: skill, met: true })) }
+      ? { score: 0, unscored: true, reason, requirements }
       : {
           score,
           reason: job.matchedSkills.length > 0 ? `Overlaps ${job.matchedSkills.slice(0, 3).join(", ")}` : reason,
-          requirements: job.matchedSkills.map((skill) => ({ label: skill, met: true })),
+          requirements,
         }
   const trust: TrustIndicatorProps | undefined = !job.applyUrl
     ? { tone: "caution", reason: "No apply link is stored for this listing." }

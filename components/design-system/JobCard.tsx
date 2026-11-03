@@ -29,6 +29,8 @@ type Props = {
   onApplyClick?: () => void;
   /** Kept so callers can still pass it. Analyze Resume renders on the detail panel, not the card. */
   hasResume?: boolean;
+  /** Shown beside missing skills when the viewer has a resume. */
+  tailorHref?: string | null;
   className?: string;
   children?: ReactNode;
 };
@@ -133,6 +135,7 @@ export default function JobCard({
   onSave,
   onClick,
   onApplyClick,
+  tailorHref,
   className,
   children,
 }: Props) {
@@ -189,31 +192,30 @@ export default function JobCard({
       <div className="flex items-start gap-2.5">
         <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-sans text-role-body-small line-clamp-2 min-w-0 flex-1 font-semibold text-ink" title={job.title}>
-              {job.title}
-            </h3>
-            {job.matchPercent !== undefined && reason ? (
-              <div
-                className="max-w-56 shrink-0"
-                onClick={(event) => event.stopPropagation()}
-                onKeyDown={(event) => event.stopPropagation()}
-              >
-                <MatchScore
-                  score={job.matchPercent}
-                  reason={reason}
-                  tone="neutral"
-                  requirements={[
-                    ...matched.map((label) => ({ label, met: true })),
-                    ...missing.map((label) => ({ label, met: false })),
-                  ]}
-                />
-              </div>
-            ) : null}
-          </div>
+          <h3 className="font-sans text-role-body-small line-clamp-2 min-w-0 font-semibold text-ink" title={job.title}>
+            {job.title}
+          </h3>
           <p className="font-sans text-role-caption mt-0.5 truncate text-ink-muted" title={job.company}>
             {job.company}
           </p>
+          {job.matchPercent !== undefined && reason ? (
+            <div
+              className="mt-1"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <MatchScore
+                score={job.matchPercent}
+                reason={reason}
+                tone="neutral"
+                tailorHref={tailorHref}
+                requirements={[
+                  ...matched.map((label) => ({ label, met: true })),
+                  ...missing.filter((label) => !matched.includes(label)).map((label) => ({ label, met: false })),
+                ]}
+              />
+            </div>
+          ) : null}
           <div
             className="mt-1 flex flex-wrap items-baseline gap-x-2"
             onClick={(event) => event.stopPropagation()}
