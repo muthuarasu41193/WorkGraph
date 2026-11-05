@@ -507,6 +507,9 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --color-caution-wash: var(--caution-wash);
   --color-danger-wash: var(--danger-wash);
   --color-ink-wash: var(--ink-wash);
+  --color-highlight: var(--highlight);
+  --color-highlight-ink: var(--highlight-ink);
+  --color-highlight-wash: var(--highlight-wash);
   --color-scrim: var(--scrim);
 
   /* Aliases. Each one points at a semantic token so older class names keep working. */

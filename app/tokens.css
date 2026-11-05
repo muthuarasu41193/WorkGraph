@@ -1,34 +1,37 @@
 /* WorkGraph token definition. Color literals live in this file only.
-   Ledger palette: docs/ART_DIRECTION.md
+   Signal Stamp palette: docs/ART_DIRECTION.md
    lib/design-tokens.ts mirrors the values for email, charts, and OG images. */
 
 :root,
 [data-theme="light"] {
   color-scheme: light;
 
-  --surface: #f4f1ea;
-  --surface-raised: #fbf8f2;
-  --surface-sunken: #e7e2d6;
-  --ink: #1a1714;
-  --ink-muted: #5c564c;
-  --ink-subtle: #6e675c;
-  --hairline: #827c76;
-  --accent: #8e2e2e;
-  --accent-ink: #fbf8f2;
+  --surface: #f5f6f8;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e8ebf0;
+  --ink: #14181f;
+  --ink-muted: #4a5563;
+  --ink-subtle: #5b6572;
+  --hairline: #7a8490;
+  --accent: #a11f2b;
+  --accent-ink: #ffffff;
   --positive: #1b6b43;
   --caution: #8a5a10;
   --danger: #9b2c2c;
-  --accent-wash: #f6e6e4;
+  --accent-wash: #f8e8ea;
   --positive-wash: #e4f2ea;
   --caution-wash: #f8eed9;
   --danger-wash: #f8e6e3;
-  --ink-wash: #e7e2d6;
+  --ink-wash: #e8ebf0;
+  --highlight: #c48a00;
+  --highlight-ink: #14181f;
+  --highlight-wash: #fff6dc;
   /* Modal scrim stays dark in both themes. Opacity is applied by the utility. */
-  --scrim: #1a1714;
+  --scrim: #14181f;
 
   --shadow-flat: 0 0 #0000;
-  --shadow-raised: 0 1px 2px rgb(26 23 20 / 0.08);
-  --shadow-overlay: 0 12px 32px rgb(26 23 20 / 0.18);
+  --shadow-raised: 0 1px 2px rgb(20 24 31 / 0.08);
+  --shadow-overlay: 0 12px 32px rgb(20 24 31 / 0.18);
 
   --duration-fast: 120ms;
   --duration-base: 180ms;
@@ -96,24 +99,27 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --surface: #141210;
-    --surface-raised: #1e1b17;
-    --surface-sunken: #0e0c0a;
-    --ink: #f4efe6;
-    --ink-muted: #c9c1b4;
-    --ink-subtle: #a89f91;
-    --hairline: #6e6862;
-    --accent: #e7a9a2;
-    --accent-ink: #1a1210;
+    --surface: #101418;
+    --surface-raised: #1a2028;
+    --surface-sunken: #0b0e12;
+    --ink: #eef2f6;
+    --ink-muted: #c5cdd6;
+    --ink-subtle: #9aa5b2;
+    --hairline: #6b7a8a;
+    --accent: #f0a8ae;
+    --accent-ink: #1a1214;
     --positive: #8fcbb0;
     --caution: #e2c48a;
     --danger: #f0b2aa;
-    --accent-wash: #3a2422;
+    --accent-wash: #3a2226;
     --positive-wash: #1a2e24;
     --caution-wash: #332815;
     --danger-wash: #3a2220;
-    --ink-wash: #2a2622;
-    --scrim: #1a1714;
+    --ink-wash: #24303a;
+    --highlight: #e8c45a;
+    --highlight-ink: #14181f;
+    --highlight-wash: #2e2810;
+    --scrim: #14181f;
 
     --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4);
     --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);
@@ -124,24 +130,27 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --surface: #141210;
-  --surface-raised: #1e1b17;
-  --surface-sunken: #0e0c0a;
-  --ink: #f4efe6;
-  --ink-muted: #c9c1b4;
-  --ink-subtle: #a89f91;
-  --hairline: #6e6862;
-  --accent: #e7a9a2;
-  --accent-ink: #1a1210;
+  --surface: #101418;
+  --surface-raised: #1a2028;
+  --surface-sunken: #0b0e12;
+  --ink: #eef2f6;
+  --ink-muted: #c5cdd6;
+  --ink-subtle: #9aa5b2;
+  --hairline: #6b7a8a;
+  --accent: #f0a8ae;
+  --accent-ink: #1a1214;
   --positive: #8fcbb0;
   --caution: #e2c48a;
   --danger: #f0b2aa;
-  --accent-wash: #3a2422;
+  --accent-wash: #3a2226;
   --positive-wash: #1a2e24;
   --caution-wash: #332815;
   --danger-wash: #3a2220;
-  --ink-wash: #2a2622;
-  --scrim: #1a1714;
+  --ink-wash: #24303a;
+  --highlight: #e8c45a;
+  --highlight-ink: #14181f;
+  --highlight-wash: #2e2810;
+  --scrim: #14181f;
 
   --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);

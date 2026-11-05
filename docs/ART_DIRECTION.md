@@ -1,9 +1,9 @@
 # WorkGraph art direction
 
-**Date:** 23 October 2026
-**Status:** Default chosen and being built. The owner asked this run to implement Group A without pausing for a separate approval. **Ledger is the default.** Signal Desk and Field Guide are recorded in full so a later pass can switch the token file without inventing a new visual argument.
+**Date:** 5 November 2026 (Signal Stamp default); Ledger recorded 23 October 2026  
+**Status:** **Signal Stamp is the default.** Token values in `app/tokens.css` implement it. Ledger, Signal Desk, and Field Guide remain recorded so a later pass can switch the token file without inventing a new visual argument.
 
-The audience this has to serve: people looking for work, many recently laid off or displaced by AI, many outside the US, often on a mid-range Android phone in daylight. They are stressed, they have been overpromised by AI tools, and they are leaving LinkedIn because it feels like performative work. The interface should feel like a good reference book or a well-made financial dashboard: calm, factual, fast, adult.
+The audience this has to serve: people looking for work, many recently laid off or displaced by AI, many outside the US, often on a mid-range Android phone in daylight. They are stressed, they have been overpromised by AI tools, and they are leaving LinkedIn because it feels like performative work. The interface should feel like a well-made financial tool: calm, factual, fast, adult — colorful only where it earns trust, never carnival.
 
 ## What we will not do
 
@@ -21,7 +21,54 @@ These apply to every direction, including the one we build.
 
 ---
 
-## 1. Ledger (default)
+## 1. Signal Stamp (default)
+
+### Concept
+
+A cool professional desk with a deep red stamp and rare gold signal. The page is crisp cool gray-white, not cream paper. Red owns primary actions, active nav, and focus. Gold (`highlight`) marks live/energy moments only — never body text, never large fills. Type, spacing, radius, and motion stay the Ledger instruments; only the paint changes.
+
+### Why this audience
+
+Job seekers need color that signals seriousness, not a purple AI toy and not a beige brochure. Cool surfaces reduce warmth fatigue on long sessions. Deep red (`#A11F2B`) keeps brand recognition and contrast on white. Gold (`#C48A00`) is restrained enough to feel editorial, not warning-tape yellow. Caution amber stays a separate token so “stale posting” never reads as “brand celebration.”
+
+### What it deliberately rejects
+
+Cream-and-terracotta “AI default” palettes, purple/indigo gradients, red–yellow gradients, brand glow, and painting every chip gold. Also rejects neon yellow text on white (fails contrast).
+
+### Palette
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `surface` | `#F5F6F8` | `#101418` | Page canvas |
+| `surface-raised` | `#FFFFFF` | `#1A2028` | Sheets, inputs, dialogs |
+| `surface-sunken` | `#E8EBF0` | `#0B0E12` | Wells, pressed |
+| `ink` | `#14181F` | `#EEF2F6` | Primary text |
+| `ink-muted` | `#4A5563` | `#C5CDD6` | Metadata |
+| `ink-subtle` | `#5B6572` | `#9AA5B2` | Captions (≥4.5:1 on surface) |
+| `hairline` | `#7A8490` | `#6B7A8A` | Rules (≥3:1 on surfaces) |
+| `accent` | `#A11F2B` | `#F0A8AE` | Stamp — actions, focus |
+| `accent-ink` | `#FFFFFF` | `#1A1214` | On accent |
+| `accent-wash` | `#F8E8EA` | `#3A2226` | Soft red selection |
+| `highlight` | `#C48A00` | `#E8C45A` | Gold — Live / rare energy |
+| `highlight-ink` | `#14181F` | `#14181F` | On gold fills |
+| `highlight-wash` | `#FFF6DC` | `#2E2810` | Soft gold wash |
+| `positive` | `#1B6B43` | `#8FCBB0` | Met / success |
+| `caution` | `#8A5A10` | `#E2C48A` | Stale / thin — not brand gold |
+| `danger` | `#9B2C2C` | `#F0B2AA` | Failure only |
+
+### Type, spacing, radius, elevation, density
+
+Same as Ledger (Newsreader + Public Sans + JetBrains Mono; 4px spacing scale; control/card/overlay radii; flat/raised/overlay shadows; scanning vs reading density). Signal Stamp changes color only.
+
+### Usage
+
+- Red ≈ 90% of brand color on screen.
+- Gold only for Live and intentional energy marks (`bg-highlight-wash text-highlight`).
+- No gradients between red and gold. No glow under buttons.
+
+---
+
+## 2. Ledger (recorded alternate)
 
 ### Concept
 
@@ -169,7 +216,7 @@ Rows are rules, not cards. The weak match is not smaller and not greyed into unr
 
 ---
 
-## 2. Signal Desk
+## 3. Signal Desk
 
 ### Concept
 
@@ -261,7 +308,7 @@ Numbers sit in a right-hand column so they align. There is no card boundary, onl
 
 ---
 
-## 3. Field Guide
+## 4. Field Guide
 
 ### Concept
 
@@ -378,10 +425,8 @@ One role per block, stacked, because this direction assumes a phone first and re
 
 ## Recommendation
 
-**Build Ledger.**
+**Build Signal Stamp.**
 
-Signal Desk is the right tool for a desk worker and the wrong default for someone in Lagos or Bengaluru on a bus, who does not want a blotter. Field Guide is the most readable and the kindest, and it is also the loosest: fewer roles on screen, and it spends the brand’s only red on errors, which throws away recognition the mark already has.
+The owner asked for a cooler, more colorful professional surface: deep red leading, gold as a rare secondary, crisp white canvas — without a layout rewrite and without an AI-gradient look. Signal Stamp keeps Ledger’s type, density, and motion discipline and only repaints the tokens.
 
-Ledger keeps the oxide red as a stamp, gives titles the weight of a document, and gives the UI a sans face that was designed for public reading. Hairlines replace the shared grey shadow, so a job row, a warning, and a dialog are different objects. It is calm without being soft, and it still scans.
-
-The owner instructed this run to proceed without waiting. **Ledger is the chosen default.** Token values in `app/tokens.css` implement the Ledger tables above. Switching later means replacing that file, not redrawing components.
+Ledger remains the warm-paper alternate. Signal Desk and Field Guide remain recorded for a full token-file switch later. **Signal Stamp is the chosen default.** Values live in `app/tokens.css`; `lib/design-tokens.ts` mirrors them for email, charts, and OG images.
