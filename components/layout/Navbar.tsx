@@ -172,17 +172,23 @@ export default function Navbar() {
             </ul>
 
             <div className="hidden items-center gap-3 md:flex">
+              <Link
+                href="/waitlist"
+                className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-ink-muted transition-colors duration-base ease-out hover:text-ink"
+              >
+                Join the waitlist
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-fg-secondary hover:text-fg-primary"
+                className="min-h-11 text-ink-muted hover:text-ink"
                 asChild
               >
                 <Link href="/login">Sign in</Link>
               </Button>
               <Button
                 size="sm"
-                className="h-10 rounded-full bg-brand px-5 text-accent-ink hover:bg-brand-700"
+                className="min-h-11 rounded-control bg-accent px-5 text-accent-ink hover:bg-accent"
                 asChild
               >
                 <Link href="/signup">Get early access</Link>
@@ -250,14 +256,21 @@ export default function Navbar() {
                 </ul>
 
                 <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6">
-                  <Button variant="outline" size="lg" className="h-12 w-full rounded-full" asChild>
+                  <Link
+                    href="/waitlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex min-h-11 items-center justify-center text-sm font-medium text-ink-muted hover:text-ink"
+                  >
+                    Join the waitlist
+                  </Link>
+                  <Button variant="outline" size="lg" className="h-12 w-full rounded-control" asChild>
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       Sign in
                     </Link>
                   </Button>
                   <Button
                     size="lg"
-                    className="h-12 w-full rounded-full bg-brand text-accent-ink hover:bg-brand-700"
+                    className="h-12 w-full rounded-control bg-accent text-accent-ink"
                     asChild
                   >
                     <Link href="/signup" onClick={() => setMobileOpen(false)}>
