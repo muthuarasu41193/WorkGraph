@@ -10,11 +10,14 @@ export default async function PricingPage() {
   const session = await getSessionUser()
   return (
     <main id="main-content" tabIndex={-1} className="mx-auto max-w-5xl px-4 py-8">
-      <Text as="h1" role="title">Pricing</Text>
-      <Text role="body" className="mt-3 max-w-2xl text-ink-muted">
-        WorkGraph Pass is a one-time payment in INR. It does not auto-renew. Pro stays a profile flag with no public price. The enforced limit shown here is cover letters per month.
+      <Text as="h1" role="title">
+        Pricing for job seekers
       </Text>
-      <div className="mt-6">
+      <Text role="body" className="mt-3 max-w-2xl text-ink-muted">
+        Start free. Buy a WorkGraph Pass when you want unlimited cover letters, tailoring, and daily
+        alerts. Passes are one-time payments in INR through Razorpay. They do not auto-renew.
+      </Text>
+      <div className="mt-8">
         <PricingTiers signedIn={Boolean(session)} />
       </div>
     </main>

@@ -60,10 +60,13 @@ export function PassCheckout({
   signedIn,
   options,
   taxWording,
+  /** Plain sentence rendered beside each buy control. */
+  policyBesideBuy = "Pause or cancel the day you get hired",
 }: {
   signedIn: boolean;
   options: PassCheckoutOption[];
   taxWording: string;
+  policyBesideBuy?: string;
 }) {
   const [loadScript, setLoadScript] = useState(false);
   const [busyId, setBusyId] = useState<PassPlanId | null>(null);
@@ -164,21 +167,26 @@ export function PassCheckout({
             <Text role="body">{option.label}</Text>
             <Text role="subheading">{option.priceLabel}</Text>
             <Text role="caption" className="text-ink-muted">{taxWording}</Text>
-            {signedIn ? (
-              <Button
-                type="button"
-                className="min-h-11"
-                disabled={busyId !== null}
-                loading={busyId === option.id}
-                onClick={() => void buy(option)}
-              >
-                Buy
-              </Button>
-            ) : (
-              <Button asChild variant="secondary" className="min-h-11">
-                <Link href="/login?next=/pricing">Sign in to buy</Link>
-              </Button>
-            )}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              {signedIn ? (
+                <Button
+                  type="button"
+                  className="min-h-11"
+                  disabled={busyId !== null}
+                  loading={busyId === option.id}
+                  onClick={() => void buy(option)}
+                >
+                  Buy
+                </Button>
+              ) : (
+                <Button asChild variant="secondary" className="min-h-11">
+                  <Link href="/login?next=/pricing">Sign in to buy</Link>
+                </Button>
+              )}
+              <Text role="body-small" className="text-ink-muted">
+                {policyBesideBuy}
+              </Text>
+            </div>
           </li>
         ))}
       </ul>

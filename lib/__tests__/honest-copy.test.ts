@@ -14,6 +14,7 @@ describe("honest pricing and privacy copy", () => {
       read("app/(marketing)/pricing/page.tsx"),
       read("components/marketing/PricingTiers.tsx"),
       read("components/marketing/PassCheckout.tsx"),
+      read("components/marketing/SeekerPricing.tsx"),
       read("lib/billing/plans.ts"),
     ].join("\n");
     assert.doesNotMatch(pricing, /stripe/i);
@@ -26,6 +27,9 @@ describe("honest pricing and privacy copy", () => {
     assert.match(pricing, /Razorpay/);
     assert.match(pricing, /never resume data/);
     assert.match(pricing, /cover letters per month/);
+    assert.match(pricing, /Pause or cancel the day you get hired/);
+    assert.doesNotMatch(pricing, /only \d+ left/i);
+    assert.doesNotMatch(pricing, /countdown/i);
   });
 
   it("does not mention Stripe on the privacy page or in the subprocessor list it renders", () => {
