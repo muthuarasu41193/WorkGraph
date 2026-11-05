@@ -1,12 +1,13 @@
 "use client"
 
-import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { FreshnessIndicator, type FreshnessIndicatorProps } from "@/components/product/FreshnessIndicator"
 import { MatchScore, type MatchScoreProps } from "@/components/product/MatchScore"
 import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay"
 import { SourceAttribution, type SourceAttributionProps } from "@/components/product/SourceAttribution"
 import { TrustIndicator, type TrustIndicatorProps } from "@/components/product/TrustIndicator"
+import { ApplySafetyNotice } from "@/components/trust/ApplySafetyNotice"
+import { EmployerMark } from "@/components/trust/EmployerMark"
 
 /**
  * Scanning card for the public jobs feed. Compact and expanded share the same actions, which stay in the tab order
@@ -96,13 +97,7 @@ export function ProductJobCard({
         <h2 className="text-role-body line-clamp-2 font-semibold text-ink" title={title}>
           {title}
         </h2>
-        <p className="text-role-caption truncate text-ink" title={company}>
-          {company}
-          {" · "}
-          <Link href="/trust#verified-employer" className={companyVerified ? "text-positive" : "text-ink-muted"}>
-            {companyVerified ? "Company domain verified" : "Company not verified"}
-          </Link>
-        </p>
+        <EmployerMark company={company} verified={companyVerified} className="text-role-caption" />
         <p className="text-role-caption truncate text-ink-subtle" title={`${location} · ${remoteType}`}>
           {location} · {remoteType}
         </p>
@@ -147,6 +142,7 @@ export function ProductJobCard({
           {applyLabel}
         </button>
       </div>
+      {onApply ? <ApplySafetyNotice className="mt-2" /> : null}
     </article>
   )
 }
