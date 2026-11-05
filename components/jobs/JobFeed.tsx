@@ -1,10 +1,12 @@
 "use client"
 
-import { useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
+import { useVirtualizer } from "@tanstack/react-virtual"
 import { ProductJobCard } from "@/components/product/JobCard"
+import { JobFeedSkeleton, JOB_FEED_ROW_HEIGHT } from "@/components/jobs/JobFeedSkeleton"
 import { EmptyState } from "@/components/states/EmptyState"
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Text } from "@/components/ui/text"
@@ -16,19 +18,28 @@ import {
   JOB_FEED_PAGE_SIZE,
   jobCardView,
   parseFeedSort,
+  relaxQuery,
   sortFeedJobs,
   type FeedSort,
 } from "@/lib/job-feed"
 import { attachMissingSkills } from "@/lib/job-requirements"
 import { dismissedSnapshot, readDismissedJobs, subscribeDismissedJobs, writeDismissedJobs } from "@/lib/dismissed-jobs"
 import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
+import {
+  readRecentSearches,
+  rememberRecentSearch,
+  recentSearchesSnapshot,
+  subscribeRecentSearches,
+} from "@/lib/recent-searches"
+import { LANGUAGE_EMPTY_HINT, queryLooksNonLatin } from "@/lib/search-language"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { formatJobSource } from "@/lib/job-card-data"
 import { sanitizeJobDescription } from "@/lib/job-summary"
 import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
-const ROW_HEIGHT = 420
+const ROW_HEIGHT = JOB_FEED_ROW_HEIGHT
+const VIRTUALIZE_AFTER = 50
 const UNDO_MS = 5000
 
 export type AppliedRef = { company: string; role: string; job_url: string | null }
@@ -147,16 +158,23 @@ export function JobFeed({
     () => "",
   )
   const dismissedRaw = useSyncExternalStore(subscribeDismissedJobs, dismissedSnapshot, () => "")
+  const recentRaw = useSyncExternalStore(subscribeRecentSearches, recentSearchesSnapshot, () => "")
   const savedIds = useMemo(() => idsFromStorage(savedRaw), [savedRaw])
   const dismissedIds = useMemo(() => dismissedIdsFromStorage(dismissedRaw), [dismissedRaw])
+  const recentSearches = useMemo(() => {
+    void recentRaw
+    return readRecentSearches()
+  }, [recentRaw])
   const params = useMemo(() => new URLSearchParams(search), [search])
   const sort = parseFeedSort(params.get("sort") ?? undefined)
+  const feedSort: FeedSort = sort === "verified" ? "newest" : sort === "salary" ? "newest" : sort
   const [query, setQuery] = useState(params.get("q") ?? "")
   const [extra, setExtra] = useState<RecommendedJobCard[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(initial.hasMore)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [retrying, setRetrying] = useState(false)
   const [emptyMark, setEmptyMark] = useState<Record<string, number>>({})
   const [focus, setFocus] = useState(0)
   const [focusAnnouncement, setFocusAnnouncement] = useState("")
@@ -170,10 +188,10 @@ export function JobFeed({
   const [pendingDismiss, setPendingDismiss] = useState<Record<string, string>>({})
   const [trackJob, setTrackJob] = useState<RecommendedJobCard | null>(null)
   const [trackedUrls, setTrackedUrls] = useState<string[]>([])
+  const [touchPrefetch, setTouchPrefetch] = useState(false)
   const timer = useRef<number | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
-  const [scrollTop, setScrollTop] = useState(0)
-  const [viewport, setViewport] = useState(640)
+  const prefetched = useRef<Set<string>>(new Set())
 
   const jobs = useMemo(() => {
     const seen = new Set<string>()
@@ -190,10 +208,11 @@ export function JobFeed({
       if (payStated && view.salary.kind === "undisclosed") return false
       return true
     })
-    return sortFeedJobs(filtered, sort === "verified" ? "newest" : sort)
-  }, [initial.jobs, extra, dismissedIds, sort, params])
+    return sortFeedJobs(filtered, feedSort === "match" ? "match" : "newest")
+  }, [initial.jobs, extra, dismissedIds, feedSort, params])
 
   const rows = jobs.map((job) => ({ job, pending: Object.prototype.hasOwnProperty.call(pendingDismiss, job.id) }))
+  const useVirtual = rows.length > VIRTUALIZE_AFTER
 
   useLayoutEffect(() => {
     if (sessionStorage.getItem("wg-jobs-restore") !== "1") return
@@ -201,6 +220,26 @@ export function JobFeed({
     const top = Number(sessionStorage.getItem("wg-jobs-scroll") ?? "")
     if (listRef.current && Number.isFinite(top)) listRef.current.scrollTop = top
   }, [])
+
+  useEffect(() => {
+    const media = window.matchMedia("(hover: none)")
+    const sync = () => setTouchPrefetch(media.matches)
+    sync()
+    media.addEventListener("change", sync)
+    return () => media.removeEventListener("change", sync)
+  }, [])
+
+  useEffect(() => {
+    const q = params.get("q")?.trim()
+    if (q) rememberRecentSearch(q, params.toString())
+  }, [params])
+
+  const virtualizer = useVirtualizer({
+    count: useVirtual ? rows.length : 0,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 4,
+  })
 
   function rememberList(nextJobs: RecommendedJobCard[]) {
     sessionStorage.setItem("wg-jobs-ids", JSON.stringify(nextJobs.map((job) => job.id)))
@@ -210,6 +249,8 @@ export function JobFeed({
 
   function pushParams(next: URLSearchParams) {
     const value = next.toString()
+    const q = next.get("q")?.trim()
+    if (q) rememberRecentSearch(q, value)
     router.replace(value ? `/jobs?${value}` : "/jobs", { scroll: false })
   }
 
@@ -388,6 +429,10 @@ export function JobFeed({
     setFocus(next)
     const job = rows[next]?.job
     if (job) setFocusAnnouncement(feedFocusAnnouncement(job.title, job.company, next, rows.length))
+    if (useVirtual) {
+      virtualizer.scrollToIndex(next, { align: "auto" })
+      return
+    }
     const node = listRef.current
     if (!node) return
     const top = next * ROW_HEIGHT
@@ -395,7 +440,19 @@ export function JobFeed({
   }
 
   function prefetchJob(id: string) {
+    if (prefetched.current.has(id)) return
+    prefetched.current.add(id)
     router.prefetch(`/jobs/${encodeURIComponent(id)}`)
+  }
+
+  async function retryFeed() {
+    setRetrying(true)
+    setLoadError(null)
+    try {
+      router.refresh()
+    } finally {
+      window.setTimeout(() => setRetrying(false), 400)
+    }
   }
 
   function onListKey(event: React.KeyboardEvent) {
@@ -420,9 +477,31 @@ export function JobFeed({
     }
   }
 
-  const start = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - 2)
-  const end = Math.min(rows.length, Math.ceil((scrollTop + viewport) / ROW_HEIGHT) + 3)
-  const visible = rows.slice(start, end)
+  const broaderSuggestions = useMemo(() => {
+    const suggestions: { label: string; href: string }[] = []
+    const q = params.get("q")?.trim()
+    if (q) {
+      const relaxed = relaxQuery(q)
+      if (relaxed) {
+        const next = new URLSearchParams(params)
+        next.set("q", relaxed)
+        suggestions.push({ label: `Search “${relaxed}”`, href: `/jobs?${next}` })
+      }
+      suggestions.push({ label: "Clear the search text", href: (() => {
+        const next = new URLSearchParams(params)
+        next.delete("q")
+        const value = next.toString()
+        return value ? `/jobs?${value}` : "/jobs"
+      })() })
+    }
+    if (params.get("locMode") || params.get("date") || params.get("pay") || params.get("hideClosed") || params.get("src") || params.get("type") || params.get("loc") || params.get("company")) {
+      suggestions.push({ label: "Search without these filters", href: q ? `/jobs?q=${encodeURIComponent(q)}` : "/jobs" })
+    }
+    if (suggestions.length === 0) {
+      suggestions.push({ label: "Browse newest roles", href: "/jobs" })
+    }
+    return suggestions.slice(0, 4)
+  }, [params])
 
   const filterBody = (
     <div className="space-y-4">
@@ -504,59 +583,59 @@ export function JobFeed({
   )
 
   return (
-    <div className="flex min-h-[70vh] flex-col gap-3 p-3" onKeyDown={onListKey}>
-      <div className="flex flex-wrap items-end gap-2">
-        <label className="min-w-0 flex-1">
-          <Text role="caption" className="text-ink-muted">Search roles</Text>
-          <Input className="mt-1 min-h-11" value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Title, skill, or company" aria-label="Search roles" />
-        </label>
-        <label className="text-role-caption text-ink-muted">
-          Sort
-          <select
-            className="mt-1 block min-h-11 rounded-control border border-hairline bg-surface-raised px-2 text-role-body-small text-ink"
-            value={sort}
-            aria-label="Sort roles"
-            onChange={(event) => {
-              const next = currentParams()
-              const value = event.target.value
-              if (value === "newest") next.delete("sort")
-              else next.set("sort", value)
-              pushParams(next)
-            }}
-          >
-            <option value="newest">Newest posted</option>
-            <option value="match">Best match</option>
-            <option value="salary">Salary</option>
-            <option value="verified" disabled>Most recently verified — no verification time is stored</option>
-          </select>
-        </label>
-        <Button type="button" variant="outline" className="min-h-11 xl:hidden" onClick={() => setFiltersOpen(true)}>Filters</Button>
-        <Button type="button" variant="outline" className="hidden min-h-11 xl:inline-flex" onClick={() => {
-          window.localStorage.setItem("wg-jobs-rail", railClosed ? "open" : "closed")
-          window.dispatchEvent(new Event("wg-jobs-rail"))
-        }}>{railClosed ? "Show filters" : "Hide filters"}</Button>
+    <div className="flex min-h-[70vh] flex-col gap-3" onKeyDown={onListKey}>
+      <div className="sticky top-0 z-sticky border-b border-hairline bg-surface/95 px-3 py-3 backdrop-blur-sm motion-reduce:backdrop-blur-none">
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="min-w-0 flex-1">
+            <Text role="caption" className="text-ink-muted">Search roles</Text>
+            <Input className="mt-1 min-h-11" value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Title, skill, or company" aria-label="Search roles" />
+          </label>
+          <label className="text-role-caption text-ink-muted">
+            Sort
+            <select
+              className="mt-1 block min-h-11 rounded-control border border-hairline bg-surface-raised px-2 text-role-body-small text-ink"
+              value={feedSort === "match" ? "match" : "newest"}
+              aria-label="Sort roles"
+              onChange={(event) => {
+                const next = currentParams()
+                const value = event.target.value
+                if (value === "newest") next.delete("sort")
+                else next.set("sort", "match")
+                pushParams(next)
+              }}
+            >
+              <option value="newest">Newest</option>
+              <option value="match">Most relevant</option>
+            </select>
+          </label>
+          <Button type="button" variant="outline" className="min-h-11 xl:hidden" onClick={() => setFiltersOpen(true)}>Filters</Button>
+          <Button type="button" variant="outline" className="hidden min-h-11 xl:inline-flex" onClick={() => {
+            window.localStorage.setItem("wg-jobs-rail", railClosed ? "open" : "closed")
+            window.dispatchEvent(new Event("wg-jobs-rail"))
+          }}>{railClosed ? "Show filters" : "Hide filters"}</Button>
+        </div>
+        {feedSort === "match" && skills.length === 0 ? <Text role="caption" className="mt-2 text-ink-muted">Most relevant needs skills on your profile. Showing newest.</Text> : null}
+        {initial.relaxedQuery && initial.originalQuery ? (
+          <Text role="body-small" className="mt-2">No exact matches for “{initial.originalQuery}”. Showing results for “{initial.relaxedQuery}”.</Text>
+        ) : null}
+        <div className="mt-3 flex gap-2 overflow-x-auto motion-reduce:scroll-auto">
+          {chips.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              className={cn(
+                "inline-flex min-h-11 shrink-0 items-center rounded-full border px-3 text-role-caption motion-reduce:transition-none",
+                chip.active ? "border-accent bg-accent-wash text-accent" : "border-hairline bg-surface-raised text-ink",
+              )}
+              onClick={() => void applyParams(chip.id, chip.params, chip.active)}
+            >
+              {chip.label}
+              {emptyMark[chip.id] === 0 ? " · 0" : ""}
+            </button>
+          ))}
+        </div>
       </div>
-      {sort === "salary" ? <Text role="caption" className="text-ink-muted">Salary sort uses the figure written in the posting. Roles that do not state pay stay at the end. Currencies and hourly rates are not converted.</Text> : null}
-      {sort === "match" && skills.length === 0 ? <Text role="caption" className="text-ink-muted">Best match needs skills on your profile. Showing newest posted.</Text> : null}
-      {initial.relaxedQuery && initial.originalQuery ? (
-        <Text role="body-small">No exact matches for “{initial.originalQuery}”. Showing results for “{initial.relaxedQuery}”.</Text>
-      ) : null}
-      <div className="flex gap-2 overflow-x-auto">
-        {chips.map((chip) => (
-          <button
-            key={chip.id}
-            type="button"
-            className={cn(
-              "inline-flex min-h-11 shrink-0 items-center rounded-full border px-3 text-role-caption",
-              chip.active ? "border-accent bg-accent-wash text-accent" : "border-hairline bg-surface-raised text-ink",
-            )}
-            onClick={() => void applyParams(chip.id, chip.params, chip.active)}
-          >
-            {chip.label}
-            {emptyMark[chip.id] === 0 ? " · 0" : ""}
-          </button>
-        ))}
-      </div>
+      <div className="flex flex-col gap-3 px-3 pb-3">
       <div className="flex flex-wrap items-center gap-2">
         {appliedChips.map((chip) => (
           <button key={chip.id} type="button" className="inline-flex min-h-11 items-center rounded-full border border-hairline px-3 text-role-caption" onClick={() => clearChip(chip.id)}>
@@ -662,7 +741,7 @@ export function JobFeed({
       </div>
       <Text role="body-small" aria-live="polite">
         {initial.error
-          ? initial.error
+          ? "Roles could not be loaded"
           : params.get("pay") === "stated" || params.get("hideClosed") === "1"
             ? `${jobs.length.toLocaleString("en-US")} loaded roles match these trust filters. The index still has ${initial.total.toLocaleString("en-US")} roles.`
             : `${initial.total.toLocaleString("en-US")} roles`}
@@ -678,83 +757,130 @@ export function JobFeed({
           aria-keyshortcuts="j k Enter s x"
           aria-describedby="job-feed-keys"
           className="h-[70vh] overflow-auto rounded-card border border-hairline bg-surface outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          onScroll={(event) => {
-            setScrollTop(event.currentTarget.scrollTop)
-            setViewport(event.currentTarget.clientHeight)
-          }}
         >
-          {initial.error ? null : rows.length === 0 ? (
-            <div className="p-4">
-              {appliedChips[0] ? (
-                <EmptyState
-                  title="No roles match these filters"
-                  reason={`${appliedChips[0].label} is the filter hiding results.`}
-                  actionLabel={`Remove ${appliedChips[0].label}`}
-                  onAction={() => clearChip(appliedChips[0].id)}
-                />
-              ) : (
-                <EmptyState
-                  title="No roles are listed"
-                  reason="The index returned an empty page for this view."
-                  actionLabel="Reload the index"
-                  onAction={() => router.refresh()}
-                />
-              )}
+          {initial.error ? (
+            <div className="space-y-3 p-4">
+              <EmptyState
+                title="Roles could not be loaded"
+                reason="The jobs request did not finish. Your filters are unchanged. Try again."
+                actionLabel={retrying ? "Trying again" : "Try again"}
+                onAction={() => void retryFeed()}
+              />
+              <Text role="caption" className="text-ink-muted">
+                WorkGraph could not reach the job index. Nothing on this page was lost.
+              </Text>
             </div>
-          ) : (
-            <div className="relative" style={{ height: rows.length * ROW_HEIGHT }}>
-              {visible.map((row, index) => {
-                const absolute = start + index
-                const view = jobCardView(attachMissingSkills(row.job, skills))
-                const saved = savedIds.has(row.job.id)
-                const applied = isApplied(row.job, applications) || (row.job.applyUrl ? trackedUrls.includes(row.job.applyUrl) : false)
-                const notes = [saved ? "Saved on this device" : null, applied ? "In your tracker" : null].filter(Boolean).join(" · ")
+          ) : rows.length === 0 ? (
+            <div className="space-y-4 p-4">
+              {queryLooksNonLatin(params.get("q") ?? "") ? (
+                <p className="rounded-card border border-hairline bg-surface-sunken px-3 py-2 text-role-body-small text-ink" role="status">
+                  {LANGUAGE_EMPTY_HINT}
+                </p>
+              ) : null}
+              <EmptyState
+                title={appliedChips[0] ? "No roles match these filters" : "No roles matched that search"}
+                reason={
+                  appliedChips[0]
+                    ? `${appliedChips[0].label} is hiding results. Try a broader search below.`
+                    : "Try a broader role or skill, or open a recent search."
+                }
+                actionLabel={appliedChips[0] ? `Remove ${appliedChips[0].label}` : "Browse newest roles"}
+                onAction={appliedChips[0] ? () => clearChip(appliedChips[0].id) : () => pushParams(new URLSearchParams())}
+              />
+              <div>
+                <Text role="caption" className="text-ink-muted">Broader searches</Text>
+                <ul className="mt-2 space-y-1" role="list">
+                  {broaderSuggestions.map((item) => (
+                    <li key={item.href + item.label}>
+                      <a href={item.href} className="inline-flex min-h-11 items-center text-role-body-small text-accent">
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {recentSearches.length > 0 ? (
+                <div>
+                  <Text role="caption" className="text-ink-muted">Recent searches</Text>
+                  <ul className="mt-2 space-y-1" role="list">
+                    {recentSearches.map((item) => (
+                      <li key={item.id}>
+                        <button
+                          type="button"
+                          className="inline-flex min-h-11 items-center text-role-body-small text-ink"
+                          onClick={() => {
+                            setQuery(item.q)
+                            router.replace(item.query ? `/jobs?${item.query}` : "/jobs", { scroll: false })
+                          }}
+                        >
+                          {item.q}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          ) : useVirtual ? (
+            <div className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const row = rows[virtualRow.index]
+                if (!row) return null
                 return (
                   <div
                     key={row.job.id}
-                    className={cn("absolute inset-x-0 px-2 py-2", absolute === focus && "ring-2 ring-inset ring-accent")}
-                    style={{ top: absolute * ROW_HEIGHT, height: ROW_HEIGHT }}
+                    data-index={virtualRow.index}
+                    ref={virtualizer.measureElement}
+                    className={cn("absolute inset-x-0 px-2 py-2", virtualRow.index === focus && "ring-2 ring-inset ring-accent")}
+                    style={{ transform: `translateY(${virtualRow.start}px)`, height: ROW_HEIGHT }}
                   >
-                    {row.pending ? (
-                      <div className="flex h-full flex-col justify-center gap-2 rounded-card border border-hairline bg-surface-sunken px-3 duration-slow ease-exit">
-                        <Text role="body-small">Dismissed {row.job.title}</Text>
-                        <Input
-                          className="min-h-11"
-                          aria-label="Optional reason"
-                          placeholder="Optional reason"
-                          onChange={(event) => {
-                            const value = event.target.value
-                            setPendingDismiss((current) => ({ ...current, [row.job.id]: value }))
-                          }}
-                        />
-                        <button type="button" className="min-h-11 self-start text-role-body-small text-accent" onClick={() => undo(row.job.id)}>Undo</button>
-                      </div>
-                    ) : (
-                      <ProductJobCard
-                        title={row.job.title}
-                        company={row.job.company}
-                        location={row.job.location}
-                        remoteType={view.remoteType}
-                        salary={view.salary}
-                        match={view.match}
-                        freshness={view.freshness}
-                        source={view.source}
-                        trust={view.trust}
-                        tailorHref={tailorHref}
-                        applyLabel={view.applyLabel}
-                        statusNote={notes || undefined}
-                        saved={saved}
-                        onSave={() => toggleSave(row.job)}
-                        onDismiss={() => dismiss(row.job)}
-                        onApply={() => apply(row.job)}
-                        onIntent={() => prefetchJob(row.job.id)}
-                      />
-                    )}
+                    <FeedRow
+                      row={row}
+                      skills={skills}
+                      saved={savedIds.has(row.job.id)}
+                      applied={isApplied(row.job, applications) || (row.job.applyUrl ? trackedUrls.includes(row.job.applyUrl) : false)}
+                      tailorHref={tailorHref}
+                      rootRef={listRef}
+                      touchPrefetch={touchPrefetch}
+                      onUndo={() => undo(row.job.id)}
+                      onReason={(value) => setPendingDismiss((current) => ({ ...current, [row.job.id]: value }))}
+                      onSave={() => toggleSave(row.job)}
+                      onDismiss={() => dismiss(row.job)}
+                      onApply={() => apply(row.job)}
+                      onIntent={() => prefetchJob(row.job.id)}
+                    />
                   </div>
                 )
               })}
             </div>
+          ) : (
+            <div className="relative" style={{ height: rows.length * ROW_HEIGHT }}>
+              {rows.map((row, absolute) => (
+                <div
+                  key={row.job.id}
+                  className={cn("absolute inset-x-0 px-2 py-2", absolute === focus && "ring-2 ring-inset ring-accent")}
+                  style={{ top: absolute * ROW_HEIGHT, height: ROW_HEIGHT }}
+                >
+                  <FeedRow
+                    row={row}
+                    skills={skills}
+                    saved={savedIds.has(row.job.id)}
+                    applied={isApplied(row.job, applications) || (row.job.applyUrl ? trackedUrls.includes(row.job.applyUrl) : false)}
+                    tailorHref={tailorHref}
+                    rootRef={listRef}
+                    touchPrefetch={touchPrefetch}
+                    onUndo={() => undo(row.job.id)}
+                    onReason={(value) => setPendingDismiss((current) => ({ ...current, [row.job.id]: value }))}
+                    onSave={() => toggleSave(row.job)}
+                    onDismiss={() => dismiss(row.job)}
+                    onApply={() => apply(row.job)}
+                    onIntent={() => prefetchJob(row.job.id)}
+                  />
+                </div>
+              ))}
+            </div>
           )}
+          {loadingMore ? <JobFeedSkeleton rows={2} className="motion-reduce:animate-none" /> : null}
           {hasMore && !initial.error ? (
             <div className="p-3">
               <Button type="button" className="min-h-11 min-w-32" disabled={loadingMore} onClick={() => void loadMore()}>
@@ -776,14 +902,16 @@ export function JobFeed({
           </aside>
         ) : null}
       </div>
+      </div>
       <Drawer open={filtersOpen} onOpenChange={setFiltersOpen}>
         <DrawerContent>
           <DrawerTitle>Filters</DrawerTitle>
-          <div className="mt-3 overflow-auto">{filterBody}</div>
+          <DrawerDescription>Narrow the job list. Changes are saved in the page address.</DrawerDescription>
+          <div className="mt-3 overflow-auto pb-6">{filterBody}</div>
         </DrawerContent>
       </Drawer>
       {trackJob ? (
-        <div className="fixed bottom-24 left-3 right-3 z-toast flex flex-wrap items-center gap-2 rounded-card border border-hairline bg-surface-raised p-3 shadow-overlay md:left-auto md:max-w-md" role="status">
+        <div className="fixed bottom-24 start-3 end-3 z-toast flex flex-wrap items-center gap-2 rounded-card border border-hairline bg-surface-raised p-3 shadow-overlay md:start-auto md:max-w-md" role="status">
           <Text role="body-small">Add {trackJob.title} at {trackJob.company} to your tracker?</Text>
           <Button type="button" className="min-h-11" onClick={() => void addToTracker(trackJob)}>Add</Button>
           <Button type="button" variant="outline" className="min-h-11" onClick={() => setTrackJob(null)}>Not now</Button>
@@ -792,3 +920,88 @@ export function JobFeed({
     </div>
   )
 }
+
+function FeedRow({
+  row,
+  skills,
+  saved,
+  applied,
+  tailorHref,
+  rootRef,
+  touchPrefetch,
+  onUndo,
+  onReason,
+  onSave,
+  onDismiss,
+  onApply,
+  onIntent,
+}: {
+  row: { job: RecommendedJobCard; pending: boolean }
+  skills: string[]
+  saved: boolean
+  applied: boolean
+  tailorHref?: string | null
+  rootRef: React.RefObject<HTMLDivElement | null>
+  touchPrefetch: boolean
+  onUndo: () => void
+  onReason: (value: string) => void
+  onSave: () => void
+  onDismiss: () => void
+  onApply: () => void
+  onIntent: () => void
+}) {
+  const hostRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!touchPrefetch) return
+    const node = hostRef.current
+    const root = rootRef.current
+    if (!node || !root) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          onIntent()
+          observer.disconnect()
+        }
+      },
+      { root, rootMargin: "120px", threshold: 0.2 },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [touchPrefetch, rootRef, onIntent, row.job.id])
+
+  const view = jobCardView(attachMissingSkills(row.job, skills))
+  const notes = [saved ? "Saved on this device" : null, applied ? "In your tracker" : null].filter(Boolean).join(" · ")
+  if (row.pending) {
+    return (
+      <div ref={hostRef} className="flex h-full flex-col justify-center gap-2 rounded-card border border-hairline bg-surface-sunken px-3 duration-slow ease-exit motion-reduce:transition-none">
+        <Text role="body-small">Dismissed {row.job.title}</Text>
+        <Input className="min-h-11" aria-label="Optional reason" placeholder="Optional reason" onChange={(event) => onReason(event.target.value)} />
+        <button type="button" className="min-h-11 self-start text-role-body-small text-accent" onClick={onUndo}>Undo</button>
+      </div>
+    )
+  }
+  return (
+    <div ref={hostRef} className="h-full">
+      <ProductJobCard
+        title={row.job.title}
+        company={row.job.company}
+        location={row.job.location}
+        remoteType={view.remoteType}
+        salary={view.salary}
+        match={view.match}
+        freshness={view.freshness}
+        source={view.source}
+        trust={view.trust}
+        tailorHref={tailorHref}
+        applyLabel={view.applyLabel}
+        statusNote={notes || undefined}
+        saved={saved}
+        onSave={onSave}
+        onDismiss={onDismiss}
+        onApply={onApply}
+        onIntent={onIntent}
+      />
+    </div>
+  )
+}
+
