@@ -3,6 +3,7 @@
  */
 
 import type { JobFeedSource, RecommendedJobCard } from "./job-dashboard";
+import { normalizeSearchText, searchTextMatches } from "./i18n/search-normalize";
 import { isJobStale } from "./job-staleness";
 import { PROFILE_MATCH_MIN_PERCENT, scoreJobCard, type ProfileMatchInput } from "./job-match";
 import { parseStatedSalary } from "./salary-parse";
@@ -146,7 +147,9 @@ function safeSkills(job: RecommendedJobCard): string[] {
 }
 
 function jobHaystack(job: RecommendedJobCard): string {
-  return `${safeString(job.title)} ${safeString(job.company)} ${safeString(job.location)} ${safeString(job.description)} ${safeString(job.matchLabel)} ${safeSkills(job).join(" ")}`.toLowerCase();
+  return normalizeSearchText(
+    `${safeString(job.title)} ${safeString(job.company)} ${safeString(job.location)} ${safeString(job.description)} ${safeString(job.matchLabel)} ${safeSkills(job).join(" ")}`,
+  );
 }
 
 function locationBlob(job: RecommendedJobCard): string {
@@ -309,11 +312,7 @@ function passesCatalogFilters(
   meta: DerivedJobMeta,
   state: JobListingFilterState
 ): boolean {
-  const q = state.q.trim().toLowerCase();
-  if (q) {
-    const terms = q.split(/\s+/).filter(Boolean);
-    if (!terms.every((term) => meta.searchBlob.includes(term))) return false;
-  }
+  if (state.q.trim() && !searchTextMatches(meta.searchBlob, state.q)) return false;
 
   if (!matchesDateWindow(job.postedAtIso, state.dateWindow)) return false;
   if (state.sources.size > 0 && !state.sources.has(job.source)) return false;

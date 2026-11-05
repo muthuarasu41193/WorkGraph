@@ -66,6 +66,7 @@ import JobApplyButton from "@/components/design-system/JobApplyButton";
 import ApplyFollowupPrompt from "@/components/design-system/ApplyFollowupPrompt";
 import ResumeIntelligenceDialog from "@/components/talent-intelligence/ResumeIntelligenceDialog";
 import { recommendedJobToCardData } from "@/lib/job-card-data";
+import { searchTextMatches } from "@/lib/i18n/search-normalize";
 import { readSavedJobIds, saveJobId, toggleSavedJobId } from "@/lib/saved-jobs-storage";
 import { useDashboardContext } from "@/components/dashboard/DashboardProvider";
 import "@/components/design-system/job-card.css";
@@ -419,11 +420,7 @@ function parseBooleanParam(value: string | null): boolean {
 }
 
 function searchTermsMatch(blob: string, rawQuery: string): boolean {
-  const trimmed = rawQuery.trim().toLowerCase();
-  if (!trimmed) return true;
-  const terms = trimmed.split(/\s+/).filter((t) => t.length > 0);
-  if (terms.length === 0) return true;
-  return terms.every((term) => blob.includes(term));
+  return searchTextMatches(blob, rawQuery);
 }
 
 const JOB_TYPE_KEYWORDS: Record<JobTypeOption, string[]> = {

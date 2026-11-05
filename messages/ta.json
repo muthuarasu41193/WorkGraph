@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "title": "WorkGraph — Search the live job index",
+    "description": "Search the live job index. A match note is an estimate when a profile is available to compare."
+  },
+  "locales": {
+    "en": "English",
+    "ta": "தமிழ்",
+    "hi": "हिन्दी",
+    "es": "Español",
+    "switcherLabel": "Language"
+  },
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How it works",
+    "interviewVault": "Interview Vault",
+    "pricing": "Pricing",
+    "contact": "Contact",
+    "jobs": "Jobs",
+    "tracker": "Tracker",
+    "prep": "Prep",
+    "insights": "Insights",
+    "profile": "Profile",
+    "settings": "Settings",
+    "home": "WorkGraph"
+  },
+  "footer": {
+    "product": "Product",
+    "resources": "Resources",
+    "company": "Company",
+    "feedback": "Send feedback to a person",
+    "rights": "All rights reserved.",
+    "searchIndex": "Search the live job index."
+  },
+  "states": {
+    "pageDidNotLoad": "This page did not load",
+    "pageStopped": "The page stopped before it could finish. Refresh it to try again.",
+    "tryAgain": "Try again",
+    "offline": "You are offline. Saved changes wait on this device until the connection returns.",
+    "offlineWaiting": "{count, plural, one {# waiting.} other {# waiting.}}",
+    "savedWaiting": "Saved the waiting updates",
+    "waitingFailed": "Some waiting updates did not save",
+    "waitingFailedNext": "Open the tracker and move the stage again.",
+    "sourceGap": "Jobs from {source} did not load. The other sources are still listed.",
+    "emptyTitle": "Applications you log will show up here",
+    "emptyReason": "The tracker is empty because nothing has been logged on this account.",
+    "filterTitle": "No roles match these filters",
+    "filterReason": "Posted today is the filter hiding results.",
+    "filterAction": "Remove posted today",
+    "save": "Save",
+    "saved": "Saved",
+    "undoSave": "Undid the save"
+  },
+  "tracker": {
+    "movedDevice": "Moved on this device",
+    "movedDeviceNext": "This saves when you are back online.",
+    "movedTo": "Moved to {stage}",
+    "moveFailed": "Could not move that application",
+    "moveFailedNext": "It is back in the previous stage.",
+    "quiet": "No update has been recorded recently. Add a next step if you want one. The gap is in the record, not a judgement of you.",
+    "quietDays": "No update has been recorded for {days, plural, one {# day} other {# days}}. Add a next step if you want one. The gap is in the record, not a judgement of you.",
+    "rejected": "This application is marked rejected. That records this outcome. It does not describe the rest of your search.",
+    "findRole": "Find a role",
+    "filterTitle": "No applications in this stage",
+    "filterReason": "{stage} is the filter hiding applications.",
+    "showAll": "Show all stages",
+    "moveSelected": "Move selected",
+    "moveCount": "Move {count, number}",
+    "confirmMove": "This moves {count, plural, one {# application} other {# applications}} to {stage}.",
+    "companyMissing": "Add a company. The application needs one.",
+    "roleMissing": "Add a role. The application needs one.",
+    "errorCount": "{count, plural, one {# field needs a value.} other {# fields need a value.}}",
+    "log": "Log application",
+    "logging": "Logging",
+    "logged": "Logged the application",
+    "logFailed": "Could not log that application"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "heading": "Talk about a job search",
+    "body": "Have a question or feedback? A person reads this form. We aim to reply within two business days.",
+    "send": "Send message",
+    "sending": "Sending",
+    "sent": "Message sent.",
+    "sentNext": "We aim to reply within two business days.",
+    "failed": "The message did not send. The connection failed. Try again.",
+    "another": "Send another message"
+  },
+  "jobs": {
+    "searchLabel": "Search roles",
+    "searchPlaceholder": "Title, skill, or company",
+    "sortLabel": "Sort roles",
+    "sortNewest": "Newest",
+    "sortRelevant": "Most relevant",
+    "filters": "Filters",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "rolesCount": "{count, plural, one {# role} other {# roles}}",
+    "loadMore": "Load more",
+    "loading": "Loading",
+    "emptyTitle": "No roles matched that search",
+    "emptyReason": "Try a broader role or skill, or open a recent search.",
+    "broader": "Broader searches",
+    "recent": "Recent searches",
+    "languageHint": "No results in your language. Try the same role or skill in English too.",
+    "errorTitle": "Roles could not be loaded",
+    "errorReason": "The jobs request did not finish. Your filters are unchanged. Try again.",
+    "tryAgain": "Try again"
+  },
+  "announce": {
+    "cta": "Join the waitlist",
+    "message": "The waitlist is open."
+  },
+  "hero": {
+    "searchFailed": "Jobs did not load. The search request failed. Try the search again.",
+    "searchEmpty": "No roles matched that search. Try a broader role or skill."
+  },
+  "onboarding": {
+    "resumeGap": "A resume gives the match a profile to compare. Search still works without one.",
+    "roleGap": "A target role fills the search when you finish. You can add one on the target role step.",
+    "locationGap": "A location starts the feed nearer to you. You can add one on the location step.",
+    "jobsFailed": "Jobs did not load. The search request failed. You can still continue.",
+    "saved": "Saved on this device",
+    "roleMissing": "Add a target role, or continue and search without one."
+  },
+  "pull": {
+    "release": "Release to refresh",
+    "refreshing": "Refreshing"
+  },
+  "swipe": {
+    "back": "Move back",
+    "forward": "Move forward",
+    "hint": "Swipe right to move back. Swipe left to move forward. Undo is on the notice."
+  },
+  "format": {
+    "currencySample": "Example pay uses locale currency formatting.",
+    "dateSample": "Example date uses locale date formatting."
+  },
+  "_meta": {
+    "status": "MACHINE_COPY_NEEDS_HUMAN_REVIEW",
+    "sourceLocale": "en",
+    "locale": "ta",
+    "note": "Strings are English placeholders. Every key needs human translation review before launch."
+  }
+}

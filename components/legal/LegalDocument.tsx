@@ -39,7 +39,7 @@ export function LegalTable({
 }) {
   return (
     <div className="my-6 overflow-x-auto rounded-xl border border-border-default">
-      <table className="w-full min-w-[36rem] text-left text-sm">
+      <table className="w-full min-w-[36rem] text-start text-sm">
         <thead className="bg-surface-2 text-fg-secondary">
           <tr>
             {headers.map((header) => (

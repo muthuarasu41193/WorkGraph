@@ -91,7 +91,7 @@ function DialogContent({
         <DialogPrimitive.Close data-slot="dialog-close" asChild>
           <Button
             variant="ghost"
-            className={cn("absolute top-2 right-2 min-h-11 min-w-11", !showCloseButton && "sr-only")}
+            className={cn("absolute top-2 end-2 min-h-11 min-w-11", !showCloseButton && "sr-only")}
             size="icon-sm"
           >
             <Icon icon={XIcon} />

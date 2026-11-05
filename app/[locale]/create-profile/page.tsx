@@ -11,26 +11,26 @@ import {
   PenLine,
   UploadCloud,
 } from "lucide-react";
-import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
+import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
 import {
   MAX_RESUME_UPLOAD_BYTES,
   MAX_RESUME_UPLOAD_LABEL,
   apiErrorMessage,
   readApiJson,
   withSupabaseAuthHeaders,
-} from "../../lib/api-fetch";
-import { describeFetchError } from "../../lib/auth-errors";
-import { profileManualInputSchema } from "../../lib/validation";
-import { ensureClientSession } from "../../lib/auth/session-client";
-import { supertokensEnabled } from "../../lib/auth/config";
+} from "@/lib/api-fetch";
+import { describeFetchError } from "@/lib/auth-errors";
+import { profileManualInputSchema } from "@/lib/validation";
+import { ensureClientSession } from "@/lib/auth/session-client";
+import { supertokensEnabled } from "@/lib/auth/config";
 import {
   hardNavigate,
   loginRedirectPath,
   syncClientSession,
   syncServerAuthCookies,
-} from "../../lib/client-auth";
-import { createBrowserSupabaseClient } from "../../lib/supabase";
-import { atsScorePath, parseResumePath } from "../../lib/workgraph-api-routes";
+} from "@/lib/client-auth";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { atsScorePath, parseResumePath } from "@/lib/workgraph-api-routes";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

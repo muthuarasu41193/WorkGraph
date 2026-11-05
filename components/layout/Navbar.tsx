@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/Logo";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { NAV_ITEMS } from "@/lib/constants";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useLandingHeader } from "./LandingHeaderContext";
@@ -17,18 +18,18 @@ function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <div className="relative size-5" aria-hidden>
       <motion.span
-        className="absolute left-0 block h-0.5 w-5 rounded-full bg-current"
+        className="absolute start-0 block h-0.5 w-5 rounded-full bg-current"
         animate={open ? { top: 9, rotate: 45 } : { top: 4, rotate: 0 }}
         transition={{ duration: 0.2 }}
         style={{ transformOrigin: "center" }}
       />
       <motion.span
-        className="absolute left-0 top-[9px] block h-0.5 w-5 rounded-full bg-current"
+        className="absolute start-0 top-[9px] block h-0.5 w-5 rounded-full bg-current"
         animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
         transition={{ duration: 0.15 }}
       />
       <motion.span
-        className="absolute left-0 block h-0.5 w-5 rounded-full bg-current"
+        className="absolute start-0 block h-0.5 w-5 rounded-full bg-current"
         animate={open ? { top: 9, rotate: -45 } : { top: 14, rotate: 0 }}
         transition={{ duration: 0.2 }}
         style={{ transformOrigin: "center" }}
@@ -78,7 +79,7 @@ function NavLink({
         {active && (
           <motion.span
             layoutId="nav-active-indicator"
-            className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-brand"
+            className="absolute start-0 -bottom-1 h-0.5 w-full rounded-full bg-brand"
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
           />
         )}
@@ -172,6 +173,7 @@ export default function Navbar() {
             </ul>
 
             <div className="hidden items-center gap-3 md:flex">
+              <LanguageSwitcher />
               <Button
                 variant="ghost"
                 size="sm"
@@ -250,6 +252,7 @@ export default function Navbar() {
                 </ul>
 
                 <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6">
+                  <LanguageSwitcher />
                   <Button variant="outline" size="lg" className="h-12 w-full rounded-full" asChild>
                     <Link href="/login" onClick={() => setMobileOpen(false)}>
                       Sign in

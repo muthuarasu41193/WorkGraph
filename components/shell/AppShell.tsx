@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Menu, Search } from "lucide-react"
 import { SkipLink } from "@/components/a11y/SkipLink"
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher"
 import { ShellCommandPalette } from "@/components/shell/ShellCommandPalette"
 import { Button } from "@/components/ui/button"
 import {
@@ -177,10 +178,11 @@ export function AppShell({
           <div className="flex min-w-0 flex-1 flex-col">
             <header className="sticky top-0 z-nav flex min-h-14 flex-wrap items-center gap-2 border-b border-hairline bg-surface px-3">
               <h1 className="min-w-0 max-w-full flex-1 truncate text-role-subheading">{shellTitle(pathname)}</h1>
+              <LanguageSwitcher className="ms-auto" />
               <button
                 id="shell-search"
                 type="button"
-                className="ml-auto inline-flex min-h-11 items-center gap-2 rounded-control border border-hairline px-3 text-role-caption text-ink-muted"
+                className="inline-flex min-h-11 items-center gap-2 rounded-control border border-hairline px-3 text-role-caption text-ink-muted"
                 aria-label="Search"
                 onClick={() => setPalette(true)}
               >
