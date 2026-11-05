@@ -44,11 +44,11 @@ export const messages = {
 
   contactEyebrow: "Contact",
   contactHeading: "Talk about a job search",
-  contactBody: "Have a question or feedback? A person reads this form. A reply time is not published.",
+  contactBody: "Have a question or feedback? A person reads this form. We aim to reply within two business days.",
   contactSend: "Send message",
   contactSending: "Sending",
   contactSent: "Message sent.",
-  contactSentNext: "A reply time is not published.",
+  contactSentNext: "We aim to reply within two business days.",
   contactFailed: "The message did not send. The connection failed. Try again.",
   contactAnother: "Send another message",
 
