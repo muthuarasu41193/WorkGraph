@@ -3,12 +3,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react";
-import { AuthSplitShell } from "../../components/auth/AuthSplitShell";
-import { signInWithPassword } from "../../lib/auth/client";
-import { supertokensEnabled } from "../../lib/auth/config";
-import { describeAuthError, humanizeSupabaseAuthMessage } from "../../lib/auth-errors";
-import { hardNavigate } from "../../lib/client-auth";
-import { createBrowserSupabaseClient } from "../../lib/supabase";
+import { AuthSplitShell } from "@/components/auth/AuthSplitShell";
+import { signInWithPassword } from "@/lib/auth/client";
+import { supertokensEnabled } from "@/lib/auth/config";
+import { describeAuthError, humanizeSupabaseAuthMessage } from "@/lib/auth-errors";
+import { hardNavigate } from "@/lib/client-auth";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

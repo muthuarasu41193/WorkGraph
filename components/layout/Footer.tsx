@@ -6,6 +6,7 @@ import { Logo } from "@/components/ui/Logo";
 import { SocialLinks } from "@/components/brand/SocialLinks";
 import { FOOTER_LINKS, SITE } from "@/lib/constants";
 import { CookiePreferencesButton } from "@/components/consent/CookiePreferencesButton";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { LEGAL_NAV } from "@/lib/legal";
 import { displayCount } from "@/lib/social-proof";
 
@@ -126,6 +127,7 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
                 &copy; 2025 {SITE.name}. All rights reserved.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-fg-tertiary">
+                <LanguageSwitcher />
                 {LEGAL_NAV.map((item, index) => (
                   <span key={item.href} className="inline-flex items-center gap-4">
                     {index > 0 ? <span aria-hidden>·</span> : null}

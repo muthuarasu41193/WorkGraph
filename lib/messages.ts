@@ -1,7 +1,9 @@
 /**
  * User-facing copy for the surfaces this UI pass owns.
- * Keys are stable so a later locale file can replace the values.
+ * Prefer `messages/*.json` + next-intl (`useTranslations` / `getTranslations`) for new UI.
+ * This module remains for callers that have not migrated yet.
  * Job cards, match scores, and the job decision page are intentionally absent.
+ * See docs/I18N_TRANSLATION_REVIEW.md for the human review list.
  */
 export const messages = {
   statesPageDidNotLoad: "This page did not load",

@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { FileText, Loader2, UploadCloud } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import AIWarningBanner from "@/app/(dashboard)/profile/components/AIWarningBanner";
-import AnalysisResults, { type ResumeAnalysis } from "@/app/(dashboard)/profile/components/AnalysisResults";
+import AIWarningBanner from "@/app/[locale]/(dashboard)/profile/components/AIWarningBanner";
+import AnalysisResults, { type ResumeAnalysis } from "@/app/[locale]/(dashboard)/profile/components/AnalysisResults";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

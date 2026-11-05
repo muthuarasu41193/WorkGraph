@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
-import { ALTERNATE_HOSTS, getSiteUrl } from "./lib/site-url";
+import type { NextConfig } from "next"
+import createNextIntlPlugin from "next-intl/plugin"
+import { ALTERNATE_HOSTS, getSiteUrl } from "./lib/site-url"
 
-const canonicalOrigin = getSiteUrl();
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
+const canonicalOrigin = getSiteUrl()
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -22,7 +24,7 @@ const nextConfig: NextConfig = {
         destination: `${canonicalOrigin}/:path*`,
         statusCode: 308 as const,
       },
-    ]);
+    ])
 
     return [
       {
@@ -31,8 +33,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       ...hostRedirects,
-    ];
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default withNextIntl(nextConfig)

@@ -1,15 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import HomeDashboard from "@/components/dashboard/home/HomeDashboard";
-import ProfileShell from "../../components/profile/premium/ProfileShell";
-import WorkGraphProviders from "../../components/providers/WorkGraphProviders";
-import { getSessionUser } from "../../lib/auth/session-server";
-import { loadProfileJobDashboard } from "../../lib/job-dashboard";
+import ProfileShell from "@/components/profile/premium/ProfileShell";
+import WorkGraphProviders from "@/components/providers/WorkGraphProviders";
+import { getSessionUser } from "@/lib/auth/session-server";
+import { loadProfileJobDashboard } from "@/lib/job-dashboard";
 import { tailorHrefForUser } from "@/lib/job-tailor-link";
-import { loadUserProfile } from "../../lib/load-profile";
-import { supabaseConfigured } from "../../lib/supabase-enabled";
-import { createServerSupabaseClient } from "../../lib/supabase";
-import { loadSemanticJobMatches } from "../../lib/workgraph-dashboard";
+import { loadUserProfile } from "@/lib/load-profile";
+import { supabaseConfigured } from "@/lib/supabase-enabled";
+import { createServerSupabaseClient } from "@/lib/supabase";
+import { loadSemanticJobMatches } from "@/lib/workgraph-dashboard";
 import "../../components/profile/profile-theme.css";
 
 export const dynamic = "force-dynamic";

@@ -1,4 +1,4 @@
-import ResumeUploader from "../../components/resume/ResumeUploader";
+import ResumeUploader from "@/components/resume/ResumeUploader";
 
 export default function UploadPage() {
   return (

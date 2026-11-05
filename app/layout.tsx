@@ -87,7 +87,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(publicSans.variable, newsreader.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+    <html lang="en" dir="ltr" className={cn(publicSans.variable, newsreader.variable, jetbrainsMono.variable)} suppressHydrationWarning>
       <body className={cn(publicSans.className, "min-h-dvh bg-background text-foreground antialiased")}>
         <ThemeScript />
         <ThemeProvider>
