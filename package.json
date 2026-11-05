@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/muthuarasu41193/WorkGraph#readme",
   "engines": {
-    "node": ">=20.16.0"
+    "node": "22.x"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
