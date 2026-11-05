@@ -206,8 +206,11 @@ def normalize_job(
     if not normalized_url:
         return None
 
+    from app.ingest.company_name import normalize_company_name
+
     clean_title = str(title or "").strip() or "Untitled role"
-    clean_company = str(company or "").strip() or f"Employer via {source.title()}"
+    raw_company = str(company or "").strip() or f"Employer via {source.title()}"
+    clean_company = normalize_company_name(raw_company) or raw_company
     clean_location = str(location or "").strip()
     clean_description = strip_html_to_text(str(description or "").strip())
     canon = canonical_job_text(clean_title, clean_company, clean_location, clean_description)

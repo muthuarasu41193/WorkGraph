@@ -105,11 +105,12 @@ export default async function HomePage({
                 location={demo.location}
                 remoteType={view.remoteType}
                 salary={view.salary}
-                match={view.match}
-                freshness={view.freshness}
-                source={view.source}
-                trust={view.trust}
-                applyLabel={view.applyLabel}
+                sourceName={view.source.source}
+                postedAtIso={demo.postedAtIso}
+                postedLabel={demo.postedAgo}
+                applyUrl={demo.applyUrl}
+                onViewDetails={() => undefined}
+                onApply={() => undefined}
               />
               <Text role="caption" className="mt-2 text-ink-muted">Freshness uses the stored posted date. Trust is shown only when the listing is missing a link or a company name.</Text>
             </div>

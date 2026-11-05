@@ -71,11 +71,11 @@ export function HeroSearch() {
               location={job.location}
               remoteType={view.remoteType}
               salary={view.salary}
-              match={view.match}
-              freshness={view.freshness}
-              source={view.source}
-              trust={view.trust}
-              applyLabel="Open"
+              sourceName={view.source.source}
+              postedAtIso={job.postedAtIso}
+              postedLabel={job.postedAgo}
+              applyUrl={job.applyUrl}
+              onViewDetails={() => router.push(`/jobs/${encodeURIComponent(job.id)}`)}
               onApply={() => router.push(`/jobs/${encodeURIComponent(job.id)}`)}
               onSave={() => router.push("/login?next=/jobs")}
               onDismiss={() => router.push(`/jobs?q=${encodeURIComponent(query)}`)}

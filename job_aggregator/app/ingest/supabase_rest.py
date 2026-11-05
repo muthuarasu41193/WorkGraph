@@ -266,6 +266,11 @@ def persist_normalized_jobs_via_rest(normalized_jobs: list[dict[str, Any]]) -> d
         chunk_size = _DEFAULT_CHUNK
     chunk_size = max(1, min(chunk_size, 100))
 
+    from app.ingest.company_name import normalize_company_name
+
+    for row in normalized_jobs:
+        row["company"] = normalize_company_name(str(row.get("company") or "")) or str(row.get("company") or "")
+
     deduped = _dedupe_by_apply_url(normalized_jobs)
     if len(deduped) < len(normalized_jobs):
         LOG.info(
