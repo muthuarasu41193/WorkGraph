@@ -45,7 +45,7 @@ Cream-and-terracotta “AI default” palettes, purple/indigo gradients, red–y
 | `ink` | `#14181F` | `#EEF2F6` | Primary text |
 | `ink-muted` | `#4A5563` | `#C5CDD6` | Metadata |
 | `ink-subtle` | `#5B6572` | `#9AA5B2` | Captions (≥4.5:1 on surface) |
-| `hairline` | `#D4DAE2` | `#2C3640` | Rules |
+| `hairline` | `#7A8490` | `#6B7A8A` | Rules (≥3:1 on surfaces) |
 | `accent` | `#A11F2B` | `#F0A8AE` | Stamp — actions, focus |
 | `accent-ink` | `#FFFFFF` | `#1A1214` | On accent |
 | `accent-wash` | `#F8E8EA` | `#3A2226` | Soft red selection |

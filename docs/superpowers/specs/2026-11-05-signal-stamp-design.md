@@ -32,7 +32,7 @@ The live product uses **Ledger**: warm cream paper (`#F4F1EA`) and oxide red (`#
 | `ink` | `#14181F` | Primary text |
 | `ink-muted` | `#4A5563` | Metadata |
 | `ink-subtle` | `#5B6572` | Captions / placeholders (≥4.5:1 on `surface`) |
-| `hairline` | `#D4DAE2` | 1px rules and borders |
+| `hairline` | `#7A8490` | 1px rules and borders (≥3:1 on surfaces) |
 | `accent` | `#A11F2B` | Primary actions, active nav, focus, logo stamp |
 | `accent-ink` | `#FFFFFF` | Text/icons on accent |
 | `accent-wash` | `#F8E8EA` | Soft red selection |

@@ -34,7 +34,7 @@ export default async function HomeHiddenJobsFeed() {
         <div>
           <h2 id="home-hidden-heading" className="flex items-center gap-2 text-role-body-small font-semibold tracking-tight text-fg-primary">
             Hidden Jobs Feed
-            <span className="inline-flex items-center gap-1 rounded-full bg-highlight-wash px-1.5 py-px text-role-caption font-medium text-highlight">
+            <span className="inline-flex items-center gap-1 rounded-full bg-highlight px-1.5 py-px text-role-caption font-medium text-highlight-ink">
               <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
               Live
             </span>
