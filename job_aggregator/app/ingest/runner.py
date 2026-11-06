@@ -121,8 +121,11 @@ def persist_normalized_jobs(session: Session, normalized_jobs: list[dict[str, An
     """
     counts = {"examined": 0, "inserted": 0, "updated": 0, "unchanged": 0}
 
+    from app.ingest.company_name import normalize_company_name
+
     for row in normalized_jobs:
         counts["examined"] += 1
+        row["company"] = normalize_company_name(str(row.get("company") or "")) or str(row.get("company") or "")
         apply_url = row["apply_url"]
         external_id = row["external_id"]
 

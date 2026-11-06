@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { normalizeCompanyName } from "@/lib/company-name/normalize";
+import { normalizeCompanyNameRules } from "@/lib/company-name/normalize-rules";
 
 const COMMUNITY_SOURCE_DEFAULTS = ["remoteok", "arbeitnow", "remotejobs", "reddit", "rss", "hackernews"] as const;
 const COMMUNITY_SOURCE_ALL = ["remoteok", "arbeitnow", "remotejobs", "reddit", "rss", "hackernews", "jobicy"] as const;
@@ -239,7 +241,9 @@ function buildRow(input: {
   const applyUrl = normalizeUrl(input.applyUrl);
   if (!applyUrl) return null;
   const title = input.title.trim() || "Untitled role";
-  const company = input.company.trim() || `Employer via ${input.source}`;
+  const rawCompany = input.company.trim() || `Employer via ${input.source}`;
+  // Fast rules path while collecting; persist re-runs with cache + Groq.
+  const company = normalizeCompanyNameRules(rawCompany).displayName || rawCompany;
   const location = (input.location || "").trim();
   const description = stripHtml(input.description || "");
   const classification =
@@ -757,6 +761,14 @@ export async function syncCommunityJobsViaSupabase(): Promise<{
   const supabase = createClient(envOrThrow("NEXT_PUBLIC_SUPABASE_URL"), envOrThrow("SUPABASE_SERVICE_ROLE_KEY"), {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+
+  for (const row of fetchedRows) {
+    const normalized = await normalizeCompanyName(row.company);
+    row.company = normalized.displayName || row.company;
+    row.content_hash = sha256Hex(
+      canonicalJobText(row.title, row.company, row.location, row.description),
+    );
+  }
 
   for (const batch of chunkRows(fetchedRows, 100)) {
     const { error } = await supabase.from("jobs").upsert(batch, { onConflict: "external_id", ignoreDuplicates: false });

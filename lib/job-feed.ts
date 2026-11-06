@@ -67,6 +67,16 @@ export function remotePolicy(location: string): string {
   return "Listed location"
 }
 
+/** Infer a job type only when the posting text names one. Null means unknown. */
+export function inferJobType(title: string, description: string): string | null {
+  const hay = `${title}\n${description}`.toLowerCase()
+  if (/\b(intern(ship)?)\b/.test(hay)) return "Internship"
+  if (/\b(part[-\s]?time)\b/.test(hay)) return "Part-time"
+  if (/\b(contract|contractor|freelance)\b/.test(hay)) return "Contract"
+  if (/\b(full[-\s]?time)\b/.test(hay)) return "Full-time"
+  return null
+}
+
 /** Same "Apply on {source}" string as the logged-in card. */
 export function namedApplyLabel(
   source: string | null | undefined,
