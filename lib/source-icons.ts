@@ -29,20 +29,6 @@ export const JOB_SOURCE_ICON_LABELS: Record<JobSourceIconKey, string> = {
   other: "Other",
 };
 
-/** Official brand hex colors used when Simple Icons has no export (LinkedIn, Naukri). */
-export const JOB_SOURCE_BRAND_COLORS: Record<JobSourceIconKey, string> = {
-  linkedin: "#0A66C2",
-  reddit: "#FF4500",
-  indeed: "#003A9B",
-  naukri: "#0552F0",
-  glassdoor: "#00A162",
-  x: "#000000",
-  github: "#181717",
-  google: "#4285F4",
-  company: "currentColor",
-  other: "currentColor",
-};
-
 const KNOWN_SCHEMA_SOURCES = new Set<string>([
   "linkedin",
   "reddit",

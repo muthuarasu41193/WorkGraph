@@ -9,7 +9,6 @@ import {
 } from "@icons-pack/react-simple-icons";
 import { Globe } from "lucide-react";
 import {
-  JOB_SOURCE_BRAND_COLORS,
   JOB_SOURCE_ICON_LABELS,
   type JobSourceIconKey,
   resolveJobSourceIconKey,
@@ -45,7 +44,7 @@ type Props = {
 };
 
 function LinkedInMark({ size = 16, color = "default", className }: SimpleIconProps) {
-  const fill = color === "default" ? JOB_SOURCE_BRAND_COLORS.linkedin : color;
+  const fill = color === "default" ? "var(--mark-linkedin)" : color;
   return (
     <svg
       viewBox="0 0 24 24"
@@ -62,7 +61,7 @@ function LinkedInMark({ size = 16, color = "default", className }: SimpleIconPro
 }
 
 function NaukriMark({ size = 16, color = "default", className }: SimpleIconProps) {
-  const fill = color === "default" ? JOB_SOURCE_BRAND_COLORS.naukri : color;
+  const fill = color === "default" ? "var(--mark-naukri)" : color;
   return (
     <svg
       viewBox="0 0 24 24"
