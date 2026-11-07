@@ -4,7 +4,8 @@ import { ArrowUpRight, Briefcase, ExternalLink, MapPin, RefreshCw } from "lucide
 import { iconClass } from "@/lib/icon-styles";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, type JSX } from "react";
-import { RedditLogo } from "@/components/icons/RedditLogo";
+import SourceBadge from "@/components/icons/SourceBadge";
+import SourceIcon from "@/components/icons/SourceIcon";
 import type { JobFeedSource, RecommendedJobCard } from "../../lib/job-dashboard";
 
 type CommunitySource = Extract<JobFeedSource, "remoteok" | "arbeitnow" | "reddit" | "rss" | "hackernews">;
@@ -32,7 +33,7 @@ function RemoteOkLogo() {
 }
 
 function RedditLogoMark() {
-  return <RedditLogo className="h-5 w-5" />;
+  return <SourceIcon source="reddit" size={18} />;
 }
 
 function HackerNewsLogo() {
@@ -372,7 +373,10 @@ export default function ProfileSocialJobPosts({
                 </div>
                 <p className="mt-3 min-h-[72px] text-sm leading-6 text-fg-secondary">{trimSnippet(post)}</p>
                 <div className="mt-3 flex items-center justify-between gap-3 border-t border-wg-border pt-3">
-                  <span className="text-xs font-medium text-fg-tertiary">{post.postedAgo}</span>
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <SourceBadge source={post.source} url={href} />
+                    <span className="text-xs font-medium text-fg-tertiary">{post.postedAgo}</span>
+                  </div>
                   <a
                     href={href}
                     target="_blank"

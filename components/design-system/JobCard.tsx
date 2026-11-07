@@ -7,12 +7,11 @@ import { FreshnessIndicator } from "@/components/product/FreshnessIndicator";
 import { MatchScore } from "@/components/product/MatchScore";
 import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay";
 import { TrustIndicator } from "@/components/product/TrustIndicator";
-import { SourceAttribution } from "@/components/product/SourceAttribution";
+import SourceBadge from "@/components/icons/SourceBadge";
 import { type JobCardData } from "@/lib/job-card-data";
 import { formatJobFreshness } from "@/lib/job-freshness";
 import { trustPropsForListing } from "@/lib/job-feed";
 import { parseStatedSalary } from "@/lib/salary-parse";
-import { jobSourceName } from "@/lib/job-apply";
 import { matchReason } from "@/lib/job-match-reason";
 import { AIProvenance } from "@/components/product/AIProvenance";
 import { buildJobSummary, jobSummaryLabel } from "@/lib/job-summary";
@@ -146,7 +145,6 @@ export default function JobCard({
 }: Props) {
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
-  const sourceName = jobSourceName(job.source, job.company, applyHref);
   const salary = salaryFigure(job);
   const trust = trustPropsForListing({
     title: job.title,
@@ -236,7 +234,7 @@ export default function JobCard({
             onKeyDown={(event) => event.stopPropagation()}
           >
             <SalaryDisplay salary={salary} />
-            <SourceAttribution source={sourceName} href={applyHref || undefined} />
+            <SourceBadge source={job.source} url={applyHref} href={applyHref || undefined} />
             {freshnessLabel ? (
               <FreshnessIndicator
                 status={freshnessLabel.includes("may no longer be open") ? "stale" : "unknown"}
