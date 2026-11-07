@@ -206,7 +206,7 @@ export default function SidebarBottom({
         </p>
       ) : null}
 
-      <LegalNav className="sidebar-legal mt-3" />
+      <LegalNav compact className="sidebar-legal mt-2" />
     </div>
   );
 }

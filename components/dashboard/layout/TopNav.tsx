@@ -28,8 +28,9 @@ import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { dashboardHref } from "@/lib/dashboard-routes";
 import { toSentenceCase } from "@/lib/sentence-case";
 
+/** 36px controls with shared geometry for the header action cluster. */
 const ICON_BTN =
-  "size-9 rounded-lg border-transparent enabled:hover:scale-100";
+  "size-9 shrink-0 rounded-lg border-transparent enabled:hover:scale-100";
 
 export default function TopNav() {
   const { profile, liveListings } = useDashboardContext();
@@ -92,20 +93,17 @@ export default function TopNav() {
             <GlobalSearch onOpenCommandPalette={() => setCmdOpen(true)} />
           </div>
 
-          <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1.5">
+          <div className="ml-auto flex min-w-0 shrink-0 items-center gap-3">
             <div className="md:hidden">
               <GlobalSearch compact onOpenCommandPalette={() => setCmdOpen(true)} />
             </div>
             {liveListings > 0 ? (
               <span
-                className="inline-flex h-7 max-w-full shrink-0 items-center gap-1 rounded-full border border-hairline bg-surface px-2"
+                className="inline-flex h-9 max-w-full shrink-0 items-center rounded-lg border border-hairline bg-surface px-3"
                 aria-label={`${liveListings.toLocaleString()} jobs in catalog`}
               >
                 <span className="text-role-caption font-medium tabular-nums text-ink">
-                  {liveListings.toLocaleString()}
-                </span>
-                <span className="hidden text-role-caption font-medium text-ink-muted md:inline">
-                  in catalog
+                  {liveListings.toLocaleString()} jobs
                 </span>
               </span>
             ) : null}
@@ -151,10 +149,10 @@ export default function TopNav() {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="wg-touch-target rounded-full outline-none transition duration-base hover:ring-2 hover:ring-surface-raised hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-surface-raised focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
+                  className="wg-touch-target inline-flex size-9 items-center justify-center rounded-full outline-none transition duration-base hover:ring-2 hover:ring-surface-raised hover:ring-offset-2 hover:ring-offset-slate-100 focus-visible:ring-2 focus-visible:ring-surface-raised focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100"
                   aria-label="Account menu"
                 >
-                  <Avatar className="size-8">
+                  <Avatar className="size-9">
                     {profile.photo_url ? (
                       <AvatarImage src={profile.photo_url} alt={profile.full_name || "Account"} />
                     ) : null}

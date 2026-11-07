@@ -8,22 +8,45 @@ import { cn } from "@/lib/utils";
 
 export type LegalSection = LegalHeading & { content: ReactNode };
 
-export function LegalNav({ className }: { className?: string }) {
+export function LegalNav({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  /** Dense muted row for the dashboard sidebar footer. */
+  compact?: boolean;
+}) {
   return (
     <nav aria-label="Legal documents" className={className}>
-      <ul className="flex flex-wrap gap-x-4 gap-y-2">
+      <ul
+        className={
+          compact
+            ? undefined
+            : "flex flex-wrap gap-x-4 gap-y-2"
+        }
+      >
         {LEGAL_NAV.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-sm text-fg-tertiary underline-offset-4 transition-colors hover:text-brand hover:underline"
+              className={
+                compact
+                  ? "text-[12px] leading-4 text-ink-subtle underline-offset-2 transition-colors hover:text-ink-muted hover:underline"
+                  : "text-sm text-fg-tertiary underline-offset-4 transition-colors hover:text-brand hover:underline"
+              }
             >
               {item.label}
             </Link>
           </li>
         ))}
         <li>
-          <CookiePreferencesButton />
+          {compact ? (
+            <CookiePreferencesButton className="text-[12px] leading-4 text-ink-subtle underline-offset-2 hover:text-ink-muted">
+              Cookies
+            </CookiePreferencesButton>
+          ) : (
+            <CookiePreferencesButton />
+          )}
         </li>
       </ul>
     </nav>

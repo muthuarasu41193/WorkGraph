@@ -2,9 +2,9 @@ import type { LucideIcon } from "lucide-react";
 import {
   Bookmark,
   BookOpen,
-  EyeOff,
   FileText,
   LayoutDashboard,
+  MessagesSquare,
   MessageSquare,
   Search,
   Send,
@@ -65,7 +65,9 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
       {
         id: "job-discovery",
         label: "Community posts",
-        icon: EyeOff,
+        // MessagesSquare is the generic fallback; SideNav swaps in SourceIcon(reddit)
+        // when the discovery feed is Reddit-sourced (never EyeOff / eye-slash).
+        icon: MessagesSquare,
         benefitHint: "Hiring posts from Reddit, Hacker News, and GitHub",
       },
     ],

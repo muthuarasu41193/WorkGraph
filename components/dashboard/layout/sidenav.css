@@ -63,16 +63,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  height: 34px;
-  min-height: 34px;
+  height: 40px;
+  min-height: 40px;
   padding: 0 10px;
   border: none;
   border-radius: 8px;
   background: transparent;
   color: var(--ink-muted); /* slate-600 */
-  font-size: var(--type-body-size);
+  font-size: 14px;
   line-height: var(--type-body-leading);
   font-weight: 500;
   letter-spacing: 0;
@@ -85,17 +85,23 @@
 }
 
 .wg-dash-root .wg-nav-item {
-  min-height: 34px;
-  height: 34px;
+  min-height: 40px;
+  height: 40px;
 }
 
 .wg-dash-sidenav .wg-nav-item .nav-icon,
 .wg-dash-sidenav .wg-nav-item svg.lucide,
 .wg-dash-sidenav .wg-nav-item .wg-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   color: var(--ink-subtle); /* slate-500 */
   stroke-width: 1.75;
+}
+
+.wg-dash-sidenav .wg-nav-item .wg-nav-item__brand-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 }
 
 .wg-nav-item:hover {
@@ -117,13 +123,13 @@
 }
 
 .wg-nav-item--active {
-  background: var(--danger-wash); /* red-50 */
-  color: var(--danger); /* red-600 */
+  background: var(--surface-sunken); /* light gray */
+  color: var(--danger); /* crimson */
   font-weight: 500;
 }
 
 .wg-nav-item--active:hover {
-  background: var(--danger-wash);
+  background: var(--surface-sunken);
   color: var(--danger);
 }
 
@@ -136,25 +142,9 @@
   color: var(--danger);
 }
 
-.wg-nav-item--active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 2px;
-  height: 16px;
-  border-radius: 9999px;
-  background: var(--danger);
-  transform: translateY(-50%);
-}
-
 .wg-nav-item--collapsed {
   justify-content: center;
   padding: 0 8px;
-}
-
-.wg-nav-item--collapsed.wg-nav-item--active::before {
-  height: 16px;
 }
 
 .wg-nav-item--nested {
@@ -300,19 +290,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 2px 0 0 20px;
-  padding-left: 12px;
-}
-
-.wg-ai-tools-list::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 1px;
-  border-radius: 1px;
-  background: var(--hairline); /* slate-200 */
+  margin: 2px 0 0;
+  padding-left: 24px;
 }
 
 .wg-nav-item__unvisited {
@@ -375,24 +354,45 @@
   background: var(--wg-surface-hover);
   border: 1px solid var(--wg-border);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   margin: 6px 2px 0;
 }
 
+.week-card__title {
+  margin: 0;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  font-weight: 500;
+  color: var(--ink);
+}
+
 .week-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.week-stats__cell {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-  font-size: var(--type-caption-size);
-  line-height: var(--type-caption-leading);
-  color: var(--wg-text-tertiary);
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .week-stats .number {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
   font-weight: 600;
-  color: var(--wg-text-primary);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.week-stats__label {
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-leading);
+  font-weight: var(--type-caption-weight);
+  color: var(--ink-subtle);
 }
 
 .week-quote {
@@ -407,14 +407,34 @@
 }
 
 .sidebar-legal {
-  padding: 0 8px;
+  padding: 0 8px 2px;
+}
+
+.sidebar-legal ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .sidebar-legal a,
 .sidebar-legal button {
   font-family: var(--wg-font-sans);
-  font-size: var(--type-caption-size);
-  line-height: var(--type-caption-leading);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-subtle);
+  text-decoration: none;
+  min-height: unset;
+  padding: 0;
+}
+
+.sidebar-legal a:hover,
+.sidebar-legal button:hover {
+  color: var(--ink-muted);
+  text-decoration: underline;
 }
 
 /* ── Sidebar bottom pinned zone ── */
@@ -426,7 +446,9 @@
   flex-shrink: 0;
   border-top: 1px solid var(--hairline);
   background: var(--surface-raised);
-  padding: 10px 6px 6px;
+  padding: 10px 6px 12px;
+  /* Keep legal links clear of the browser URL/status chrome */
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
 }
 
 .wg-dash-root .sidebar-bottom .wg-dash-compact-btn,
