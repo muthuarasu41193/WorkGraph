@@ -39,7 +39,7 @@ export default function HomeJobMatchesSection({
         <div>
           <h2
             id="home-matches-heading"
-            className="text-role-subheading font-semibold tracking-tight text-fg-primary"
+            className="text-role-subheading"
           >
             Recommended Jobs
           </h2>

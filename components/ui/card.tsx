@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { cardHoverLift } from "@/lib/focus-ring"
 
 const cardBase =
-  "group/card flex flex-col gap-3 overflow-hidden rounded-[10px] border border-border-default bg-surface p-4 text-sm shadow-none hover:border-border-strong dark:bg-surface " +
+  "group/card flex flex-col gap-3 overflow-hidden rounded-[10px] border border-border-default bg-surface p-4 text-role-body shadow-none hover:border-border-strong dark:bg-surface " +
   cardHoverLift
 
 function Card({
@@ -44,7 +44,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "text-base font-semibold leading-heading tracking-heading text-fg-primary group-data-[size=sm]/card:text-sm",
+        "text-role-card-title group-data-[size=sm]/card:text-role-body",
         className
       )}
       {...props}

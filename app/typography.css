@@ -1,56 +1,93 @@
-/* WorkGraph typography system — Newsreader, Public Sans, JetBrains Mono */
+/* WorkGraph typography — Inter (UI) + Newsreader (page titles / hero only) */
 
 :root {
-  --wg-font-sans: var(--font-public), ui-sans-serif, system-ui, sans-serif;
+  --wg-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --wg-font-heading: var(--font-display-face), ui-serif, Georgia, serif;
   --wg-font-display: var(--font-display-face), ui-serif, Georgia, serif;
   --wg-font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
 
-  /* Major third from 16px. 560 and 650 fall back to 600: those cuts are not in the static font files. */
-  --type-display-size: 2.441rem;
-  --type-display-leading: 1.15;
-  --type-display-tracking: -0.02em;
+  /* display — page / marketing hero */
+  --type-display-size: 36px;
+  --type-display-leading: 44px;
+  --type-display-tracking: -0.01em;
   --type-display-weight: 600;
-  --type-title-size: 1.953rem;
-  --type-title-leading: 1.2;
-  --type-title-tracking: -0.018em;
+
+  /* h1 — page titles */
+  --type-title-size: 28px;
+  --type-title-leading: 36px;
+  --type-title-tracking: -0.01em;
   --type-title-weight: 600;
-  --type-heading-size: 1.563rem;
-  --type-heading-leading: 1.25;
-  --type-heading-tracking: -0.015em;
-  --type-heading-weight: 600;
-  --type-subheading-size: 1.25rem;
-  --type-subheading-leading: 1.35;
-  --type-subheading-tracking: -0.01em;
-  --type-subheading-weight: 600;
-  --type-body-size: 1rem;
-  --type-body-leading: 1.55;
+
+  /* h2 — section titles (sans) */
+  --type-h2-size: 20px;
+  --type-h2-leading: 28px;
+  --type-h2-tracking: 0em;
+  --type-h2-weight: 600;
+
+  /* card-title — job titles, card headings */
+  --type-card-title-size: 16px;
+  --type-card-title-leading: 24px;
+  --type-card-title-tracking: 0em;
+  --type-card-title-weight: 600;
+
+  /* body — default UI copy */
+  --type-body-size: 14px;
+  --type-body-leading: 20px;
   --type-body-tracking: 0em;
   --type-body-weight: 400;
-  --type-body-small-size: 0.875rem;
-  --type-body-small-leading: 1.45;
-  --type-body-small-tracking: 0em;
-  --type-body-small-weight: 400;
-  --type-caption-size: 0.75rem;
-  --type-caption-leading: 1.4;
-  --type-caption-tracking: 0.01em;
+
+  /* body-lg — intro paragraphs */
+  --type-body-lg-size: 16px;
+  --type-body-lg-leading: 24px;
+  --type-body-lg-tracking: 0em;
+  --type-body-lg-weight: 400;
+
+  /* caption — meta, tags, helper (minimum size in the system) */
+  --type-caption-size: 12px;
+  --type-caption-leading: 16px;
+  --type-caption-tracking: 0em;
   --type-caption-weight: 500;
-  --type-code-size: 0.8125rem;
-  --type-code-leading: 1.45;
+
+  /* button */
+  --type-button-size: 14px;
+  --type-button-leading: 20px;
+  --type-button-tracking: 0em;
+  --type-button-weight: 500;
+
+  /* code — never below caption */
+  --type-code-size: 12px;
+  --type-code-leading: 16px;
   --type-code-tracking: 0em;
-  --type-code-weight: 450;
-  --wg-leading-body: 1.45;
-  --wg-leading-heading: 1.25;
-  --wg-tracking-body: -0.011em;
-  --wg-tracking-heading: -0.022em;
-  --wg-text-xs: 0.75rem; /* 12 */
-  --wg-text-sm: 0.8125rem; /* 13 */
-  --wg-text-base: 0.875rem; /* 14 */
-  --wg-text-md: 0.9375rem; /* 15 */
-  --wg-text-lg: 1.0625rem; /* 17 */
-  --wg-text-xl: 1.25rem; /* 20 */
-  --wg-text-2xl: 1.5rem; /* 24 */
-  --wg-text-3xl: 1.875rem; /* 30 */
+  --type-code-weight: 500;
+
+  /* Legacy aliases used by older utilities */
+  --type-heading-size: var(--type-title-size);
+  --type-heading-leading: var(--type-title-leading);
+  --type-heading-tracking: var(--type-title-tracking);
+  --type-heading-weight: var(--type-title-weight);
+  --type-subheading-size: var(--type-h2-size);
+  --type-subheading-leading: var(--type-h2-leading);
+  --type-subheading-tracking: var(--type-h2-tracking);
+  --type-subheading-weight: var(--type-h2-weight);
+  --type-body-small-size: var(--type-body-size);
+  --type-body-small-leading: var(--type-body-leading);
+  --type-body-small-tracking: var(--type-body-tracking);
+  --type-body-small-weight: var(--type-body-weight);
+
+  --wg-leading-body: calc(var(--type-body-leading) / var(--type-body-size));
+  --wg-leading-heading: calc(var(--type-title-leading) / var(--type-title-size));
+  --wg-tracking-body: 0em;
+  --wg-tracking-heading: -0.01em;
+
+  /* Remapped scale (no step below 12px) */
+  --wg-text-xs: var(--type-caption-size);
+  --wg-text-sm: var(--type-body-size);
+  --wg-text-base: var(--type-body-lg-size);
+  --wg-text-md: var(--type-body-lg-size);
+  --wg-text-lg: var(--type-h2-size);
+  --wg-text-xl: var(--type-title-size);
+  --wg-text-2xl: var(--type-display-size);
+  --wg-text-3xl: var(--type-display-size);
 }
 
 @layer base {
@@ -61,65 +98,74 @@
   }
 
   body {
-    font-weight: 400;
-    line-height: var(--wg-leading-body);
-    letter-spacing: var(--wg-tracking-body);
+    font-weight: var(--type-body-weight);
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-leading);
+    letter-spacing: var(--type-body-tracking);
     font-variant-numeric: tabular-nums;
-    color: var(--wg-text-body);
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--wg-font-heading);
-    color: var(--wg-text-heading);
-    line-height: var(--wg-leading-heading);
-    letter-spacing: var(--wg-tracking-heading);
+    color: var(--ink-muted);
   }
 
   h1 {
-    font-weight: 700;
-    font-size: clamp(1.375rem, 4vw + 0.75rem, 1.875rem);
+    font-family: var(--wg-font-heading);
+    font-size: var(--type-title-size);
+    line-height: var(--type-title-leading);
+    letter-spacing: var(--type-title-tracking);
+    font-weight: var(--type-title-weight);
+    color: var(--ink);
   }
 
-  h2,
+  h2 {
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-h2-size);
+    line-height: var(--type-h2-leading);
+    letter-spacing: var(--type-h2-tracking);
+    font-weight: var(--type-h2-weight);
+    color: var(--ink);
+  }
+
   h3,
   h4,
   h5,
   h6 {
-    font-weight: 600;
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-card-title-size);
+    line-height: var(--type-card-title-leading);
+    letter-spacing: var(--type-card-title-tracking);
+    font-weight: var(--type-card-title-weight);
+    color: var(--ink);
   }
 
   p,
   li,
   dd,
   dt {
-    font-weight: 400;
-    line-height: var(--wg-leading-body);
-    letter-spacing: var(--wg-tracking-body);
-    color: var(--wg-text-body);
+    font-weight: var(--type-body-weight);
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-leading);
+    letter-spacing: var(--type-body-tracking);
+    color: var(--ink-muted);
   }
 
   small,
   .text-muted,
   [data-slot="card-description"] {
-    font-weight: 400;
-    line-height: var(--wg-leading-body);
-    color: var(--wg-text-muted);
+    font-size: var(--type-caption-size);
+    line-height: var(--type-caption-leading);
+    font-weight: var(--type-caption-weight);
+    color: var(--ink-subtle);
   }
 
   label {
+    font-size: var(--type-body-size);
+    line-height: var(--type-body-leading);
     font-weight: 500;
-    line-height: var(--wg-leading-body);
-    color: var(--wg-text-body);
+    color: var(--ink-muted);
   }
 
   strong {
     font-weight: 600;
-    color: var(--wg-text-heading);
+    color: var(--ink);
   }
 
   code,
@@ -130,11 +176,12 @@
   }
 
   [data-slot="card-title"] {
-    font-size: var(--wg-text-lg);
-    font-weight: 600;
-    line-height: var(--wg-leading-heading);
-    letter-spacing: var(--wg-tracking-heading);
-    color: var(--wg-text-primary);
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-card-title-size);
+    line-height: var(--type-card-title-leading);
+    letter-spacing: var(--type-card-title-tracking);
+    font-weight: var(--type-card-title-weight);
+    color: var(--ink);
   }
 }
 
@@ -149,68 +196,76 @@
     font-family: var(--wg-font-sans);
   }
 
-  .text-role-display,
-  .text-role-title,
-  .text-role-heading {
-    font-family: var(--wg-font-display);
-    color: var(--ink);
-  }
-
   .text-role-display {
+    font-family: var(--wg-font-display);
     font-size: var(--type-display-size);
     line-height: var(--type-display-leading);
     letter-spacing: var(--type-display-tracking);
     font-weight: var(--type-display-weight);
+    color: var(--ink);
   }
 
-  .text-role-title {
+  .text-role-title,
+  .text-role-heading,
+  .text-role-h1 {
+    font-family: var(--wg-font-heading);
     font-size: var(--type-title-size);
     line-height: var(--type-title-leading);
     letter-spacing: var(--type-title-tracking);
     font-weight: var(--type-title-weight);
+    color: var(--ink);
   }
 
-  .text-role-heading {
-    font-size: var(--type-heading-size);
-    line-height: var(--type-heading-leading);
-    letter-spacing: var(--type-heading-tracking);
-    font-weight: var(--type-heading-weight);
-  }
-
-  .text-role-subheading {
+  .text-role-subheading,
+  .text-role-h2 {
     font-family: var(--wg-font-sans);
-    font-size: var(--type-subheading-size);
-    line-height: var(--type-subheading-leading);
-    letter-spacing: var(--type-subheading-tracking);
-    font-weight: var(--type-subheading-weight);
+    font-size: var(--type-h2-size);
+    line-height: var(--type-h2-leading);
+    letter-spacing: var(--type-h2-tracking);
+    font-weight: var(--type-h2-weight);
+    color: var(--ink);
+  }
+
+  .text-role-card-title {
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-card-title-size);
+    line-height: var(--type-card-title-leading);
+    letter-spacing: var(--type-card-title-tracking);
+    font-weight: var(--type-card-title-weight);
     color: var(--ink);
   }
 
   .text-role-body,
-  .text-role-body-small,
-  .text-role-caption {
+  .text-role-body-small {
     font-family: var(--wg-font-sans);
-  }
-
-  .text-role-body {
     font-size: var(--type-body-size);
     line-height: var(--type-body-leading);
     letter-spacing: var(--type-body-tracking);
     font-weight: var(--type-body-weight);
   }
 
-  .text-role-body-small {
-    font-size: var(--type-body-small-size);
-    line-height: var(--type-body-small-leading);
-    letter-spacing: var(--type-body-small-tracking);
-    font-weight: var(--type-body-small-weight);
+  .text-role-body-lg {
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-body-lg-size);
+    line-height: var(--type-body-lg-leading);
+    letter-spacing: var(--type-body-lg-tracking);
+    font-weight: var(--type-body-lg-weight);
   }
 
   .text-role-caption {
+    font-family: var(--wg-font-sans);
     font-size: var(--type-caption-size);
     line-height: var(--type-caption-leading);
     letter-spacing: var(--type-caption-tracking);
     font-weight: var(--type-caption-weight);
+  }
+
+  .text-role-button {
+    font-family: var(--wg-font-sans);
+    font-size: var(--type-button-size);
+    line-height: var(--type-button-leading);
+    letter-spacing: var(--type-button-tracking);
+    font-weight: var(--type-button-weight);
   }
 
   .text-role-code {
@@ -240,31 +295,31 @@
 
   .wg-text-heading {
     font-family: var(--wg-font-heading);
-    font-weight: 600;
-    line-height: var(--wg-leading-heading);
-    letter-spacing: var(--wg-tracking-heading);
-    color: var(--wg-text-heading);
+    font-weight: var(--type-title-weight);
+    line-height: var(--type-title-leading);
+    letter-spacing: var(--type-title-tracking);
+    color: var(--ink);
   }
 
   .wg-text-heading-bold {
     font-family: var(--wg-font-heading);
-    font-weight: 700;
-    line-height: var(--wg-leading-heading);
-    letter-spacing: var(--wg-tracking-heading);
-    color: var(--wg-text-heading);
+    font-weight: var(--type-title-weight);
+    line-height: var(--type-title-leading);
+    letter-spacing: var(--type-title-tracking);
+    color: var(--ink);
   }
 
   .wg-text-body {
-    font-weight: 400;
-    line-height: var(--wg-leading-body);
-    letter-spacing: var(--wg-tracking-body);
-    color: var(--wg-text-body);
+    font-weight: var(--type-body-weight);
+    line-height: var(--type-body-leading);
+    letter-spacing: var(--type-body-tracking);
+    color: var(--ink-muted);
   }
 
   .wg-text-secondary {
-    font-weight: 400;
-    line-height: var(--wg-leading-body);
-    color: var(--wg-text-secondary);
+    font-weight: var(--type-body-weight);
+    line-height: var(--type-body-leading);
+    color: var(--ink-muted);
   }
 }
 
@@ -277,11 +332,11 @@
 }
 
 .wg-section-heading {
-  font-family: var(--wg-font-display);
-  font-size: var(--type-title-size);
-  line-height: var(--type-title-leading);
-  letter-spacing: var(--type-title-tracking);
-  font-weight: var(--type-title-weight);
+  font-family: var(--wg-font-sans);
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-leading);
+  letter-spacing: var(--type-h2-tracking);
+  font-weight: var(--type-h2-weight);
 }
 
 html,

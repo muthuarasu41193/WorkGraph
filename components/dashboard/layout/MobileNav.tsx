@@ -34,7 +34,7 @@ export default function MobileNav() {
                 type="button"
                 onClick={() => navigate(routeId)}
                 className={cn(
-                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1.5 text-xs font-medium transition-colors duration-base ease-exit",
+                  "flex min-h-[52px] w-full flex-col items-center justify-center gap-0.5 rounded-lg px-0.5 py-1.5 text-role-caption transition-colors duration-base ease-exit",
                   FOCUS_RING,
                   active
                     ? "bg-brand-50 text-brand"

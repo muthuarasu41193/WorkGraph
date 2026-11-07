@@ -9,9 +9,10 @@
   --surface: #f5f6f8;
   --surface-raised: #ffffff;
   --surface-sunken: #e8ebf0;
-  --ink: #14181f;
-  --ink-muted: #4a5563;
-  --ink-subtle: #5b6572;
+  /* Typography ink: primary / secondary / tertiary (min 4.5:1 on white) */
+  --ink: #111827;
+  --ink-muted: #4b5563;
+  --ink-subtle: #6b7280;
   --hairline: #7a8490;
   --accent: #a11f2b;
   --accent-ink: #ffffff;

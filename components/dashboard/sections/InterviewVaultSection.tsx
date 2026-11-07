@@ -86,7 +86,7 @@ export default function InterviewVaultSection() {
   return (
     <section className="space-y-4" aria-labelledby="vault-heading">
       <header>
-        <h1 id="vault-heading" className="text-xl font-semibold tracking-tight text-fg-primary">Prep Vault</h1>
+        <h1 id="vault-heading" className="text-role-title">Prep Vault</h1>
         <p className="mt-0.5 text-role-caption text-fg-secondary">
           Private prep notes stored on this device — questions, answers, and company research.
         </p>
@@ -94,7 +94,7 @@ export default function InterviewVaultSection() {
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="text-lg">Add interview prep</CardTitle>
+          <CardTitle>Add interview prep</CardTitle>
           <CardDescription>Track each company you are interviewing with.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -117,13 +117,13 @@ export default function InterviewVaultSection() {
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="text-lg">Common questions checklist</CardTitle>
+          <CardTitle>Common questions checklist</CardTitle>
           <CardDescription>Practice these out loud before every interview.</CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
             {STARTER_QUESTIONS.map((q) => (
-              <li key={q} className="flex items-start gap-2 text-sm">
+              <li key={q} className="flex items-start gap-2 text-role-body">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 {q}
               </li>
@@ -141,7 +141,7 @@ export default function InterviewVaultSection() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h2 className="font-semibold">{entry.company}</h2>
-                      {entry.role ? <p className="text-sm text-muted-foreground">{entry.role}</p> : null}
+                      {entry.role ? <p className="text-role-body text-ink-muted">{entry.role}</p> : null}
                     </div>
                     <Button
                       type="button"
@@ -154,9 +154,9 @@ export default function InterviewVaultSection() {
                     </Button>
                   </div>
                   {entry.notes ? (
-                    <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{entry.notes}</p>
+                    <p className="mt-3 whitespace-pre-wrap text-role-body text-ink-muted">{entry.notes}</p>
                   ) : null}
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-2 text-role-caption text-ink-muted">
                     Updated {new Date(entry.updatedAt).toLocaleDateString()}
                   </p>
                 </CardContent>

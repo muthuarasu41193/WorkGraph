@@ -31,12 +31,10 @@ export default function PageHero({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1">
           {greeting ? (
-            <p className="text-role-caption font-medium text-fg-secondary">{greeting}</p>
+            <p className="text-role-caption text-ink-subtle">{greeting}</p>
           ) : null}
-          <h1 className="text-role-title text-ink">{title}</h1>
-          <p className="measure text-role-body text-ink-muted">
-            {subtitle}
-          </p>
+          <h1 className="text-role-title">{title}</h1>
+          <p className="measure text-role-body-lg text-ink-muted">{subtitle}</p>
         </div>
         {cta ? <div className="shrink-0">{cta}</div> : null}
       </div>
@@ -53,8 +51,8 @@ export default function PageHero({
                   : "bg-surface ring-1 ring-[var(--dash-border)]",
               )}
             >
-              <span className="font-semibold tabular-nums text-fg-primary">{m.value}</span>
-              <span className="text-fg-secondary">{m.label}</span>
+              <span className="font-semibold tabular-nums text-ink">{m.value}</span>
+              <span className="text-ink-muted">{m.label}</span>
             </div>
           ))}
         </div>

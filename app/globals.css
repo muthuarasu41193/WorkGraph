@@ -603,27 +603,27 @@ details[data-filter-dropdown="true"][open] > [data-filter-menu="true"] {
   --font-mono: var(--wg-font-mono);
   --font-numeric: var(--wg-font-mono);
 
-  --text-xs: 0.75rem;
-  --text-xs--line-height: 1.4;
-  --text-sm: 0.8125rem;
-  --text-sm--line-height: 1.45;
-  --text-base: 0.875rem;
-  --text-base--line-height: 1.45;
-  --text-md: 0.9375rem;
-  --text-md--line-height: 1.45;
-  --text-lg: 1.0625rem;
-  --text-lg--line-height: 1.4;
-  --text-xl: 1.25rem;
-  --text-xl--line-height: 1.25;
-  --text-2xl: 1.5rem;
-  --text-2xl--line-height: 1.2;
-  --text-3xl: 1.875rem;
-  --text-3xl--line-height: 1.15;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+  --text-xl: 28px;
+  --text-xl--line-height: 36px;
+  --text-2xl: 36px;
+  --text-2xl--line-height: 44px;
+  --text-3xl: 36px;
+  --text-3xl--line-height: 44px;
 
-  --leading-body: 1.45;
-  --leading-heading: 1.25;
-  --tracking-body: -0.011em;
-  --tracking-heading: -0.022em;
+  --leading-body: 20px;
+  --leading-heading: 36px;
+  --tracking-body: 0em;
+  --tracking-heading: -0.01em;
 
   --max-width-landing: 1200px;
   --radius-sm: var(--radius-control);

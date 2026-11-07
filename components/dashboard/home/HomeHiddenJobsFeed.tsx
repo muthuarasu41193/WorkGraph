@@ -32,7 +32,7 @@ export default async function HomeHiddenJobsFeed() {
     <section className="space-y-3" aria-labelledby="home-hidden-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-role-body-small font-semibold tracking-tight text-fg-primary">
+          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-role-subheading">
             Hidden Jobs Feed
             <span className="inline-flex items-center gap-1 rounded-full bg-highlight px-1.5 py-px text-role-caption font-medium text-highlight-ink">
               <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
@@ -76,14 +76,14 @@ export default async function HomeHiddenJobsFeed() {
                       </Badge>
                     ) : null}
                   </div>
-                  <h3 className="mt-0.5 truncate text-role-body-small font-semibold tracking-tight text-fg-primary">
+                  <h3 className="mt-0.5 truncate text-role-card-title">
                     {item.title}
                   </h3>
                   <p className="truncate text-role-caption text-fg-secondary">
                     {[item.company, item.author, item.location].filter(Boolean).join(" · ") || "Community post"}
                   </p>
                 </div>
-                <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-2.5 text-role-caption">
+                <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-2.5 text-role-button">
                   <a href={item.url} target="_blank" rel="noopener noreferrer">
                     Open post
                     <ExternalLink className={iconClass()} />

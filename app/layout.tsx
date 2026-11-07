@@ -13,28 +13,21 @@ import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-// Latin woff2 subsets committed in app/fonts. next/font/google downloads CSS at
-// build time, and Google sometimes returns extensionless /l/font?kit= URLs.
-// Turbopack then fails with "next/font/google queries have exactly one entry".
-// Discrete weights match the previous cuts, so 450/560/650 still fall back.
-const publicSans = localFont({
+// Latin woff2 subsets committed in app/fonts. next/font/google is avoided:
+// Turbopack can fail when Google returns extensionless /l/font?kit= CSS URLs.
+const inter = localFont({
   src: [
-    { path: "./fonts/public-sans/public-sans-latin.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/public-sans/public-sans-latin.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/public-sans/public-sans-latin.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/public-sans/public-sans-latin.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/inter/inter-latin-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/inter/inter-latin-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/inter/inter-latin-600.woff2", weight: "600", style: "normal" },
   ],
-  variable: "--font-public",
+  variable: "--font-inter",
   display: "swap",
   preload: true,
 });
 
 const newsreader = localFont({
-  src: [
-    { path: "./fonts/newsreader/newsreader-latin.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/newsreader/newsreader-latin.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/newsreader/newsreader-latin.woff2", weight: "700", style: "normal" },
-  ],
+  src: [{ path: "./fonts/newsreader/newsreader-latin.woff2", weight: "600", style: "normal" }],
   variable: "--font-display-face",
   display: "swap",
   preload: false,
@@ -87,8 +80,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn(publicSans.variable, newsreader.variable, jetbrainsMono.variable)} suppressHydrationWarning>
-      <body className={cn(publicSans.className, "min-h-dvh bg-background text-foreground antialiased")}>
+    <html lang="en" className={cn(inter.variable, newsreader.variable, jetbrainsMono.variable)} suppressHydrationWarning>
+      <body className={cn(inter.className, "min-h-dvh bg-background text-foreground antialiased")}>
         <ThemeScript />
         <ThemeProvider>
           <JsonLd />
