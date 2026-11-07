@@ -14,6 +14,7 @@ export type HomeDashboardPageProps = {
   recommendedJobs: RecommendedJobCard[];
   semanticJobMatches: JobMatchPreviewExt[] | null;
   jobPipeline: JobPipelineCounts;
+  matchedListings: number;
   feedKind: "live" | "demo";
 };
 
@@ -55,6 +56,7 @@ export async function loadHomeDashboardPageProps(): Promise<HomeDashboardLoadRes
     recommendedJobs: jobDashboard.recommended,
     semanticJobMatches,
     jobPipeline: jobDashboard.pipeline,
+    matchedListings: jobDashboard.matchedListings,
     feedKind: jobDashboard.feedKind,
   };
 }

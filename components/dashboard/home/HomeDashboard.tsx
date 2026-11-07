@@ -2,13 +2,12 @@ import { Suspense } from "react";
 import type { JobMatchPreviewExt } from "@/lib/home-dashboard";
 import HomeDashboardSkeleton from "@/components/dashboard/home/HomeDashboardSkeleton";
 import HomeHiddenJobsFeed from "@/components/dashboard/home/HomeHiddenJobsFeed";
-import HomeJobMatchesSection, {
-  HomeJobMatchesSkeleton,
-} from "@/components/dashboard/home/HomeJobMatchesSection";
+import HomeJobMatchesSection from "@/components/dashboard/home/HomeJobMatchesSection";
 import HomeStatCards from "@/components/dashboard/home/HomeStatCards";
 import HomeWelcomeHeader from "@/components/dashboard/home/HomeWelcomeHeader";
 import {
   buildHomeDashboardData,
+  countApplicationsThisWeek,
   getProfileFirstName,
   getTimeGreeting,
   loadHiddenJobsFeed,
@@ -26,23 +25,24 @@ export type HomeDashboardProps = {
   recommendedJobs: RecommendedJobCard[];
   semanticJobMatches: JobMatchPreviewExt[] | null;
   jobPipeline: JobPipelineCounts;
+  /** Catalog jobs matched to profile — same source as Jobs tab `matchedListings`. */
+  matchedListings: number;
   feedKind: "live" | "demo";
 };
 
 function StatCardsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-[var(--layout-card-gap)] md:grid-cols-2" aria-hidden>
-      {Array.from({ length: 2 }).map((_, i) => (
+    <div className="grid grid-cols-1 gap-[var(--layout-card-gap)] sm:grid-cols-3" aria-hidden>
+      {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={i}
-          className="relative overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] md:p-[var(--layout-card-pad)]"
+          className="flex flex-col gap-[var(--space-3)] rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] md:p-[var(--layout-card-pad)]"
         >
-          <span className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
-          <div className="h-10 w-10 rounded-[var(--radius-control)] wg-skeleton-shimmer" />
-          <div className="mt-[var(--space-3)] flex flex-col gap-[var(--layout-stack-tight)]">
-            <div className="h-4 w-36 rounded wg-skeleton-shimmer" />
-            <div className="h-3.5 w-48 max-w-full rounded wg-skeleton-shimmer" />
-            <div className="h-7 w-12 rounded wg-skeleton-shimmer" />
+          <div className="h-8 w-8 rounded-md wg-skeleton-shimmer" />
+          <div className="flex flex-col gap-[var(--space-1)]">
+            <div className="h-3.5 w-24 rounded wg-skeleton-shimmer" />
+            <div className="h-8 w-14 rounded wg-skeleton-shimmer" />
+            <div className="h-3.5 w-40 max-w-full rounded wg-skeleton-shimmer" />
           </div>
         </div>
       ))}
@@ -54,28 +54,30 @@ async function HomeStatsAndMatches(props: HomeDashboardProps) {
   const vaultHomePromise = supabaseConfigured()
     ? getVaultHomeStats(props.profile.id)
     : Promise.resolve({ views: 0, earningsInr: 0, rating: 0, ratingCount: 0 });
-  const followUpsPromise = supabaseConfigured()
-    ? listApplicationsForUser()
-        .then((apps) => countFollowUpsNeedingAttention(apps))
-        .catch(() => 0)
-    : Promise.resolve(0);
-  const [hidden, wallet, vaultHome, followUpsDue] = await Promise.all([
+  const applicationsPromise = supabaseConfigured()
+    ? listApplicationsForUser().catch(() => [])
+    : Promise.resolve([]);
+  const [hidden, wallet, vaultHome, applications] = await Promise.all([
     loadHiddenJobsFeed(5),
     loadWalletSnapshot(),
     vaultHomePromise,
-    followUpsPromise,
+    applicationsPromise,
   ]);
+  const followUpsDue = countFollowUpsNeedingAttention(applications);
+  const applicationsThisWeek = countApplicationsThisWeek(applications);
   const data = buildHomeDashboardData({
     profile: props.profile,
     recommendedJobs: props.recommendedJobs,
     semanticJobMatches: props.semanticJobMatches,
     jobPipeline: props.jobPipeline,
+    matchedListings: props.matchedListings,
     feedKind: props.feedKind,
     hiddenFeed: hidden.items,
     hiddenTotal: hidden.total,
     wallet,
     vaultEarningsInr: vaultHome.earningsInr,
     followUpsDue,
+    applicationsThisWeek,
   });
 
   return (
@@ -89,15 +91,10 @@ async function HomeStatsAndMatches(props: HomeDashboardProps) {
 export default function HomeDashboard(props: HomeDashboardProps) {
   const greeting = getTimeGreeting();
   const displayName = getProfileFirstName(props.profile);
-  const newMatches = props.semanticJobMatches?.length ?? props.recommendedJobs.length;
 
   return (
     <div className="flex flex-col gap-[var(--layout-section-gap)]">
-      <HomeWelcomeHeader
-        greeting={greeting}
-        displayName={displayName}
-        newMatches={newMatches > 0 ? newMatches : undefined}
-      />
+      <HomeWelcomeHeader greeting={greeting} displayName={displayName} />
 
       <Suspense fallback={<StatCardsSkeleton />}>
         <HomeStatsAndMatches {...props} />

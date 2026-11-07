@@ -10,10 +10,12 @@ import { workgraphBffFetch } from "@/lib/workgraph-bff";
 import type { DashboardSnapshot, WalletSummary } from "@/packages/shared/types/phase3";
 
 export type HomeStatCards = {
-  matchedToday: number;
+  /** Catalog jobs matched to the user's profile (same source as Jobs tab). */
+  newMatches: number;
+  followUpsDue: number;
+  applicationsThisWeek: number;
   hiddenJobsFound: number;
   pendingApplications: number;
-  followUpsDue: number;
   vaultEarningsInr: number;
   vaultEarningsCurrency: string;
 };
@@ -92,14 +94,6 @@ export function getProfileFirstName(profile: Pick<Profile, "full_name" | "email"
   return "there";
 }
 
-function isPostedToday(iso: string | null | undefined): boolean {
-  if (!iso) return false;
-  const posted = new Date(iso);
-  if (Number.isNaN(posted.getTime())) return false;
-  const now = new Date();
-  return posted.toDateString() === now.toDateString();
-}
-
 function parseMatchPercent(label: string): number {
   const matchPct = label.match(/(\d{1,3})%\s*match/i);
   if (matchPct) return Math.min(99, Math.max(48, Number(matchPct[1])));
@@ -108,17 +102,28 @@ function parseMatchPercent(label: string): number {
   return Math.min(99, Math.max(48, Number(m[1])));
 }
 
-export function countJobsMatchedToday(
-  jobs: RecommendedJobCard[],
-  topMatches: JobMatchPreviewExt[],
+function localDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/** Count applications whose applied_date falls within the last 7 days (inclusive of today). */
+export function countApplicationsThisWeek(
+  applications: { applied_date: string }[],
+  now = new Date(),
 ): number {
-  const todayFromListings = jobs.filter((job) => isPostedToday(job.postedAtIso)).length;
-  if (todayFromListings > 0) return todayFromListings;
+  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(end);
+  start.setDate(start.getDate() - 6);
+  const startKey = localDateKey(start);
+  const endKey = localDateKey(end);
 
-  const strongMatches = topMatches.filter((j) => j.matchPercent >= 70).length;
-  if (strongMatches > 0) return Math.min(strongMatches, 12);
-
-  return Math.min(topMatches.length, 5);
+  return applications.filter((app) => {
+    const day = app.applied_date.slice(0, 10);
+    return day >= startKey && day <= endKey;
+  }).length;
 }
 
 export function formatInr(amount: number): string {
@@ -191,24 +196,25 @@ export async function loadWalletSnapshot(): Promise<WalletSummary | null> {
   }
 }
 
-export function buildHomeStats(
-  jobs: RecommendedJobCard[],
-  topMatches: JobMatchPreviewExt[],
-  pipeline: JobPipelineCounts,
-  hiddenTotal: number,
-  wallet: WalletSummary | null,
-  vaultEarningsInrOverride?: number | null,
-  followUpsDue = 0,
-): HomeStatCards {
+export function buildHomeStats(input: {
+  matchedListings: number;
+  pipeline: JobPipelineCounts;
+  hiddenTotal: number;
+  wallet: WalletSummary | null;
+  vaultEarningsInrOverride?: number | null;
+  followUpsDue?: number;
+  applicationsThisWeek?: number;
+}): HomeStatCards {
   const vaultEarningsInr =
-    vaultEarningsInrOverride ??
-    (wallet ? centsToInr(wallet.lifetime_earned_cents, wallet.currency) : 0);
+    input.vaultEarningsInrOverride ??
+    (input.wallet ? centsToInr(input.wallet.lifetime_earned_cents, input.wallet.currency) : 0);
 
   return {
-    matchedToday: countJobsMatchedToday(jobs, topMatches),
-    hiddenJobsFound: hiddenTotal,
-    pendingApplications: pipeline.applied,
-    followUpsDue,
+    newMatches: Math.max(0, input.matchedListings),
+    followUpsDue: input.followUpsDue ?? 0,
+    applicationsThisWeek: input.applicationsThisWeek ?? 0,
+    hiddenJobsFound: input.hiddenTotal,
+    pendingApplications: input.pipeline.applied,
     vaultEarningsInr,
     vaultEarningsCurrency: "INR",
   };
@@ -229,12 +235,15 @@ export type BuildHomeDashboardInput = {
   recommendedJobs: RecommendedJobCard[];
   semanticJobMatches: JobMatchPreviewExt[] | null;
   jobPipeline: JobPipelineCounts;
+  /** Catalog-wide profile match count — same query as the Jobs tab. */
+  matchedListings: number;
   feedKind: "live" | "demo";
   hiddenFeed: HiddenOpportunity[];
   hiddenTotal: number;
   wallet: WalletSummary | null;
   vaultEarningsInr?: number | null;
   followUpsDue?: number;
+  applicationsThisWeek?: number;
 };
 
 export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDashboardData {
@@ -243,15 +252,15 @@ export function buildHomeDashboardData(input: BuildHomeDashboardInput): HomeDash
     input.recommendedJobs,
   ).slice(0, 5);
 
-  const stats = buildHomeStats(
-    input.recommendedJobs,
-    topMatches,
-    input.jobPipeline,
-    input.hiddenTotal,
-    input.wallet,
-    input.vaultEarningsInr,
-    input.followUpsDue ?? 0,
-  );
+  const stats = buildHomeStats({
+    matchedListings: input.matchedListings,
+    pipeline: input.jobPipeline,
+    hiddenTotal: input.hiddenTotal,
+    wallet: input.wallet,
+    vaultEarningsInrOverride: input.vaultEarningsInr,
+    followUpsDue: input.followUpsDue ?? 0,
+    applicationsThisWeek: input.applicationsThisWeek ?? 0,
+  });
 
   return {
     displayName: getProfileFirstName(input.profile),

@@ -17,6 +17,7 @@ export default async function DashboardHomePage() {
         recommendedJobs={props.recommendedJobs}
         semanticJobMatches={props.semanticJobMatches}
         jobPipeline={props.jobPipeline}
+        matchedListings={props.matchedListings}
         feedKind={props.feedKind}
       />
     </Suspense>
