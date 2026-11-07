@@ -10,7 +10,7 @@ import type { PreviewState } from "@/lib/primitive"
 
 const buttonVariants = cva(
   cn(
-    "group/button wg-touch-target relative inline-flex shrink-0 items-center justify-center rounded-md border bg-clip-padding text-role-button whitespace-nowrap select-none",
+    "group/button wg-touch-target relative inline-flex shrink-0 items-center justify-center rounded-[var(--radius-button)] border bg-clip-padding text-role-button whitespace-nowrap select-none",
     "transition-colors duration-base ease-exit",
     BUTTON_PRESS,
     FOCUS_RING,

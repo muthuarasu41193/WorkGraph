@@ -61,9 +61,9 @@ export default function InsightCard({
   );
 
   const classes = cn(
-    "relative flex flex-col overflow-hidden rounded-[10px] border border-hairline bg-surface-raised p-4 shadow-none",
-    "transition-[border-color,box-shadow] duration-base",
-    "hover:border-hairline hover:shadow-sm",
+    "relative flex flex-col gap-[var(--layout-stack-tight)] overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] shadow-none md:p-[var(--layout-card-pad)]",
+    "transition-colors duration-base",
+    "hover:border-hairline",
     actionable && "cursor-pointer no-underline",
     className,
   );

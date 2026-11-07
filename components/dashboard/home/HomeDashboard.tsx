@@ -31,15 +31,15 @@ export type HomeDashboardProps = {
 
 function StatCardsSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2" aria-hidden>
+    <div className="grid grid-cols-1 gap-[var(--layout-card-gap)] md:grid-cols-2" aria-hidden>
       {Array.from({ length: 2 }).map((_, i) => (
         <div
           key={i}
-          className="relative overflow-hidden rounded-[10px] border border-hairline bg-surface-raised p-4"
+          className="relative overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] md:p-[var(--layout-card-pad)]"
         >
-          <span className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-danger to-danger" />
-          <div className="h-10 w-10 rounded-lg wg-skeleton-shimmer" />
-          <div className="mt-3 space-y-2">
+          <span className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+          <div className="h-10 w-10 rounded-[var(--radius-control)] wg-skeleton-shimmer" />
+          <div className="mt-[var(--space-3)] flex flex-col gap-[var(--layout-stack-tight)]">
             <div className="h-4 w-36 rounded wg-skeleton-shimmer" />
             <div className="h-3.5 w-48 max-w-full rounded wg-skeleton-shimmer" />
             <div className="h-7 w-12 rounded wg-skeleton-shimmer" />
@@ -47,15 +47,6 @@ function StatCardsSkeleton() {
         </div>
       ))}
     </div>
-  );
-}
-
-function StatsAndMatchesSkeleton() {
-  return (
-    <>
-      <StatCardsSkeleton />
-      <HomeJobMatchesSkeleton />
-    </>
   );
 }
 
@@ -101,14 +92,14 @@ export default function HomeDashboard(props: HomeDashboardProps) {
   const newMatches = props.semanticJobMatches?.length ?? props.recommendedJobs.length;
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-[var(--layout-section-gap)]">
       <HomeWelcomeHeader
         greeting={greeting}
         displayName={displayName}
         newMatches={newMatches > 0 ? newMatches : undefined}
       />
 
-      <Suspense fallback={<StatsAndMatchesSkeleton />}>
+      <Suspense fallback={<StatCardsSkeleton />}>
         <HomeStatsAndMatches {...props} />
       </Suspense>
 
