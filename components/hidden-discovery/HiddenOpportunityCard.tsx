@@ -1,31 +1,12 @@
 "use client";
 
-import { Bookmark, Github } from "lucide-react";
-import { RedditLogo } from "@/components/icons/RedditLogo";
+import { Bookmark } from "lucide-react";
+import SourceBadge from "@/components/icons/SourceBadge";
 import { TrustIndicator } from "@/components/product/TrustIndicator";
 import { iconClass } from "@/lib/icon-styles";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import { trustPropsForListing } from "@/lib/job-feed";
 import "./hidden-opportunity-card.css";
-
-const SOURCE_LABELS: Record<string, string> = {
-  reddit: "Reddit",
-  hackernews: "Hacker News",
-  github: "GitHub",
-};
-
-function SourceIcon({ source }: { source: string }) {
-  if (source === "reddit") {
-    return <RedditLogo className={iconClass("standalone")} />;
-  }
-  if (source === "hackernews") {
-    return <span aria-hidden>Y</span>;
-  }
-  if (source === "github") {
-    return <Github className={iconClass("standalone")} />;
-  }
-  return <span className="text-xs font-semibold uppercase">{source.slice(0, 2)}</span>;
-}
 
 function formatPostedDate(iso: string): string {
   const ms = Date.parse(iso);
@@ -52,7 +33,6 @@ export default function HiddenOpportunityCard({
   onViewSource,
   onVisible,
 }: Props) {
-  const sourceLabel = SOURCE_LABELS[opportunity.source] ?? opportunity.source;
   const meta = [opportunity.company, opportunity.author, formatPostedDate(opportunity.postedAt)]
     .filter(Boolean)
     .join(" · ");
@@ -72,14 +52,8 @@ export default function HiddenOpportunityCard({
       onMouseEnter={onVisible}
       onFocus={onVisible}
     >
-      <div className="hidden-opp-card__source">
-        <div className="hidden-opp-card__source-icon" data-source={opportunity.source}>
-          <SourceIcon source={opportunity.source} />
-        </div>
-        <span className="hidden-opp-card__source-name">{sourceLabel}</span>
-      </div>
-
       <div className="hidden-opp-card__main">
+        <SourceBadge source={opportunity.source} url={opportunity.url} />
         <h2 className="hidden-opp-card__title">{opportunity.title}</h2>
         <p className="hidden-opp-card__meta">{meta}</p>
         {trust ? <TrustIndicator {...trust} className="mt-1" /> : null}
