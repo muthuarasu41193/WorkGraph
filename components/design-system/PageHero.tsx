@@ -28,15 +28,15 @@ export default function PageHero({
 }: Props) {
   return (
     <header className={cn("wg-section-fade flex flex-col gap-[var(--layout-section-title-gap)]", className)}>
-      <div className="flex flex-col gap-[var(--space-3)] sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-col gap-[var(--layout-stack-tight)]">
-          {greeting ? (
-            <p className="text-role-caption text-ink-subtle">{greeting}</p>
-          ) : null}
-          <h1 className="text-role-title">{title}</h1>
-          <p className="measure text-role-body-lg text-ink-muted">{subtitle}</p>
+      <div className="flex flex-col gap-[var(--layout-stack-tight)]">
+        {greeting ? (
+          <p className="text-role-caption text-ink-subtle">{greeting}</p>
+        ) : null}
+        <div className="flex flex-col gap-[var(--space-3)] sm:flex-row sm:items-center sm:justify-between sm:gap-[var(--space-4)]">
+          <h1 className="text-role-title min-w-0">{title}</h1>
+          {cta ? <div className="shrink-0 self-start sm:self-center">{cta}</div> : null}
         </div>
-        {cta ? <div className="shrink-0">{cta}</div> : null}
+        <p className="max-w-[560px] text-role-body-lg text-ink-muted">{subtitle}</p>
       </div>
 
       {metrics && metrics.length > 0 ? (

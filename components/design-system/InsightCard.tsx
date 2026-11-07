@@ -31,12 +31,7 @@ export default function InsightCard({
 
   const content = (
     <>
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-y-2 left-0 w-[2px] rounded-full bg-gradient-to-b from-danger to-danger"
-      />
-
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-danger-wash text-danger">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-sunken text-ink-muted">
         <Icon className={iconClass("standalone")} />
       </span>
 
@@ -63,8 +58,7 @@ export default function InsightCard({
   const classes = cn(
     "relative flex flex-col gap-[var(--layout-stack-tight)] overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] shadow-none md:p-[var(--layout-card-pad)]",
     "transition-colors duration-base",
-    "hover:border-hairline",
-    actionable && "cursor-pointer no-underline",
+    actionable && "cursor-pointer no-underline hover:border-border-strong",
     className,
   );
 
