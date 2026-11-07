@@ -35,10 +35,10 @@ type Props = {
 const AVATAR_TONES = [
   { bg: "var(--wg-surface-sunken)", fg: "var(--wg-text-secondary)" },
   { bg: "color-mix(in srgb, var(--wg-brand-50) 80%, var(--wg-surface-sunken))", fg: "var(--wg-brand-800)" },
-  { bg: "color-mix(in srgb, var(--wg-info-50, #eff6ff) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
-  { bg: "color-mix(in srgb, var(--wg-success-50, #f0fdf4) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
-  { bg: "color-mix(in srgb, var(--wg-warning-50, #fffbeb) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
-  { bg: "color-mix(in srgb, var(--wg-slate-100, #f1f5f9) 90%, var(--wg-surface-sunken))", fg: "var(--wg-text-muted)" },
+  { bg: "color-mix(in srgb, var(--wg-info-50) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-success-50) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-warning-50) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-slate-100) 90%, var(--wg-surface-sunken))", fg: "var(--wg-text-muted)" },
 ] as const;
 
 function hashCompanyName(name: string): number {
