@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Bookmark } from "lucide-react";
 import JobApplyButton from "@/components/design-system/JobApplyButton";
-import { FreshnessIndicator } from "@/components/product/FreshnessIndicator";
-import { MatchScore } from "@/components/product/MatchScore";
-import { SalaryDisplay, type SalaryFigure } from "@/components/product/SalaryDisplay";
-import { TrustIndicator } from "@/components/product/TrustIndicator";
-import SourceBadge from "@/components/icons/SourceBadge";
+import SourceIcon from "@/components/icons/SourceIcon";
+import { Card } from "@/components/ui/card";
+import { IconButton } from "@/components/ui/icon-button";
 import { type JobCardData } from "@/lib/job-card-data";
-import { formatJobFreshness } from "@/lib/job-freshness";
-import { trustPropsForListing } from "@/lib/job-feed";
+import { formatJobPostedCompact } from "@/lib/job-freshness";
 import { parseStatedSalary } from "@/lib/salary-parse";
 import { matchReason } from "@/lib/job-match-reason";
-import { AIProvenance } from "@/components/product/AIProvenance";
-import { buildJobSummary, jobSummaryLabel } from "@/lib/job-summary";
 import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 import "./job-card.css";
@@ -37,12 +32,40 @@ type Props = {
   children?: ReactNode;
 };
 
+const AVATAR_TONES = [
+  { bg: "var(--wg-surface-sunken)", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-brand-50) 80%, var(--wg-surface-sunken))", fg: "var(--wg-brand-800)" },
+  { bg: "color-mix(in srgb, var(--wg-info-50, #eff6ff) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-success-50, #f0fdf4) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-warning-50, #fffbeb) 85%, var(--wg-surface-sunken))", fg: "var(--wg-text-secondary)" },
+  { bg: "color-mix(in srgb, var(--wg-slate-100, #f1f5f9) 90%, var(--wg-surface-sunken))", fg: "var(--wg-text-muted)" },
+] as const;
+
+function hashCompanyName(name: string): number {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) {
+    hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+/** Initials unique enough that single-word companies do not all collapse to the same pair. */
 function companyInitials(name: string): string {
-  const cleaned = name.trim();
-  if (!cleaned) return "CO";
+  const cleaned = name.trim().replace(/[^\p{L}\p{N}\s&.+-]/gu, "");
+  if (!cleaned) return "?";
   const parts = cleaned.split(/\s+/).filter(Boolean);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+  if (parts.length >= 2) {
+    const first = parts[0][0] ?? "";
+    const second = parts[1][0] ?? "";
+    return `${first}${second}`.toUpperCase();
+  }
+  const word = parts[0];
+  if (word.length === 1) return word.toUpperCase();
+  return `${word[0]}${word[word.length - 1]}`.toUpperCase();
+}
+
+function avatarTone(company: string) {
+  return AVATAR_TONES[hashCompanyName(company.toLowerCase()) % AVATAR_TONES.length];
 }
 
 function isUsefulChip(value?: string): value is string {
@@ -52,82 +75,99 @@ function isUsefulChip(value?: string): value is string {
   return normalized !== "see listing" && normalized !== "—" && normalized !== "-";
 }
 
-function CompanyLogo({ company, logoUrl }: { company: string; logoUrl?: string }) {
-  const [failed, setFailed] = useState(false);
-
-  if (logoUrl && !failed) {
-    return (
-      <img
-        src={logoUrl}
-        alt=""
-        className="h-9 w-9 shrink-0 rounded-md bg-surface-sunken object-cover"
-        onError={() => setFailed(true)}
-      />
-    );
+function salaryLabel(job: JobCardData): string | null {
+  const parsed = parseStatedSalary(job.description ?? "");
+  if (parsed.kind === "range" || parsed.kind === "single") {
+    const label = parsed.label?.trim();
+    return label || null;
   }
+  const range = job.salaryRange?.trim();
+  if (!range || range.toLowerCase() === "see listing") return null;
+  return range;
+}
+
+function CompanyLogo({
+  company,
+  logoUrl,
+  source,
+  applyUrl,
+}: {
+  company: string;
+  logoUrl?: string;
+  source?: JobCardData["source"];
+  applyUrl?: string | null;
+}) {
+  const [failed, setFailed] = useState(false);
+  const tone = useMemo(() => avatarTone(company), [company]);
+  const initials = useMemo(() => companyInitials(company), [company]);
 
   return (
-    <span
-      className="text-role-caption flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-sunken font-semibold text-ink"
-      aria-hidden
-    >
-      {companyInitials(company)}
-    </span>
+    <div className="job-card__logo relative shrink-0">
+      {logoUrl && !failed ? (
+        <img
+          src={logoUrl}
+          alt=""
+          className="h-10 w-10 rounded-lg bg-surface-sunken object-cover"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span
+          className="text-role-caption flex h-10 w-10 items-center justify-center rounded-lg font-semibold"
+          style={{ background: tone.bg, color: tone.fg } as CSSProperties}
+          aria-hidden
+        >
+          {initials}
+        </span>
+      )}
+      {source || applyUrl ? (
+        <span className="job-card__source-badge absolute -bottom-1 -right-1">
+          <SourceIcon
+            source={source ?? "other"}
+            url={applyUrl}
+            size={10}
+            className="h-4 w-4 rounded-[4px] border border-surface bg-surface shadow-xs"
+          />
+        </span>
+      ) : null}
+    </div>
   );
 }
 
 function JobChip({ children }: { children: string }) {
   return (
-    <span className="text-role-caption rounded-control bg-surface-sunken px-1.5 py-px leading-tight text-ink-muted tabular-nums">
+    <span className="text-role-caption rounded-[var(--radius-tag)] bg-surface-sunken px-1.5 py-0.5 leading-tight text-ink-muted normal-case">
       {children}
     </span>
   );
 }
 
-function salaryFigure(job: JobCardData): SalaryFigure {
-  const parsed = parseStatedSalary(job.description ?? "");
-  if (parsed.kind === "range" || parsed.kind === "single") return parsed;
-  const label = job.salaryRange?.trim();
-  if (!label || label.toLowerCase() === "see listing") return { kind: "undisclosed" };
-  return { kind: "stated", label };
-}
-
-function BookmarkButton({ saved, onSave }: { saved: boolean; onSave: () => void }) {
+function MatchPill({ percent }: { percent: number }) {
   return (
-    <button
-      type="button"
-      onClick={(event) => {
-        event.stopPropagation();
-        onSave();
-      }}
-      aria-label={saved ? "Remove from saved" : "Save job"}
-      className={cn(
-        "job-card__bookmark wg-touch-target shrink-0 rounded-md p-1 text-ink-subtle transition-colors hover:text-ink focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hairline focus-visible:ring-offset-1",
-        saved && "text-ink",
-      )}
-    >
-      <Bookmark className={cn(iconClass("inline"), saved && "fill-current")} />
-    </button>
+    <span className="text-role-caption inline-flex shrink-0 items-center rounded-full bg-surface-sunken px-2 py-0.5 font-medium tabular-nums text-ink-muted">
+      {Math.round(percent)}% match
+    </span>
   );
 }
 
 export function JobCardSkeleton() {
   return (
-    <article className="job-card" aria-hidden>
+    <Card className="job-card gap-0 p-5 md:p-5" aria-hidden size="sm">
       <div className="flex items-start gap-3">
-        <div className="h-9 w-9 shrink-0 rounded-md wg-skeleton-shimmer" />
+        <div className="h-10 w-10 shrink-0 rounded-lg wg-skeleton-shimmer" />
         <div className="min-w-0 flex-1 space-y-2">
           <div className="h-4 w-2/3 max-w-[240px] rounded wg-skeleton-shimmer" />
           <div className="h-3 w-1/2 max-w-[200px] rounded wg-skeleton-shimmer" />
-          <div className="h-3 w-3/4 max-w-[280px] rounded wg-skeleton-shimmer" />
           <div className="flex gap-1.5 pt-0.5">
-            <div className="h-5 w-16 rounded-control wg-skeleton-shimmer" />
-            <div className="h-5 w-14 rounded-control wg-skeleton-shimmer" />
+            <div className="h-5 w-16 rounded-[var(--radius-tag)] wg-skeleton-shimmer" />
+            <div className="h-5 w-14 rounded-[var(--radius-tag)] wg-skeleton-shimmer" />
           </div>
-          <div className="h-8 w-full rounded wg-skeleton-shimmer" />
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <div className="h-3 w-16 rounded wg-skeleton-shimmer" />
+          <div className="h-5 w-14 rounded-full wg-skeleton-shimmer" />
         </div>
       </div>
-    </article>
+    </Card>
   );
 }
 
@@ -139,52 +179,43 @@ export default function JobCard({
   onSave,
   onClick,
   onApplyClick,
-  tailorHref,
   className,
   children,
 }: Props) {
   const applyHref = job.applyUrl?.trim();
   const canApply = Boolean(applyHref);
-  const salary = salaryFigure(job);
-  const trust = trustPropsForListing({
-    title: job.title,
-    company: job.company,
-    description: job.description,
-    applyUrl: job.applyUrl,
-    postedAtIso: job.postedAtIso,
-    source: job.source,
-    isCommunity: job.source === "reddit" || job.source === "hackernews" || job.source === "rss",
-  });
-  const freshnessLabel = formatJobFreshness(job.postedAtIso);
-  const chips = [job.workMode, job.employmentType, job.experience, job.location].filter(isUsefulChip);
-  const summary = buildJobSummary({
-    description: job.description,
-    company: job.company,
-    generatedSummary: job.generatedSummary,
-  });
+  const postedLabel = formatJobPostedCompact(job.postedAtIso) ?? (job.postedAgo?.trim() || null);
+  const salary = salaryLabel(job);
   const matched = job.matchedSkills ?? [];
-  const missing = job.missingSkills ?? [];
-  const reason =
+  const skillsReason =
     job.matchPercent !== undefined ? matchReason(matched.length, job.profileSkillCount ?? 0) : null;
+  const showMatchPill =
+    typeof job.matchPercent === "number" && Number.isFinite(job.matchPercent) && job.matchPercent > 0;
 
-  function renderApply(extraClass?: string) {
-    if (!canApply || !applyHref) return null;
-    return (
-      <JobApplyButton
-        jobId={job.id}
-        company={job.company}
-        title={job.title}
-        applyUrl={applyHref}
-        source={job.source}
-        onClick={onApplyClick}
-        className={extraClass}
-      />
-    );
-  }
+  const metaParts = (() => {
+    const parts: string[] = [];
+    for (const value of [job.company, job.location, job.workMode]) {
+      if (!isUsefulChip(value)) continue;
+      if (parts.some((part) => part.toLowerCase() === value.toLowerCase())) continue;
+      parts.push(value);
+    }
+    return parts;
+  })();
+  const tags = [
+    job.employmentType,
+    job.experience,
+    skillsReason ?? undefined,
+    salary ?? undefined,
+  ].filter(isUsefulChip);
+  // Avoid duplicating values already shown in the meta line.
+  const uniqueTags = tags.filter(
+    (tag) => !metaParts.some((part) => part.toLowerCase() === tag.toLowerCase()),
+  );
 
   return (
-    <article
+    <Card
       id={id}
+      size="sm"
       style={{ animationDelay: `calc(var(--duration-fast) * ${index} / 3)` }}
       onClick={onClick}
       onKeyDown={
@@ -199,83 +230,77 @@ export default function JobCard({
       }
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={cn("job-card wg-job-card-enter group min-w-0", onClick && "cursor-pointer", className)}
+      className={cn(
+        "job-card wg-job-card-enter group min-w-0 gap-0 p-5 md:p-5",
+        onClick && "cursor-pointer",
+        className,
+      )}
     >
-      <div className="flex items-start gap-2.5">
-        <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
+      <div className="flex items-start gap-3">
+        <CompanyLogo
+          company={job.company}
+          logoUrl={job.companyLogo}
+          source={job.source}
+          applyUrl={applyHref}
+        />
+
         <div className="min-w-0 flex-1">
           <h3 className="font-sans text-role-card-title line-clamp-2 min-w-0 text-ink" title={job.title}>
             {job.title}
           </h3>
-          <p className="font-sans text-role-caption mt-0.5 truncate text-ink-muted" title={job.company}>
-            {job.company}
-          </p>
-          {job.matchPercent !== undefined && reason ? (
-            <div
-              className="mt-1"
-              onClick={(event) => event.stopPropagation()}
-              onKeyDown={(event) => event.stopPropagation()}
-            >
-              <MatchScore
-                score={job.matchPercent}
-                reason={reason}
-                tone="neutral"
-                tailorHref={tailorHref}
-                requirements={[
-                  ...matched.map((label) => ({ label, met: true })),
-                  ...missing.filter((label) => !matched.includes(label)).map((label) => ({ label, met: false })),
-                ]}
-              />
-            </div>
+
+          {metaParts.length > 0 ? (
+            <p className="text-role-body mt-0.5 truncate text-ink-muted" title={metaParts.join(" · ")}>
+              {metaParts.join(" · ")}
+            </p>
           ) : null}
-          <div
-            className="mt-1 flex flex-wrap items-baseline gap-x-2"
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-          >
-            <SalaryDisplay salary={salary} />
-            <SourceBadge source={job.source} url={applyHref} href={applyHref || undefined} />
-            {freshnessLabel ? (
-              <FreshnessIndicator
-                status={freshnessLabel.includes("may no longer be open") ? "stale" : "unknown"}
-                label={freshnessLabel}
-              />
-            ) : null}
-            {trust ? <TrustIndicator {...trust} /> : null}
-          </div>
-          {chips.length > 0 ? (
+
+          {uniqueTags.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {chips.map((chip) => (
-                <JobChip key={chip}>{chip}</JobChip>
+              {uniqueTags.map((tag) => (
+                <JobChip key={tag}>{tag}</JobChip>
               ))}
             </div>
           ) : null}
-          {summary ? (
-            <div className="mt-2">
-              <p className="measure text-role-body text-ink-muted">
-                <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
-                {summary.text}
-              </p>
-              {summary.kind === "ai" ? (
-                <AIProvenance label="AI summary" summary="Generated and stored. Not the original posting." href="/trust#match" hrefLabel="What generated text means" />
-              ) : null}
-            </div>
+        </div>
+
+        <div className="job-card__aside flex shrink-0 flex-col items-end gap-1.5 self-stretch">
+          {postedLabel ? (
+            <span className="text-role-caption leading-tight text-ink-subtle">{postedLabel}</span>
           ) : null}
+          {showMatchPill ? <MatchPill percent={job.matchPercent!} /> : null}
+          <div
+            className="job-card__actions mt-auto flex items-center gap-1.5"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            {onSave ? (
+              <IconButton
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                label={saved ? "Remove from saved" : "Save job"}
+                onClick={() => onSave(job.id)}
+                className={cn("job-card__bookmark text-ink-subtle hover:text-ink", saved && "text-ink")}
+              >
+                <Bookmark className={cn(iconClass("inline"), saved && "fill-current")} />
+              </IconButton>
+            ) : null}
+            {canApply && applyHref ? (
+              <JobApplyButton
+                jobId={job.id}
+                company={job.company}
+                title={job.title}
+                applyUrl={applyHref}
+                source={job.source}
+                onClick={onApplyClick}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
 
-      {onSave || canApply ? (
-        <div
-          className="mt-3 flex flex-wrap items-center justify-between gap-2"
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-        >
-          {onSave ? <BookmarkButton saved={saved} onSave={() => onSave(job.id)} /> : <span />}
-          {renderApply()}
-        </div>
-      ) : null}
-
       {children ? <div className="job-card__expanded">{children}</div> : null}
-    </article>
+    </Card>
   );
 }

@@ -83,6 +83,7 @@ describe("getApplyLabel", () => {
 describe("matchReason", () => {
   it("states how many profile skills overlapped", () => {
     assert.equal(matchReason(4, 9), "Matches 4 of 9 skills");
-    assert.equal(matchReason(0, 9), "Matches 0 of 9 skills");
+    assert.equal(matchReason(0, 9), null);
+    assert.equal(matchReason(0, 0), null);
   });
 });

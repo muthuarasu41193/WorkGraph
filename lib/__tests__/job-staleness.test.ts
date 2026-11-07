@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
 import { jobCardView, STALE_AFTER_DAYS as feedStaleDays } from "../job-feed"
-import { formatJobFreshness } from "../job-freshness"
+import { formatJobFreshness, formatJobPostedCompact } from "../job-freshness"
 import { scoreJobCard } from "../job-match"
 import { isJobStale, STALE_AFTER_DAYS } from "../job-staleness"
 import type { RecommendedJobCard } from "../job-dashboard"
@@ -53,6 +53,13 @@ describe("shared job staleness", () => {
       assert.equal(Boolean(freshness?.includes("may no longer be open")), stale, `freshness copy ${days}`)
       assert.equal(scored.subScores.freshness === -40, stale, `match rank ${days}`)
     }
+  })
+
+  it("formats compact posted captions for job cards", () => {
+    assert.equal(formatJobPostedCompact(daysAgo(0), NOW), "Posted today")
+    assert.equal(formatJobPostedCompact(daysAgo(1), NOW), "Posted 1d ago")
+    assert.equal(formatJobPostedCompact(daysAgo(2), NOW), "Posted 2d ago")
+    assert.equal(formatJobPostedCompact(null, NOW), null)
   })
 
   it("parses stated pay inside the card view without a second lookup", () => {
