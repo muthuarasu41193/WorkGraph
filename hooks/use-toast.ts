@@ -1,11 +1,10 @@
 "use client";
 
-import { create } from "zustand";
+import { toast as sonnerToast } from "sonner";
 
 export type ToastVariant = "default" | "success" | "error";
 
-export type ToastRecord = {
-  id: string;
+export type ToastInput = {
   title: string;
   description?: string;
   variant?: ToastVariant;
@@ -13,24 +12,38 @@ export type ToastRecord = {
   onUndo?: () => void;
 };
 
-type ToastState = {
-  toasts: ToastRecord[];
-  push: (toast: Omit<ToastRecord, "id">) => void;
-  dismiss: (id: string) => void;
-};
+/** @deprecated Prefer toast(); kept so older imports type-check during migration. */
+export type ToastRecord = ToastInput & { id: string };
 
-export const useToastStore = create<ToastState>((set) => ({
-  toasts: [],
-  push: (toast) => {
-    const id = crypto.randomUUID();
-    set((state) => ({ toasts: [...state.toasts, { ...toast, id }] }));
-    window.setTimeout(() => {
-      set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
-    }, toast.onUndo ? 5000 : 3000);
-  },
-  dismiss: (id) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
-}));
+/**
+ * Quiet toast API used across product surfaces.
+ * Playbook: success auto-dismisses (~4s); errors persist with an action; Undo when reversible.
+ */
+export function toast(input: ToastInput) {
+  const duration = input.variant === "error" ? Infinity : input.onUndo ? 5_000 : 4_000;
+  const action = input.onUndo
+    ? {
+        label: input.undoLabel ?? "Undo",
+        onClick: () => input.onUndo?.(),
+      }
+    : undefined;
 
-export function toast(input: Omit<ToastRecord, "id">) {
-  useToastStore.getState().push(input);
+  const options = {
+    description: input.description,
+    duration,
+    action,
+  };
+
+  if (input.variant === "error") {
+    return sonnerToast.error(input.title, options);
+  }
+  if (input.variant === "success") {
+    return sonnerToast.success(input.title, options);
+  }
+  return sonnerToast(input.title, options);
+}
+
+/** Dismiss a toast by id (Sonner id) or all when omitted. */
+export function dismissToast(id?: string | number) {
+  sonnerToast.dismiss(id);
 }
