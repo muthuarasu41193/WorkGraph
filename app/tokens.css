@@ -12,7 +12,9 @@
   /* Typography ink: primary / secondary / tertiary (min 4.5:1 on white) */
   --ink: #111827;
   --ink-muted: #4b5563;
-  --ink-subtle: #6b7280;
+  /* Tertiary: Tailwind gray-500 is #6b7280 on pure white; darken slightly so
+     caption text still clears 4.5:1 on --surface (#f5f6f8). */
+  --ink-subtle: #606978;
   /* Soft hairline — 1px borders on white / raised surfaces */
   --hairline: #e5e7eb;
   --accent: #a11f2b;
