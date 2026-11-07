@@ -44,7 +44,7 @@ function DropdownMenuSubTrigger({
     <DropdownMenuPrimitive.SubTrigger
       data-slot="dropdown-menu-sub-trigger"
       className={cn(
-        "flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none focus:bg-surface-sunken data-[state=open]:bg-surface-sunken",
+        "flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-role-body outline-none focus:bg-surface-sunken data-[state=open]:bg-surface-sunken",
         WG_ICON.childInline,
         inset && "pl-8",
         className,
@@ -102,7 +102,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       className={cn(
-          "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none transition-colors duration-base ease-exit focus:bg-surface-sunken focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          "relative flex cursor-default select-none items-center gap-2 rounded-md px-2 py-1.5 text-role-body outline-none transition-colors duration-base ease-exit focus:bg-surface-sunken focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           WG_ICON.childInline,
         inset && "pl-8",
         className,
@@ -122,7 +122,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-surface-sunken focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex cursor-default select-none items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-role-body outline-none transition-colors focus:bg-surface-sunken focus:text-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className,
       )}
       checked={checked}
@@ -146,7 +146,7 @@ function DropdownMenuLabel({
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
-      className={cn("px-2 py-1.5 text-sm font-medium", inset && "pl-8", className)}
+      className={cn("px-2 py-1.5 text-role-body font-medium", inset && "pl-8", className)}
       {...props}
     />
   );

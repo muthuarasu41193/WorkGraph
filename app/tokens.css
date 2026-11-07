@@ -9,10 +9,12 @@
   --surface: #f5f6f8;
   --surface-raised: #ffffff;
   --surface-sunken: #e8ebf0;
-  --ink: #14181f;
-  --ink-muted: #4a5563;
-  --ink-subtle: #5b6572;
-  --hairline: #7a8490;
+  /* Typography ink: primary / secondary / tertiary (min 4.5:1 on white) */
+  --ink: #111827;
+  --ink-muted: #4b5563;
+  --ink-subtle: #6b7280;
+  /* Soft hairline — 1px borders on white / raised surfaces */
+  --hairline: #e5e7eb;
   --accent: #a11f2b;
   --accent-ink: #ffffff;
   --positive: #1b6b43;
@@ -39,24 +41,41 @@
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
-  --radius-control: 2px;
-  --radius-card: 6px;
-  --radius-overlay: 10px;
+  /* Radius: buttons/tags 6 · cards/inputs 8 · avatars/pills full */
+  --radius-control: 6px;
+  --radius-button: 6px;
+  --radius-tag: 6px;
+  --radius-input: 8px;
+  --radius-card: 8px;
+  --radius-overlay: 8px;
   --radius-full: 999px;
 
   --border-hairline: 1px;
-  --border-strong: 2px;
+  --border-strong: 1px;
 
+  /* 4px-based scale — only these steps in UI rhythm */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
-  --space-8: 64px;
-  --space-9: 96px;
-  --space-10: 128px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+  /* Legacy aliases (map onto the closed scale) */
+  --space-9: 48px;
+  --space-10: 48px;
+
+  --layout-page-max: 1120px;
+  --layout-page-pad: 32px;
+  --layout-page-pad-mobile: 16px;
+  --layout-section-gap: 32px;
+  --layout-section-title-gap: 12px;
+  --layout-card-pad: 20px;
+  --layout-card-pad-mobile: 16px;
+  --layout-card-gap: 16px;
+  --layout-stack-tight: 8px;
+  --layout-stack-group: 16px;
 
   --z-base: 0;
   --z-sticky: 10;

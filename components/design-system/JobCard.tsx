@@ -206,7 +206,7 @@ export default function JobCard({
       <div className="flex items-start gap-2.5">
         <CompanyLogo company={job.company} logoUrl={job.companyLogo} />
         <div className="min-w-0 flex-1">
-          <h3 className="font-sans text-role-body-small line-clamp-2 min-w-0 font-semibold text-ink" title={job.title}>
+          <h3 className="font-sans text-role-card-title line-clamp-2 min-w-0 text-ink" title={job.title}>
             {job.title}
           </h3>
           <p className="font-sans text-role-caption mt-0.5 truncate text-ink-muted" title={job.company}>
@@ -254,7 +254,7 @@ export default function JobCard({
           ) : null}
           {summary ? (
             <div className="mt-2">
-              <p className="measure text-role-body-small text-ink-muted">
+              <p className="measure text-role-body text-ink-muted">
                 <span className="font-medium text-ink">{jobSummaryLabel(summary.kind)}. </span>
                 {summary.text}
               </p>

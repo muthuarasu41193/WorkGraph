@@ -1,64 +1,86 @@
-/* WorkGraph spacing & radius — 4px increment scale */
+/* WorkGraph spacing & radius — 4px scale + layout primitives */
 
 :root {
-  --wg-radius-sm: 6px;
-  --wg-radius-md: 8px;
-  --wg-radius-lg: 10px;
-  --wg-radius-xl: 14px;
-  --wg-pad-button-x: 0.875rem;
-  --wg-pad-button-y: 0.5rem;
-  --wg-pad-card: 1rem;
+  --wg-radius-sm: var(--radius-button);
+  --wg-radius-md: var(--radius-card);
+  --wg-radius-lg: var(--radius-card);
+  --wg-radius-xl: var(--radius-card);
+  --wg-pad-button-x: var(--space-4);
+  --wg-pad-button-y: var(--space-2);
+  --wg-pad-card: var(--layout-card-pad);
 }
 
 @layer components {
   .wg-page {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--layout-section-gap);
   }
 
   .wg-page-lg {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: var(--layout-section-gap);
   }
 
   .wg-section {
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-section-title-gap);
   }
 
   .wg-section-lg {
-    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-section-title-gap);
   }
 
   .wg-section-stack {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--layout-stack-group);
   }
 
   .wg-section-stack-lg {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--layout-section-gap);
+  }
+
+  .wg-stack-tight {
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-stack-tight);
+  }
+
+  .wg-stack-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-stack-group);
   }
 
   .wg-grid {
     display: grid;
-    gap: 1rem;
+    gap: var(--layout-card-gap);
   }
 
   .wg-flex-gap {
     display: flex;
-    gap: 1rem;
+    gap: var(--layout-card-gap);
   }
 
   .wg-flex-gap-lg {
     display: flex;
-    gap: 1.5rem;
+    gap: var(--layout-section-gap);
   }
 
   .wg-card-pad {
-    padding: var(--wg-pad-card);
+    padding: var(--layout-card-pad-mobile);
+  }
+
+  @media (min-width: 768px) {
+    .wg-card-pad {
+      padding: var(--layout-card-pad);
+    }
   }
 }

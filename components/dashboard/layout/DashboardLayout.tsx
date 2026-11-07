@@ -5,6 +5,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
 import { SkipLink } from "@/components/a11y/SkipLink";
 import { LegalNav } from "@/components/legal/LegalDocument";
+import { PageContainer } from "@/components/ui/page-container";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import MobileNav from "./MobileNav";
@@ -36,13 +37,17 @@ function DashboardLayoutInner({ children }: Props) {
       <div className="flex min-w-0 flex-1 flex-col overflow-x-clip overflow-y-hidden">
         <TopNav />
 
-        <main id="main-content" tabIndex={-1} className="wg-dash-main min-w-0 max-w-full px-4 py-4 outline-none md:px-5 min-[1025px]:px-6 min-[1025px]:py-5">
-          <div className="wg-dash-content mx-auto w-full min-w-0 max-w-full">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="wg-dash-main min-w-0 max-w-full py-[var(--space-4)] outline-none md:py-[var(--space-6)]"
+        >
+          <PageContainer gap="none" className="wg-dash-content">
             {children}
-            <div className="mt-8 border-t border-hairline pt-4 md:hidden">
+            <div className="mt-[var(--space-7)] border-t border-hairline pt-[var(--space-4)] md:hidden">
               <LegalNav />
             </div>
-          </div>
+          </PageContainer>
         </main>
       </div>
 

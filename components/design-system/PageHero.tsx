@@ -27,34 +27,32 @@ export default function PageHero({
   className,
 }: Props) {
   return (
-    <header className={cn("wg-section-fade space-y-3", className)}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
+    <header className={cn("wg-section-fade flex flex-col gap-[var(--layout-section-title-gap)]", className)}>
+      <div className="flex flex-col gap-[var(--space-3)] sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-[var(--layout-stack-tight)]">
           {greeting ? (
-            <p className="text-role-caption font-medium text-fg-secondary">{greeting}</p>
+            <p className="text-role-caption text-ink-subtle">{greeting}</p>
           ) : null}
-          <h1 className="text-role-title text-ink">{title}</h1>
-          <p className="measure text-role-body text-ink-muted">
-            {subtitle}
-          </p>
+          <h1 className="text-role-title">{title}</h1>
+          <p className="measure text-role-body-lg text-ink-muted">{subtitle}</p>
         </div>
         {cta ? <div className="shrink-0">{cta}</div> : null}
       </div>
 
       {metrics && metrics.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-[var(--space-2)]">
           {metrics.map((m) => (
             <div
               key={m.label}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-role-caption",
+                "inline-flex items-center gap-[var(--space-2)] rounded-[var(--radius-tag)] px-[var(--space-3)] py-[var(--space-1)] text-role-caption",
                 m.accent
                   ? "bg-[var(--dash-accent-soft)] text-[var(--dash-accent)]"
-                  : "bg-surface ring-1 ring-[var(--dash-border)]",
+                  : "bg-surface border border-hairline",
               )}
             >
-              <span className="font-semibold tabular-nums text-fg-primary">{m.value}</span>
-              <span className="text-fg-secondary">{m.label}</span>
+              <span className="font-semibold tabular-nums text-ink">{m.value}</span>
+              <span className="text-ink-muted">{m.label}</span>
             </div>
           ))}
         </div>

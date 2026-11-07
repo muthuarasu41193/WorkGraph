@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/design-system/EmptyState";
+import { Card } from "@/components/ui/card";
+import { Section } from "@/components/ui/section";
 import { WG_PLATFORM_CHIP_CLASS } from "@/lib/design-tokens";
 import { loadHiddenJobsFeed } from "@/lib/home-dashboard";
 import { cn } from "@/lib/utils";
@@ -29,25 +31,18 @@ export default async function HomeHiddenJobsFeed() {
   const { items, total } = await loadHiddenJobsFeed(5);
 
   return (
-    <section className="space-y-3" aria-labelledby="home-hidden-heading">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 id="home-hidden-heading" className="flex items-center gap-2 text-role-body-small font-semibold tracking-tight text-fg-primary">
-            Hidden Jobs Feed
-            <span className="inline-flex items-center gap-1 rounded-full bg-highlight px-1.5 py-px text-role-caption font-medium text-highlight-ink">
-              <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
-              Live
-            </span>
-          </h2>
-          <p className="mt-0.5 text-role-caption text-fg-secondary">
-            Latest from Reddit, Hacker News, and GitHub — {total.toLocaleString("en-IN")} opportunities indexed.
-          </p>
-        </div>
-        <Button asChild variant="outline" size="sm">
-          <Link href={dashboardHref("job-discovery")}>Open discovery</Link>
-        </Button>
-      </div>
-
+    <Section
+      titleId="home-hidden-heading"
+      title="Hidden Jobs Feed"
+      description={`Latest from Reddit, Hacker News, and GitHub — ${total.toLocaleString("en-IN")} opportunities indexed.`}
+      action={{ href: dashboardHref("job-discovery"), label: "Open discovery" }}
+      titleAddon={
+        <span className="inline-flex items-center gap-[var(--space-1)] rounded-full bg-highlight px-[var(--space-2)] py-px text-role-caption text-highlight-ink">
+          <Radio className={iconClass("inline", "animate-pulse")} aria-hidden />
+          Live
+        </span>
+      }
+    >
       {items.length === 0 ? (
         <EmptyState
           icon={Radar}
@@ -60,40 +55,43 @@ export default async function HomeHiddenJobsFeed() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised">
-          {items.map((item) => (
-            <li key={item.id} className="border-b border-hairline last:border-b-0">
-              <article className="flex items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-surface-sunken">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <Badge variant="outline" className={cn("h-5 px-1.5 text-role-caption capitalize", WG_PLATFORM_CHIP_CLASS)}>
-                      {sourceLabel(item.source)}
-                    </Badge>
-                    <span className="text-role-caption text-fg-secondary">{formatPostedAt(item.postedAt)}</span>
-                    {item.tags.includes("remote") ? (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-role-caption">
-                        Remote
+        <Card className="gap-0 p-0 md:p-0">
+          <ul>
+            {items.map((item) => (
+              <li key={item.id} className="border-b border-hairline last:border-b-0">
+                <article className="flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] transition-colors hover:bg-surface-sunken">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-[var(--space-2)]">
+                      <Badge
+                        variant="outline"
+                        className={cn("h-5 px-[var(--space-2)] text-role-caption capitalize", WG_PLATFORM_CHIP_CLASS)}
+                      >
+                        {sourceLabel(item.source)}
                       </Badge>
-                    ) : null}
+                      <span className="text-role-caption text-ink-muted">{formatPostedAt(item.postedAt)}</span>
+                      {item.tags.includes("remote") ? (
+                        <Badge variant="secondary" className="h-5 px-[var(--space-2)] text-role-caption">
+                          Remote
+                        </Badge>
+                      ) : null}
+                    </div>
+                    <h3 className="mt-[var(--space-1)] truncate text-role-card-title">{item.title}</h3>
+                    <p className="truncate text-role-caption text-ink-muted">
+                      {[item.company, item.author, item.location].filter(Boolean).join(" · ") || "Community post"}
+                    </p>
                   </div>
-                  <h3 className="mt-0.5 truncate text-role-body-small font-semibold tracking-tight text-fg-primary">
-                    {item.title}
-                  </h3>
-                  <p className="truncate text-role-caption text-fg-secondary">
-                    {[item.company, item.author, item.location].filter(Boolean).join(" · ") || "Community post"}
-                  </p>
-                </div>
-                <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-2.5 text-role-caption">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer">
-                    Open post
-                    <ExternalLink className={iconClass()} />
-                  </a>
-                </Button>
-              </article>
-            </li>
-          ))}
-        </ul>
+                  <Button asChild size="sm" variant="outline" className="h-7 shrink-0 px-[var(--space-3)] text-role-button">
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      Open post
+                      <ExternalLink className={iconClass()} />
+                    </a>
+                  </Button>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </Card>
       )}
-    </section>
+    </Section>
   );
 }

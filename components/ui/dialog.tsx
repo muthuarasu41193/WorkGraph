@@ -64,7 +64,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed z-modal grid w-full gap-4 bg-popover p-4 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-slow outline-none",
+          "fixed z-modal grid w-full gap-4 bg-popover p-4 text-role-body text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-slow outline-none",
           "inset-x-0 bottom-0 max-h-[85dvh] overflow-auto rounded-t-xl pb-[max(1rem,env(safe-area-inset-bottom))]",
           "data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
           "md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:max-h-none md:w-full md:max-w-sm md:-translate-x-1/2 md:-translate-y-1/2 md:overflow-visible md:rounded-xl md:pb-4",
@@ -148,7 +148,7 @@ function DialogTitle({
     <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn(
-        "font-heading text-base leading-none font-medium",
+        "text-role-card-title",
         className
       )}
       {...props}
@@ -164,7 +164,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "text-role-body text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
         className
       )}
       {...props}

@@ -3,6 +3,7 @@ import { formatCurrencyAmount } from "@/lib/currency";
 import type { HiddenOpportunity } from "@/lib/hidden-opportunities/types";
 import type { JobPipelineCounts, RecommendedJobCard } from "@/lib/job-dashboard";
 import type { JobMatchPreview } from "@/lib/profile-mock-data";
+import { toSentenceCase } from "@/lib/sentence-case";
 import type { Profile } from "@/lib/types";
 import { workgraphApiEnabled } from "@/lib/workgraph-api";
 import { workgraphBffFetch } from "@/lib/workgraph-bff";
@@ -85,9 +86,9 @@ export function getTimeGreeting(date = new Date()): string {
 
 export function getProfileFirstName(profile: Pick<Profile, "full_name" | "email">): string {
   const fromName = profile.full_name?.trim().split(/\s+/)[0];
-  if (fromName) return fromName;
+  if (fromName) return toSentenceCase(fromName);
   const emailLocal = profile.email?.split("@")[0]?.trim();
-  if (emailLocal) return emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1);
+  if (emailLocal) return toSentenceCase(emailLocal);
   return "there";
 }
 
