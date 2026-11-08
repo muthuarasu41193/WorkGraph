@@ -2,7 +2,7 @@
 .job-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -32,7 +32,7 @@
 .filter-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   padding: 12px 16px;
   background: var(--wg-surface);
   border-bottom: 1px solid var(--wg-border-default);
@@ -117,7 +117,7 @@
   font-weight: 450;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   white-space: nowrap;
   cursor: pointer;
   list-style: none;
@@ -171,7 +171,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   padding: 6px 20px;
   background: var(--wg-surface);
   border-bottom: 1px solid var(--wg-surface-hover);
@@ -180,7 +180,7 @@
 .filter-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   padding: 2px 8px;
   border-radius: 6px;
   background: var(--wg-brand-50);
@@ -223,7 +223,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
   padding: 8px 20px;
   font-size: 12px;
   color: var(--wg-text-tertiary);
@@ -236,7 +236,7 @@
   min-width: 0;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .results-bar__count {
@@ -247,7 +247,7 @@
 .results-bar__sort {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--space-1);
   list-style: none;
   cursor: pointer;
   color: var(--wg-text-tertiary);
@@ -301,7 +301,7 @@
 .view-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: var(--space-1);
   flex-shrink: 0;
 }
 
@@ -474,7 +474,7 @@
 .analyze-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-2);
   min-height: 36px;
   padding: 7px 12px;
   background: transparent;

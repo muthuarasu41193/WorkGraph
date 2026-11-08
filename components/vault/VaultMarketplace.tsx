@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -58,89 +60,91 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
   }, [experiences]);
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <div className="flex flex-col gap-[var(--layout-section-gap)]">
+      <header className="flex flex-col gap-[var(--layout-stack-tight)]">
+        <h1 className="text-role-title">Interview Vault</h1>
+        <p className="text-role-body text-muted-foreground">
           Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
         </p>
       </header>
 
-      <div className="space-y-4 rounded-xl border bg-card p-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Search company, role, or level…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="filter-difficulty">Difficulty</Label>
-            <Select value={difficulty} onValueChange={setDifficulty}>
-              <SelectTrigger id="filter-difficulty">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {VAULT_DIFFICULTIES.map((d) => (
-                  <SelectItem key={d} value={d}>
-                    {VAULT_DIFFICULTY_LABELS[d]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <Card>
+        <CardContent className="flex flex-col gap-[var(--layout-stack-group)]">
+          <div className="relative">
+            <Search className={iconClass("inline", "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground")} />
+            <Input
+              className="pl-9"
+              placeholder="Search company, role, or level…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="filter-rounds">Rounds</Label>
-            <Select value={rounds} onValueChange={setRounds}>
-              <SelectTrigger id="filter-rounds">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {roundOptions.map((r) => (
-                  <SelectItem key={r} value={String(r)}>
-                    {r} rounds
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex flex-col gap-[var(--space-2)]">
+              <Label htmlFor="filter-difficulty">Difficulty</Label>
+              <Select value={difficulty} onValueChange={setDifficulty}>
+                <SelectTrigger id="filter-difficulty">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {VAULT_DIFFICULTIES.map((d) => (
+                    <SelectItem key={d} value={d}>
+                      {VAULT_DIFFICULTY_LABELS[d]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="filter-result">Result</Label>
-            <Select value={result} onValueChange={setResult}>
-              <SelectTrigger id="filter-result">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                {VAULT_RESULTS.map((r) => (
-                  <SelectItem key={r} value={r}>
-                    {VAULT_RESULT_LABELS[r]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="flex flex-col gap-[var(--space-2)]">
+              <Label htmlFor="filter-rounds">Rounds</Label>
+              <Select value={rounds} onValueChange={setRounds}>
+                <SelectTrigger id="filter-rounds">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {roundOptions.map((r) => (
+                    <SelectItem key={r} value={String(r)}>
+                      {r} rounds
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
-            <Label>Interview date</Label>
-            <div className="flex gap-2">
-              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} aria-label="From date" />
-              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} aria-label="To date" />
+            <div className="flex flex-col gap-[var(--space-2)]">
+              <Label htmlFor="filter-result">Result</Label>
+              <Select value={result} onValueChange={setResult}>
+                <SelectTrigger id="filter-result">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {VAULT_RESULTS.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {VAULT_RESULT_LABELS[r]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-[var(--space-2)] sm:col-span-2 lg:col-span-1">
+              <Label>Interview date</Label>
+              <div className="flex gap-[var(--space-2)]">
+                <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} aria-label="From date" />
+                <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} aria-label="To date" />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {filtered.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-[var(--layout-card-gap)] sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((exp) => (
             <li key={exp.id}>
               <VaultExperienceCard experience={exp} />
@@ -148,7 +152,7 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-[var(--radius-card)] border border-dashed p-[var(--space-8)] text-center text-role-body text-muted-foreground">
           No experiences match your filters yet. Be the first to{" "}
           <a href="/interview-vault/sell" className="text-primary underline-offset-4 hover:underline">
             sell an experience

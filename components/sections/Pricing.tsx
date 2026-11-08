@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { Check, ChevronDown, X } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { cn } from "@/lib/utils";
 
 type BillingPeriod = "monthly" | "annual";
@@ -155,7 +156,7 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("monthly")}
           className={cn(
-            "relative z-sticky rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+            "relative z-sticky rounded-full px-5 py-2 text-role-button font-semibold transition-colors",
             !isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={!isAnnual}
@@ -166,7 +167,7 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("annual")}
           className={cn(
-            "relative z-sticky rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+            "relative z-sticky rounded-full px-5 py-2 text-role-button font-semibold transition-colors",
             isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={isAnnual}
@@ -182,7 +183,7 @@ function BillingToggle({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="rounded-full bg-success-50 px-3 py-1 text-xs font-bold text-success"
+            className="rounded-full bg-success-50 px-3 py-1 text-role-caption font-bold text-success"
           >
             Save 40%
           </motion.span>
@@ -201,9 +202,9 @@ function FeatureItem({ feature }: { feature: PricingFeature }) {
       )}
     >
       {feature.included ? (
-        <Check className="mt-0.5 size-4 shrink-0 text-success" aria-hidden />
+        <Check className={iconClass("inline", "mt-0.5 shrink-0 text-success")} aria-hidden />
       ) : (
-        <X className="mt-0.5 size-4 shrink-0 text-brand/70" aria-hidden />
+        <X className={iconClass("inline", "mt-0.5 shrink-0 text-brand/70")} aria-hidden />
       )}
       <span className={cn(!feature.included && "opacity-70")}>{feature.text}</span>
     </li>
@@ -242,7 +243,7 @@ function PricingCard({
       {tier.badge && (
         <span
           className={cn(
-            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider text-accent-ink",
+            "absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-role-caption font-bold uppercase tracking-wider text-accent-ink",
             tier.badgeVariant === "popular" ? "bg-brand" : "bg-ink",
           )}
         >
@@ -251,8 +252,8 @@ function PricingCard({
       )}
 
       <div className="text-center">
-        <h3 className="font-heading text-xl font-bold text-fg-primary">{tier.name}</h3>
-        <p className="mt-1 text-sm text-fg-tertiary">{tier.tagline}</p>
+        <h3 className="font-heading text-role-subheading font-bold text-fg-primary">{tier.name}</h3>
+        <p className="mt-1 text-role-body text-fg-tertiary">{tier.tagline}</p>
 
         <div className="mt-6 flex flex-col items-center">
           <div className="flex items-baseline justify-center gap-1">
@@ -278,7 +279,7 @@ function PricingCard({
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.25 }}
-                className="mt-1 text-xs text-fg-tertiary"
+                className="mt-1 text-role-caption text-fg-tertiary"
               >
                 billed ${tier.annualBilled}/yr
               </motion.p>
@@ -294,7 +295,7 @@ function PricingCard({
           tier.cta.style === "outline" &&
             "border-2 border-brand bg-transparent py-3 text-brand hover:bg-brand-50",
           tier.cta.style === "primary" &&
-            "bg-brand py-3.5 text-base text-accent-ink shadow-md hover:bg-brand-700 hover:shadow-lg",
+            "bg-brand py-3.5 text-role-button text-accent-ink shadow-md hover:bg-brand-700 hover:shadow-lg",
           tier.cta.style === "dark" &&
             "bg-ink py-3 text-accent-ink hover:bg-ink",
         )}
@@ -317,7 +318,7 @@ function FaqAccordion() {
 
   return (
     <div className="mx-auto mt-16 max-w-3xl">
-      <h3 className="text-center font-heading text-2xl font-bold text-fg-primary sm:text-3xl">
+      <h3 className="text-center font-heading text-role-title font-bold text-fg-primary">
         Frequently asked questions
       </h3>
       <div className="mt-8 divide-y divide-border-default rounded-2xl border border-border-default bg-surface">
@@ -334,7 +335,7 @@ function FaqAccordion() {
                 <span className="font-semibold text-fg-primary">{item.question}</span>
                 <ChevronDown
                   className={cn(
-                    "size-5 shrink-0 text-fg-tertiary transition-transform duration-slow",
+                    iconClass("inline", "shrink-0 text-fg-tertiary transition-transform duration-slow"),
                     isOpen && "rotate-180",
                   )}
                   aria-hidden
@@ -378,16 +379,16 @@ function EnterpriseCta() {
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="mt-16 rounded-[20px] bg-ink px-4 py-12 text-center sm:px-8 min-[1025px]:px-12"
     >
-      <p className="font-heading text-xl font-bold text-accent-ink sm:text-2xl">
+      <p className="font-heading text-role-title font-bold text-accent-ink">
         Need a custom plan for your company or bootcamp?
       </p>
       <Link
         href="#contact"
-        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-8 py-3 text-base font-semibold text-fg-primary transition-colors duration-base hover:bg-surface-active"
+        className="mt-6 inline-flex min-h-11 items-center gap-[var(--space-2)] rounded-full bg-surface px-8 py-3 text-role-button font-semibold text-fg-primary transition-colors duration-base hover:bg-surface-active"
       >
         Contact Sales →
       </Link>
-      <p className="mt-4 text-sm text-fg-tertiary">
+      <p className="mt-4 text-role-body text-fg-tertiary">
         We work with recruiting firms, coding bootcamps, and universities
       </p>
     </motion.div>
@@ -401,13 +402,13 @@ export default function Pricing() {
     <section id="pricing" aria-label="Pricing" className="bg-surface py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1280px] px-4 md:px-6 min-[1025px]:px-8">
         <header className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold text-brand text-role-caption">
+          <p className="text-role-caption font-bold text-brand">
             SIMPLE PRICING
           </p>
           <h2 className="wg-section-heading mt-4 font-heading font-bold tracking-tight text-fg-primary">
             Start free. Upgrade when you&apos;re ready.
           </h2>
-          <p className="mt-4 text-lg text-fg-secondary">
+          <p className="mt-4 text-role-body-lg text-fg-secondary">
             No hidden fees. No long-term contracts. Cancel anytime.
           </p>
         </header>

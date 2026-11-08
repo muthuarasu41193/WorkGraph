@@ -19,18 +19,18 @@ export default function VaultNav() {
 
   return (
     <header className="sticky top-0 z-modal border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/interview-vault" className="flex items-center gap-2 shrink-0">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-[var(--space-4)] px-[var(--space-4)]">
+        <Link href="/interview-vault" className="flex shrink-0 items-center gap-[var(--space-2)]">
           <WorkGraphLogo className="h-7 w-auto" />
-          <span className="hidden text-sm font-semibold sm:inline">Interview Vault</span>
+          <span className="hidden text-role-body font-semibold sm:inline">Interview Vault</span>
         </Link>
 
-        <nav className="flex items-center gap-1" aria-label="Interview Vault">
+        <nav className="flex items-center gap-[var(--space-1)]" aria-label="Interview Vault">
           {NAV_LINKS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || (href !== "/interview-vault" && pathname.startsWith(href));
             return (
               <Button key={href} variant={active ? "secondary" : "ghost"} size="sm" asChild>
-                <Link href={href} className={cn("gap-1.5", active && "font-medium")}>
+                <Link href={href} aria-label={label} className={cn("gap-1.5", active && "font-medium")}>
                   <Icon className={iconClass()} />
                   <span className="hidden md:inline">{label}</span>
                 </Link>

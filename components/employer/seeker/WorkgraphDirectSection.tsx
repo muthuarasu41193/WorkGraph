@@ -149,24 +149,24 @@ export default function WorkgraphDirectSection({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-[var(--layout-section-gap)]">
       <header>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-[var(--space-2)]">
           <Radio className={iconClass("standalone", "text-[var(--wg-red)]")} aria-hidden />
-          <h1 className="text-2xl font-bold tracking-tight">WorkGraph Direct</h1>
+          <h1 className="text-role-title">WorkGraph Direct</h1>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-role-body text-muted-foreground">
           Apply to employer hiring signals with your resume, profile links, and a tailored message —
           employers review your full application in their Pulse inbox.
         </p>
       </header>
 
       {connections.length > 0 ? (
-        <section className="rounded-xl border bg-muted/30 p-4">
-          <h2 className="text-sm font-semibold">Your applications</h2>
-          <ul className="mt-2 space-y-2">
+        <section className="rounded-[var(--radius-card)] border border-hairline bg-muted/30 p-[var(--layout-card-pad-mobile)] md:p-[var(--layout-card-pad)]">
+          <h2 className="text-role-card-title">Your applications</h2>
+          <ul className="mt-[var(--space-2)] flex flex-col gap-[var(--space-2)]">
             {connections.slice(0, 5).map((c) => (
-              <li key={c.id} className="flex items-center justify-between gap-2 text-sm">
+              <li key={c.id} className="flex items-center justify-between gap-[var(--space-2)] text-role-body">
                 <span>{c.signal?.title ?? "Signal"}</span>
                 <Badge variant="outline">{c.stage}</Badge>
               </li>
@@ -193,7 +193,7 @@ export default function WorkgraphDirectSection({
           }
         />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-[var(--layout-card-gap)] sm:grid-cols-2">
           {signals.map((signal) => {
             const preview = scoreFitSignals(signal.fit_signals, profileInput);
             const already = connectedIds.has(signal.id);
@@ -201,9 +201,9 @@ export default function WorkgraphDirectSection({
               <li key={signal.id}>
                 <Card className="h-full border-[var(--wg-red)]/10">
                   <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-[var(--space-2)]">
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground flex flex-wrap items-center gap-1.5">
+                        <p className="flex flex-wrap items-center gap-[var(--space-2)] text-role-caption font-medium text-muted-foreground">
                           <Building2 className={iconClass("inline", "shrink-0")} />
                           {signal.employer?.verification_status === "verified" &&
                           signal.employer.company_slug ? (
@@ -219,23 +219,23 @@ export default function WorkgraphDirectSection({
                           {signal.employer?.verification_status === "verified" ? (
                             <Badge
                               variant="outline"
-                              className="h-5 gap-0.5 border-positive/40 px-1.5 text-xs text-positive"
+                              className="h-5 gap-0.5 border-positive/40 px-1.5 text-role-caption text-positive"
                             >
                               <BadgeCheck className={iconClass()} />
                               Verified
                             </Badge>
                           ) : null}
                         </p>
-                        <CardTitle className="mt-1 text-base">{signal.title}</CardTitle>
+                        <CardTitle className="mt-1">{signal.title}</CardTitle>
                       </div>
                       <Badge className="shrink-0 bg-[var(--wg-red)]/10 text-[var(--wg-red)] hover:bg-[var(--wg-red)]/15">
-                        <Sparkles className="mr-1 h-3 w-3" />
+                        <Sparkles className={iconClass("inline", "mr-1")} />
                         {preview.matchPercent}% fit
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm">
-                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  <CardContent className="flex flex-col gap-[var(--space-3)] text-role-body">
+                    <div className="flex flex-wrap gap-[var(--space-2)] text-role-caption text-muted-foreground">
                       {signal.location ? (
                         <span className="flex items-center gap-1">
                           <MapPin className={iconClass()} />
@@ -246,14 +246,14 @@ export default function WorkgraphDirectSection({
                       <span>{HIRING_INTENT_LABELS[signal.hiring_intent]}</span>
                     </div>
                     {signal.why_now ? (
-                      <p className="text-xs italic text-foreground/80 border-l-2 border-[var(--wg-red)] pl-2">
+                      <p className="border-l-2 border-[var(--wg-red)] pl-[var(--space-2)] text-role-caption italic text-foreground/80">
                         {signal.why_now}
                       </p>
                     ) : null}
                     {preview.matchedSignals.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-[var(--space-1)]">
                         {preview.matchedSignals.map((s) => (
-                          <Badge key={s} variant="secondary" className="text-xs">
+                          <Badge key={s} variant="secondary" className="text-role-caption">
                             {s}
                           </Badge>
                         ))}
@@ -265,7 +265,7 @@ export default function WorkgraphDirectSection({
                       onClick={() => setConnectTarget(signal)}
                     >
                       {already ? "Applied" : "Apply"}
-                      {!already ? <Send className="ml-2 h-4 w-4" /> : null}
+                      {!already ? <Send className={iconClass("inline", "ml-2")} /> : null}
                     </Button>
                   </CardContent>
                 </Card>
