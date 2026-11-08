@@ -10,9 +10,9 @@ type Props = {
 };
 
 const SIZES = {
-  sm: { radius: 28, stroke: 5, font: "text-lg" },
-  md: { radius: 40, stroke: 6, font: "text-2xl" },
-  lg: { radius: 52, stroke: 8, font: "text-3xl" },
+  sm: { radius: 28, stroke: 5, font: "text-role-subheading" },
+  md: { radius: 40, stroke: 6, font: "text-role-title" },
+  lg: { radius: 52, stroke: 8, font: "text-role-title" },
 };
 
 function scoreColor(score: number): string {
@@ -34,7 +34,11 @@ export default function ScoreRing({ score, size = "md", label, className }: Prop
   const dim = (radius + stroke) * 2;
 
   return (
-    <div className={cn("relative flex flex-col items-center gap-1", className)} role="img" aria-label={label ?? `Score ${score}%`}>
+    <div
+      className={cn("relative flex flex-col items-center gap-[var(--space-1)]", className)}
+      role="img"
+      aria-label={label ?? `Score ${score}%`}
+    >
       <svg width={dim} height={dim} className="-rotate-90">
         <circle
           cx={radius + stroke}
@@ -57,11 +61,15 @@ export default function ScoreRing({ score, size = "md", label, className }: Prop
         />
       </svg>
       <span
-        className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold", font, scoreColor(score))}
+        className={cn(
+          "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold",
+          font,
+          scoreColor(score),
+        )}
       >
         {score}%
       </span>
-      {label ? <span className="text-xs text-muted-foreground">{label}</span> : null}
+      {label ? <span className="text-role-caption text-muted-foreground">{label}</span> : null}
     </div>
   );
 }

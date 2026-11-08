@@ -24,22 +24,22 @@ type Props = {
 
 export default function ResumeIntelligenceDashboard({ report, cached }: Props) {
   return (
-    <div className="space-y-4">
+    <div className="wg-section-stack">
       <Alert className="border-primary/20 bg-primary/5">
         <Shield className={iconClass()} />
-        <AlertDescription className="text-sm">
+        <AlertDescription className="text-role-body">
           {report.philosophyReminder}
           {cached ? " (Loaded from your saved analysis.)" : null}
         </AlertDescription>
       </Alert>
 
       {(report.jobTitle || report.company) && (
-        <header className="rounded-xl border bg-muted/30 px-4 py-3">
-          <h2 className="text-lg font-semibold">
+        <header className="rounded-xl border bg-muted/30 px-[var(--space-4)] py-[var(--space-3)]">
+          <h2 className="text-role-subheading font-semibold">
             {report.jobTitle ?? "Role"}
             {report.company ? ` at ${report.company}` : ""}
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-role-caption text-muted-foreground">
             Generated {new Date(report.generatedAt).toLocaleString()}
           </p>
         </header>

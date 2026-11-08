@@ -4,6 +4,7 @@ import type { MissingSkills } from "@/lib/talent-intelligence/types";
 import { Badge } from "@/components/ui/badge";
 import ExpandableCard from "../shared/ExpandableCard";
 import { AlertTriangle } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 
 type Props = { data: MissingSkills };
 
@@ -18,17 +19,20 @@ function SkillTier({
 }) {
   if (!items.length) return null;
   return (
-    <div className="space-y-3">
-      <h4 className="flex items-center gap-2 text-sm font-semibold">
+    <div className="flex flex-col gap-[var(--space-3)]">
+      <h4 className="flex items-center gap-[var(--space-2)] text-role-card-title font-semibold">
         <Badge variant={variant}>{title}</Badge>
-        <span className="text-muted-foreground">({items.length})</span>
+        <span className="text-role-caption text-muted-foreground">({items.length})</span>
       </h4>
-      <ul className="space-y-3">
+      <ul className="flex flex-col gap-[var(--space-3)]">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border bg-muted/20 p-3 text-sm">
+          <li
+            key={i}
+            className="rounded-lg border bg-muted/20 p-[var(--space-3)] text-role-body"
+          >
             <p className="font-medium">{item.skill}</p>
-            <p className="mt-1 text-muted-foreground">{item.explanation}</p>
-            <p className="mt-2 rounded-md bg-primary/5 p-2 text-xs">
+            <p className="mt-[var(--space-1)] text-muted-foreground">{item.explanation}</p>
+            <p className="mt-[var(--space-2)] rounded-md bg-primary/5 p-[var(--space-2)] text-role-caption">
               {item.howToDemonstrateIfYouHaveIt}
             </p>
           </li>
@@ -46,9 +50,9 @@ export default function MissingSkillsSection({ data }: Props) {
     <ExpandableCard
       title="Missing Skills"
       description="Gaps identified — only highlight skills you genuinely possess."
-      icon={<AlertTriangle className="h-5 w-5 text-caution" />}
+      icon={<AlertTriangle className={iconClass("inline", "text-caution")} />}
     >
-      <div className="space-y-6">
+      <div className="flex flex-col gap-[var(--space-6)]">
         <SkillTier title="Critical" variant="destructive" items={data.critical} />
         <SkillTier title="Important" variant="secondary" items={data.important} />
         <SkillTier title="Nice to Have" variant="outline" items={data.niceToHave} />

@@ -26,7 +26,7 @@ export function FollowUpBadge({ application, today, className }: BadgeProps) {
     <Badge
       variant="outline"
       className={cn(
-        "mt-1 border-border bg-muted/40 font-normal text-muted-foreground",
+        "mt-[var(--space-1)] border-border bg-muted/40 font-normal text-muted-foreground",
         className,
       )}
     >
@@ -44,7 +44,7 @@ export function FollowUpSuggestion({
   if (state !== "likely_no_response") return null;
 
   return (
-    <p className={cn("text-xs text-muted-foreground", className)} role="status">
+    <p className={cn("text-role-caption text-muted-foreground", className)} role="status">
       {likelyNoResponseSuggestion()}
     </p>
   );

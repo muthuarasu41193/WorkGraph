@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Trash2 } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -114,23 +115,23 @@ export default function SavedCoverLetterCard({
   return (
     <>
       <Card className="wg-dash-section-card">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">{jobTitle}</CardTitle>
+        <CardHeader className="pb-[var(--space-3)]">
+          <CardTitle>{jobTitle}</CardTitle>
           <CardDescription>
             {company} · {dateLabel}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="gap-[var(--space-3)]">
+          <div className="flex flex-wrap gap-[var(--space-2)]">
             <Button type="button" variant="outline" size="sm" onClick={() => void handleView()} disabled={loadingLetter}>
               View Full Letter
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={() => void handleCopy()} loading={copying}>
-              <Copy className="h-4 w-4" />
+              <Copy className={iconClass()} />
               Copy
             </Button>
             <Button type="button" variant="destructive" size="sm" onClick={() => setConfirmOpen(true)}>
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className={iconClass()} />
               Delete
             </Button>
           </div>
@@ -151,9 +152,9 @@ export default function SavedCoverLetterCard({
             </DialogDescription>
           </DialogHeader>
           {loadingLetter && !letter ? (
-            <p className="text-sm text-muted-foreground">Loading letter…</p>
+            <p className="text-role-body text-muted-foreground">Loading letter…</p>
           ) : (
-            <p className="whitespace-pre-wrap text-sm leading-6">{letter}</p>
+            <p className="whitespace-pre-wrap text-role-body leading-6">{letter}</p>
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => void handleCopy()} loading={copying}>

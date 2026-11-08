@@ -3,6 +3,7 @@
 import type { CoachingQuestion } from "@/lib/talent-intelligence/types";
 import ExpandableCard from "../shared/ExpandableCard";
 import { MessageCircleQuestion } from "lucide-react";
+import { iconClass } from "@/lib/icon-styles";
 
 type Props = { items: CoachingQuestion[] };
 
@@ -13,16 +14,19 @@ export default function AchievementDiscoverySection({ items }: Props) {
     <ExpandableCard
       title="Achievement Discovery"
       description="Coaching questions to uncover genuine accomplishments you may have overlooked."
-      icon={<MessageCircleQuestion className="h-5 w-5 text-accent" />}
+      icon={<MessageCircleQuestion className={iconClass("inline", "text-accent")} />}
       defaultOpen={false}
     >
-      <ul className="space-y-4">
+      <ul className="flex flex-col gap-[var(--layout-stack-group)]">
         {items.map((item, i) => (
-          <li key={i} className="rounded-lg border border-accent-wash/50 bg-accent-wash/30 p-4">
-            <p className="font-medium">{item.question}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{item.context}</p>
+          <li
+            key={i}
+            className="rounded-lg border border-accent-wash/50 bg-accent-wash/30 p-[var(--space-4)]"
+          >
+            <p className="text-role-card-title font-medium">{item.question}</p>
+            <p className="mt-[var(--space-2)] text-role-body text-muted-foreground">{item.context}</p>
             {item.relatedGap ? (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-[var(--space-1)] text-role-caption text-muted-foreground">
                 Related gap: {item.relatedGap}
               </p>
             ) : null}
