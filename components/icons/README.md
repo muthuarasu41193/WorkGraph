@@ -19,4 +19,4 @@ Central place for **job / community source** brand marks.
 ## Components
 
 - `SourceIcon` — 24px neutral rounded tile + brand glyph (default 16px).
-- `SourceBadge` — icon + caption label; optional link for job cards / community posts.
+- `SourceBadge` — icon + caption label; optional `secondary` (subreddit / author) and optional link for job cards / community posts.
