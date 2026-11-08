@@ -33,7 +33,7 @@ type Props = {
 
 function StarRating({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-[var(--space-1)]">
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
@@ -44,7 +44,7 @@ function StarRating({ value, onChange }: { value: number; onChange?: (v: number)
           aria-label={`${star} star${star > 1 ? "s" : ""}`}
         >
           <Star
-            className={`h-5 w-5 ${star <= value ? "fill-caution text-caution" : "text-muted-foreground"}`}
+            className={iconClass("inline", star <= value ? "fill-caution text-caution" : "text-muted-foreground")}
           />
         </button>
       ))}
@@ -126,18 +126,18 @@ export default function VaultExperienceDetail({
     reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : experience.avg_rating;
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-3">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex flex-col gap-[var(--layout-section-gap)]">
+      <header className="flex flex-col gap-[var(--space-3)]">
+        <div className="flex flex-wrap items-start justify-between gap-[var(--space-4)]">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{experience.company}</h1>
-            <p className="text-lg text-muted-foreground">{experience.role}</p>
-            {experience.level ? <p className="text-sm text-muted-foreground">{experience.level}</p> : null}
+            <h1 className="text-role-title">{experience.company}</h1>
+            <p className="text-role-body-lg text-muted-foreground">{experience.role}</p>
+            {experience.level ? <p className="text-role-body text-muted-foreground">{experience.level}</p> : null}
           </div>
-          <Badge className="text-base px-3 py-1">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
+          <Badge className="px-3 py-1 text-role-body">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-[var(--space-2)]">
           {experience.difficulty ? (
             <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
           ) : null}
@@ -151,13 +151,13 @@ export default function VaultExperienceDetail({
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-[var(--space-2)]">
             Preview
             {!unlocked ? <Lock className={iconClass("inline", "text-muted-foreground")} /> : <Unlock className={iconClass("inline", "text-positive")} />}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm leading-relaxed text-muted-foreground">{preview}</p>
+        <CardContent className="flex flex-col gap-[var(--layout-stack-group)]">
+          <p className="text-role-body leading-relaxed text-muted-foreground">{preview}</p>
 
           {unlocked ? (
             <div
@@ -165,19 +165,19 @@ export default function VaultExperienceDetail({
               dangerouslySetInnerHTML={{ __html: fullContent }}
             />
           ) : (
-            <div className="relative overflow-hidden rounded-lg border bg-muted/30 p-6">
-              <p className="text-sm leading-relaxed text-muted-foreground blur-sm select-none" aria-hidden>
+            <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-muted/30 p-[var(--layout-card-pad)]">
+              <p className="text-role-body leading-relaxed text-muted-foreground blur-sm select-none" aria-hidden>
                 {preview}
               </p>
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-background via-background/90 to-transparent">
-                <Lock className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm font-medium">Premium content locked</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-[var(--space-3)] bg-gradient-to-t from-background via-background/90 to-transparent">
+                <Lock className={iconClass("standalone", "text-muted-foreground")} />
+                <p className="text-role-body font-medium">Premium content locked</p>
                 {!isOwner ? (
                   <Button onClick={() => void handleUnlock()} disabled={purchasing}>
                     {purchasing ? "Processing…" : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
                   </Button>
                 ) : (
-                  <p className="text-xs text-muted-foreground">You own this listing</p>
+                  <p className="text-role-caption text-muted-foreground">You own this listing</p>
                 )}
               </div>
             </div>
@@ -185,13 +185,13 @@ export default function VaultExperienceDetail({
         </CardContent>
       </Card>
 
-      <section aria-labelledby="reviews-heading" className="space-y-4">
+      <section aria-labelledby="reviews-heading" className="flex flex-col gap-[var(--layout-stack-group)]">
         <div className="flex items-center justify-between">
-          <h2 id="reviews-heading" className="text-lg font-semibold">
+          <h2 id="reviews-heading" className="text-role-subheading">
             Reviews & ratings
           </h2>
           {avgRating != null ? (
-            <span className="flex items-center gap-1 text-sm">
+            <span className="flex items-center gap-[var(--space-1)] text-role-body">
               <Star className={iconClass("inline", "fill-caution text-caution")} />
               {avgRating.toFixed(1)} ({reviews.length})
             </span>
@@ -200,7 +200,7 @@ export default function VaultExperienceDetail({
 
         {unlocked && !isOwner ? (
           <Card>
-            <CardContent className="space-y-3 p-4">
+            <CardContent className="flex flex-col gap-[var(--space-3)]">
               <Label>Your rating</Label>
               <StarRating value={rating} onChange={setRating} />
               <Textarea
@@ -217,14 +217,14 @@ export default function VaultExperienceDetail({
         ) : null}
 
         {reviews.length > 0 ? (
-          <ul className="space-y-3">
+          <ul className="flex flex-col gap-[var(--space-3)]">
             {reviews.map((review) => (
               <li key={review.id}>
                 <Card>
-                  <CardContent className="p-4">
+                  <CardContent>
                     <StarRating value={review.rating} />
-                    {review.comment ? <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p> : null}
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    {review.comment ? <p className="mt-[var(--space-2)] text-role-body text-muted-foreground">{review.comment}</p> : null}
+                    <p className="mt-[var(--space-1)] text-role-caption text-muted-foreground">
                       {new Date(review.created_at).toLocaleDateString()}
                     </p>
                   </CardContent>
@@ -233,16 +233,16 @@ export default function VaultExperienceDetail({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-muted-foreground">No reviews yet.</p>
+          <p className="text-role-body text-muted-foreground">No reviews yet.</p>
         )}
       </section>
 
       {related.length > 0 ? (
-        <section aria-labelledby="related-heading" className="space-y-4">
-          <h2 id="related-heading" className="text-lg font-semibold">
+        <section aria-labelledby="related-heading" className="flex flex-col gap-[var(--layout-stack-group)]">
+          <h2 id="related-heading" className="text-role-subheading">
             Related experiences
           </h2>
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <ul className="grid gap-[var(--layout-card-gap)] sm:grid-cols-2">
             {related.map((exp) => (
               <li key={exp.id}>
                 <VaultExperienceCard experience={exp} />
@@ -252,7 +252,7 @@ export default function VaultExperienceDetail({
         </section>
       ) : null}
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-role-body text-muted-foreground">
         <Link href="/interview-vault" className="text-primary hover:underline">
           ← Back to marketplace
         </Link>

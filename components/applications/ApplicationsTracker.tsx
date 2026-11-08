@@ -19,7 +19,7 @@ export default function ApplicationsTracker({ userId }: Props) {
       <Alert>
         <AlertTitle>Supabase required</AlertTitle>
         <AlertDescription>
-          Configure <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code> and run the applications
+          Configure <code className="text-role-caption">NEXT_PUBLIC_SUPABASE_URL</code> and run the applications
           migration to use the tracker.
         </AlertDescription>
       </Alert>
@@ -32,7 +32,7 @@ export default function ApplicationsTracker({ userId }: Props) {
 
   if (api.error) {
     return (
-      <div className="space-y-4">
+      <div className="wg-stack-group">
         <Alert variant="destructive">
           <AlertTitle>Could not load applications</AlertTitle>
           <AlertDescription>{api.error}</AlertDescription>
@@ -45,7 +45,7 @@ export default function ApplicationsTracker({ userId }: Props) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="wg-section-stack-lg">
       <KanbanBoard
         applications={api.applications}
         createApplication={api.createApplication}

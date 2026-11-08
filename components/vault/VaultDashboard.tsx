@@ -54,27 +54,27 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
   ];
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex flex-col gap-[var(--layout-section-gap)]">
+      <header className="flex flex-wrap items-start justify-between gap-[var(--space-4)]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Seller Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
+          <h1 className="text-role-title">Seller Dashboard</h1>
+          <p className="mt-1 text-role-body text-muted-foreground">Track earnings, views, and manage your published experiences.</p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/interview-vault/sell">+ New experience</Link>
         </Button>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-[var(--layout-card-gap)] sm:grid-cols-3">
         {stats.map(({ label, value, icon: Icon }) => (
           <Card key={label}>
-            <CardContent className="flex items-center gap-3 p-4">
+            <CardContent className="flex items-center gap-[var(--space-3)]">
               <div className="rounded-lg bg-primary/10 p-2">
-                <Icon className="h-5 w-5 text-primary" />
+                <Icon className={iconClass("inline", "text-primary")} />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{label}</p>
-                <p className="text-xl font-bold">{value}</p>
+                <p className="text-role-caption text-muted-foreground">{label}</p>
+                <p className="text-role-subheading font-bold tabular-nums">{value}</p>
               </div>
             </CardContent>
           </Card>
@@ -83,7 +83,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Sales over time</CardTitle>
+          <CardTitle>Sales over time</CardTitle>
         </CardHeader>
         <CardContent>
           <VaultEarningsChart salesByDay={dashboard.sales_by_day} currency={currency} />
@@ -92,7 +92,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Your experiences</CardTitle>
+          <CardTitle>Your experiences</CardTitle>
           <Button onClick={() => void requestWithdrawal()} disabled={withdrawing || dashboard.total_earnings_inr < 500}>
             <Wallet className={iconClass()} />
             {withdrawing ? "Submitting…" : "Request withdrawal"}
@@ -102,12 +102,12 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
           {dashboard.experiences.length > 0 ? (
             <ul className="divide-y">
               {dashboard.experiences.map((exp) => (
-                <li key={exp.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                <li key={exp.id} className="flex flex-wrap items-center justify-between gap-[var(--space-3)] py-[var(--space-3)] first:pt-0 last:pb-0">
                   <div>
                     <Link href={`/interview-vault/${exp.id}`} className="font-medium hover:text-primary">
                       {exp.company || "Untitled"} — {exp.role || "Draft"}
                     </Link>
-                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <div className="mt-1 flex flex-wrap gap-[var(--space-2)] text-role-caption text-muted-foreground">
                       <span>{exp.view_count} views</span>
                       <span>{exp.sales_count} sales</span>
                       <span>{formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned</span>
@@ -121,7 +121,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-role-body text-muted-foreground">
               No experiences yet.{" "}
               <Link href="/interview-vault/sell" className="text-primary hover:underline">
                 Create your first listing
@@ -129,7 +129,7 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
             </p>
           )}
           {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-[var(--space-3)] text-role-caption text-muted-foreground">
               Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).
             </p>
           ) : null}

@@ -108,9 +108,9 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
           <DialogDescription>Track a new role in your pipeline.</DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-4" onSubmit={(e) => void handleSubmit(e)}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
+        <form className="flex flex-col gap-[var(--layout-stack-group)]" onSubmit={(e) => void handleSubmit(e)}>
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-company">Company</Label>
               <Input
                 id="add-company"
@@ -120,7 +120,7 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-role">Role</Label>
               <Input
                 id="add-role"
@@ -132,8 +132,8 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-status">Stage</Label>
               <Select value={status} onValueChange={(v) => setStatus(v as ApplicationStatus)}>
                 <SelectTrigger id="add-status">
@@ -148,7 +148,7 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-applied">Applied date</Label>
               <Input
                 id="add-applied"
@@ -159,7 +159,7 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="add-url">Job URL</Label>
             <Input
               id="add-url"
@@ -170,8 +170,8 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
             />
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-contact">Contact person</Label>
               <Input
                 id="add-contact"
@@ -179,13 +179,13 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
                 onChange={(e) => setContactPerson(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="add-next">Next step</Label>
               <Input id="add-next" value={nextStep} onChange={(e) => setNextStep(e.target.value)} />
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="add-next-date">Next step date</Label>
             <Input
               id="add-next-date"
@@ -195,7 +195,7 @@ export default function AddApplicationDialog({ open, onOpenChange, onSubmit }: P
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="add-notes">Notes</Label>
             <Textarea
               id="add-notes"

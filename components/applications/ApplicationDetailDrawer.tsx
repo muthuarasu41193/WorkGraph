@@ -172,8 +172,8 @@ function DrawerBody({
 
   return (
     <>
-      <SheetHeader className="border-b border-border pb-4">
-        <div className="flex items-start gap-3 pr-8">
+      <SheetHeader className="border-b border-border pb-[var(--space-4)]">
+        <div className="flex items-start gap-[var(--space-3)] pr-[var(--space-8)]">
           <Avatar className="h-12 w-12 rounded-lg">
             {logo ? <AvatarImage src={logo} alt="" /> : null}
             <AvatarFallback className="rounded-lg bg-[var(--dash-accent-soft)] font-semibold text-[var(--dash-accent)]">
@@ -183,15 +183,15 @@ function DrawerBody({
           <div className="min-w-0">
             <SheetTitle className="text-left leading-snug">{application.role}</SheetTitle>
             <SheetDescription className="text-left">{application.company}</SheetDescription>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-[var(--space-1)] text-role-caption text-muted-foreground">
               {APPLICATION_STATUS_LABELS[application.status]} · Applied {application.applied_date}
             </p>
             <FollowUpBadge application={application} />
-            <FollowUpSuggestion application={application} className="mt-1 text-left" />
+            <FollowUpSuggestion application={application} className="mt-[var(--space-1)] text-left" />
           </div>
         </div>
         {application.job_url ? (
-          <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
+          <Button asChild variant="outline" size="sm" className="mt-[var(--space-2)] w-fit">
             <a href={application.job_url} target="_blank" rel="noopener noreferrer">
               View posting
               <ExternalLink className={iconClass()} />
@@ -200,12 +200,12 @@ function DrawerBody({
         ) : null}
       </SheetHeader>
 
-      <div className="space-y-6 p-4">
-        <section className="space-y-3" aria-labelledby="drawer-fields-heading">
-          <h2 id="drawer-fields-heading" className="text-sm font-semibold">
+      <div className="flex flex-col gap-[var(--space-6)] p-[var(--space-4)]">
+        <section className="flex flex-col gap-[var(--space-3)]" aria-labelledby="drawer-fields-heading">
+          <h2 id="drawer-fields-heading" className="text-role-card-title font-semibold">
             Details
           </h2>
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="drawer-status">Stage</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as ApplicationStatus)}>
               <SelectTrigger id="drawer-status">
@@ -220,11 +220,11 @@ function DrawerBody({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="drawer-next">Next step</Label>
             <Input id="drawer-next" value={nextStep} onChange={(e) => setNextStep(e.target.value)} />
           </div>
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="drawer-next-date">Next step date</Label>
             <Input
               id="drawer-next-date"
@@ -233,7 +233,7 @@ function DrawerBody({
               onChange={(e) => setNextStepDate(e.target.value)}
             />
           </div>
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="drawer-notes">Notes</Label>
             <Textarea
               id="drawer-notes"
@@ -247,14 +247,14 @@ function DrawerBody({
           </Button>
         </section>
 
-        <section className="space-y-3" aria-labelledby="drawer-followup-heading">
-          <h2 id="drawer-followup-heading" className="text-sm font-semibold">
+        <section className="flex flex-col gap-[var(--space-3)]" aria-labelledby="drawer-followup-heading">
+          <h2 id="drawer-followup-heading" className="text-role-card-title font-semibold">
             Follow-up
           </h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-role-caption text-muted-foreground">
             Drafts are a short template — not AI. Nothing moves stages automatically.
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-[var(--space-2)]">
             <Button type="button" variant="outline" onClick={() => setDraftOpen((value) => !value)}>
               Draft follow-up
             </Button>
@@ -268,7 +268,7 @@ function DrawerBody({
             </Button>
           </div>
           {draftOpen ? (
-            <div className="space-y-2 rounded-lg border border-border bg-muted/20 p-3">
+            <div className="flex flex-col gap-[var(--layout-stack-tight)] rounded-lg border border-border bg-muted/20 p-[var(--space-3)]">
               <Textarea readOnly value={draftText} rows={6} className="resize-none bg-background" />
               <Button type="button" variant="outline" size="sm" onClick={() => void copyDraft()}>
                 <Copy className={iconClass()} />
@@ -278,43 +278,43 @@ function DrawerBody({
           ) : null}
         </section>
 
-        <section className="space-y-3" aria-labelledby="drawer-meta-heading">
-          <h2 id="drawer-meta-heading" className="text-sm font-semibold">
+        <section className="flex flex-col gap-[var(--space-3)]" aria-labelledby="drawer-meta-heading">
+          <h2 id="drawer-meta-heading" className="text-role-card-title font-semibold">
             Application info
           </h2>
-          <dl className="grid gap-2 text-sm">
+          <dl className="grid gap-[var(--space-2)] text-role-body">
             {application.contact_person ? (
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-between gap-[var(--space-2)]">
                 <dt className="text-muted-foreground">Contact</dt>
                 <dd className="font-medium">{application.contact_person}</dd>
               </div>
             ) : null}
             {application.salary_offered ? (
-              <div className="flex justify-between gap-2">
+              <div className="flex justify-between gap-[var(--space-2)]">
                 <dt className="text-muted-foreground">Salary offered</dt>
                 <dd className="font-medium">{application.salary_offered}</dd>
               </div>
             ) : null}
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-[var(--space-2)]">
               <dt className="text-muted-foreground">Last updated</dt>
               <dd className="tabular-nums">{formatTimelineAt(application.updated_at)}</dd>
             </div>
           </dl>
         </section>
 
-        <section className="space-y-3" aria-labelledby="drawer-timeline-heading">
-          <h2 id="drawer-timeline-heading" className="text-sm font-semibold">
+        <section className="flex flex-col gap-[var(--space-3)]" aria-labelledby="drawer-timeline-heading">
+          <h2 id="drawer-timeline-heading" className="text-role-card-title font-semibold">
             Timeline
           </h2>
           {application.timeline.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No timeline events yet.</p>
+            <p className="text-role-body text-muted-foreground">No timeline events yet.</p>
           ) : (
-            <ol className="relative space-y-4 border-l border-border pl-4">
+            <ol className="relative space-y-[var(--space-4)] border-l border-border pl-[var(--space-4)]">
               {application.timeline.map((event) => (
                 <li key={event.id} className="relative">
                   <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--dash-accent)]" />
-                  <p className="text-sm font-medium">{event.label}</p>
-                  <p className="text-xs text-muted-foreground">{formatTimelineAt(event.at)}</p>
+                  <p className="text-role-body font-medium">{event.label}</p>
+                  <p className="text-role-caption text-muted-foreground">{formatTimelineAt(event.at)}</p>
                 </li>
               ))}
             </ol>

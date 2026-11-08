@@ -167,11 +167,11 @@ export default function VaultSellForm({ initialDraft }: Props) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Sell Your Experience</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h1 className="text-role-title">Sell Your Experience</h1>
+        <p className="mt-1 text-role-body text-muted-foreground">
           Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-1 flex items-center gap-[var(--space-2)] text-role-caption text-muted-foreground">
           {saving ? (
             <>
               <Loader2 className={iconClass("inline", "animate-spin")} /> Saving…
@@ -193,7 +193,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
               type="button"
               onClick={() => setStep(s.id)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                "flex items-center gap-[var(--space-2)] rounded-full border px-3 py-1 text-role-caption font-medium transition-colors",
                 step === s.id ? "border-primary bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted",
                 step > s.id && "border-positive/50 text-positive ",
               )}
@@ -340,7 +340,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
                   value={priceInr}
                   onChange={(e) => setPriceInr(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">You keep 70% of each sale. Recommended: ₹299–₹999.</p>
+                <p className="text-role-caption text-muted-foreground">You keep 70% of each sale. Recommended: ₹299–₹999.</p>
               </div>
               <Button type="button" onClick={() => void publish()} disabled={saving}>
                 Publish to marketplace

@@ -123,16 +123,16 @@ export default function ResumeIntelligenceDialog({
         )}
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-4xl gap-0 p-0">
-        <DialogHeader className="border-b px-6 py-4">
-          <DialogTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-primary" />
+        <DialogHeader className="border-b px-[var(--space-6)] py-[var(--space-4)]">
+          <DialogTitle className="flex items-center gap-[var(--space-2)]">
+            <Brain className={iconClass("inline", "text-primary")} />
             Resume Intelligence
           </DialogTitle>
           <DialogDescription>
             {jobTitle} at {company} — honest fit analysis using your real experience.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(90vh-5rem)] px-6 py-4">
+        <ScrollArea className="max-h-[calc(90vh-5rem)] px-[var(--space-6)] py-[var(--space-4)]">
           {!hasResume ? (
             <Alert variant="destructive">
               <AlertDescription>
@@ -140,11 +140,15 @@ export default function ResumeIntelligenceDialog({
               </AlertDescription>
             </Alert>
           ) : loading ? (
-            <div className="space-y-4 py-8" aria-busy="true" aria-label="Analyzing resume">
+            <div
+              className="flex flex-col gap-[var(--layout-stack-group)] py-[var(--space-8)]"
+              aria-busy="true"
+              aria-label="Analyzing resume"
+            >
               <div className="h-5 w-56 rounded wg-skeleton-shimmer" />
               <div className="h-24 w-full rounded-xl wg-skeleton-shimmer" />
               <div className="h-24 w-full rounded-xl wg-skeleton-shimmer" />
-              <p className="text-center text-xs text-muted-foreground">
+              <p className="text-center text-role-caption text-muted-foreground">
                 Analyzing your resume against this role. This usually takes 1–2 minutes.
               </p>
             </div>

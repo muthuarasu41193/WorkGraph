@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Brain, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import type { ResumeIntelligenceReport } from "@/lib/talent-intelligence/types";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
@@ -126,19 +126,7 @@ export default function ResumeIntelligenceSection({
   }
 
   return (
-    <section className="space-y-8" aria-labelledby="resume-intelligence-heading">
-      <header>
-        <div className="flex items-center gap-2">
-          <Brain className={iconClass("standalone", "text-primary")} />
-          <h1 id="resume-intelligence-heading" className="text-2xl font-bold tracking-tight">
-            Resume Intelligence
-          </h1>
-        </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Compare your genuine experience against any job. WorkGraph explains fit, gaps, and improvements — never fabricates content.
-        </p>
-      </header>
-
+    <section className="wg-section-stack-lg" aria-label="Resume Intelligence">
       {!hasResume ? (
         <Alert variant="destructive">
           <AlertDescription>
@@ -149,17 +137,17 @@ export default function ResumeIntelligenceSection({
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-[var(--space-2)]">
+            <Sparkles className={iconClass("inline", "text-primary")} />
             Analyze against a job
           </CardTitle>
           <CardDescription>
             Paste a job description from any source, or analyze from a job card in your feed.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+        <CardContent className="gap-[var(--layout-stack-group)]">
+          <div className="grid gap-[var(--layout-card-gap)] sm:grid-cols-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="ti-job-title">Job title (optional)</Label>
               <Input
                 id="ti-job-title"
@@ -168,7 +156,7 @@ export default function ResumeIntelligenceSection({
                 placeholder="Senior Software Engineer"
               />
             </div>
-            <div className="space-y-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="ti-company">Company (optional)</Label>
               <Input
                 id="ti-company"
@@ -178,7 +166,7 @@ export default function ResumeIntelligenceSection({
               />
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="wg-stack-tight">
             <Label htmlFor="ti-jd">Job description</Label>
             <Textarea
               id="ti-jd"
@@ -189,7 +177,7 @@ export default function ResumeIntelligenceSection({
               className="min-h-[160px] resize-y"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-[var(--space-2)]">
             <Button
               onClick={() => analyze(false)}
               disabled={!hasResume || jobDescription.trim().length < 80}
@@ -214,22 +202,22 @@ export default function ResumeIntelligenceSection({
       {history.length > 0 && !report ? (
         <Card className="wg-dash-section-card">
           <CardHeader>
-            <CardTitle className="text-base">Recent analyses</CardTitle>
+            <CardTitle>Recent analyses</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <ul className="flex flex-col gap-[var(--layout-stack-tight)]">
               {history.map((h) => (
                 <li key={h.id}>
                   <button
                     type="button"
                     onClick={() => loadReport(h.id)}
-                    className="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition hover:bg-muted/50"
+                    className="flex w-full items-center justify-between rounded-lg border px-[var(--space-3)] py-[var(--space-2)] text-left text-role-body transition hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
                     <span>
                       {h.jobTitle ?? "Untitled role"}
                       {h.company ? ` · ${h.company}` : ""}
                     </span>
-                    <span className="tabular-nums text-muted-foreground">
+                    <span className="tabular-nums text-role-caption text-muted-foreground">
                       {h.overallScore ?? "—"}% · {new Date(h.createdAt).toLocaleDateString()}
                     </span>
                   </button>

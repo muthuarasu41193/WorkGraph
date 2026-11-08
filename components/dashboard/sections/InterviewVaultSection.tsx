@@ -84,9 +84,9 @@ export default function InterviewVaultSection() {
   }
 
   return (
-    <section className="space-y-4" aria-labelledby="vault-heading">
+    <section className="flex flex-col gap-[var(--layout-section-title-gap)]" aria-labelledby="vault-heading">
       <header>
-        <h1 id="vault-heading" className="text-role-title">Prep Vault</h1>
+        <h1 id="vault-heading" className="text-role-title">Prep Materials</h1>
         <p className="mt-0.5 text-role-caption text-fg-secondary">
           Private prep notes stored on this device — questions, answers, and company research.
         </p>
@@ -97,8 +97,8 @@ export default function InterviewVaultSection() {
           <CardTitle>Add interview prep</CardTitle>
           <CardDescription>Track each company you are interviewing with.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid gap-3 sm:grid-cols-2">
+        <CardContent className="flex flex-col gap-[var(--space-3)]">
+          <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
             <Input placeholder="Company name" value={company} onChange={(e) => setCompany(e.target.value)} />
             <Input placeholder="Role title (optional)" value={role} onChange={(e) => setRole(e.target.value)} />
           </div>
@@ -121,7 +121,7 @@ export default function InterviewVaultSection() {
           <CardDescription>Practice these out loud before every interview.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2">
+          <ul className="flex flex-col gap-[var(--space-2)]">
             {STARTER_QUESTIONS.map((q) => (
               <li key={q} className="flex items-start gap-2 text-role-body">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
@@ -133,14 +133,14 @@ export default function InterviewVaultSection() {
       </Card>
 
       {entries.length > 0 ? (
-        <ul className="space-y-3">
+        <ul className="flex flex-col gap-[var(--space-3)]">
           {entries.map((entry) => (
             <li key={entry.id}>
               <Card className="wg-dash-section-card">
-                <CardContent className="p-4">
+                <CardContent>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-semibold">{entry.company}</h2>
+                      <h2 className="text-role-card-title">{entry.company}</h2>
                       {entry.role ? <p className="text-role-body text-ink-muted">{entry.role}</p> : null}
                     </div>
                     <Button

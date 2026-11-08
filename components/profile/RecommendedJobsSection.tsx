@@ -1406,14 +1406,17 @@ export default function RecommendedJobsSection({
   return (
     <section id="recommended-jobs" className="scroll-mt-28">
       {!isLiveFeed && feedDemoHint ? (
-        <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-sm text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "var(--duration-fast)" }}>
+        <div
+          className="mb-[var(--space-3)] flex gap-[var(--space-3)] rounded-[var(--radius-card)] border border-hairline bg-warning-50 p-[var(--layout-card-pad-mobile)] text-role-body text-fg-secondary wg-section-fade"
+          style={{ animationDelay: "var(--duration-fast)" }}
+        >
           <span className="mt-0.5 shrink-0 text-caution">
-            <LifeBuoy className="h-5 w-5" aria-hidden />
+            <LifeBuoy className={iconClass()} aria-hidden />
           </span>
           <div className="min-w-0 space-y-2">
             <p className="font-semibold leading-snug text-caution">{demoBannerCopy(feedDemoHint).title}</p>
             <p className="leading-relaxed text-caution/95">{demoBannerCopy(feedDemoHint).body}</p>
-            <p className="text-xs text-caution/90">
+            <p className="text-role-caption text-caution/90">
               <Link
                 href="/api/jobs-health"
                 className="font-medium underline decoration-warning underline-offset-2 hover:text-fg-primary"
@@ -1432,7 +1435,7 @@ export default function RecommendedJobsSection({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-sans text-role-subheading text-ink">Your Match Profile</h3>
-            <p className="mt-1 text-sm text-fg-tertiary">Based on your profile, we match jobs by:</p>
+            <p className="mt-1 text-role-body text-fg-tertiary">Based on your profile, we match jobs by:</p>
           </div>
           <button
             type="button"
@@ -1449,17 +1452,17 @@ export default function RecommendedJobsSection({
             {matchBreakdown.map((item) => (
               <span
                 key={item.label}
-                className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-3 py-1 text-xs font-medium text-fg-secondary"
+                className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-3 py-1 text-role-caption font-medium text-fg-secondary"
               >
                 {item.label}
               </span>
             ))}
-            <Link href="/profile?view=profile" className="text-sm font-medium text-info hover:underline">
+            <Link href="/profile?view=profile" className="text-role-body font-medium text-info hover:underline">
               Update profile skills
             </Link>
           </div>
         ) : isMatchProfileExpanded ? (
-          <p className="mt-4 text-sm text-fg-tertiary">
+          <p className="mt-4 text-role-body text-fg-tertiary">
             Add skills to your profile to enable job matching.{" "}
             <Link href="/profile?view=profile" className="font-medium text-info hover:underline">
               Edit profile
@@ -1469,7 +1472,7 @@ export default function RecommendedJobsSection({
       </section>
 
       {fetchError ? (
-        <div className="mb-3 rounded-xl border border-brand-200 bg-brand-50 p-4 text-sm text-fg-secondary">
+        <div className="mb-3 rounded-xl border border-brand-200 bg-brand-50 p-4 text-role-body text-fg-secondary">
           <p className="font-semibold text-brand">Could not load more jobs</p>
           <p className="mt-1 text-fg-secondary">{fetchError}</p>
         </div>
@@ -1525,7 +1528,7 @@ export default function RecommendedJobsSection({
               </summary>
               <div data-filter-menu="true" className="filter-menu w-52">
                 {JOB_TYPE_OPTIONS.map((type) => (
-                  <label key={type} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink hover:bg-surface-sunken">
+                  <label key={type} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-role-body text-ink hover:bg-surface-sunken">
                     <input
                       type="checkbox"
                       checked={jobTypes.has(type)}
@@ -1563,7 +1566,7 @@ export default function RecommendedJobsSection({
                     setCurrentPage(1);
                   }}
                   placeholder="Country or city"
-                  className="mb-2 h-9 w-full rounded-md border border-hairline px-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash"
+                  className="mb-2 h-9 w-full rounded-md border border-hairline px-3 text-role-body text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash"
                 />
                 <div className="flex flex-wrap gap-2">
                   {["any", "remote", "hybrid", "onsite"].map((loc) => (
@@ -1668,7 +1671,7 @@ export default function RecommendedJobsSection({
                 <Button
                   key={d.id}
                   type="button"
-                  variant={dateWindow === d.id ? "default" : "outline"}
+                  variant={dateWindow === d.id ? "secondary" : "outline"}
                   onClick={() => setDateWindow(d.id)}
                   className="rounded-2xl"
                 >
@@ -1685,7 +1688,7 @@ export default function RecommendedJobsSection({
                     key={loc}
                     type="button"
                     size="sm"
-                    variant={locationMode === loc ? "default" : "outline"}
+                    variant={locationMode === loc ? "secondary" : "outline"}
                     onClick={() => setLocationMode(loc)}
                     className="rounded-2xl capitalize"
                   >
@@ -1700,7 +1703,7 @@ export default function RecommendedJobsSection({
                 {JOB_TYPE_OPTIONS.map((type) => (
                   <Badge
                     key={type}
-                    variant={jobTypes.has(type) ? "default" : "outline"}
+                    variant={jobTypes.has(type) ? "secondary" : "outline"}
                     className="cursor-pointer"
                     onClick={() =>
                       setJobTypes((prev) => {
@@ -1722,7 +1725,7 @@ export default function RecommendedJobsSection({
                 {(sourceFilterOptions.length > 0 ? sourceFilterOptions : [...JOB_FEED_SOURCE_OPTIONS]).map((src) => (
                   <Badge
                     key={src}
-                    variant={sources.has(src) ? "default" : "outline"}
+                    variant={sources.has(src) ? "secondary" : "outline"}
                     className="cursor-pointer"
                     onClick={() => togglePlatform(src)}
                   >
@@ -1743,7 +1746,7 @@ export default function RecommendedJobsSection({
                   <Button
                     key={o.id}
                     type="button"
-                    variant={matchScore === o.id ? "default" : "outline"}
+                    variant={matchScore === o.id ? "secondary" : "outline"}
                     onClick={() => setMatchScore(o.id as typeof matchScore)}
                     className="rounded-2xl"
                   >
@@ -1794,7 +1797,7 @@ export default function RecommendedJobsSection({
                     key={o.id}
                     type="button"
                     size="sm"
-                    variant={matchScore === o.id ? "default" : "outline"}
+                    variant={matchScore === o.id ? "secondary" : "outline"}
                     className="rounded-2xl"
                     onClick={() => setMatchScore(o.id as typeof matchScore)}
                   >
@@ -1809,7 +1812,7 @@ export default function RecommendedJobsSection({
                 <Button
                   type="button"
                   size="sm"
-                  variant={experienceLevel === "any" ? "default" : "outline"}
+                  variant={experienceLevel === "any" ? "secondary" : "outline"}
                   className="rounded-2xl"
                   onClick={() => setExperienceLevel("any")}
                 >
@@ -1820,7 +1823,7 @@ export default function RecommendedJobsSection({
                     key={exp}
                     type="button"
                     size="sm"
-                    variant={experienceLevel === exp ? "default" : "outline"}
+                    variant={experienceLevel === exp ? "secondary" : "outline"}
                     className="rounded-2xl"
                     onClick={() => setExperienceLevel(exp)}
                   >
@@ -1844,7 +1847,7 @@ export default function RecommendedJobsSection({
                 {sourceFilterOptions.map((src) => (
                   <Badge
                     key={src}
-                    variant={sources.has(src) ? "default" : "outline"}
+                    variant={sources.has(src) ? "secondary" : "outline"}
                     className="cursor-pointer"
                     onClick={() => togglePlatform(src)}
                   >
@@ -1863,7 +1866,7 @@ export default function RecommendedJobsSection({
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as (typeof CURRENCY_OPTIONS)[number])}
-                  className="h-9 rounded-lg border border-border-default px-2 text-sm"
+                  className="h-9 rounded-lg border border-border-default px-2 text-role-body"
                 >
                   {CURRENCY_OPTIONS.map((c) => (
                     <option key={c} value={c}>
@@ -1871,10 +1874,10 @@ export default function RecommendedJobsSection({
                     </option>
                   ))}
                 </select>
-                <Button type="button" size="sm" variant={salaryPeriod === "year" ? "default" : "outline"} onClick={() => setSalaryPeriod("year")}>
+                <Button type="button" size="sm" variant={salaryPeriod === "year" ? "secondary" : "outline"} onClick={() => setSalaryPeriod("year")}>
                   Per year
                 </Button>
-                <Button type="button" size="sm" variant={salaryPeriod === "hour" ? "default" : "outline"} onClick={() => setSalaryPeriod("hour")}>
+                <Button type="button" size="sm" variant={salaryPeriod === "hour" ? "secondary" : "outline"} onClick={() => setSalaryPeriod("hour")}>
                   Per hour
                 </Button>
               </div>
@@ -1882,7 +1885,7 @@ export default function RecommendedJobsSection({
             <div className="grid gap-2">
               <Label>Company size</Label>
               <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" variant={companySize === "any" ? "default" : "outline"} onClick={() => setCompanySize("any")}>
+                <Button type="button" size="sm" variant={companySize === "any" ? "secondary" : "outline"} onClick={() => setCompanySize("any")}>
                   Any
                 </Button>
                 {COMPANY_SIZE_OPTIONS.map((size) => (
@@ -1890,7 +1893,7 @@ export default function RecommendedJobsSection({
                     key={size}
                     type="button"
                     size="sm"
-                    variant={companySize === size ? "default" : "outline"}
+                    variant={companySize === size ? "secondary" : "outline"}
                     className="rounded-2xl"
                     onClick={() => setCompanySize(size)}
                   >
@@ -1906,7 +1909,7 @@ export default function RecommendedJobsSection({
                 {visibleIndustryOptions.map((ind) => (
                   <Badge
                     key={ind}
-                    variant={industries.has(ind) ? "default" : "outline"}
+                    variant={industries.has(ind) ? "secondary" : "outline"}
                     className="cursor-pointer"
                     onClick={() =>
                       setIndustries((prev) => {
@@ -1937,7 +1940,7 @@ export default function RecommendedJobsSection({
                 {BENEFIT_OPTIONS.map((benefit) => (
                   <Badge
                     key={benefit}
-                    variant={benefits.has(benefit) ? "default" : "outline"}
+                    variant={benefits.has(benefit) ? "secondary" : "outline"}
                     className="cursor-pointer"
                     onClick={() =>
                       setBenefits((prev) => {
@@ -1953,11 +1956,11 @@ export default function RecommendedJobsSection({
                 ))}
               </div>
             </div>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-role-body">
               <Checkbox checked={visaSponsorshipOnly} onCheckedChange={(c) => setVisaSponsorshipOnly(c === true)} />
               Visa sponsorship
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <label className="flex cursor-pointer items-center gap-2 text-role-body">
               <Checkbox checked={easyApplyOnly} onCheckedChange={(c) => setEasyApplyOnly(c === true)} />
               Easy apply only
             </label>
@@ -2116,7 +2119,7 @@ export default function RecommendedJobsSection({
                   >
                     {sanitizeJobDescription(job.description ?? "", job.company) || job.matchLabel}
                   </div>
-                  <ul className="space-y-1 text-sm">
+                  <ul className="space-y-1 text-role-body">
                     {reqs.map((r) => (
                       <li key={r.label} className="flex items-center gap-2">
                         {r.status === "ok" ? (
@@ -2130,7 +2133,7 @@ export default function RecommendedJobsSection({
                       </li>
                     ))}
                   </ul>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-fg-tertiary">
+                  <div className="flex flex-wrap items-center gap-3 text-role-caption text-fg-tertiary">
                     {meta.companySize ? <span>Company size: {meta.companySize}</span> : null}
                     {meta.industries.length > 0 ? <span>Industry: {meta.industries.join(", ")}</span> : null}
                     {meta.benefits.length > 0 ? <span>Benefits: {meta.benefits.join(", ")}</span> : null}
@@ -2169,7 +2172,7 @@ export default function RecommendedJobsSection({
           className="mt-6 flex flex-col items-center gap-3 border-t border-border-default pt-5"
           aria-label="Job results pagination"
         >
-          <p className="text-sm text-fg-tertiary">
+          <p className="text-role-body text-fg-tertiary">
             Showing {rangeStart}-{rangeEnd} of {totalMatched.toLocaleString()} jobs
           </p>
           {totalPages > 1 ? (
@@ -2185,7 +2188,7 @@ export default function RecommendedJobsSection({
               </button>
               {paginationTokens.map((token, index) =>
                 token === "ellipsis" ? (
-                  <span key={`ellipsis-${index}`} className="px-1 text-sm text-fg-tertiary">
+                  <span key={`ellipsis-${index}`} className="px-1 text-role-body text-fg-tertiary">
                     …
                   </span>
                 ) : (
@@ -2197,7 +2200,7 @@ export default function RecommendedJobsSection({
                     aria-label={`Page ${token}`}
                     aria-current={token === safePage ? "page" : undefined}
                     className={cn(
-                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-sm font-medium transition",
+                      "inline-flex h-9 min-w-9 items-center justify-center rounded-full px-3 text-role-body font-medium transition",
                       token === safePage
                         ? "bg-info text-accent-ink shadow-sm"
                         : "border border-border-default bg-surface text-fg-secondary hover:border-info hover:bg-info-50"
@@ -2226,9 +2229,9 @@ export default function RecommendedJobsSection({
       showProfileMatchesOnly &&
       (liveListings > 0 || pageJobs.length > 0) ? (
         <div className="rounded-xl border border-border-default bg-surface px-6 py-10 text-center">
-          <UserSearch className="mx-auto h-20 w-20 text-info" />
+          <UserSearch className={iconClass("standalone", "mx-auto size-12 text-info")} />
           <h3 className="mt-4 text-role-subheading font-semibold text-fg-primary">No profile matches found</h3>
-          <p className="mt-2 text-sm text-fg-tertiary">
+          <p className="mt-2 text-role-body text-fg-tertiary">
             {matchedListings > 0
               ? `${matchedListings.toLocaleString()} jobs match your profile in the index. Try browsing all jobs or updating your skills.`
               : `${liveListings.toLocaleString()} jobs are indexed, but none overlap your current skills. Browse the full catalog or update your profile.`}
@@ -2241,13 +2244,13 @@ export default function RecommendedJobsSection({
                 setSkillsPick(new Set());
                 setCurrentPage(1);
               }}
-              className="inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-sm font-medium text-accent-ink hover:bg-info-foreground"
+              className="inline-flex h-10 items-center rounded-[20px] bg-info px-5 text-role-button font-medium text-accent-ink hover:bg-info-foreground"
             >
               Browse all {liveListings.toLocaleString()} jobs
             </button>
             <Link
               href="/profile?view=profile"
-              className="inline-flex h-10 items-center rounded-[20px] border border-info px-5 text-sm font-medium text-info"
+              className="inline-flex h-10 items-center rounded-[20px] border border-info px-5 text-role-button font-medium text-info"
             >
               Update profile skills
             </Link>
@@ -2318,7 +2321,7 @@ export default function RecommendedJobsSection({
               {skillHints.map((skill) => (
                 <span
                   key={skill}
-                  className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-2.5 py-0.5 text-xs text-fg-secondary"
+                  className="inline-flex items-center rounded-full border border-border-default bg-surface-hover px-2.5 py-0.5 text-role-caption text-fg-secondary"
                 >
                   {skill}
                 </span>
@@ -2329,7 +2332,7 @@ export default function RecommendedJobsSection({
                 {matchedListings.toLocaleString()} jobs match your profile
               </p>
             ) : null}
-            <Link href="/profile?view=profile" className="mt-2 inline-block text-xs font-medium text-info hover:underline">
+            <Link href="/profile?view=profile" className="mt-2 inline-block text-role-caption font-medium text-info hover:underline">
               Update profile
             </Link>
           </section>
@@ -2343,13 +2346,13 @@ export default function RecommendedJobsSection({
         <div className="fixed inset-0 z-modal bg-surface p-4 md:hidden">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-sans text-role-subheading text-ink">Job Details</h3>
-            <button type="button" onClick={() => setMobileDetailJobId(null)}>
-              <X className="h-5 w-5 text-fg-secondary" />
+            <button type="button" onClick={() => setMobileDetailJobId(null)} aria-label="Close job details" className="inline-flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30">
+              <X className={iconClass("inline", "text-fg-secondary")} />
             </button>
           </div>
           {(() => {
             const jobEntry = listingPipeline.find(({ job }) => job.id === mobileDetailJobId);
-            if (!jobEntry) return <p className="text-sm text-fg-tertiary">Job not available.</p>;
+            if (!jobEntry) return <p className="text-role-body text-fg-tertiary">Job not available.</p>;
             const { job, meta } = jobEntry;
             return (
               <div className="space-y-3">

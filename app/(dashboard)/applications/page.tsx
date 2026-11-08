@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import ApplicationsTracker from "@/components/applications/ApplicationsTracker";
+import PageHero from "@/components/design-system/PageHero";
 import { getSessionUser } from "@/lib/auth/session-server";
 import { loadUserProfile } from "@/lib/load-profile";
 
@@ -12,5 +13,13 @@ export default async function ApplicationsPage() {
   const profile = await loadUserProfile(sessionUser.id);
   if (!profile) redirect("/create-profile");
 
-  return <ApplicationsTracker userId={sessionUser.id} />;
+  return (
+    <div className="wg-section-stack-lg">
+      <PageHero
+        title="Application Intelligence"
+        subtitle="Track every opportunity and maximize your response rate."
+      />
+      <ApplicationsTracker userId={sessionUser.id} />
+    </div>
+  );
 }

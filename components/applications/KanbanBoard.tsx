@@ -66,19 +66,19 @@ function KanbanColumn({
         isOver && "ring-2 ring-[var(--dash-accent)] ring-offset-2 ring-offset-background",
       )}
     >
-      <header className="border-b border-border px-3 py-3">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold">{label}</h3>
-          <span className="rounded-full bg-[var(--dash-accent-soft)] px-2 py-0.5 text-xs font-semibold tabular-nums text-[var(--dash-accent)]">
+      <header className="border-b border-border px-[var(--space-3)] py-[var(--space-3)]">
+        <div className="flex items-center justify-between gap-[var(--space-2)]">
+          <h3 className="text-role-card-title font-semibold">{label}</h3>
+          <span className="rounded-full bg-[var(--dash-accent-soft)] px-[var(--space-2)] py-[var(--space-1)] text-role-caption font-semibold tabular-nums text-[var(--dash-accent)]">
             {applications.length}
           </span>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+        <p className="mt-[var(--space-1)] text-role-caption text-muted-foreground">{description}</p>
       </header>
 
-      <ul className="flex min-h-[120px] flex-1 flex-col gap-2 p-2">
+      <ul className="flex min-h-[120px] flex-1 flex-col gap-[var(--space-2)] p-[var(--space-2)]">
         {applications.length === 0 ? (
-          <li className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-muted-foreground">
+          <li className="rounded-lg border border-dashed border-border px-[var(--space-3)] py-[var(--space-6)] text-center text-role-caption text-muted-foreground">
             Empty — drop cards here
           </li>
         ) : (
@@ -192,14 +192,11 @@ export default function KanbanBoard({
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Application Tracker</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Drag cards across stages · {applications.length} total applications
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-[var(--space-3)]">
+        <p className="text-role-caption text-muted-foreground">
+          Drag cards across stages · {applications.length} total applications
+        </p>
+        <div className="flex flex-wrap items-center gap-[var(--space-2)]">
           {followUpCount > 0 ? (
             <Button
               type="button"
@@ -224,7 +221,7 @@ export default function KanbanBoard({
           title="No applications yet"
           description="Track every role you apply to. Add your first application to start moving cards across stages."
           action={
-            <Button type="button" onClick={() => setAddOpen(true)}>
+            <Button type="button" variant="outline" onClick={() => setAddOpen(true)}>
               <Plus className={iconClass()} />
               Add Application
             </Button>
@@ -237,7 +234,7 @@ export default function KanbanBoard({
         onDragStart={handleDragStart}
         onDragEnd={(e) => void handleDragEnd(e)}
       >
-        <div className="flex gap-3 overflow-x-auto pb-2 pt-1">
+        <div className="flex gap-[var(--space-3)] overflow-x-auto pb-[var(--space-2)] pt-[var(--space-1)]">
           {APPLICATION_COLUMNS.map((column) => (
             <KanbanColumn
               key={column.id}

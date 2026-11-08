@@ -32,20 +32,20 @@ export default function HiddenJobsSection() {
   }
 
   return (
-    <section className="space-y-3" aria-labelledby="hidden-jobs-heading">
-      <header>
+    <section className="flex flex-col gap-[var(--layout-section-title-gap)]" aria-labelledby="hidden-jobs-heading">
+      <header className="flex flex-col gap-[var(--layout-stack-tight)]">
         <h1 id="hidden-jobs-heading" className="text-role-title">
-          Hidden Jobs
+          Saved Jobs
         </h1>
-        <p className="mt-0.5 text-role-caption text-fg-secondary">
-          Roles you dismissed from your feed. Restore any job to see it again under Jobs.
+        <p className="text-role-caption text-fg-secondary">
+          Roles you dismissed from your feed. Restore any job to see it again under Find Jobs.
         </p>
       </header>
 
       {hiddenJobs.length === 0 ? (
         <EmptyState
           icon={Eye}
-          title="No hidden jobs yet"
+          title="No saved jobs yet"
           description="When browsing listings, use Hide on roles you are not interested in — they will appear here."
           action={
             <Button asChild size="sm">
@@ -54,12 +54,12 @@ export default function HiddenJobsSection() {
           }
         />
       ) : (
-        <ul className="overflow-hidden rounded-[10px] border border-hairline bg-surface-raised">
+        <ul className="overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised">
           {hiddenJobs.map((job) => (
             <li key={job.id} className="border-b border-hairline last:border-b-0">
-              <div className="flex flex-col gap-2 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-[var(--space-2)] px-[var(--layout-card-pad-mobile)] py-[var(--space-3)] sm:flex-row sm:items-center sm:justify-between md:px-[var(--layout-card-pad)]">
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-[var(--space-2)]">
                       <h2 className="text-role-card-title">{job.title}</h2>
                       <Badge variant="outline" className="h-5 px-1.5 text-role-caption">{job.source}</Badge>
                     </div>
@@ -67,7 +67,7 @@ export default function HiddenJobsSection() {
                       {job.company} · {job.location}
                     </p>
                   </div>
-                  <div className="flex shrink-0 gap-2">
+                  <div className="flex shrink-0 gap-[var(--space-2)]">
                     <Button type="button" variant="outline" size="sm" onClick={() => handleRestore(job)}>
                       <RotateCcw className={iconClass()} />
                       Restore

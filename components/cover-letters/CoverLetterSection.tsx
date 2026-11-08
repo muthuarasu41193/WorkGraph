@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { FileText, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { apiErrorMessage, readApiJson, withSupabaseAuthHeaders } from "@/lib/api-fetch";
 import { coverLetterLimitNotice, parseCoverLetterLimitPayload } from "@/lib/subscription/limit-notice";
@@ -166,19 +166,7 @@ export function CoverLetterSection({ hasResume }: Props) {
   }
 
   return (
-    <section className="space-y-8" aria-labelledby="cover-letters-heading">
-      <header>
-        <div className="flex items-center gap-2">
-          <FileText className={iconClass("standalone", "text-primary")} />
-          <h1 id="cover-letters-heading" className="text-2xl font-bold tracking-tight">
-            Cover Letters
-          </h1>
-        </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Draft a letter from your stored resume for a specific role. Review it before sending — this is a starting point, not a hiring guarantee.
-        </p>
-      </header>
-
+    <section className="wg-section-stack-lg" aria-label="Cover Letters">
       {!hasResume ? (
         <Alert variant="destructive">
           <AlertDescription>
@@ -189,20 +177,20 @@ export function CoverLetterSection({ hasResume }: Props) {
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-[var(--space-2)]">
+            <Sparkles className={iconClass("inline", "text-primary")} />
             Generate a cover letter
           </CardTitle>
           <CardDescription>
             Add the role and paste the job description. WorkGraph writes a 3–4 paragraph draft in your voice.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="gap-[var(--layout-stack-group)]">
           <Text role="body-small" className="text-muted-foreground">
             Written only from your resume. Review before sending.
           </Text>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+          <div className="grid gap-[var(--layout-card-gap)] sm:grid-cols-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="cl-job-title">Job title</Label>
               <Input
                 id="cl-job-title"
@@ -213,7 +201,7 @@ export function CoverLetterSection({ hasResume }: Props) {
                 disabled={generating}
               />
             </div>
-            <div className="space-y-2">
+            <div className="wg-stack-tight">
               <Label htmlFor="cl-company">Company</Label>
               <Input
                 id="cl-company"
@@ -225,10 +213,10 @@ export function CoverLetterSection({ hasResume }: Props) {
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
+          <div className="wg-stack-tight">
+            <div className="flex items-center justify-between gap-[var(--space-2)]">
               <Label htmlFor="cl-jd">Job description</Label>
-              <span className="text-xs tabular-nums text-muted-foreground">
+              <span className="text-role-caption tabular-nums text-muted-foreground">
                 {jobDescription.length}/{JOB_DESCRIPTION_MAX}
               </span>
             </div>
@@ -266,20 +254,21 @@ export function CoverLetterSection({ hasResume }: Props) {
 
       {letter ? (
         <Card className="wg-dash-section-card">
-          <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+          <CardHeader className="flex flex-row items-start justify-between gap-[var(--space-3)] space-y-0">
             <div>
-              <CardTitle className="text-lg">Generated letter</CardTitle>
+              <CardTitle>Generated letter</CardTitle>
               <CardDescription>
                 Draft for {jobTitle.trim() || "this role"}
                 {company.trim() ? ` at ${company.trim()}` : ""}. Edit in your own editor before sending.
               </CardDescription>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-[var(--space-2)]">
               <Button type="button" variant="outline" size="sm" onClick={() => void copyLetter()}>
                 Copy
               </Button>
               <Button
                 type="button"
+                variant="secondary"
                 size="sm"
                 onClick={() => void saveLetter()}
                 disabled={Boolean(savedId)}
@@ -289,7 +278,7 @@ export function CoverLetterSection({ hasResume }: Props) {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="gap-[var(--space-3)]">
             <Text role="body-small" className="text-muted-foreground">
               Written only from your resume. Review before sending.
             </Text>
@@ -298,27 +287,27 @@ export function CoverLetterSection({ hasResume }: Props) {
                 <AlertDescription>{warning}</AlertDescription>
               </Alert>
             ))}
-            <p className="whitespace-pre-wrap text-sm leading-6">{letter}</p>
+            <p className="whitespace-pre-wrap text-role-body leading-6">{letter}</p>
           </CardContent>
         </Card>
       ) : null}
 
       <Card className="wg-dash-section-card">
         <CardHeader>
-          <CardTitle className="text-base">Your Saved Cover Letters</CardTitle>
+          <CardTitle>Your Saved Cover Letters</CardTitle>
           <CardDescription>Letters you chose to keep. Delete anytime.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="gap-[var(--space-3)]">
           {listLoading ? (
-            <p className="text-sm text-muted-foreground">Loading saved letters…</p>
+            <p className="text-role-body text-muted-foreground">Loading saved letters…</p>
           ) : listError ? (
             <Alert variant="destructive">
               <AlertDescription>{listError}</AlertDescription>
             </Alert>
           ) : savedLetters.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No saved cover letters yet.</p>
+            <p className="text-role-body text-muted-foreground">No saved cover letters yet.</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="flex flex-col gap-[var(--space-3)]">
               {savedLetters.map((item) => (
                 <li key={item.id}>
                   <SavedCoverLetterCard

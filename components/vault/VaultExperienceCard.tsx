@@ -24,22 +24,22 @@ export default function VaultExperienceCard({ experience, className }: Props) {
   return (
     <Link href={`/interview-vault/${experience.id}`} className={cn("group block", className)}>
       <Card className="h-full transition-shadow hover:shadow-md">
-        <CardContent className="flex h-full flex-col p-4">
-          <div className="flex items-start justify-between gap-2">
+        <CardContent className="flex h-full flex-col">
+          <div className="flex items-start justify-between gap-[var(--space-2)]">
             <div className="min-w-0">
-              <h2 className="truncate font-semibold group-hover:text-primary">{experience.company}</h2>
-              <p className="truncate text-sm text-muted-foreground">{experience.role}</p>
+              <h2 className="truncate text-role-card-title group-hover:text-primary">{experience.company}</h2>
+              <p className="truncate text-role-body text-muted-foreground">{experience.role}</p>
               {experience.level ? (
-                <p className="mt-0.5 text-xs text-muted-foreground">{experience.level}</p>
+                <p className="mt-0.5 text-role-caption text-muted-foreground">{experience.level}</p>
               ) : null}
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-1">
+            <div className="flex shrink-0 flex-col items-end gap-[var(--space-1)]">
               <Badge variant="secondary">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
               <Lock className={iconClass("inline", "text-muted-foreground")} aria-hidden />
             </div>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-[var(--space-2)] flex flex-wrap gap-[var(--space-2)]">
             {experience.difficulty ? (
               <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
             ) : null}
@@ -52,13 +52,15 @@ export default function VaultExperienceCard({ experience, className }: Props) {
           </div>
 
           {preview ? (
-            <p className="mt-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{preview}</p>
+            <p className="mt-[var(--space-3)] line-clamp-3 flex-1 text-role-body text-muted-foreground">{preview}</p>
           ) : (
-            <p className="mt-3 flex-1 text-sm italic text-muted-foreground">Preview available after opening</p>
+            <p className="mt-[var(--space-3)] flex-1 text-role-body italic text-muted-foreground">
+              Preview available after opening
+            </p>
           )}
 
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
+          <div className="mt-[var(--space-3)] flex items-center justify-between text-role-caption text-muted-foreground">
+            <span className="flex items-center gap-[var(--space-1)]">
               {rating != null ? (
                 <>
                   <Star className={iconClass("inline", "fill-caution text-caution")} />

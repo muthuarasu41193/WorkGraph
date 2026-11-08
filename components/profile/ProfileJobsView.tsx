@@ -40,7 +40,7 @@ export default function ProfileJobsView({
   return (
     <div className="space-y-4">
       <PageHero
-        title="Jobs"
+        title="Find Jobs"
         subtitle="Ranked by how your skills overlap each role."
       />
       <ProfileJobDashboard
