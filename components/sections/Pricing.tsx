@@ -156,7 +156,8 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("monthly")}
           className={cn(
-            "relative z-sticky rounded-full px-5 py-2 text-role-button font-semibold transition-colors",
+            "relative z-sticky rounded-full px-[var(--space-5)] py-[var(--space-2)] text-role-button font-semibold transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
             !isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={!isAnnual}
@@ -167,7 +168,8 @@ function BillingToggle({
           type="button"
           onClick={() => onChange("annual")}
           className={cn(
-            "relative z-sticky rounded-full px-5 py-2 text-role-button font-semibold transition-colors",
+            "relative z-sticky rounded-full px-[var(--space-5)] py-[var(--space-2)] text-role-button font-semibold transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
             isAnnual ? "text-fg-primary" : "text-fg-tertiary",
           )}
           aria-pressed={isAnnual}
@@ -264,7 +266,7 @@ function PricingCard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="font-numeric text-5xl font-bold tracking-heading text-fg-primary"
+                className="font-numeric text-role-display font-bold tracking-heading text-fg-primary"
               >
                 ${displayPrice}
               </motion.span>
@@ -291,19 +293,20 @@ function PricingCard({
       <Link
         href={tier.cta.href}
         className={cn(
-          "mt-8 inline-flex min-h-11 w-full items-center justify-center rounded-full font-semibold transition-colors duration-base ease-standard",
+          "mt-[var(--space-6)] inline-flex min-h-11 w-full items-center justify-center rounded-full text-role-button font-semibold transition-colors duration-base ease-standard",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
           tier.cta.style === "outline" &&
-            "border-2 border-brand bg-transparent py-3 text-brand hover:bg-brand-50",
+            "border-2 border-brand bg-transparent py-[var(--space-3)] text-brand hover:bg-brand-50",
           tier.cta.style === "primary" &&
-            "bg-brand py-3.5 text-role-button text-accent-ink shadow-md hover:bg-brand-700 hover:shadow-lg",
+            "bg-brand py-[var(--space-3)] text-accent-ink shadow-md hover:bg-brand-700 hover:shadow-lg",
           tier.cta.style === "dark" &&
-            "bg-ink py-3 text-accent-ink hover:bg-ink",
+            "bg-ink py-[var(--space-3)] text-accent-ink hover:bg-ink",
         )}
       >
         {tier.cta.label}
       </Link>
 
-      <ul className="mt-8 flex flex-1 flex-col gap-3.5" role="list">
+      <ul className="mt-[var(--space-6)] flex flex-1 flex-col gap-[var(--space-3)]" role="list">
         {tier.features.map((feature) => (
           <FeatureItem key={feature.text} feature={feature} />
         ))}

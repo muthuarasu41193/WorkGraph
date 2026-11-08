@@ -165,7 +165,7 @@ export default function VaultExperienceDetail({
               dangerouslySetInnerHTML={{ __html: fullContent }}
             />
           ) : (
-            <div className="relative overflow-hidden rounded-lg border bg-muted/30 p-6">
+            <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-muted/30 p-[var(--layout-card-pad)]">
               <p className="text-role-body leading-relaxed text-muted-foreground blur-sm select-none" aria-hidden>
                 {preview}
               </p>

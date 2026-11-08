@@ -1406,7 +1406,10 @@ export default function RecommendedJobsSection({
   return (
     <section id="recommended-jobs" className="scroll-mt-28">
       {!isLiveFeed && feedDemoHint ? (
-        <div className="mb-3 flex gap-3 rounded-xl border border-border-default bg-warning-50 p-4 text-role-body text-fg-secondary ring-1 ring-border-default wg-section-fade" style={{ animationDelay: "var(--duration-fast)" }}>
+        <div
+          className="mb-[var(--space-3)] flex gap-[var(--space-3)] rounded-[var(--radius-card)] border border-hairline bg-warning-50 p-[var(--layout-card-pad-mobile)] text-role-body text-fg-secondary wg-section-fade"
+          style={{ animationDelay: "var(--duration-fast)" }}
+        >
           <span className="mt-0.5 shrink-0 text-caution">
             <LifeBuoy className={iconClass()} aria-hidden />
           </span>

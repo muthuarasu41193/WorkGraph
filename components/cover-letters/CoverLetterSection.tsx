@@ -268,6 +268,7 @@ export function CoverLetterSection({ hasResume }: Props) {
               </Button>
               <Button
                 type="button"
+                variant="secondary"
                 size="sm"
                 onClick={() => void saveLetter()}
                 disabled={Boolean(savedId)}

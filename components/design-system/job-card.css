@@ -84,7 +84,7 @@
   border: 1px solid var(--wg-border);
   border-radius: 8px;
   padding: 0 32px 0 36px;
-  font-size: 13px;
+  font-size: var(--type-body-size);
   color: var(--wg-text-primary);
   background: var(--wg-surface-hover);
   outline: none;
@@ -112,7 +112,7 @@
   border: 1px solid var(--wg-border);
   border-radius: 8px;
   background: var(--wg-surface);
-  font-size: 13px;
+  font-size: var(--type-body-size);
   color: var(--wg-text-secondary);
   font-weight: 450;
   display: inline-flex;
@@ -184,7 +184,7 @@
   padding: 2px 8px;
   border-radius: 6px;
   background: var(--wg-brand-50);
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   line-height: 1.35;
   color: var(--wg-brand-800);
 }
@@ -208,7 +208,7 @@
   border: none;
   background: transparent;
   padding: 0;
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   font-weight: 500;
   color: var(--wg-primary);
   cursor: pointer;
@@ -225,7 +225,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: 8px 20px;
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   color: var(--wg-text-tertiary);
   border-bottom: 1px solid var(--wg-surface-hover);
   background: var(--wg-surface);
@@ -283,7 +283,7 @@
   border-radius: 6px;
   background: transparent;
   padding: 6px 8px;
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   color: var(--wg-text-secondary);
   text-align: left;
   cursor: pointer;
@@ -336,7 +336,7 @@
   border: 1px solid var(--wg-border);
   background: var(--wg-surface);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--type-caption-size);
   color: var(--wg-text-secondary);
   transition:
     background-color var(--duration-base) ease,
@@ -403,7 +403,7 @@
   background: var(--wg-text-primary);
   color: var(--wg-text-inverse);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--type-body-size);
   font-weight: 500;
   line-height: 1;
   border: none;
@@ -481,7 +481,7 @@
   color: var(--wg-text-muted);
   border: 1px solid var(--wg-border-default);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--type-body-size);
   font-weight: 450;
   line-height: 1;
   cursor: pointer;
@@ -511,7 +511,7 @@
   border-radius: 8px;
   background: var(--wg-slate-900);
   padding: 0 12px;
-  font-size: 13px;
+  font-size: var(--type-body-size);
   font-weight: 500;
   color: var(--wg-text-inverse);
   cursor: pointer;
@@ -529,7 +529,7 @@
   border-radius: 8px;
   background: var(--wg-surface);
   padding: 0 12px;
-  font-size: 13px;
+  font-size: var(--type-body-size);
   font-weight: 500;
   color: var(--wg-text-muted);
   cursor: pointer;
