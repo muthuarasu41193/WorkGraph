@@ -3,25 +3,25 @@ import { Text } from "@/components/ui/text"
 
 const DELIVERABLES = [
   {
-    id: "index",
-    title: "A searchable live index",
-    body: "Roles arrive from Greenhouse, Lever, community posts, and other ingest sources. You can open a listing, read the stored date, and apply on the company site.",
-    href: "/sources",
-    linkLabel: "Where jobs come from",
+    id: "vault",
+    title: "A marketplace for lived interviews",
+    body: "Active and passive seekers publish notes at a price they choose. Buyers unlock prep that came from a real process, not a guru funnel.",
+    href: "/interview-vault",
+    linkLabel: "Open interview vault",
   },
   {
     id: "trust",
-    title: "Labels that say what was checked",
-    body: "Stale dates, missing apply links, and payment asks are written as sentences. We omit badges we cannot support.",
-    href: "/trust",
-    linkLabel: "What we checked",
+    title: "Profile links before publishing",
+    body: "GitHub and LinkedIn must be on the seller profile before an experience goes live. That keeps the vault checkable.",
+    href: "/#trust",
+    linkLabel: "How seller trust works",
   },
   {
-    id: "vault",
-    title: "Interview vault and prep tools",
-    body: "Read shared interview notes when they exist, tailor evidence against a role, and keep cover letters with the applications you log.",
-    href: "/interview-vault",
-    linkLabel: "Open interview vault",
+    id: "index",
+    title: "A searchable live job index",
+    body: "Roles from ATS boards and community sources sit beside the vault, so looking for work and preparing for it stay in one product.",
+    href: "/sources",
+    linkLabel: "Where jobs come from",
   },
 ] as const
 
@@ -35,11 +35,11 @@ export function WhatWeDeliver() {
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="max-w-2xl space-y-3">
           <Text as="h2" role="title" id="deliver-heading">
-            What you get
+            What customers actually get
           </Text>
           <Text role="body" className="text-ink-muted">
-            Three surfaces that stay useful on a hard week: find a role, read
-            what the posting actually claims, and keep the search moving.
+            Clear surfaces for prep, trust, and search — without inventing
+            stats, scarcity, or guaranteed offers.
           </Text>
         </div>
 

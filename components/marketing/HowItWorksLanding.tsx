@@ -1,17 +1,18 @@
+import Link from "next/link"
 import { Text } from "@/components/ui/text"
 
 const STEPS = [
   {
-    title: "Search without signing in",
-    body: "Type a role or skill. Results come from the jobs index. An account is not required to look.",
+    title: "Search roles or open the vault",
+    body: "Use the live job index without an account, or browse interview notes that other seekers published.",
   },
   {
-    title: "Open a listing and read the facts",
-    body: "See the source, the stored posted date, and trust labels that name the check that produced them.",
+    title: "Buy grounded prep when you need it",
+    body: "Unlock a note to read rounds, questions, and tips from someone who linked GitHub and LinkedIn.",
   },
   {
-    title: "Save a profile and log applications",
-    body: "Sign in to keep a resume, get match estimates, and move stages in the tracker as replies arrive.",
+    title: "Sell your own write-up at your price",
+    body: "Add profile links, draft the interview you sat, set INR pricing, and earn while the next search continues.",
   },
 ] as const
 
@@ -25,11 +26,11 @@ export function HowItWorksLanding() {
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="max-w-2xl space-y-3">
           <Text as="h2" role="title" id="how-heading">
-            How to use it
+            How to use WorkGraph
           </Text>
           <Text role="body" className="text-ink-muted">
-            Start with the index. Add a profile only when you want match notes
-            or a place to record applications.
+            One product for looking, preparing, and earning from experience you
+            already have — without fake course noise.
           </Text>
         </div>
 
@@ -48,6 +49,21 @@ export function HowItWorksLanding() {
             </li>
           ))}
         </ol>
+
+        <div className="mt-10 flex flex-wrap gap-4">
+          <Link
+            href="/jobs"
+            className="inline-flex min-h-11 items-center text-accent transition-colors duration-base hover:text-ink"
+          >
+            Search the job index
+          </Link>
+          <Link
+            href="/interview-vault"
+            className="inline-flex min-h-11 items-center text-ink-muted transition-colors duration-base hover:text-ink"
+          >
+            Browse the vault
+          </Link>
+        </div>
       </div>
     </section>
   )

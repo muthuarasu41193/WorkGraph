@@ -143,12 +143,19 @@ export default function VaultSellForm({ initialDraft }: Props) {
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error ?? "Publish failed");
-      toast({ title: "Published!", description: "Your experience is live on the marketplace.", variant: "success" });
+      toast({
+        title: "Published",
+        description: "Your experience is live in the interview vault.",
+        variant: "success",
+      });
       router.push(`/interview-vault/${id}`);
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not publish";
       toast({
         title: "Publish failed",
-        description: err instanceof Error ? err.message : "Could not publish",
+        description: message.includes("GitHub")
+          ? `${message} Open your profile, add both links, then try again.`
+          : message,
         variant: "error",
       });
     } finally {
@@ -167,9 +174,9 @@ export default function VaultSellForm({ initialDraft }: Props) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Sell Your Experience</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Sell your experience</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
+          Set your own price for an interview you sat. Publishing requires a GitHub link and a LinkedIn link on your profile so buyers can check who wrote it. Drafts auto-save every few seconds.
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           {saving ? (

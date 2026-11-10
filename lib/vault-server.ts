@@ -10,6 +10,7 @@ import {
   parseVaultPaymentStatus,
   publicVaultListItem,
   redactVaultExperience,
+  sellerProfileLinksReady,
   VAULT_LIST_SELECT,
   type VaultDashboardStats,
   type VaultExperience,
@@ -253,6 +254,7 @@ export async function updateExperienceForSeller(
   if (input.status !== undefined) {
     patch.status = input.status;
     if (input.status === "published") {
+      await assertSellerCanPublish(supabase, user.id);
       patch.published_at = new Date().toISOString();
     }
   }
@@ -260,6 +262,30 @@ export async function updateExperienceForSeller(
   const { data, error } = await supabase.from("vault_experiences").update(patch).eq("id", id).select("*").single();
   if (error) throw new VaultApiError(error.message, 500);
   return mapVaultExperienceRow(data as Record<string, unknown>);
+}
+
+/** Sellers must link GitHub and LinkedIn on their profile before publishing. */
+export async function assertSellerCanPublish(
+  supabase: Awaited<ReturnType<typeof requireSupabase>>,
+  userId: string,
+): Promise<void> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("github_url, linkedin_url")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) throw new VaultApiError(error.message, 500);
+
+  if (!sellerProfileLinksReady({
+    github_url: data?.github_url as string | null | undefined,
+    linkedin_url: data?.linkedin_url as string | null | undefined,
+  })) {
+    throw new VaultApiError(
+      "Add a GitHub link and a LinkedIn link on your profile before you publish an experience.",
+      400,
+    );
+  }
 }
 
 export async function getSellerDraft(userId: string): Promise<VaultExperience | null> {

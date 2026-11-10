@@ -110,6 +110,16 @@ export type VaultDashboardStats = {
   sales_by_day: Array<{ date: string; sales: number; earnings_inr: number }>;
 };
 
+/** True when a seller profile has both links required before publish. */
+export function sellerProfileLinksReady(profile: {
+  github_url?: string | null;
+  linkedin_url?: string | null;
+}): boolean {
+  const github = typeof profile.github_url === "string" ? profile.github_url.trim() : "";
+  const linkedin = typeof profile.linkedin_url === "string" ? profile.linkedin_url.trim() : "";
+  return Boolean(github && linkedin);
+}
+
 export const VAULT_DIFFICULTY_LABELS: Record<VaultDifficulty, string> = {
   easy: "Easy",
   medium: "Medium",

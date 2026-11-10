@@ -60,9 +60,9 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Interview vault</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
+          Real interview notes from sellers who link GitHub and LinkedIn on their profile. Preview free. Unlock the full write-up at the seller-set price.
         </p>
       </header>
 
