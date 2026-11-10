@@ -3,16 +3,16 @@ import { Text } from "@/components/ui/text"
 
 const UPDATES = [
   {
-    title: "Public job index",
-    body: "Search roles from ATS boards and community sources without creating an account. Each card shows the stored posted date and where the listing came from.",
+    title: "Interview vault with seller-set prices",
+    body: "Publish the interviews you sat. Buyers unlock the full note. You choose the INR amount.",
   },
   {
-    title: "Match notes when you have a profile",
-    body: "After you add a resume or profile, WorkGraph compares requirements and shows an estimate of what matched. It is not a hiring probability.",
+    title: "GitHub and LinkedIn required to publish",
+    body: "An experience cannot go live until both links are on the seller profile. Buyers can open them.",
   },
   {
-    title: "Application record",
-    body: "Log stages, follow-ups, and next steps in one tracker so a quiet stretch stays a gap in the record, not a judgement of you.",
+    title: "Live job index beside the vault",
+    body: "Search roles from public boards and community sources without creating an account.",
   },
 ] as const
 
@@ -35,29 +35,28 @@ export function LaunchNews() {
               Launch note
             </p>
             <Text role="caption" className="text-ink-subtle">
-              Open now for job seekers
+              Built for job seekers helping job seekers
             </Text>
           </div>
           <Text as="h2" role="title" id="launch-news-heading">
-            What is shipping now
+            What WorkGraph is shipping
           </Text>
           <Text role="body" className="max-w-md text-ink-muted">
-            WorkGraph is open for job seekers who want a calm index, honest
-            labels, and a place to keep the search organized. Premium checkout
-            is documented on pricing when it is available to buy.
+            A calm place to search roles and trade interview experience with
+            transparent seller profiles — not course hype, not fake promises.
           </Text>
-          <div className="flex flex-col gap-3 border-l-2 border-accent pl-4 sm:flex-row sm:items-center sm:gap-6 sm:border-l-0 sm:pl-0">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
             <Link
-              href="/waitlist"
+              href="/interview-vault/sell"
               className="inline-flex min-h-11 items-center text-accent transition-colors duration-base hover:text-ink"
             >
-              Join the waitlist for updates
+              Sell an experience
             </Link>
             <Link
-              href="/jobs"
+              href="/waitlist"
               className="inline-flex min-h-11 items-center text-ink-muted transition-colors duration-base hover:text-ink"
             >
-              Or search the index now
+              Join the waitlist for updates
             </Link>
           </div>
         </div>

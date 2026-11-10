@@ -3,17 +3,18 @@ import { getSiteUrl } from "./site-url";
 
 export const SITE = {
   name: "WorkGraph",
-  tagline: "Live job index for a clear next step",
-  description: "Search the live job index. Match notes are estimates when a profile is available.",
+  tagline: "Interview notes from people who show their work",
+  description:
+    "Buy and sell real interview experiences with GitHub and LinkedIn on the seller profile. Search the live job index without an account.",
   url: getSiteUrl(),
   email: "hello@getworkgraph.com",
 } as const;
 
 export const NAV_ITEMS = [
-  { label: "Launch", href: "/#launch" },
+  { label: "Interview vault", href: "/#interview-vault" },
+  { label: "Trust", href: "/#trust" },
   { label: "What you get", href: "/#features" },
   { label: "How it works", href: "/#how-it-works" },
-  { label: "Interview Vault", href: "/interview-vault" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/#contact" },
 ] as const;
@@ -21,13 +22,13 @@ export const NAV_ITEMS = [
 export const NAV_ANNOUNCEMENT = {
   message: messages.announceMessage,
   cta: messages.announceCta,
-  href: "/#launch",
+  href: "/interview-vault",
 } as const;
 
 export const ANNOUNCEMENT = {
-  message: "WorkGraph is launching the live job index",
-  cta: "Read the launch note",
-  href: "/#launch",
+  message: "Sell interview notes. Buy prep from linked sellers.",
+  cta: "Open the vault",
+  href: "/interview-vault",
 } as const;
 
 export const HERO = {
