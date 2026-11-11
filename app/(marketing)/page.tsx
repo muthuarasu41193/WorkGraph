@@ -3,42 +3,19 @@ import { cookies } from "next/headers"
 import Contact from "@/components/sections/Contact"
 import Testimonials from "@/components/sections/Testimonials"
 import { HeroSearch } from "@/components/marketing/HeroSearch"
+import { IndexPanel } from "@/components/marketing/IndexPanel"
 import { PricingTiers } from "@/components/marketing/PricingTiers"
 import { ProductJobCard } from "@/components/product/JobCard"
 import { MatchScore } from "@/components/product/MatchScore"
 import { Text } from "@/components/ui/text"
 import { jobCardView, parseMatchPercent } from "@/lib/job-feed"
 import { fetchLiveJobsPage, mapJobRowToCard } from "@/lib/jobs-catalog"
-import { countedAtLabel } from "@/lib/credibility"
 import { accountDataRights } from "@/lib/account/privacy-copy"
 import { getSessionUser } from "@/lib/auth/session-server"
 import { getConsentedTestimonials, getIndexStats } from "@/lib/social-proof-server"
 import { createServerSupabaseClient } from "@/lib/supabase"
-import type { IndexStats } from "@/lib/social-proof-server"
 
 export const dynamic = "force-dynamic"
-
-function Stat({ label, value }: { label: string; value: number | null }) {
-  if (value == null) return null
-  return (
-    <div>
-      <Text role="heading">{value.toLocaleString("en-US")}</Text>
-      <Text role="caption" className="text-ink-muted">{label}</Text>
-    </div>
-  )
-}
-
-function IndexNumbers({ stats }: { stats: IndexStats }) {
-  const shown = [stats.liveJobs, stats.postedLast24Hours, stats.verifiedEmployers].some((value) => value != null)
-  if (!shown) return <Text role="body-small">Index counts could not be loaded.</Text>
-  return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      <Stat label="Jobs in the index" value={stats.liveJobs} />
-      <Stat label="Posted in the last 24 hours" value={stats.postedLast24Hours} />
-      <Stat label="Verified employers" value={stats.verifiedEmployers} />
-    </div>
-  )
-}
 
 export default async function HomePage({
   searchParams,
@@ -70,28 +47,20 @@ export default async function HomePage({
           </div>
         </section>
       ) : null}
-      <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div>
-          <Text as="h1" role="display">Search the live index</Text>
-          <Text role="body" className="mt-3 max-w-xl text-ink-muted">
-            Results come from the jobs index. No account is required to look.
+
+      <section className="mx-auto grid max-w-6xl items-start gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="text-start">
+          <Text as="h1" role="display">
+            Every listing shows where it came from.
           </Text>
-          <div className="mt-4">
+          <Text role="body" className="mt-3 max-w-xl text-ink-muted">
+            Jobs from open boards and company pages, refreshed through the day. No account needed to look.
+          </Text>
+          <div className="mt-5">
             <HeroSearch />
           </div>
         </div>
-        <aside className="rounded-card border border-hairline bg-surface-raised p-4">
-          <Text as="h2" role="subheading">Index</Text>
-          <div className="mt-3">
-            <IndexNumbers stats={stats} />
-          </div>
-          {countedAtLabel(countedAt) && [stats.liveJobs, stats.postedLast24Hours, stats.verifiedEmployers].some((value) => value != null) ? (
-            <Text role="caption" className="mt-2 text-ink-subtle">{countedAtLabel(countedAt)}</Text>
-          ) : null}
-          <Text role="caption" className="mt-3 text-ink-subtle">
-            Posted means the listing date we stored. It is not a verification time. Suspected scams removed this month are not shown because that count is not stored.
-          </Text>
-        </aside>
+        <IndexPanel stats={stats} countedAt={countedAt} />
       </section>
 
       <section id="features" className="mx-auto max-w-6xl space-y-4 px-4 py-8">

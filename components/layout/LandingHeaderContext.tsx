@@ -4,14 +4,11 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
 
-const STORAGE_KEY = "wg-announcement-dismissed";
-const ANNOUNCEMENT_HEIGHT = 44;
+const ANNOUNCEMENT_HEIGHT = 0;
 const NAV_HEIGHT = 64;
 
 type LandingHeaderContextValue = {
@@ -24,27 +21,18 @@ type LandingHeaderContextValue = {
 const LandingHeaderContext = createContext<LandingHeaderContextValue | null>(null);
 
 export function LandingHeaderProvider({ children }: { children: ReactNode }) {
-  const [announcementVisible, setAnnouncementVisible] = useState(false);
-
-  useEffect(() => {
-    setAnnouncementVisible(localStorage.getItem(STORAGE_KEY) !== "true");
-  }, []);
-
   const dismissAnnouncement = useCallback(() => {
-    setAnnouncementVisible(false);
-    localStorage.setItem(STORAGE_KEY, "true");
+    // Waitlist invitation lives in the header as a quiet link; no banner to dismiss.
   }, []);
-
-  const headerOffset = NAV_HEIGHT + (announcementVisible ? ANNOUNCEMENT_HEIGHT : 0);
 
   const value = useMemo(
     () => ({
-      announcementVisible,
+      announcementVisible: false,
       dismissAnnouncement,
-      headerOffset,
+      headerOffset: NAV_HEIGHT,
       navHeight: NAV_HEIGHT,
     }),
-    [announcementVisible, dismissAnnouncement, headerOffset],
+    [dismissAnnouncement],
   );
 
   return (
