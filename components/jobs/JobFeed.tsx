@@ -14,11 +14,13 @@ import {
   FEED_JOB_TYPES,
   FEED_SOURCES,
   JOB_FEED_PAGE_SIZE,
+  inferJobType,
   jobCardView,
   parseFeedSort,
   sortFeedJobs,
   type FeedSort,
 } from "@/lib/job-feed"
+import { jobSourceName } from "@/lib/job-apply"
 import { attachMissingSkills } from "@/lib/job-requirements"
 import { dismissedSnapshot, readDismissedJobs, subscribeDismissedJobs, writeDismissedJobs } from "@/lib/dismissed-jobs"
 import { readSavedSearches, writeSavedSearches } from "@/lib/saved-searches"
@@ -28,7 +30,7 @@ import { sanitizeJobDescription } from "@/lib/job-summary"
 import { feedFocusAnnouncement, nextListIndex } from "@/lib/a11y"
 import { cn } from "@/lib/utils"
 
-const ROW_HEIGHT = 420
+const ROW_HEIGHT = 280
 const UNDO_MS = 5000
 
 export type AppliedRef = { company: string; role: string; job_url: string | null }
@@ -733,20 +735,27 @@ export function JobFeed({
                       <ProductJobCard
                         title={row.job.title}
                         company={row.job.company}
+                        employerMark="unverified"
                         location={row.job.location}
                         remoteType={view.remoteType}
                         salary={view.salary}
-                        match={view.match}
-                        freshness={view.freshness}
-                        source={view.source}
-                        trust={view.trust}
-                        tailorHref={tailorHref}
-                        applyLabel={view.applyLabel}
+                        jobType={inferJobType(row.job.title, row.job.description)}
+                        sourceName={jobSourceName(row.job.source, row.job.company, row.job.applyUrl)}
+                        postedAtIso={row.job.postedAtIso}
+                        postedLabel={row.job.postedAgo}
+                        applyUrl={row.job.applyUrl}
                         statusNote={notes || undefined}
                         saved={saved}
                         onSave={() => toggleSave(row.job)}
                         onDismiss={() => dismiss(row.job)}
+                        onReport={() =>
+                          toast({
+                            title: "Report received on this device",
+                            description: "We store the flag locally until a moderated queue is available.",
+                          })
+                        }
                         onApply={() => apply(row.job)}
+                        onViewDetails={() => openJob(row.job)}
                         onIntent={() => prefetchJob(row.job.id)}
                       />
                     )}

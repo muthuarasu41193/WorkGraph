@@ -13,23 +13,20 @@ const JOB = {
   company: "Harbor Ledger",
   location: "Lagos",
   remoteType: "Remote",
-  description:
-    "Edit the daily briefing, check the source on every figure, and keep the desk calm when the wire is loud.",
-  match: {
-    score: 72,
-    reason: "4 of 6 requirements met",
-    requirements: [
-      { label: "Editing", met: true },
-      { label: "SQL", met: false },
-    ],
-  },
-  freshness: { status: "verified" as const, label: "Verified live 2 hours ago" },
-  source: {
-    source: "Greenhouse",
-    href: "https://boards.greenhouse.io",
-    attribution: "Listing data via Greenhouse.",
-  },
+  sourceName: "Greenhouse",
+  postedAtIso: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  applyUrl: "https://boards.greenhouse.io",
+  jobType: "Full-time",
   salary: { kind: "range" as const, min: 84000, max: 102000, currency: "USD", period: "per year" },
+}
+
+const MATCH = {
+  score: 72,
+  reason: "4 of 6 requirements met",
+  requirements: [
+    { label: "Editing", met: true },
+    { label: "SQL", met: false },
+  ],
 }
 
 function Block({ title, children }: { title: string; children: ReactNode }) {
@@ -45,23 +42,23 @@ function Specimens() {
   return (
     <div>
       <Block title="JobCard">
-        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" onSave={() => undefined} onDismiss={() => undefined} onApply={() => undefined} />
+        <ProductJobCard {...JOB} onSave={() => undefined} onDismiss={() => undefined} onApply={() => undefined} onViewDetails={() => undefined} />
         <ProductJobCard
           {...JOB}
-          applyLabel="Apply on Greenhouse"
-          expanded
           saved
-          trust={{ tone: "caution", reason: "No company domain listed" }}
+          employerMark="reported"
           onSave={() => undefined}
           onDismiss={() => undefined}
           onApply={() => undefined}
+          onViewDetails={() => undefined}
+          onReport={() => undefined}
         />
-        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" loading />
-        <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" error="This listing could not be refreshed." disabled />
+        <ProductJobCard {...JOB} loading />
+        <ProductJobCard {...JOB} error="This listing could not be refreshed." disabled onViewDetails={() => undefined} />
       </Block>
       <Block title="MatchScore">
-        <MatchScore {...JOB.match} />
-        <MatchScore {...JOB.match} defaultExpanded />
+        <MatchScore {...MATCH} />
+        <MatchScore {...MATCH} defaultExpanded />
         <MatchScore score={0} reason="" loading />
         <MatchScore score={0} reason="" error="Match could not be scored." />
       </Block>
@@ -97,7 +94,7 @@ function Specimens() {
         <SalaryDisplay salary={{ kind: "undisclosed" }} error="Salary could not be read." />
       </Block>
       <Block title="SourceAttribution">
-        <SourceAttribution {...JOB.source} />
+        <SourceAttribution source={JOB.sourceName} href={JOB.applyUrl} />
         <SourceAttribution source="Lever" href="https://jobs.lever.co" loading />
         <SourceAttribution source="Lever" href="https://jobs.lever.co" error="Source link unavailable." />
       </Block>
