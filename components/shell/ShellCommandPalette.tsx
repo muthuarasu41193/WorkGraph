@@ -4,7 +4,10 @@ import { useMemo, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { readSavedSearches, subscribeSavedSearches } from "@/lib/saved-searches"
+import { readSavedSearches, savedSearchesSnapshot, subscribeSavedSearches } from "@/lib/saved-searches"
+
+const EMPTY_SAVED: ReturnType<typeof readSavedSearches> = []
+const emptySavedSnapshot = () => "[]"
 import { fuzzyScore, SHELL_DESTINATIONS } from "@/lib/shell-nav"
 
 type Item = { id: string; label: string; hint?: string; href?: string; action?: "help" }
@@ -46,7 +49,15 @@ export function ShellCommandPalette({
   const [jobs, setJobs] = useState<Item[]>([])
   const [tracker, setTracker] = useState<Item[]>([])
   const [active, setActive] = useState(0)
-  const saved = useSyncExternalStore(subscribeSavedSearches, readSavedSearches, () => [])
+  const savedRaw = useSyncExternalStore(
+    subscribeSavedSearches,
+    savedSearchesSnapshot,
+    emptySavedSnapshot,
+  )
+  const saved = useMemo(() => {
+    if (savedRaw === "[]") return EMPTY_SAVED
+    return readSavedSearches()
+  }, [savedRaw])
   const recent = useMemo(() => (open ? readRecent() : []), [open])
 
   const nav: Item[] = SHELL_DESTINATIONS.map((dest) => ({
