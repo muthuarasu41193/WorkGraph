@@ -1,0 +1,119 @@
+/**
+ * Isolated landing redesign tokens.
+ * Scoped under .wg-landing only — never :root — so other pages are untouched.
+ */
+
+.wg-landing {
+  --bg: #faf8f6;
+  --surface: #ffffff;
+  --ink: #1a1416;
+  --mute: #5f5559;
+  --line: #e8e1dd;
+  --brand: #9b1c2e;
+  --brand-d: #7a1523;
+  --tint: #f8e9eb;
+  --ok: #14794b;
+  --okbg: #e3f4ec;
+
+  --landing-font-display: var(--font-landing-display), ui-serif, Georgia, serif;
+  --landing-font-sans: var(--font-landing-sans), ui-sans-serif, system-ui, sans-serif;
+
+  color: var(--ink);
+  background-color: var(--bg);
+  font-family: var(--landing-font-sans);
+}
+
+.wg-landing h1,
+.wg-landing h2,
+.wg-landing h3,
+.wg-landing h4,
+.wg-landing h5,
+.wg-landing h6 {
+  font-family: var(--landing-font-display);
+}
+
+@media (prefers-color-scheme: dark) {
+  .wg-landing {
+    --bg: #151012;
+    --surface: #1f1719;
+    --ink: #f5eeee;
+    --mute: #b5a8ab;
+    --line: #33292c;
+    --brand: #d4475c;
+    --brand-d: #e8697c;
+    --tint: #2b1a1e;
+    --ok: #4cc790;
+    --okbg: #10291f;
+  }
+}
+
+/* --- Landing UI primitives (used by ui.tsx) --- */
+
+.wg-landing .wg-landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  font-family: var(--landing-font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.wg-landing .wg-landing-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.wg-landing .wg-landing-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wg-landing .wg-landing-btn--primary {
+  background-color: var(--brand);
+  color: #ffffff;
+  border-color: var(--brand);
+}
+
+.wg-landing .wg-landing-btn--primary:hover:not(:disabled) {
+  background-color: var(--brand-d);
+  border-color: var(--brand-d);
+}
+
+.wg-landing .wg-landing-btn--ghost {
+  background-color: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.wg-landing .wg-landing-btn--ghost:hover:not(:disabled) {
+  background-color: var(--tint);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.wg-landing .wg-landing-card {
+  background-color: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .wg-landing .wg-landing-card {
+    padding: 1.5rem;
+  }
+}
