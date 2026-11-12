@@ -27,7 +27,7 @@ export function Footer() {
       <div className="wg-container">
         <div className="wg-footer__grid">
           <div>
-            <a className="wg-brand" href="/landing-preview">
+            <a className="wg-brand" href="/">
               <span className="wg-brand__mark" aria-hidden="true" />
               WorkGraph
             </a>
@@ -73,7 +73,7 @@ export function Footer() {
 
         <div className="wg-footer__bottom">
           <p>© {year} WorkGraph</p>
-          <p>Landing preview — isolated from the live homepage.</p>
+          <p>Search the live job index.</p>
         </div>
       </div>
     </footer>

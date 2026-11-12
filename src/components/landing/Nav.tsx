@@ -18,7 +18,7 @@ export function Nav() {
   return (
     <header className="wg-nav">
       <div className="wg-container wg-nav__inner">
-        <a className="wg-brand" href="/landing-preview" aria-label="WorkGraph home">
+        <a className="wg-brand" href="/" aria-label="WorkGraph home">
           <span className="wg-brand__mark" aria-hidden="true" />
           WorkGraph
         </a>
