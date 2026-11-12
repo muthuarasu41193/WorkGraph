@@ -66,7 +66,7 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         id: "job-discovery",
         label: "Community posts",
         icon: EyeOff,
-        benefitHint: "Hiring posts from Reddit, Hacker News, and GitHub",
+        benefitHint: "Hiring posts from Reddit, LinkedIn, and more",
       },
     ],
   },

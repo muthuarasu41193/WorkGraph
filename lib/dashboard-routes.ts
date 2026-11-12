@@ -84,7 +84,7 @@ export const DASHBOARD_ROUTES: DashboardRoute[] = [
     label: "Hidden Jobs Discovery",
     shortLabel: "Discover",
     icon: Radar,
-    description: "Hiring posts from Reddit, Hacker News, and GitHub (not ATS job boards)",
+    description: "Hiring posts from Reddit, LinkedIn, and more (not ATS job boards)",
   },
   {
     id: "hidden-jobs",
