@@ -1,4 +1,5 @@
 import { AskBar } from "./AskBar";
+import { Contact } from "./Contact";
 import { Faq } from "./Faq";
 import { FinalCta } from "./FinalCta";
 import { Footer } from "./Footer";
@@ -13,8 +14,7 @@ import { landingFontVariables } from "./fonts";
 import "./landing.css";
 
 /**
- * Stiro-inspired WorkGraph landing composition.
- * Mount only inside `/landing-preview` until explicitly promoted.
+ * Stiro-inspired WorkGraph landing composition — live at `/`.
  */
 export function LandingPage() {
   return (
@@ -32,6 +32,7 @@ export function LandingPage() {
         <Showcase />
         <Trust />
         <Faq />
+        <Contact />
         <FinalCta />
       </main>
       <Footer />

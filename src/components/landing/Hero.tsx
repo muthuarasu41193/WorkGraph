@@ -59,7 +59,7 @@ export function Hero() {
             Sign in when you want to save a role or log an application.
           </p>
           <div className="wg-hero__actions">
-            <LinkButton href="#live-index" variant="primary">
+            <LinkButton href="/jobs" variant="primary">
               Search the index
             </LinkButton>
             <LinkButton href="#how-it-works" variant="ghost">
@@ -69,6 +69,8 @@ export function Hero() {
           <p className="wg-hero__note">
             Prefer a slower start?{" "}
             <a href="/waitlist">Join the waitlist</a>
+            {" · "}
+            <a href="#live-index">Try search here</a>
           </p>
         </div>
         <FloatingDemo />

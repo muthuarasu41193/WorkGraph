@@ -15,7 +15,7 @@ export function FinalCta() {
           save roles or keep an application record.
         </p>
         <div className="wg-final__actions">
-          <LinkButton href="#live-index" variant="primary">
+          <LinkButton href="/jobs" variant="primary">
             Search the index
           </LinkButton>
           <LinkButton href="/signup" variant="ghost">

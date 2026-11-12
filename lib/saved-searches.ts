@@ -6,22 +6,44 @@ export type SavedSearch = {
 }
 
 const KEY = "wg-saved-searches"
+const EMPTY: SavedSearch[] = []
 
-export function readSavedSearches(): SavedSearch[] {
-  if (typeof window === "undefined") return []
+let cachedRaw: string | null = null
+let cachedItems: SavedSearch[] = EMPTY
+
+function parseSaved(raw: string): SavedSearch[] {
   try {
-    const parsed = JSON.parse(localStorage.getItem(KEY) ?? "[]") as SavedSearch[]
-    if (!Array.isArray(parsed)) return []
-    return parsed
+    const parsed = JSON.parse(raw) as SavedSearch[]
+    if (!Array.isArray(parsed)) return EMPTY
+    const items = parsed
       .filter((item) => item && typeof item.name === "string" && typeof item.query === "string" && typeof item.id === "string")
       .slice(0, 20)
+    return items.length === 0 ? EMPTY : items
   } catch {
-    return []
+    return EMPTY
   }
 }
 
+export function readSavedSearches(): SavedSearch[] {
+  if (typeof window === "undefined") return EMPTY
+  const raw = localStorage.getItem(KEY) ?? "[]"
+  if (raw === cachedRaw) return cachedItems
+  cachedRaw = raw
+  cachedItems = parseSaved(raw)
+  return cachedItems
+}
+
+/** Stable string snapshot for useSyncExternalStore consumers. */
+export function savedSearchesSnapshot(): string {
+  if (typeof window === "undefined") return "[]"
+  return localStorage.getItem(KEY) ?? "[]"
+}
+
 export function writeSavedSearches(items: SavedSearch[]): void {
-  localStorage.setItem(KEY, JSON.stringify(items.slice(0, 20)))
+  const next = items.slice(0, 20)
+  localStorage.setItem(KEY, JSON.stringify(next))
+  cachedRaw = JSON.stringify(next)
+  cachedItems = next.length === 0 ? EMPTY : next
   window.dispatchEvent(new Event("wg-saved-searches"))
 }
 
