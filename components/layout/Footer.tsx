@@ -112,7 +112,11 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
                 Search the live job index.
               </p>
               <SocialLinks className="mt-6" />
-              <p className="mt-6 text-sm text-fg-tertiary">Feedback goes to a person through the contact form.</p>
+              <p className="mt-6 text-sm text-fg-tertiary">
+                <Link href="/contact" className="text-accent-ink underline-offset-2 hover:underline">
+                  Send feedback to a person
+                </Link>
+              </p>
             </div>
 
             <FooterColumn title="Product" links={FOOTER_LINKS.product} />
@@ -123,7 +127,7 @@ export default function Footer({ signups = 0 }: { signups?: number }) {
           <div className="mt-12 border-t border-ink-muted pt-8">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-sm text-fg-tertiary">
-                &copy; 2025 {SITE.name}. All rights reserved.
+                &copy; {new Date().getFullYear()} {SITE.name}. Policies show a visible last-updated date on each page.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-fg-tertiary">
                 {LEGAL_NAV.map((item, index) => (

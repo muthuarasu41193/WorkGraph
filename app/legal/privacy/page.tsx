@@ -12,6 +12,7 @@ import {
   PRIVACY_EMAIL,
   SUBPROCESSORS,
 } from "@/lib/legal";
+import { PRIVACY_SUMMARY_POINTS } from "@/lib/accountability";
 import { routeShareMetadata } from "@/lib/seo";
 
 const TITLE = "Privacy Policy";
@@ -36,6 +37,17 @@ export default function PrivacyPolicyPage() {
       lastUpdated={LEGAL_LAST_UPDATED}
       intro={
         <>
+          <div className="rounded-card border border-hairline bg-surface-sunken p-4">
+            <p className="font-medium text-fg-primary">Plain-language summary</p>
+            <p className="mt-2 text-sm text-fg-secondary">
+              Read this first. The full policy below is the binding draft for counsel review.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 ps-5 text-sm text-fg-secondary">
+              {PRIVACY_SUMMARY_POINTS.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </div>
           <p>
             This draft describes how WorkGraph (&quot;we&quot;, &quot;us&quot;) processes personal data when you
             use getworkgraph.com and related apps. It is a working placeholder for counsel, not a
