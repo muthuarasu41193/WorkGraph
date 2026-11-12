@@ -16,9 +16,12 @@ import { WorkGraphMark } from "@/components/brand/WorkGraphLogo";
 import CareerIntelligenceSection from "./CareerIntelligenceSection";
 import JobSearchWellbeingCard from "./JobSearchWellbeingCard";
 import SidebarBottom from "./SidebarBottom";
-import SideNavItem from "./SideNavItem";
+import SideNavItem, { CommunityPostsIcon } from "./SideNavItem";
 import { useWeeklyJobActivity } from "@/hooks/use-weekly-job-activity";
 import "./sidenav.css";
+
+/** Discovery feed is Reddit-primary today; swap to MessagesSquare if that changes. */
+const COMMUNITY_POSTS_REDDIT_SOURCED = true;
 
 type Props = {
   collapsed?: boolean;
@@ -107,6 +110,10 @@ export default function SideNav({
     const common = {
       label: item.label,
       icon: item.icon,
+      leading:
+        item.id === "job-discovery" ? (
+          <CommunityPostsIcon redditSourced={COMMUNITY_POSTS_REDDIT_SOURCED} />
+        ) : undefined,
       active,
       collapsed,
       countSuffix: getItemCount(item),

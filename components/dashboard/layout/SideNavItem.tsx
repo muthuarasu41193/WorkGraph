@@ -1,8 +1,10 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { Check } from "lucide-react";
+import { Check, MessagesSquare } from "lucide-react";
+import SourceIcon from "@/components/icons/SourceIcon";
 import { Icon as WgIcon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { NavFeedbackKind } from "@/lib/nav-feedback-events";
@@ -12,6 +14,8 @@ import NavBenefitTooltip from "./NavBenefitTooltip";
 type BaseProps = {
   label: string;
   icon: LucideIcon;
+  /** When set (e.g. Community posts), replaces the Lucide glyph. */
+  leading?: ReactNode;
   active?: boolean;
   collapsed?: boolean;
   nested?: boolean;
@@ -37,10 +41,30 @@ type ButtonProps = BaseProps & {
 
 export type SideNavItemProps = LinkProps | ButtonProps;
 
+/** Community discovery is Reddit-sourced today — use brand mark; else MessagesSquare. */
+export function CommunityPostsIcon({
+  redditSourced = true,
+  className,
+}: {
+  redditSourced?: boolean;
+  className?: string;
+}) {
+  if (redditSourced) {
+    return (
+      <SourceIcon
+        source="reddit"
+        size={14}
+        className={cn("wg-nav-item__brand-icon bg-transparent", className)}
+      />
+    );
+  }
+  return <MessagesSquare className={cn("nav-icon", className)} strokeWidth={1.75} aria-hidden />;
+}
+
 function NavItemContent({
   label,
   icon: IconComponent,
-  active,
+  leading,
   collapsed,
   badge,
   countSuffix,
@@ -51,7 +75,7 @@ function NavItemContent({
   SideNavItemProps,
   | "label"
   | "icon"
-  | "active"
+  | "leading"
   | "collapsed"
   | "badge"
   | "countSuffix"
@@ -69,7 +93,7 @@ function NavItemContent({
           suggested && "wg-nav-item__icon-wrap--suggested",
         )}
       >
-        <WgIcon icon={IconComponent} className="nav-icon" strokeWidth={1.75} />
+        {leading ?? <WgIcon icon={IconComponent} className="nav-icon" strokeWidth={1.75} />}
       </span>
       {!collapsed ? (
         <>
@@ -109,7 +133,6 @@ export default function SideNavItem(props: SideNavItemProps) {
     active = false,
     collapsed = false,
     nested = false,
-    badge,
     countSuffix,
     benefitHint,
     loading = false,

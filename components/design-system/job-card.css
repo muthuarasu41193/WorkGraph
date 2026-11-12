@@ -355,21 +355,15 @@
   color: var(--wg-brand-800);
 }
 
-/* Compact card shell */
+/* Compact card shell — padding comes from the Card primitive (p-5 / 20px). */
 .job-card {
-  background: var(--wg-surface);
-  border: 1px solid var(--wg-border);
-  border-radius: 10px;
   margin: 0;
-  padding: 0.75rem 0.875rem;
   max-width: 100%;
   min-width: 0;
-  box-shadow: none;
   transition:
     border-color var(--duration-base) ease-exit,
     box-shadow var(--duration-base) ease-exit,
     background-color var(--duration-base) ease-exit;
-  position: relative;
 }
 
 .job-card:hover {
@@ -382,16 +376,6 @@
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--hairline);
-}
-
-.job-card__bookmark {
-  opacity: 0;
-  transition: opacity var(--duration-base) ease;
-}
-
-.job-card:hover .job-card__bookmark,
-.job-card:focus-within .job-card__bookmark {
-  opacity: 1;
 }
 
 .apply-btn {
@@ -431,14 +415,6 @@
 }
 
 @media (max-width: 767px) {
-  .job-card {
-    padding: 0.75rem;
-  }
-
-  .job-card__bookmark {
-    opacity: 1;
-  }
-
   .apply-btn {
     width: 100%;
     height: 40px;
