@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/toaster";
 import JsonLd from "@/components/seo/JsonLd";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import { ThemeScript } from "@/components/theme/ThemeScript";
+import { NuqsProvider } from "@/components/providers/NuqsProvider";
 
 // Latin woff2 subsets committed in app/fonts. next/font/google is avoided:
 // Turbopack can fail when Google returns extensionless /l/font?kit= CSS URLs.
@@ -84,14 +85,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={cn(inter.className, "min-h-dvh bg-background text-foreground antialiased")}>
         <ThemeScript />
         <ThemeProvider>
-          <JsonLd />
-          <PageTransition>
-            {children}
-          </PageTransition>
-          <OfflineBanner />
-          <ServiceWorkerRegister />
-          <Toaster />
-          <PageShell />
+          <NuqsProvider>
+            <JsonLd />
+            <PageTransition>
+              {children}
+            </PageTransition>
+            <OfflineBanner />
+            <ServiceWorkerRegister />
+            <Toaster />
+            <PageShell />
+          </NuqsProvider>
         </ThemeProvider>
       </body>
     </html>

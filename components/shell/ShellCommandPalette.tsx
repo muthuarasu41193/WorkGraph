@@ -2,8 +2,8 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
+import { Command } from "cmdk"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { readSavedSearches, subscribeSavedSearches } from "@/lib/saved-searches"
 import { fuzzyScore, SHELL_DESTINATIONS } from "@/lib/shell-nav"
 
@@ -45,7 +45,6 @@ export function ShellCommandPalette({
   const [query, setQuery] = useState("")
   const [jobs, setJobs] = useState<Item[]>([])
   const [tracker, setTracker] = useState<Item[]>([])
-  const [active, setActive] = useState(0)
   const saved = useSyncExternalStore(subscribeSavedSearches, readSavedSearches, () => [])
   const recent = useMemo(() => (open ? readRecent() : []), [open])
 
@@ -83,7 +82,6 @@ export function ShellCommandPalette({
 
   async function search(value: string) {
     setQuery(value)
-    setActive(0)
     const needle = value.trim()
     if (needle.length < 2) {
       setJobs([])
@@ -133,50 +131,39 @@ export function ShellCommandPalette({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-2 p-3">
-        <DialogTitle className="text-role-subheading">Search</DialogTitle>
-        <Input
-          autoFocus
-          aria-label="Search jobs, companies, saved searches, and pages"
-          placeholder="Jobs, companies, saved searches, tracker, pages"
-          value={query}
-          className="min-h-11"
-          onChange={(event) => void search(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "ArrowDown") {
-              event.preventDefault()
-              setActive((index) => Math.min(index + 1, Math.max(items.length - 1, 0)))
-            } else if (event.key === "ArrowUp") {
-              event.preventDefault()
-              setActive((index) => Math.max(index - 1, 0))
-            } else if (event.key === "Enter" && items[active]) {
-              event.preventDefault()
-              go(items[active])
-            }
-          }}
-        />
-        <ul role="listbox" aria-label="Search results" className="max-h-80 overflow-auto">
-          {items.length === 0 ? (
-            <li className="px-2 py-3 text-role-caption text-ink-subtle">No matches</li>
-          ) : (
-            items.map((item, index) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={index === active}
-                  className={`flex min-h-11 w-full items-center justify-between gap-3 rounded-control px-2 text-left ${index === active ? "bg-surface-sunken" : ""}`}
-                  onMouseEnter={() => setActive(index)}
-                  onClick={() => go(item)}
-                >
-                  <span className="text-role-body-small text-ink">{item.label}</span>
-                  {item.hint ? <span className="shrink-0 text-role-caption text-ink-subtle">{item.hint}</span> : null}
-                </button>
-              </li>
-            ))
-          )}
-        </ul>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        onOpenChange(next)
+        if (!next) setQuery("")
+      }}
+    >
+      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-lg">
+        <DialogTitle className="sr-only">Search</DialogTitle>
+        <Command shouldFilter={false} label="Shell search" loop className="bg-surface-raised text-ink">
+          <Command.Input
+            autoFocus
+            value={query}
+            onValueChange={(value) => void search(value)}
+            placeholder="Jobs, companies, saved searches, tracker, pages"
+            className="h-11 w-full border-b border-hairline bg-transparent px-4 text-role-body text-ink outline-none placeholder:text-ink-subtle"
+            aria-label="Search jobs, companies, saved searches, and pages"
+          />
+          <Command.List className="max-h-80 overflow-auto p-2">
+            <Command.Empty className="px-2 py-3 text-role-caption text-ink-subtle">No matches</Command.Empty>
+            {items.map((item) => (
+              <Command.Item
+                key={item.id}
+                value={`${item.id} ${item.label} ${item.hint ?? ""}`}
+                onSelect={() => go(item)}
+                className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 rounded-control px-2 text-left outline-none data-[selected=true]:bg-surface-sunken"
+              >
+                <span className="text-role-body-small text-ink">{item.label}</span>
+                {item.hint ? <span className="shrink-0 text-role-caption text-ink-subtle">{item.hint}</span> : null}
+              </Command.Item>
+            ))}
+          </Command.List>
+        </Command>
       </DialogContent>
     </Dialog>
   )
