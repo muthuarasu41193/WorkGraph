@@ -1,0 +1,14 @@
+---
+description: Landing redesign guardrails — scope edits to landing paths only; protect core app, auth, data, and honest copy.
+alwaysApply: true
+---
+
+# LANDING REDESIGN GUARDRAILS
+
+- Only create or edit files inside: `src/components/landing/`, `src/app/landing-preview/`, `src/styles/landing.css` (or the equivalent `app/` path used by this repo), and `public/landing/`.
+- NEVER edit or delete: API routes, anything under `lib/` or `utils/` that already exists, Supabase clients/migrations/policies, middleware, auth code, Groq/AI code, the job index/search logic, Interview Vault logic, employer code, `package.json` dependencies, `next.config`, or the existing `globals.css`.
+- Do not add new npm packages unless I explicitly approve it.
+- Do not rename or move existing files.
+- If a task seems to need changing a protected file, STOP and ask me first.
+- Landing copy must stay honest: no invented statistics, testimonials, customer logos, income guarantees, or job guarantees. Use real numbers only if fetched from the existing data source.
+- Keep everything TypeScript-strict, accessible (semantic HTML, labels, focus states) and mobile-first.
