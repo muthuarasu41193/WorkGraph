@@ -10,8 +10,8 @@ export default function AnnouncementBar({ signups = 0 }: { signups?: number }) {
   const { announcementVisible, dismissAnnouncement } = useLandingHeader();
   const joined = displayCount(signups);
   const message = joined.showNumber
-    ? `Early access · ${joined.display} people have joined`
-    : joined.display;
+    ? `${NAV_ANNOUNCEMENT.message} · ${joined.display} people have joined`
+    : NAV_ANNOUNCEMENT.message;
 
   if (!announcementVisible) return null;
 
