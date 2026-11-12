@@ -5,14 +5,17 @@ import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { VaultReportForm } from "@/components/vault/VaultReportForm";
+import { VaultTrustBadges } from "@/components/vault/VaultTrustBadges";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { vaultFreshnessLabel } from "@/lib/prep-pack/freshness";
 import {
+  buildContentsOutline,
   VAULT_DIFFICULTY_LABELS,
   VAULT_RESULT_LABELS,
   type VaultExperience,
@@ -124,6 +127,8 @@ export default function VaultExperienceDetail({
 
   const avgRating =
     reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : experience.avg_rating;
+  const contentsOutline = buildContentsOutline(experience);
+  const freshness = vaultFreshnessLabel(experience.interview_date, experience.published_at);
 
   return (
     <div className="space-y-8">
@@ -133,8 +138,13 @@ export default function VaultExperienceDetail({
             <h1 className="text-2xl font-bold tracking-tight">{experience.company}</h1>
             <p className="text-lg text-muted-foreground">{experience.role}</p>
             {experience.level ? <p className="text-sm text-muted-foreground">{experience.level}</p> : null}
+            {experience.display_name ? (
+              <p className="text-sm text-muted-foreground">Contributor: {experience.display_name}</p>
+            ) : null}
           </div>
-          <Badge className="text-base px-3 py-1">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
+          <Badge className="text-base px-3 py-1">
+            {experience.price_inr <= 0 ? "Free" : `₹${experience.price_inr.toLocaleString("en-IN")}`}
+          </Badge>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -144,9 +154,24 @@ export default function VaultExperienceDetail({
           {experience.rounds != null ? <Badge variant="outline">{experience.rounds} rounds</Badge> : null}
           {experience.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge> : null}
           {experience.interview_date ? (
-            <Badge variant="outline">{new Date(experience.interview_date).toLocaleDateString()}</Badge>
+            <Badge variant="outline">
+              Interview date {new Date(experience.interview_date).toLocaleDateString()}
+            </Badge>
           ) : null}
         </div>
+
+        <VaultTrustBadges statuses={experience.trust_statuses} />
+        <p className="text-sm text-muted-foreground">{freshness}</p>
+        {contentsOutline.length > 0 ? (
+          <div className="space-y-1">
+            <p className="text-sm font-medium">What this guide covers</p>
+            <ul className="list-disc pl-5 text-sm text-muted-foreground">
+              {contentsOutline.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </header>
 
       <Card>
@@ -171,11 +196,25 @@ export default function VaultExperienceDetail({
               </p>
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-background via-background/90 to-transparent">
                 <Lock className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm font-medium">Premium content locked</p>
+                <p className="text-sm font-medium">
+                  {experience.price_inr <= 0 ? "Sign in to unlock" : "Paid content locked"}
+                </p>
                 {!isOwner ? (
-                  <Button onClick={() => void handleUnlock()} disabled={purchasing}>
-                    {purchasing ? "Processing…" : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
-                  </Button>
+                  <>
+                    <Button onClick={() => void handleUnlock()} disabled={purchasing}>
+                      {purchasing
+                        ? "Processing…"
+                        : experience.price_inr <= 0
+                          ? "Unlock free guide"
+                          : `Unlock for ₹${experience.price_inr.toLocaleString("en-IN")}`}
+                    </Button>
+                    {experience.price_inr > 0 ? (
+                      <p className="max-w-sm text-center text-xs text-muted-foreground">
+                        Paid unlock requires payment verification. Purchasing a guide does not guarantee an interview or an offer.
+                        If a purchase is inaccessible or misrepresented, use Report below.
+                      </p>
+                    ) : null}
+                  </>
                 ) : (
                   <p className="text-xs text-muted-foreground">You own this listing</p>
                 )}
@@ -251,6 +290,13 @@ export default function VaultExperienceDetail({
           </ul>
         </section>
       ) : null}
+
+      <section aria-labelledby="report-heading" className="space-y-3">
+        <h2 id="report-heading" className="text-lg font-semibold">
+          Need help or see a problem?
+        </h2>
+        <VaultReportForm experienceId={experience.id} isLoggedIn={isLoggedIn} />
+      </section>
 
       <p className="text-center text-sm text-muted-foreground">
         <Link href="/interview-vault" className="text-primary hover:underline">

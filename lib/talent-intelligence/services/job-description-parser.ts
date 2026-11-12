@@ -62,9 +62,9 @@ export function parseJobDescription(text: string, hints?: { title?: string; comp
     title = firstLine.trim();
   }
 
-  const companyMatch = normalized.match(/(?:at|@)\s+([A-Z][A-Za-z0-9&.\-\s]{2,40})/);
+  const companyMatch = normalized.match(/(?:at|@)\s+([A-Z][A-Za-z0-9&.\- ]{2,40})/);
   if (!company && companyMatch?.[1]) {
-    company = companyMatch[1].trim();
+    company = companyMatch[1].replace(/\s+/g, " ").trim();
   }
 
   let seniority: string | null = null;

@@ -68,7 +68,7 @@ const TIERS: PricingTier[] = [
       { text: "All 50+ hidden job sources", included: true },
       { text: "AI cover letter generator", included: true },
       { text: "Application tracker", included: true },
-      { text: "Sell interview guides (keep 80%)", included: true },
+      { text: "Sell interview guides (marketplace fee TBD)", included: true },
       { text: "Priority email support", included: true },
       { text: "Team features", included: false },
       { text: "API access", included: false },
@@ -113,7 +113,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I really earn money selling interview guides?",
     answer:
-      "Pro users can publish interview guides for companies they've interviewed at. You keep 80% of every sale. We don't publish typical-seller earnings because they depend on what you write and how it sells.",
+      "You can publish firsthand interview guides. Marketplace fees and payout timing are not settled product policy yet, and paid unlocks still require a working payment provider. We don't publish typical-seller earnings because they depend on what you write and how it sells. Buying or selling a guide does not guarantee an interview or an offer.",
   },
   {
     question: "What's your refund policy?",

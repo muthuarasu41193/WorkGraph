@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
+import { VaultTrustBadges } from "@/components/vault/VaultTrustBadges";
 import { iconClass } from "@/lib/icon-styles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,10 +33,17 @@ export default function VaultExperienceCard({ experience, className }: Props) {
               {experience.level ? (
                 <p className="mt-0.5 text-xs text-muted-foreground">{experience.level}</p>
               ) : null}
+              {experience.display_name ? (
+                <p className="mt-0.5 text-xs text-muted-foreground">by {experience.display_name}</p>
+              ) : null}
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
-              <Badge variant="secondary">₹{experience.price_inr.toLocaleString("en-IN")}</Badge>
-              <Lock className={iconClass("inline", "text-muted-foreground")} aria-hidden />
+              <Badge variant="secondary">
+                {experience.price_inr <= 0 ? "Free" : `₹${experience.price_inr.toLocaleString("en-IN")}`}
+              </Badge>
+              {experience.price_inr > 0 ? (
+                <Lock className={iconClass("inline", "text-muted-foreground")} aria-hidden />
+              ) : null}
             </div>
           </div>
 
@@ -50,6 +58,14 @@ export default function VaultExperienceCard({ experience, className }: Props) {
               <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge>
             ) : null}
           </div>
+
+          <VaultTrustBadges statuses={experience.trust_statuses} compact className="mt-2" />
+
+          {experience.contents_outline.length > 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Includes: {experience.contents_outline.slice(0, 4).join(" · ")}
+            </p>
+          ) : null}
 
           {preview ? (
             <p className="mt-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{preview}</p>
@@ -68,7 +84,7 @@ export default function VaultExperienceCard({ experience, className }: Props) {
                 "No ratings yet"
               )}
             </span>
-            <span>{experience.sales_count} sold</span>
+            <span>{experience.freshness_label}</span>
           </div>
         </CardContent>
       </Card>

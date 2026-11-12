@@ -12,6 +12,11 @@ export const PRODUCT_EVENT_NAMES = [
   "digest_unsubscribed",
   "application_added",
   "follow_up_marked",
+  "prep_pack_generated",
+  "prep_pack_shared",
+  "prep_pack_viewed",
+  "vault_guide_opened",
+  "vault_report_submitted",
 ] as const;
 
 export type ProductEventName = (typeof PRODUCT_EVENT_NAMES)[number];

@@ -39,6 +39,8 @@ function sampleExperience(overrides: Partial<VaultExperience> = {}): VaultExperi
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
     published_at: "2026-01-01T00:00:00.000Z",
+    trust_statuses: ["outcome_self_reported", "not_independently_verified"],
+    display_name: null,
     ...overrides,
   };
 }

@@ -70,11 +70,32 @@ export default async function HomePage({
           </div>
         </section>
       ) : null}
+      <section className="mx-auto max-w-6xl space-y-4 px-4 pt-8">
+        <Text as="h1" role="display">Interview prep for a real role</Text>
+        <Text role="body" className="max-w-2xl text-ink-muted">
+          Paste a job description or choose a role to get requirements, firsthand Interview Vault guides, and a practice checklist. No account required. Paying for anything does not guarantee an offer.
+        </Text>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/prepare"
+            className="inline-flex min-h-11 items-center rounded-[var(--radius-button)] bg-brand px-4 text-role-button text-accent-ink shadow-brand hover:bg-brand-700"
+          >
+            Get a free prep pack
+          </Link>
+          <Link
+            href="/interview-vault"
+            className="inline-flex min-h-11 items-center rounded-[var(--radius-button)] border border-border-default bg-surface px-4 text-role-button text-ink hover:bg-surface-hover"
+          >
+            Browse Interview Vault
+          </Link>
+        </div>
+      </section>
+
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
-          <Text as="h1" role="display">Search the live index</Text>
+          <Text as="h2" role="title">Also search the live job index</Text>
           <Text role="body" className="mt-3 max-w-xl text-ink-muted">
-            Results come from the jobs index. No account is required to look.
+            Job discovery stays available as a secondary path. Results come from the jobs index. No account is required to look.
           </Text>
           <div className="mt-4">
             <HeroSearch />

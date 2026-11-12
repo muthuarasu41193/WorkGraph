@@ -1,4 +1,9 @@
 import { isVaultPaymentStatus, type VaultPaymentStatus } from "@/lib/security/vault-entitlement";
+import {
+  normalizeVaultTrustStatuses,
+  type VaultTrustStatus,
+} from "@/lib/vault-trust";
+import { vaultFreshnessLabel } from "@/lib/prep-pack/freshness";
 
 export const VAULT_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type VaultDifficulty = (typeof VAULT_DIFFICULTIES)[number];
@@ -37,6 +42,8 @@ export type VaultExperience = {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  trust_statuses: VaultTrustStatus[];
+  display_name: string | null;
 };
 
 export type VaultExperienceListItem = Pick<
@@ -55,11 +62,15 @@ export type VaultExperienceListItem = Pick<
   | "sales_count"
   | "avg_rating"
   | "published_at"
+  | "trust_statuses"
+  | "display_name"
 > & {
   preview: string;
   questions_html: string;
   tips_html: string;
   rounds_data: VaultRound[];
+  contents_outline: string[];
+  freshness_label: string;
 };
 
 export type VaultExperienceInsert = {
@@ -76,6 +87,7 @@ export type VaultExperienceInsert = {
   price_inr?: number;
   status?: VaultExperienceStatus;
   draft_step?: number;
+  display_name?: string | null;
 };
 
 export type VaultReview = {
@@ -117,10 +129,10 @@ export const VAULT_DIFFICULTY_LABELS: Record<VaultDifficulty, string> = {
 };
 
 export const VAULT_RESULT_LABELS: Record<VaultResult, string> = {
-  offer: "Got Offer",
-  rejected: "Rejected",
-  ongoing: "Ongoing",
-  withdrawn: "Withdrawn",
+  offer: "Self-reported: offer",
+  rejected: "Self-reported: rejected",
+  ongoing: "Self-reported: ongoing",
+  withdrawn: "Self-reported: withdrawn",
 };
 
 export const VAULT_SELL_STEPS = [
@@ -188,7 +200,23 @@ export function buildPreviewContent(fullHtml: string, ratio = 0.2): string {
   return preview.length < plain.length ? `${preview}…` : preview;
 }
 
+export function buildContentsOutline(experience: Pick<VaultExperience, "rounds_data" | "questions_html" | "tips_html" | "rounds">): string[] {
+  const outline: string[] = [];
+  if (experience.rounds_data.length > 0) {
+    for (const round of experience.rounds_data) {
+      const name = round.name?.trim();
+      if (name) outline.push(name.slice(0, 80));
+    }
+  } else if (experience.rounds != null && experience.rounds > 0) {
+    outline.push(`${experience.rounds} interview round${experience.rounds === 1 ? "" : "s"}`);
+  }
+  if (experience.questions_html.trim()) outline.push("Questions asked");
+  if (experience.tips_html.trim()) outline.push("Tips and preparation notes");
+  return outline.slice(0, 8);
+}
+
 export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperience {
+  const result = row.result != null && isVaultResult(String(row.result)) ? (row.result as VaultResult) : null;
   return {
     id: String(row.id),
     seller_id: String(row.seller_id),
@@ -197,7 +225,7 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     level: row.level != null ? String(row.level) : null,
     difficulty: row.difficulty != null && isVaultDifficulty(String(row.difficulty)) ? (row.difficulty as VaultDifficulty) : null,
     rounds: typeof row.rounds === "number" ? row.rounds : row.rounds != null ? Number(row.rounds) : null,
-    result: row.result != null && isVaultResult(String(row.result)) ? (row.result as VaultResult) : null,
+    result,
     interview_date: row.interview_date != null ? String(row.interview_date) : null,
     rounds_data: Array.isArray(row.rounds_data) ? (row.rounds_data as VaultRound[]) : [],
     questions_html: String(row.questions_html ?? ""),
@@ -211,6 +239,8 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
     published_at: row.published_at != null ? String(row.published_at) : null,
+    trust_statuses: normalizeVaultTrustStatuses(row.trust_statuses, Boolean(result)),
+    display_name: row.display_name != null && String(row.display_name).trim() ? String(row.display_name).trim().slice(0, 80) : null,
   };
 }
 
@@ -260,10 +290,14 @@ export function publicVaultListItem(experience: VaultExperience): VaultExperienc
     sales_count: experience.sales_count,
     avg_rating: experience.avg_rating,
     published_at: experience.published_at,
+    trust_statuses: experience.trust_statuses,
+    display_name: experience.display_name,
     preview,
     questions_html: "",
     tips_html: "",
     rounds_data: [],
+    contents_outline: buildContentsOutline(experience),
+    freshness_label: vaultFreshnessLabel(experience.interview_date, experience.published_at),
   };
 }
 
@@ -272,5 +306,9 @@ export function parseVaultPaymentStatus(value: unknown): VaultPaymentStatus {
   return "pending";
 }
 
+/** Core list columns that exist before the trust migration. */
 export const VAULT_LIST_SELECT =
   "id,seller_id,company,role,level,difficulty,rounds,result,interview_date,price_inr,view_count,sales_count,avg_rating,published_at,questions_html,tips_html,rounds_data";
+
+/** Prefer this after `20261112120000_prep_packs_vault_trust_reports.sql` is applied. */
+export const VAULT_LIST_SELECT_WITH_TRUST = `${VAULT_LIST_SELECT},trust_statuses,display_name`;

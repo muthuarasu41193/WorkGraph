@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, PlusCircle, Store } from "lucide-react";
+import { ClipboardList, LayoutDashboard, PlusCircle, Store } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
+  { href: "/prepare", label: "Prep pack", icon: ClipboardList },
   { href: "/interview-vault", label: "Marketplace", icon: Store },
   { href: "/interview-vault/sell", label: "Sell Experience", icon: PlusCircle },
   { href: "/interview-vault/dashboard", label: "Dashboard", icon: LayoutDashboard },
