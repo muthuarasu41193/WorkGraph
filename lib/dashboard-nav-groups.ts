@@ -13,7 +13,7 @@ import {
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 
 export type NavItem = {
-  id: DashboardRouteId | "interview-vault" | "settings";
+  id: DashboardRouteId | "interview-vault" | "prepare" | "settings";
   label: string;
   icon: LucideIcon;
   href?: string;
@@ -51,6 +51,13 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         benefitHint: "Your job search overview",
       },
       {
+        id: "prepare",
+        label: "Prep pack",
+        icon: BookOpen,
+        href: "/prepare",
+        benefitHint: "Build a free interview prep pack",
+      },
+      {
         id: "jobs",
         label: "Find Jobs",
         icon: Search,
@@ -72,11 +79,24 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
   },
   {
     id: "intelligence",
-    label: "AI Tools",
-    subtitle: "AI-powered tools",
+    label: "Interview & AI tools",
+    subtitle: "Prep first, then tailor applications",
     collapsible: true,
     defaultCollapsedForNewUsers: true,
     items: [
+      {
+        id: "interview-vault",
+        label: "Interview Vault",
+        icon: MessageSquare,
+        href: "/interview-vault",
+        benefitHint: "Learn from firsthand interview guides",
+      },
+      {
+        id: "vault",
+        label: "Prep Materials",
+        icon: BookOpen,
+        benefitHint: "Local practice notes on this device",
+      },
       {
         id: "resume-intelligence",
         label: "Resume Intelligence",
@@ -101,19 +121,6 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         label: "Career Path",
         icon: TrendingUp,
         benefitHint: "See your growth trajectory",
-      },
-      {
-        id: "interview-vault",
-        label: "Interview Vault",
-        icon: MessageSquare,
-        href: "/interview-vault",
-        benefitHint: "Learn from real interview experiences",
-      },
-      {
-        id: "vault",
-        label: "Prep Materials",
-        icon: BookOpen,
-        benefitHint: "Practice and gain confidence",
       },
     ],
   },

@@ -132,6 +132,20 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Connections you sent to hiring signals, including the snapshot you submitted",
   },
   {
+    table: "vault_content_reports",
+    ownerColumn: "reporter_id",
+    export: true,
+    deleteStrategy: "anonymise",
+    label: "Interview Vault content reports you submitted (the link to your account is removed; the report row stays for moderation)",
+  },
+  {
+    table: "prep_packs",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview prep packs you saved or shared while signed in (shared payloads never include pasted job descriptions)",
+  },
+  {
     table: "vault_reviews",
     ownerColumn: "user_id",
     export: true,

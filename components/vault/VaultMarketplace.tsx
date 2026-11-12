@@ -59,10 +59,17 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
+        <p className="text-sm text-muted-foreground">
+          Firsthand interview guides from contributors. Outcomes are self-reported unless a trust label says a check was made. Preview before you buy — purchasing does not guarantee an offer.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Need a full prep checklist for a role?{" "}
+          <a href="/prepare" className="text-primary underline-offset-4 hover:underline">
+            Build a free prep pack
+          </a>
+          .
         </p>
       </header>
 

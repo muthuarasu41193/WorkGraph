@@ -13,16 +13,19 @@ export type ShellDest = {
  * Jobs, tracker, and onboarding are new routes inside this shell.
  */
 export const SHELL_DESTINATIONS: ShellDest[] = [
+  { href: "/prepare", label: "Prep pack", short: "Prep", tab: true },
+  { href: "/interview-vault", label: messages.shellPrep, short: messages.shellPrep, tab: true },
   { href: "/jobs", label: messages.shellJobs, short: messages.shellJobs, tab: true },
   { href: "/tracker", label: messages.shellTracker, short: messages.shellTracker, tab: true },
-  { href: "/interview-vault", label: messages.shellPrep, short: messages.shellPrep, tab: true },
-  { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: true },
   { href: "/profile", label: messages.shellProfile, short: messages.shellProfile, tab: true },
+  { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: false },
   { href: "/alerts", label: "Alerts", short: "Alerts", tab: false },
   { href: "/profile?view=settings", label: messages.shellSettings, short: messages.shellSettings, tab: false },
 ]
 
 export function shellTitle(pathname: string): string {
+  if (pathname.startsWith("/prepare")) return "Prep pack"
+  if (pathname.startsWith("/interview-vault")) return messages.shellPrep
   if (pathname.startsWith("/jobs/")) return messages.shellJob
   if (pathname.startsWith("/jobs")) return messages.shellJobs
   if (pathname.startsWith("/tracker")) return messages.shellTracker

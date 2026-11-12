@@ -94,6 +94,41 @@ export default function TrustPage() {
         </Text>
       </section>
 
+      <section id="interview-vault" className="space-y-3">
+        <Text as="h2" role="heading">Interview Vault trust labels</Text>
+        <Text role="body-small">
+          Interview Vault never shows a vague “verified” badge. When a label appears, it names the check that was made:
+        </Text>
+        <ul className="list-disc space-y-2 pl-5 text-role-body-small text-ink-muted">
+          <li>
+            <span className="text-ink">Current company email confirmed:</span> the contributor demonstrated access to a supported company email at the time of verification. This does not prove past employment or an interview.
+          </li>
+          <li>
+            <span className="text-ink">Past employment reviewed:</span> limited evidence or an authorized verification service was reviewed. Availability varies. This does not prove interview participation.
+          </li>
+          <li>
+            <span className="text-ink">Interview evidence reviewed:</span> optional, redacted evidence that an interview occurred was reviewed. This does not verify every detail in the guide.
+          </li>
+          <li>
+            <span className="text-ink">Outcome self-reported:</span> the contributor’s reported offer or rejection has not been independently confirmed.
+          </li>
+          <li>
+            <span className="text-ink">Not independently verified:</span> the guide is available, but WorkGraph has not independently checked the relevant claim.
+          </li>
+        </ul>
+        <Text role="body-small">
+          Public display names may be pseudonyms. Work email addresses and verification documents are never shown publicly. Report misleading or inaccessible guides from the guide page after signing in.
+        </Text>
+      </section>
+
+      <section id="prep-pack" className="space-y-2">
+        <Text as="h2" role="heading">Interview prep pack</Text>
+        <Text role="body-small">
+          Prep packs use deterministic matching on the job description or a role template, plus published Interview Vault guides. They do not send pasted job descriptions to a new external AI provider. Shared pack links omit pasted job descriptions and private profile data. Skill lists and practice topics are estimates for preparation, not hiring probabilities.
+        </Text>
+        <Link href="/prepare" className="inline-flex min-h-11 items-center text-accent">Build a free prep pack</Link>
+      </section>
+
       <section id="match" className="space-y-2">
         <Text as="h2" role="heading">Match estimate</Text>
         <Text role="body-small">

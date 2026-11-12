@@ -87,7 +87,7 @@ export default function SideNav({
   }
 
   function isActive(id: string): boolean {
-    if (id === "interview-vault") return false;
+    if (id === "interview-vault" || id === "prepare") return false;
     return activeRoute === id;
   }
 

@@ -10,11 +10,11 @@ export const SITE = {
 } as const;
 
 export const NAV_ITEMS = [
-  { label: "Features", href: "/#features" },
-  { label: "How it works", href: "/#how-it-works" },
+  { label: "Prep pack", href: "/prepare" },
   { label: "Interview Vault", href: "/interview-vault" },
+  { label: "Jobs", href: "/jobs" },
+  { label: "How it works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Contact", href: "/#contact" },
 ] as const;
 
 export const NAV_ANNOUNCEMENT = {

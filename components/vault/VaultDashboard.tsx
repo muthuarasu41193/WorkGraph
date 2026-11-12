@@ -128,11 +128,12 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
               </Link>
             </p>
           )}
-          {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500 ? (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Minimum withdrawal amount is ₹500 ({formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).
-            </p>
-          ) : null}
+          <p className="mt-3 text-xs text-muted-foreground">
+            Earnings shown may include unverified purchase intents. Live payouts and marketplace fee splits are not enabled yet.
+            {dashboard.total_earnings_inr > 0 && dashboard.total_earnings_inr < 500
+              ? ` Interest recording requires at least ₹500 (${formatCurrencyAmount(convertInrToCurrency(500, currency), currency)}).`
+              : null}
+          </p>
         </CardContent>
       </Card>
     </div>

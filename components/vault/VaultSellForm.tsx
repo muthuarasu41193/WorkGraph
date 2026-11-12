@@ -26,6 +26,7 @@ import {
   type VaultExperience,
   type VaultRound,
 } from "@/lib/vault";
+import { CONTRIBUTOR_GUIDANCE } from "@/lib/vault-trust";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -57,6 +58,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
   const [questionsHtml, setQuestionsHtml] = useState(initialDraft?.questions_html ?? "");
   const [tipsHtml, setTipsHtml] = useState(initialDraft?.tips_html ?? "");
   const [priceInr, setPriceInr] = useState(String(initialDraft?.price_inr ?? 499));
+  const [displayName, setDisplayName] = useState(initialDraft?.display_name ?? "");
 
   const ensureDraft = useCallback(async (): Promise<string> => {
     if (draftId) return draftId;
@@ -87,6 +89,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
           tips_html: tipsHtml,
           price_inr: Number(priceInr) || 499,
           draft_step: step,
+          display_name: displayName.trim() || null,
         }),
       });
       const data = await res.json();
@@ -114,6 +117,7 @@ export default function VaultSellForm({ initialDraft }: Props) {
     questionsHtml,
     tipsHtml,
     priceInr,
+    displayName,
     step,
   ]);
 
@@ -169,8 +173,15 @@ export default function VaultSellForm({ initialDraft }: Props) {
       <header>
         <h1 className="text-2xl font-bold tracking-tight">Sell Your Experience</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
+          Share firsthand interview guidance you choose to publish. Drafts auto-save every few seconds.
+          Earnings and paid unlocks depend on payment infrastructure that is still being verified — do not
+          treat dashboard withdrawal messages as a live payout guarantee.
         </p>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+          {CONTRIBUTOR_GUIDANCE.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           {saving ? (
             <>
@@ -223,6 +234,19 @@ export default function VaultSellForm({ initialDraft }: Props) {
               <div className="space-y-1.5">
                 <Label htmlFor="company">Company</Label>
                 <Input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. Google" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="display-name">Public display name (optional)</Label>
+                <Input
+                  id="display-name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Pseudonym shown on your guide"
+                  maxLength={80}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Use a public pseudonym if you want. Never enter a work email address.
+                </p>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">

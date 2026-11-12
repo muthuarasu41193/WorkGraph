@@ -11,6 +11,7 @@ import {
   publicVaultListItem,
   redactVaultExperience,
   VAULT_LIST_SELECT,
+  VAULT_LIST_SELECT_WITH_TRUST,
   type VaultDashboardStats,
   type VaultExperience,
   type VaultExperienceInsert,
@@ -61,35 +62,42 @@ function mapListItem(row: Record<string, unknown>): VaultExperienceListItem {
 export async function listPublishedExperiences(filters: VaultListFilters = {}): Promise<VaultExperienceListItem[]> {
   const { supabase } = await optionalUser();
 
-  let query = supabase
-    .from("vault_experiences")
-    .select(VAULT_LIST_SELECT)
-    .eq("status", "published")
-    .order("published_at", { ascending: false });
+  const applyFilters = (select: string) => {
+    let query = supabase
+      .from("vault_experiences")
+      .select(select)
+      .eq("status", "published")
+      .order("published_at", { ascending: false });
 
-  if (filters.difficulty && isVaultDifficulty(filters.difficulty)) {
-    query = query.eq("difficulty", filters.difficulty);
-  }
-  if (filters.rounds != null) {
-    query = query.eq("rounds", filters.rounds);
-  }
-  if (filters.result && isVaultResult(filters.result)) {
-    query = query.eq("result", filters.result);
-  }
-  if (filters.date_from) {
-    query = query.gte("interview_date", filters.date_from);
-  }
-  if (filters.date_to) {
-    query = query.lte("interview_date", filters.date_to);
-  }
+    if (filters.difficulty && isVaultDifficulty(filters.difficulty)) {
+      query = query.eq("difficulty", filters.difficulty);
+    }
+    if (filters.rounds != null) {
+      query = query.eq("rounds", filters.rounds);
+    }
+    if (filters.result && isVaultResult(filters.result)) {
+      query = query.eq("result", filters.result);
+    }
+    if (filters.date_from) {
+      query = query.gte("interview_date", filters.date_from);
+    }
+    if (filters.date_to) {
+      query = query.lte("interview_date", filters.date_to);
+    }
+    return query;
+  };
 
-  const { data, error } = await query;
-  if (error) {
-    logRouteError("vault/list", error);
+  let result = await applyFilters(VAULT_LIST_SELECT_WITH_TRUST);
+  if (result.error) {
+    // Pre-migration databases may lack trust columns; fall back to the stable select.
+    result = await applyFilters(VAULT_LIST_SELECT);
+  }
+  if (result.error) {
+    logRouteError("vault/list", result.error);
     throw new VaultApiError("Could not load experiences.", 500);
   }
 
-  let items = (data ?? []).map((row) => mapListItem(row as Record<string, unknown>));
+  let items = (result.data ?? []).map((row) => mapListItem(row as unknown as Record<string, unknown>));
 
   if (filters.q?.trim()) {
     const q = filters.q.trim().toLowerCase();
@@ -250,6 +258,13 @@ export async function updateExperienceForSeller(
   if (input.tips_html !== undefined) patch.tips_html = input.tips_html;
   if (input.price_inr !== undefined) patch.price_inr = input.price_inr;
   if (input.draft_step !== undefined) patch.draft_step = input.draft_step;
+  if (input.display_name !== undefined) {
+    const name = input.display_name?.trim() || null;
+    if (name && (/@/.test(name) || name.length > 80)) {
+      throw new VaultApiError("Display name cannot be an email or longer than 80 characters.", 400);
+    }
+    patch.display_name = name;
+  }
   if (input.status !== undefined) {
     patch.status = input.status;
     if (input.status === "published") {
@@ -508,6 +523,6 @@ export async function requestVaultWithdrawal(userId: string): Promise<{ ok: true
   }
   return {
     ok: true,
-    message: `Withdrawal request for ₹${dashboard.total_earnings_inr.toLocaleString("en-IN")} submitted. Payouts are processed within 5–7 business days.`,
+    message: `Withdrawal interest recorded for ₹${dashboard.total_earnings_inr.toLocaleString("en-IN")}. Live payout processing is not enabled yet — marketplace fee and payout timing are not settled product policy. No money has been transferred.`,
   };
 }
