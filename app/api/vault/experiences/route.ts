@@ -3,6 +3,7 @@ import { VaultApiError, createDraftExperience, listPublishedExperiences } from "
 import { logRouteError } from "@/lib/security/log";
 import type { VaultListFilters } from "@/lib/vault";
 import { isVaultDifficulty, isVaultResult } from "@/lib/vault";
+import { isVaultSort } from "@/lib/vault/filters";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,15 @@ export async function GET(request: Request) {
 
     const q = searchParams.get("q");
     if (q) filters.q = q;
+
+    const company = searchParams.get("company");
+    if (company) filters.company = company.slice(0, 200);
+
+    const role = searchParams.get("role");
+    if (role) filters.role = role.slice(0, 200);
+
+    const interview_round = searchParams.get("interview_round");
+    if (interview_round) filters.interview_round = interview_round.slice(0, 120);
 
     const difficulty = searchParams.get("difficulty");
     if (difficulty && isVaultDifficulty(difficulty)) filters.difficulty = difficulty;
@@ -28,6 +38,9 @@ export async function GET(request: Request) {
 
     const date_to = searchParams.get("date_to");
     if (date_to) filters.date_to = date_to;
+
+    const sort = searchParams.get("sort");
+    if (sort && isVaultSort(sort)) filters.sort = sort;
 
     const experiences = await listPublishedExperiences(filters);
     return NextResponse.json({ ok: true, experiences });

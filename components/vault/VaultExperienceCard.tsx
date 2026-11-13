@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Lock, Star } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
+import VaultFreshness from "@/components/vault/VaultFreshness";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -43,12 +44,19 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             {experience.difficulty ? (
               <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
             ) : null}
-            {experience.rounds != null ? (
+            {experience.interview_round ? (
+              <Badge variant="outline">{experience.interview_round}</Badge>
+            ) : experience.rounds != null ? (
               <Badge variant="outline">{experience.rounds} rounds</Badge>
             ) : null}
             {experience.result ? (
               <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge>
             ) : null}
+            {experience.skills.slice(0, 3).map((skill) => (
+              <Badge key={skill} variant="outline">
+                {skill}
+              </Badge>
+            ))}
           </div>
 
           {preview ? (
@@ -57,7 +65,14 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             <p className="mt-3 flex-1 text-sm italic text-muted-foreground">Preview available after opening</p>
           )}
 
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+          <VaultFreshness
+            className="mt-3"
+            lastConfirmedLabel={experience.last_confirmed_label}
+            stale={experience.stale}
+            staleLabel={experience.stale_label}
+          />
+
+          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               {rating != null ? (
                 <>

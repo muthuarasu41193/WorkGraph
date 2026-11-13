@@ -139,6 +139,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Connections you sent to hiring signals, including the snapshot you submitted",
   },
   {
+    table: "vault_guide_reports",
+    ownerColumn: "reporter_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault guide reports you submitted",
+  },
+  {
     table: "vault_reviews",
     ownerColumn: "user_id",
     export: true,
