@@ -146,6 +146,27 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Interview Vault evidence-label records (status, method, and dates only; no evidence contents)",
   },
   {
+    table: "vault_review_reports",
+    ownerColumn: "reporter_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault review reports you submitted",
+  },
+  {
+    table: "vault_guide_reports",
+    ownerColumn: "reporter_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault guide reports you submitted",
+  },
+  {
+    table: "vault_refund_requests",
+    ownerColumn: "buyer_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault refund requests you submitted (status and reason only; no payment secrets)",
+  },
+  {
     table: "vault_reviews",
     ownerColumn: "user_id",
     export: true,
