@@ -30,6 +30,8 @@ export type VaultExperience = {
   company: string;
   role: string;
   level: string | null;
+  interview_round: string | null;
+  skills: string[];
   difficulty: VaultDifficulty | null;
   rounds: number | null;
   result: VaultResult | null;
@@ -46,6 +48,8 @@ export type VaultExperience = {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  content_confirmed_at: string | null;
+  removed_at: string | null;
 };
 
 export type VaultExperienceListItem = Pick<
@@ -55,6 +59,8 @@ export type VaultExperienceListItem = Pick<
   | "company"
   | "role"
   | "level"
+  | "interview_round"
+  | "skills"
   | "difficulty"
   | "rounds"
   | "result"
@@ -64,6 +70,8 @@ export type VaultExperienceListItem = Pick<
   | "sales_count"
   | "avg_rating"
   | "published_at"
+  | "updated_at"
+  | "content_confirmed_at"
 > & {
   preview: string;
   questions_html: string;
@@ -77,6 +85,8 @@ export type VaultExperienceInsert = {
   company?: string;
   role?: string;
   level?: string | null;
+  interview_round?: string | null;
+  skills?: string[];
   difficulty?: VaultDifficulty | null;
   rounds?: number | null;
   result?: VaultResult | null;
@@ -96,6 +106,11 @@ export type VaultReview = {
   rating: number;
   comment: string | null;
   created_at: string;
+  updated_at: string | null;
+  purchase_id: string | null;
+  verified_purchaser: true;
+  is_own: boolean;
+  hidden: boolean;
 };
 
 export type VaultPurchase = {
@@ -208,6 +223,8 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     company: String(row.company ?? ""),
     role: String(row.role ?? ""),
     level: row.level != null ? String(row.level) : null,
+    interview_round: row.interview_round != null ? String(row.interview_round) : null,
+    skills: Array.isArray(row.skills) ? row.skills.map(String).filter(Boolean).slice(0, 40) : [],
     difficulty: row.difficulty != null && isVaultDifficulty(String(row.difficulty)) ? (row.difficulty as VaultDifficulty) : null,
     rounds: typeof row.rounds === "number" ? row.rounds : row.rounds != null ? Number(row.rounds) : null,
     result: row.result != null && isVaultResult(String(row.result)) ? (row.result as VaultResult) : null,
@@ -224,17 +241,29 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
     published_at: row.published_at != null ? String(row.published_at) : null,
+    content_confirmed_at: row.content_confirmed_at != null ? String(row.content_confirmed_at) : null,
+    removed_at: row.removed_at != null ? String(row.removed_at) : null,
   };
 }
 
-export function mapVaultReviewRow(row: Record<string, unknown>): VaultReview {
+export function mapVaultReviewRow(
+  row: Record<string, unknown>,
+  options?: { viewerId?: string | null },
+): VaultReview {
+  const userId = String(row.user_id);
+  const hidden = row.hidden_at != null;
   return {
     id: String(row.id),
     experience_id: String(row.experience_id),
-    user_id: String(row.user_id),
+    user_id: userId,
     rating: Number(row.rating),
     comment: row.comment != null ? String(row.comment) : null,
     created_at: String(row.created_at),
+    updated_at: row.updated_at != null ? String(row.updated_at) : null,
+    purchase_id: row.purchase_id != null ? String(row.purchase_id) : null,
+    verified_purchaser: true,
+    is_own: Boolean(options?.viewerId && options.viewerId === userId),
+    hidden,
   };
 }
 
@@ -267,6 +296,8 @@ export function publicVaultListItem(
     company: experience.company,
     role: experience.role,
     level: experience.level,
+    interview_round: experience.interview_round,
+    skills: experience.skills,
     difficulty: experience.difficulty,
     rounds: experience.rounds,
     result: experience.result,
@@ -276,6 +307,8 @@ export function publicVaultListItem(
     sales_count: experience.sales_count,
     avg_rating: experience.avg_rating,
     published_at: experience.published_at,
+    updated_at: experience.updated_at,
+    content_confirmed_at: experience.content_confirmed_at,
     preview,
     questions_html: "",
     tips_html: "",
@@ -290,4 +323,4 @@ export function parseVaultPaymentStatus(value: unknown): VaultPaymentStatus {
 }
 
 export const VAULT_LIST_SELECT =
-  "id,seller_id,company,role,level,difficulty,rounds,result,interview_date,price_inr,view_count,sales_count,avg_rating,published_at,questions_html,tips_html,rounds_data";
+  "id,seller_id,company,role,level,interview_round,skills,difficulty,rounds,result,interview_date,price_inr,view_count,sales_count,avg_rating,published_at,updated_at,content_confirmed_at,removed_at,questions_html,tips_html,rounds_data";

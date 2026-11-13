@@ -6,11 +6,13 @@ import { iconClass } from "@/lib/icon-styles";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { VaultEvidenceLabelChips } from "@/components/vault/VaultEvidenceLabels";
+import VaultFreshness from "@/components/vault/VaultFreshness";
 import {
   VAULT_DIFFICULTY_LABELS,
   VAULT_RESULT_LABELS,
   type VaultExperienceListItem,
 } from "@/lib/vault";
+import { formatInterviewMonthYear, vaultFreshnessDisplay } from "@/lib/vault/freshness";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -22,6 +24,11 @@ export default function VaultExperienceCard({ experience, className }: Props) {
   const preview = experience.preview;
   const rating = experience.avg_rating;
   const evidenceLabels = experience.evidence_labels ?? [];
+  const interviewMonthYear = formatInterviewMonthYear(experience.interview_date);
+  const freshness = vaultFreshnessDisplay({
+    updatedAt: experience.updated_at,
+    contentConfirmedAt: experience.content_confirmed_at ?? experience.published_at,
+  });
 
   return (
     <Link href={`/interview-vault/${experience.id}`} className={cn("group block", className)}>
@@ -42,16 +49,27 @@ export default function VaultExperienceCard({ experience, className }: Props) {
           </div>
 
           <div className="mt-2 flex flex-wrap gap-1.5">
+            {experience.interview_round ? (
+              <Badge variant="outline">{experience.interview_round}</Badge>
+            ) : null}
             {experience.difficulty ? (
               <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
             ) : null}
             {experience.rounds != null ? (
               <Badge variant="outline">{experience.rounds} rounds</Badge>
             ) : null}
+            {interviewMonthYear ? <Badge variant="outline">{interviewMonthYear}</Badge> : null}
             {experience.result ? (
               <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge>
             ) : null}
           </div>
+
+          <VaultFreshness
+            className="mt-2"
+            lastConfirmedLabel={freshness.lastConfirmedLabel ?? "Confirmation date not available"}
+            stale={freshness.stale}
+            staleLabel={freshness.staleLabel}
+          />
 
           {evidenceLabels.length > 0 ? (
             <div className="mt-2">

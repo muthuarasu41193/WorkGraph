@@ -25,6 +25,27 @@ import {
   type ContributorVerificationRecord,
   type VaultEvidenceLabelPublic,
 } from "@/lib/vault-evidence-labels";
+import { buildVaultGuideOutline, type VaultGuideOutlineSection } from "@/lib/vault/outline";
+import { vaultFreshnessDisplay, type VaultFreshnessDisplay } from "@/lib/vault/freshness";
+import {
+  canTransitionRefundStatus,
+  authorizeVaultRefundRequest,
+  getVaultRefundWindowDays,
+  isVaultRefundReason,
+  isVaultRefundStatus,
+  type VaultRefundReason,
+  type VaultRefundStatus,
+} from "@/lib/vault/refunds";
+import {
+  isVaultReportReason,
+  isVaultReportStatus,
+  isVaultReviewReportReason,
+  reportStatusRemovesGuide,
+  type VaultReportReason,
+  type VaultReportStatus,
+  type VaultReviewReportReason,
+} from "@/lib/vault/reports";
+import { authorizeVaultReviewWrite, validateVaultReviewInput } from "@/lib/vault/reviews";
 import { recordEvent } from "@/lib/metrics/record";
 import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
 import { logRouteError } from "@/lib/security/log";
@@ -128,6 +149,7 @@ export async function listPublishedExperiences(filters: VaultListFilters = {}): 
     .from("vault_experiences")
     .select(VAULT_LIST_SELECT)
     .eq("status", "published")
+    .is("removed_at", null)
     .order("published_at", { ascending: false });
 
   if (filters.difficulty && isVaultDifficulty(filters.difficulty)) {
@@ -187,14 +209,20 @@ export async function getExperienceById(id: string): Promise<VaultExperience | n
   return experience;
 }
 
+export type VaultPurchaseLookup = {
+  id: string;
+  payment_status: ReturnType<typeof parseVaultPaymentStatus>;
+  created_at: string;
+};
+
 export async function getVaultPurchase(
   experienceId: string,
   userId: string,
-): Promise<{ payment_status: ReturnType<typeof parseVaultPaymentStatus> } | null> {
+): Promise<VaultPurchaseLookup | null> {
   const supabase = await requireSupabase();
   const { data, error } = await supabase
     .from("vault_purchases")
-    .select("id, payment_status")
+    .select("id, payment_status, created_at")
     .eq("experience_id", experienceId)
     .eq("buyer_id", userId)
     .maybeSingle();
@@ -203,7 +231,11 @@ export async function getVaultPurchase(
     return null;
   }
   if (!data) return null;
-  return { payment_status: parseVaultPaymentStatus((data as { payment_status?: unknown }).payment_status) };
+  return {
+    id: String((data as { id: string }).id),
+    payment_status: parseVaultPaymentStatus((data as { payment_status?: unknown }).payment_status),
+    created_at: String((data as { created_at: string }).created_at),
+  };
 }
 
 export async function userHasPurchased(experienceId: string, userId: string): Promise<boolean> {
@@ -226,6 +258,11 @@ export type VaultExperienceView = {
   unlocked: boolean;
   is_owner: boolean;
   evidence_labels: VaultEvidenceLabelPublic[];
+  outline: VaultGuideOutlineSection[];
+  freshness: VaultFreshnessDisplay;
+  can_review: boolean;
+  can_request_refund: boolean;
+  refund_window_days: number;
 };
 
 export async function getExperienceView(id: string): Promise<VaultExperienceView | null> {
@@ -242,19 +279,67 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
     purchase,
   });
 
-  if (experience.status === "published") {
+  // Removed guides: entitled purchasers and owner may still open by ID.
+  if (experience.removed_at && !is_owner && !unlocked) {
+    return null;
+  }
+
+  if (experience.status === "published" && !experience.removed_at) {
     await incrementViewCount(id);
   }
 
   const records = await loadContributorVerifications([experience.seller_id], [experience.id]);
   const evidence_labels = labelsForGuide(experience, records);
 
+  // Outline from full metadata before redaction; titles only.
+  const outline = buildVaultGuideOutline(experience);
+  const freshness = vaultFreshnessDisplay({
+    updatedAt: experience.updated_at,
+    contentConfirmedAt: experience.content_confirmed_at ?? experience.published_at,
+  });
+
+  const reviewAuth = authorizeVaultReviewWrite({
+    userId: user?.id,
+    sellerId: experience.seller_id,
+    priceInr: experience.price_inr,
+    purchase,
+  });
+
+  let can_request_refund = false;
+  if (user && purchase) {
+    const supabase = await requireSupabase();
+    const { data: existingRefund } = await supabase
+      .from("vault_refund_requests")
+      .select("id")
+      .eq("purchase_id", purchase.id)
+      .maybeSingle();
+    const refundAuth = authorizeVaultRefundRequest({
+      userId: user.id,
+      sellerId: experience.seller_id,
+      purchase,
+      existingRequest: Boolean(existingRefund),
+    });
+    can_request_refund = refundAuth.allowed;
+  }
+
   const rawFull = buildFullContent(experience);
   const preview = buildPreviewContent(rawFull);
   const full_content = unlocked ? rawFull : "";
   const publicExperience = unlocked ? experience : redactVaultExperience(experience);
 
-  return { experience: publicExperience, preview, full_content, unlocked, is_owner, evidence_labels };
+  return {
+    experience: publicExperience,
+    preview,
+    full_content,
+    unlocked,
+    is_owner,
+    evidence_labels,
+    outline,
+    freshness,
+    can_review: reviewAuth.allowed,
+    can_request_refund,
+    refund_window_days: getVaultRefundWindowDays(),
+  };
 }
 
 export type VaultPurchaseResult = {
@@ -402,15 +487,18 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
 }
 
 export async function listReviewsForExperience(experienceId: string): Promise<VaultReview[]> {
+  const user = await getSessionUser();
   const supabase = await requireSupabase();
   const { data, error } = await supabase
     .from("vault_reviews")
-    .select("*")
+    .select("id, experience_id, user_id, rating, comment, created_at, updated_at, purchase_id, hidden_at")
     .eq("experience_id", experienceId)
     .order("created_at", { ascending: false });
 
   if (error) throw new VaultApiError(error.message, 500);
-  return (data ?? []).map((row) => mapVaultReviewRow(row as Record<string, unknown>));
+  return (data ?? [])
+    .map((row) => mapVaultReviewRow(row as Record<string, unknown>, { viewerId: user?.id }))
+    .filter((review) => !review.hidden || review.is_own);
 }
 
 export async function submitReview(
@@ -420,40 +508,459 @@ export async function submitReview(
 ): Promise<VaultReview> {
   const { user, supabase } = await requireUser();
 
-  if (rating < 1 || rating > 5) {
-    throw new VaultApiError("Rating must be between 1 and 5", 400);
-  }
+  const validated = validateVaultReviewInput({ rating, comment });
+  if (!validated.ok) throw new VaultApiError(validated.error, 400);
 
   const experience = await getExperienceById(experienceId);
   if (!experience) throw new VaultApiError("Experience not found", 404);
 
   const purchase = await getVaultPurchase(experienceId, user.id);
-  const entitled = hasVaultEntitlement({
-    viewerId: user.id,
+  const auth = authorizeVaultReviewWrite({
+    userId: user.id,
     sellerId: experience.seller_id,
     priceInr: experience.price_inr,
     purchase,
   });
-  if (!entitled || experience.seller_id === user.id) {
-    throw new VaultApiError("Purchase required to review", 403);
+  if (!auth.allowed) throw new VaultApiError(auth.error, auth.status);
+
+  const { data: existing } = await supabase
+    .from("vault_reviews")
+    .select("id")
+    .eq("purchase_id", auth.purchaseId)
+    .maybeSingle();
+
+  if (existing) {
+    const { data, error } = await supabase
+      .from("vault_reviews")
+      .update({
+        rating: validated.rating,
+        comment: validated.comment,
+      })
+      .eq("id", (existing as { id: string }).id)
+      .eq("user_id", user.id)
+      .select("id, experience_id, user_id, rating, comment, created_at, updated_at, purchase_id, hidden_at")
+      .single();
+    if (error) throw new VaultApiError(error.message, 500);
+    return mapVaultReviewRow(data as Record<string, unknown>, { viewerId: user.id });
   }
 
   const { data, error } = await supabase
     .from("vault_reviews")
-    .upsert(
-      {
-        experience_id: experienceId,
-        user_id: user.id,
-        rating,
-        comment: comment?.trim() || null,
-      },
-      { onConflict: "experience_id,user_id" },
-    )
-    .select("*")
+    .insert({
+      experience_id: experienceId,
+      user_id: user.id,
+      purchase_id: auth.purchaseId,
+      rating: validated.rating,
+      comment: validated.comment,
+    })
+    .select("id, experience_id, user_id, rating, comment, created_at, updated_at, purchase_id, hidden_at")
     .single();
 
+  if (error) {
+    if (String(error.message).toLowerCase().includes("duplicate") || error.code === "23505") {
+      throw new VaultApiError("Only one review is allowed per purchase.", 409);
+    }
+    throw new VaultApiError(error.message, 500);
+  }
+  return mapVaultReviewRow(data as Record<string, unknown>, { viewerId: user.id });
+}
+
+export async function updateOwnReview(
+  experienceId: string,
+  reviewId: string,
+  rating: number,
+  comment?: string,
+): Promise<VaultReview> {
+  const { user, supabase } = await requireUser();
+  const validated = validateVaultReviewInput({ rating, comment });
+  if (!validated.ok) throw new VaultApiError(validated.error, 400);
+
+  const { data, error } = await supabase
+    .from("vault_reviews")
+    .update({
+      rating: validated.rating,
+      comment: validated.comment,
+    })
+    .eq("id", reviewId)
+    .eq("experience_id", experienceId)
+    .eq("user_id", user.id)
+    .is("hidden_at", null)
+    .select("id, experience_id, user_id, rating, comment, created_at, updated_at, purchase_id, hidden_at")
+    .maybeSingle();
+
   if (error) throw new VaultApiError(error.message, 500);
-  return mapVaultReviewRow(data as Record<string, unknown>);
+  if (!data) throw new VaultApiError("Review not found", 404);
+  return mapVaultReviewRow(data as Record<string, unknown>, { viewerId: user.id });
+}
+
+export async function deleteOwnReview(experienceId: string, reviewId: string): Promise<void> {
+  const { user, supabase } = await requireUser();
+  const { data, error } = await supabase
+    .from("vault_reviews")
+    .delete()
+    .eq("id", reviewId)
+    .eq("experience_id", experienceId)
+    .eq("user_id", user.id)
+    .select("id")
+    .maybeSingle();
+  if (error) throw new VaultApiError(error.message, 500);
+  if (!data) throw new VaultApiError("Review not found", 404);
+}
+
+export async function submitVaultGuideReport(input: {
+  experienceId: string;
+  reason: string;
+  details?: string | null;
+}): Promise<{ id: string }> {
+  const { user, supabase } = await requireUser();
+  if (!isVaultReportReason(input.reason)) {
+    throw new VaultApiError("Choose a valid report reason.", 400);
+  }
+
+  const experience = await getExperienceById(input.experienceId);
+  if (!experience || experience.status !== "published" || experience.removed_at) {
+    throw new VaultApiError("Guide not found", 404);
+  }
+
+  const details = input.details?.trim() || null;
+  const { data, error } = await supabase
+    .from("vault_guide_reports")
+    .insert({
+      experience_id: input.experienceId,
+      reporter_id: user.id,
+      reason: input.reason as VaultReportReason,
+      details,
+      status: "open",
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    logRouteError("vault/report", error);
+    throw new VaultApiError("Could not submit report.", 500);
+  }
+
+  void recordEvent("vault_report_submitted", user.id, { reason: input.reason });
+  return { id: String((data as { id: string }).id) };
+}
+
+export async function adminUpdateVaultGuideReportStatus(input: {
+  reportId: string;
+  status: string;
+  actorUserId: string;
+}): Promise<{ id: string; status: VaultReportStatus; experience_id: string }> {
+  if (!isVaultReportStatus(input.status)) {
+    throw new VaultApiError("Invalid report status.", 400);
+  }
+
+  const admin = createSupabaseAdminClient();
+  if (!admin) throw new VaultApiError("Admin tools are unavailable.", 503);
+
+  const { data: report, error: fetchError } = await admin
+    .from("vault_guide_reports")
+    .select("id, experience_id, status")
+    .eq("id", input.reportId)
+    .maybeSingle();
+
+  if (fetchError) {
+    logRouteError("vault/admin-report-lookup", fetchError);
+    throw new VaultApiError("Could not update report.", 500);
+  }
+  if (!report) throw new VaultApiError("Report not found.", 404);
+
+  const nowIso = new Date().toISOString();
+  const nextStatus = input.status as VaultReportStatus;
+  const { data, error } = await admin
+    .from("vault_guide_reports")
+    .update({
+      status: nextStatus,
+      resolved_at: nextStatus === "open" ? null : nowIso,
+      resolved_by: nextStatus === "open" ? null : input.actorUserId,
+    })
+    .eq("id", input.reportId)
+    .select("id, status, experience_id")
+    .single();
+
+  if (error || !data) {
+    logRouteError("vault/admin-report-update", error ?? new Error("missing row"));
+    throw new VaultApiError("Could not update report.", 500);
+  }
+
+  if (reportStatusRemovesGuide(nextStatus)) {
+    const { error: removeError } = await admin
+      .from("vault_experiences")
+      .update({ removed_at: nowIso })
+      .eq("id", (data as { experience_id: string }).experience_id)
+      .is("removed_at", null);
+    if (removeError) {
+      logRouteError("vault/admin-remove-guide", removeError);
+      throw new VaultApiError("Report updated but the guide could not be removed.", 500);
+    }
+  }
+
+  return {
+    id: String((data as { id: string }).id),
+    status: nextStatus,
+    experience_id: String((data as { experience_id: string }).experience_id),
+  };
+}
+
+export async function submitVaultReviewReport(input: {
+  reviewId: string;
+  reason: string;
+  details?: string | null;
+}): Promise<{ id: string }> {
+  const { user, supabase } = await requireUser();
+  if (!isVaultReviewReportReason(input.reason)) {
+    throw new VaultApiError("Choose a valid report reason.", 400);
+  }
+
+  const { data: review, error: reviewError } = await supabase
+    .from("vault_reviews")
+    .select("id, user_id, hidden_at")
+    .eq("id", input.reviewId)
+    .maybeSingle();
+  if (reviewError) throw new VaultApiError("Could not submit report.", 500);
+  if (!review || (review as { hidden_at: string | null }).hidden_at) {
+    throw new VaultApiError("Review not found", 404);
+  }
+  if ((review as { user_id: string }).user_id === user.id) {
+    throw new VaultApiError("You cannot report your own review.", 403);
+  }
+
+  const { data, error } = await supabase
+    .from("vault_review_reports")
+    .insert({
+      review_id: input.reviewId,
+      reporter_id: user.id,
+      reason: input.reason as VaultReviewReportReason,
+      details: input.details?.trim() || null,
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new VaultApiError("You already reported this review.", 409);
+    }
+    logRouteError("vault/review-report", error);
+    throw new VaultApiError("Could not submit report.", 500);
+  }
+
+  void recordEvent("vault_review_reported", user.id, { reason: input.reason });
+  return { id: String((data as { id: string }).id) };
+}
+
+export async function adminHideVaultReview(input: {
+  reviewId: string;
+  hidden: boolean;
+  actorUserId: string;
+}): Promise<{ id: string; hidden: boolean }> {
+  const admin = createSupabaseAdminClient();
+  if (!admin) throw new VaultApiError("Admin tools are unavailable.", 503);
+
+  const patch = input.hidden
+    ? { hidden_at: new Date().toISOString(), hidden_by: input.actorUserId }
+    : { hidden_at: null, hidden_by: null };
+
+  const { data, error } = await admin
+    .from("vault_reviews")
+    .update(patch)
+    .eq("id", input.reviewId)
+    .select("id, hidden_at")
+    .maybeSingle();
+
+  if (error) {
+    logRouteError("vault/admin-hide-review", error);
+    throw new VaultApiError("Could not update review.", 500);
+  }
+  if (!data) throw new VaultApiError("Review not found.", 404);
+  return {
+    id: String((data as { id: string }).id),
+    hidden: (data as { hidden_at: string | null }).hidden_at != null,
+  };
+}
+
+export type VaultRefundRequestPublic = {
+  id: string;
+  experience_id: string;
+  purchase_id: string;
+  reason: VaultRefundReason;
+  details: string | null;
+  status: VaultRefundStatus;
+  processing_mode: "manual";
+  contributor_response: string | null;
+  contributor_responded_at: string | null;
+  created_at: string;
+  resolved_at: string | null;
+};
+
+function mapRefundRow(row: Record<string, unknown>): VaultRefundRequestPublic {
+  return {
+    id: String(row.id),
+    experience_id: String(row.experience_id),
+    purchase_id: String(row.purchase_id),
+    reason: row.reason as VaultRefundReason,
+    details: row.details != null ? String(row.details) : null,
+    status: row.status as VaultRefundStatus,
+    processing_mode: "manual",
+    contributor_response: row.contributor_response != null ? String(row.contributor_response) : null,
+    contributor_responded_at:
+      row.contributor_responded_at != null ? String(row.contributor_responded_at) : null,
+    created_at: String(row.created_at),
+    resolved_at: row.resolved_at != null ? String(row.resolved_at) : null,
+  };
+}
+
+export async function createVaultRefundRequest(input: {
+  experienceId: string;
+  reason: string;
+  details?: string | null;
+}): Promise<VaultRefundRequestPublic> {
+  const { user, supabase } = await requireUser();
+  if (!isVaultRefundReason(input.reason)) {
+    throw new VaultApiError("Choose a valid refund reason.", 400);
+  }
+
+  const experience = await getExperienceById(input.experienceId);
+  if (!experience) throw new VaultApiError("Guide not found", 404);
+
+  const purchase = await getVaultPurchase(input.experienceId, user.id);
+  const { data: existing } = await supabase
+    .from("vault_refund_requests")
+    .select("id")
+    .eq("purchase_id", purchase?.id ?? "00000000-0000-0000-0000-000000000000")
+    .maybeSingle();
+
+  const auth = authorizeVaultRefundRequest({
+    userId: user.id,
+    sellerId: experience.seller_id,
+    purchase,
+    existingRequest: Boolean(existing),
+  });
+  if (!auth.allowed) throw new VaultApiError(auth.error, auth.status);
+  if (!purchase) throw new VaultApiError("A verified purchase is required to request a refund.", 403);
+
+  const { data, error } = await supabase
+    .from("vault_refund_requests")
+    .insert({
+      experience_id: input.experienceId,
+      buyer_id: user.id,
+      purchase_id: purchase.id,
+      reason: input.reason,
+      details: input.details?.trim() || null,
+      status: "open",
+      processing_mode: "manual",
+    })
+    .select(
+      "id, experience_id, purchase_id, reason, details, status, processing_mode, contributor_response, contributor_responded_at, created_at, resolved_at",
+    )
+    .single();
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new VaultApiError("A refund request already exists for this purchase.", 409);
+    }
+    logRouteError("vault/refund-request", error);
+    throw new VaultApiError("Could not submit refund request.", 500);
+  }
+
+  void recordEvent("vault_refund_requested", user.id, { reason: input.reason });
+  return mapRefundRow(data as Record<string, unknown>);
+}
+
+export async function respondToVaultRefundRequest(input: {
+  requestId: string;
+  response: string;
+}): Promise<VaultRefundRequestPublic> {
+  const { user, supabase } = await requireUser();
+  const response = input.response.trim();
+  if (!response) throw new VaultApiError("Response is required.", 400);
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("vault_refund_requests")
+    .select(
+      "id, experience_id, purchase_id, reason, details, status, processing_mode, contributor_response, contributor_responded_at, created_at, resolved_at",
+    )
+    .eq("id", input.requestId)
+    .maybeSingle();
+  if (fetchError) throw new VaultApiError("Could not update refund request.", 500);
+  if (!existing) throw new VaultApiError("Refund request not found.", 404);
+  if ((existing as { status: string }).status !== "open") {
+    throw new VaultApiError("Only open refund requests can receive a contributor response.", 400);
+  }
+
+  const experience = await getExperienceById(String((existing as { experience_id: string }).experience_id));
+  if (!experience || experience.seller_id !== user.id) {
+    throw new VaultApiError("Refund request not found.", 404);
+  }
+
+  const { data, error } = await supabase
+    .from("vault_refund_requests")
+    .update({
+      contributor_response: response.slice(0, 2000),
+      contributor_responded_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", input.requestId)
+    .select(
+      "id, experience_id, purchase_id, reason, details, status, processing_mode, contributor_response, contributor_responded_at, created_at, resolved_at",
+    )
+    .single();
+
+  if (error) throw new VaultApiError("Could not update refund request.", 500);
+  return mapRefundRow(data as Record<string, unknown>);
+}
+
+export async function adminUpdateVaultRefundStatus(input: {
+  requestId: string;
+  status: string;
+  adminNote?: string | null;
+  actorUserId: string;
+}): Promise<VaultRefundRequestPublic> {
+  if (!isVaultRefundStatus(input.status)) {
+    throw new VaultApiError("Invalid refund status.", 400);
+  }
+
+  const admin = createSupabaseAdminClient();
+  if (!admin) throw new VaultApiError("Admin tools are unavailable.", 503);
+
+  const { data: existing, error: fetchError } = await admin
+    .from("vault_refund_requests")
+    .select("id, status")
+    .eq("id", input.requestId)
+    .maybeSingle();
+  if (fetchError) throw new VaultApiError("Could not update refund request.", 500);
+  if (!existing) throw new VaultApiError("Refund request not found.", 404);
+
+  const from = (existing as { status: string }).status as VaultRefundStatus;
+  const to = input.status as VaultRefundStatus;
+  if (!canTransitionRefundStatus(from, to)) {
+    throw new VaultApiError("That status transition is not allowed.", 400);
+  }
+
+  // Manual only: never call a payment provider or mutate earnings here.
+  const nowIso = new Date().toISOString();
+  const { data, error } = await admin
+    .from("vault_refund_requests")
+    .update({
+      status: to,
+      admin_note: input.adminNote?.trim() || null,
+      updated_at: nowIso,
+      resolved_at: to === "open" ? null : nowIso,
+      resolved_by: to === "open" ? null : input.actorUserId,
+    })
+    .eq("id", input.requestId)
+    .select(
+      "id, experience_id, purchase_id, reason, details, status, processing_mode, contributor_response, contributor_responded_at, created_at, resolved_at",
+    )
+    .single();
+
+  if (error) {
+    logRouteError("vault/admin-refund", error);
+    throw new VaultApiError("Could not update refund request.", 500);
+  }
+  return mapRefundRow(data as Record<string, unknown>);
 }
 
 export async function getRelatedExperiences(
