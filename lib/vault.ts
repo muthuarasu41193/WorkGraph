@@ -1,9 +1,18 @@
 import { isVaultPaymentStatus, type VaultPaymentStatus } from "@/lib/security/vault-entitlement";
+import type { VaultEvidenceLabelPublic } from "@/lib/vault-evidence-labels";
 
 export const VAULT_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type VaultDifficulty = (typeof VAULT_DIFFICULTIES)[number];
 
-export const VAULT_RESULTS = ["offer", "rejected", "ongoing", "withdrawn"] as const;
+/** Self-reported interview outcomes. Existing values kept for data compatibility. */
+export const VAULT_RESULTS = [
+  "offer",
+  "rejected",
+  "ongoing",
+  "withdrawn",
+  "no_outcome",
+  "prefer_not_to_say",
+] as const;
 export type VaultResult = (typeof VAULT_RESULTS)[number];
 
 export const VAULT_STATUSES = ["draft", "published", "archived"] as const;
@@ -60,6 +69,8 @@ export type VaultExperienceListItem = Pick<
   questions_html: string;
   tips_html: string;
   rounds_data: VaultRound[];
+  /** Server-derived evidence labels only. Never includes verification row fields. */
+  evidence_labels: VaultEvidenceLabelPublic[];
 };
 
 export type VaultExperienceInsert = {
@@ -117,10 +128,12 @@ export const VAULT_DIFFICULTY_LABELS: Record<VaultDifficulty, string> = {
 };
 
 export const VAULT_RESULT_LABELS: Record<VaultResult, string> = {
-  offer: "Got Offer",
-  rejected: "Rejected",
-  ongoing: "Ongoing",
-  withdrawn: "Withdrawn",
+  offer: "Offer (self-reported)",
+  rejected: "Rejected (self-reported)",
+  ongoing: "Ongoing (self-reported)",
+  withdrawn: "Withdrew (self-reported)",
+  no_outcome: "No outcome (self-reported)",
+  prefer_not_to_say: "Prefer not to say",
 };
 
 export const VAULT_SELL_STEPS = [
@@ -243,7 +256,10 @@ export function redactVaultExperience(experience: VaultExperience): VaultExperie
   };
 }
 
-export function publicVaultListItem(experience: VaultExperience): VaultExperienceListItem {
+export function publicVaultListItem(
+  experience: VaultExperience,
+  evidenceLabels: VaultEvidenceLabelPublic[] = [],
+): VaultExperienceListItem {
   const preview = buildPreviewContent(buildFullContent(experience));
   return {
     id: experience.id,
@@ -264,6 +280,7 @@ export function publicVaultListItem(experience: VaultExperience): VaultExperienc
     questions_html: "",
     tips_html: "",
     rounds_data: [],
+    evidence_labels: evidenceLabels.map((label) => ({ id: label.id, text: label.text })),
   };
 }
 

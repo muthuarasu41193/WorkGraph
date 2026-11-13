@@ -132,6 +132,20 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Connections you sent to hiring signals, including the snapshot you submitted",
   },
   {
+    table: "contributor_verification_audit",
+    ownerColumn: "contributor_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault evidence-label audit events (action and outcome only; no evidence contents)",
+  },
+  {
+    table: "contributor_verifications",
+    ownerColumn: "contributor_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault evidence-label records (status, method, and dates only; no evidence contents)",
+  },
+  {
     table: "vault_reviews",
     ownerColumn: "user_id",
     export: true,

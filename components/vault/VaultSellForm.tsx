@@ -171,7 +171,15 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <p className="mt-1 text-sm text-muted-foreground">
           Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground" role="note">
+          Publish only firsthand, original, non-confidential content from interviews you personally
+          attended. Do not include private contact details, confidential questions you are not allowed
+          to share, or material copied from other platforms. Guides without independently reviewed
+          evidence are labeled &quot;Not independently verified&quot; and can still be published under
+          existing seller rules.{" "}
+          <span className="text-xs">(NEEDS COUNSEL REVIEW)</span>
+        </p>
+        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground" aria-live="polite">
           {saving ? (
             <>
               <Loader2 className={iconClass("inline", "animate-spin")} /> Saving…
@@ -260,10 +268,10 @@ export default function VaultSellForm({ initialDraft }: Props) {
                   <Input id="level" value={level} onChange={(e) => setLevel(e.target.value)} placeholder="e.g. L4, SDE-2" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="result">Outcome</Label>
+                  <Label htmlFor="result">Interview outcome (self-reported)</Label>
                   <Select value={result} onValueChange={setResult}>
                     <SelectTrigger id="result">
-                      <SelectValue placeholder="Select" />
+                      <SelectValue placeholder="Select an outcome" />
                     </SelectTrigger>
                     <SelectContent>
                       {VAULT_RESULTS.map((r) => (
@@ -273,6 +281,10 @@ export default function VaultSellForm({ initialDraft }: Props) {
                       ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground">
+                    This outcome is self-reported and is not independently confirmed. Buyers will see
+                    an &quot;Outcome self-reported&quot; evidence label when you select a value.
+                  </p>
                 </div>
               </div>
             </>

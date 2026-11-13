@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { VaultEvidenceLabelsExplainer } from "@/components/vault/VaultEvidenceLabels";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -59,11 +60,14 @@ export default function VaultMarketplace({ initialExperiences }: Props) {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
+        <p className="text-sm text-muted-foreground">
+          Real interview experiences from candidates — preview free, unlock the full playbook.
+          Evidence labels describe limited checks when available; they do not guarantee accuracy or
+          outcomes.
         </p>
+        <VaultEvidenceLabelsExplainer />
       </header>
 
       <div className="space-y-4 rounded-xl border bg-card p-4">

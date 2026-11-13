@@ -5,10 +5,10 @@ import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { VaultEvidenceLabelChips } from "@/components/vault/VaultEvidenceLabels";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ import {
   type VaultExperienceListItem,
   type VaultReview,
 } from "@/lib/vault";
+import type { VaultEvidenceLabelPublic } from "@/lib/vault-evidence-labels";
 
 type Props = {
   experience: VaultExperience;
@@ -29,6 +30,7 @@ type Props = {
   initialReviews: VaultReview[];
   related: VaultExperienceListItem[];
   isLoggedIn: boolean;
+  evidenceLabels: VaultEvidenceLabelPublic[];
 };
 
 function StarRating({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
@@ -61,6 +63,7 @@ export default function VaultExperienceDetail({
   initialReviews,
   related,
   isLoggedIn,
+  evidenceLabels,
 }: Props) {
   const [unlocked, setUnlocked] = useState(initialUnlocked);
   const [purchasing, setPurchasing] = useState(false);
@@ -147,6 +150,8 @@ export default function VaultExperienceDetail({
             <Badge variant="outline">{new Date(experience.interview_date).toLocaleDateString()}</Badge>
           ) : null}
         </div>
+
+        <VaultEvidenceLabelChips labels={evidenceLabels} />
       </header>
 
       <Card>
