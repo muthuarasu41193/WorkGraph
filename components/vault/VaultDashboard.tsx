@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, ShoppingBag, Wallet } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
+import VaultCompanyEmailConfirm from "@/components/vault/VaultCompanyEmailConfirm";
 import VaultEarningsChart from "@/components/vault/VaultEarningsChart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,8 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
           </Card>
         ))}
       </div>
+
+      <VaultCompanyEmailConfirm />
 
       <Card>
         <CardHeader>

@@ -132,6 +132,14 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Connections you sent to hiring signals, including the snapshot you submitted",
   },
   {
+    table: "contributor_company_email_challenges",
+    ownerColumn: "contributor_id",
+    export: true,
+    deleteStrategy: "delete",
+    label:
+      "Pending work-email confirmation challenges (hashed email and code digests only; never plaintext email or code)",
+  },
+  {
     table: "contributor_verification_audit",
     ownerColumn: "contributor_id",
     export: true,

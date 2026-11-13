@@ -128,6 +128,34 @@ export function buildStageUpdateSeekerEmail(params: {
   };
 }
 
+/**
+ * One-time company-email confirmation for Interview Vault contributors.
+ * Callers must not log `code` or `to`.
+ */
+export function buildCompanyEmailConfirmationEmail(params: {
+  to: string;
+  code: string;
+  expiresInMinutes: number;
+}): SendEmailInput {
+  const minutes = Math.max(1, Math.floor(params.expiresInMinutes));
+  const html = `
+    <div style="font-family:Inter,system-ui,sans-serif;max-width:520px;color:${WG_COLORS.textPrimary}">
+      <p style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:${WG_COLORS.primary}">WorkGraph Interview Vault</p>
+      <h1 style="font-size:20px;margin:0 0 12px">Confirm your work email</h1>
+      <p>Use this one-time code in your contributor dashboard. It expires in ${minutes} minutes.</p>
+      <p style="font-size:28px;letter-spacing:.24em;font-weight:700;margin:20px 0">${escapeHtml(params.code)}</p>
+      <p style="font-size:12px;color:${WG_COLORS.textTertiary}">If you did not request this, you can ignore this message. WorkGraph never asks for your work email password.</p>
+    </div>
+  `;
+
+  return {
+    to: params.to,
+    subject: "Your WorkGraph work-email confirmation code",
+    html,
+    text: `Your WorkGraph confirmation code is ${params.code}. It expires in ${minutes} minutes. If you did not request this, ignore this message.`,
+  };
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
