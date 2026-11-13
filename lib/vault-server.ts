@@ -18,11 +18,25 @@ import {
   type VaultListFilters,
   type VaultReview,
 } from "@/lib/vault";
+import { requireAttestationForPublish, VAULT_ATTESTATION_VERSION } from "@/lib/vault/attestation";
+import {
+  filterAndSortVaultBrowse,
+  type VaultBrowseItem,
+} from "@/lib/vault/filters";
+import {
+  isVaultReportReason,
+  isVaultReportStatus,
+  reportStatusRemovesGuide,
+  VAULT_REPORT_DETAILS_MAX,
+  type VaultReportReason,
+  type VaultReportStatus,
+} from "@/lib/vault/reports";
 import { recordEvent } from "@/lib/metrics/record";
 import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
 import { logRouteError } from "@/lib/security/log";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
+import { createSupabaseAdminClient } from "@/lib/supabase-admin";
 
 export class VaultApiError extends Error {
   constructor(
@@ -58,6 +72,26 @@ function mapListItem(row: Record<string, unknown>): VaultExperienceListItem {
   return publicVaultListItem(mapVaultExperienceRow(row));
 }
 
+function toBrowseItem(item: VaultExperienceListItem): VaultBrowseItem {
+  return {
+    id: item.id,
+    company: item.company,
+    role: item.role,
+    level: item.level,
+    interview_round: item.interview_round,
+    skills: item.skills,
+    difficulty: item.difficulty,
+    rounds: item.rounds,
+    result: item.result,
+    interview_date: item.interview_date,
+    published_at: item.published_at,
+    updated_at: item.updated_at,
+    content_confirmed_at: item.content_confirmed_at,
+    avg_rating: item.avg_rating,
+    sales_count: item.sales_count,
+  };
+}
+
 export async function listPublishedExperiences(filters: VaultListFilters = {}): Promise<VaultExperienceListItem[]> {
   const { supabase } = await optionalUser();
 
@@ -65,6 +99,7 @@ export async function listPublishedExperiences(filters: VaultListFilters = {}): 
     .from("vault_experiences")
     .select(VAULT_LIST_SELECT)
     .eq("status", "published")
+    .is("removed_at", null)
     .order("published_at", { ascending: false });
 
   if (filters.difficulty && isVaultDifficulty(filters.difficulty)) {
@@ -89,19 +124,25 @@ export async function listPublishedExperiences(filters: VaultListFilters = {}): 
     throw new VaultApiError("Could not load experiences.", 500);
   }
 
-  let items = (data ?? []).map((row) => mapListItem(row as Record<string, unknown>));
+  const items = (data ?? []).map((row) => mapListItem(row as Record<string, unknown>));
+  const sortedIds = filterAndSortVaultBrowse(
+    items.map(toBrowseItem),
+    {
+      q: filters.q,
+      company: filters.company,
+      role: filters.role,
+      interview_round: filters.interview_round,
+      difficulty: filters.difficulty,
+      rounds: filters.rounds,
+      result: filters.result,
+      date_from: filters.date_from,
+      date_to: filters.date_to,
+      sort: filters.sort,
+    },
+  ).map((row) => row.id);
 
-  if (filters.q?.trim()) {
-    const q = filters.q.trim().toLowerCase();
-    items = items.filter(
-      (item) =>
-        item.company.toLowerCase().includes(q) ||
-        item.role.toLowerCase().includes(q) ||
-        (item.level?.toLowerCase().includes(q) ?? false),
-    );
-  }
-
-  return items;
+  const byId = new Map(items.map((item) => [item.id, item]));
+  return sortedIds.map((id) => byId.get(id)).filter((item): item is VaultExperienceListItem => Boolean(item));
 }
 
 export async function getExperienceById(id: string): Promise<VaultExperience | null> {
@@ -172,7 +213,13 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
     purchase,
   });
 
-  if (experience.status === "published") {
+  // Removed guides leave browse/matches. Interim: owner + entitled purchasers may still open by ID.
+  // Refunds / permanent purchaser access remain an open product/legal decision.
+  if (experience.removed_at && !is_owner && !unlocked) {
+    return null;
+  }
+
+  if (experience.status === "published" && !experience.removed_at) {
     await incrementViewCount(id);
   }
 
@@ -195,6 +242,10 @@ export type VaultPurchaseResult = {
 export async function createDraftExperience(input: VaultExperienceInsert = {}): Promise<VaultExperience> {
   const { user, supabase } = await requireUser();
 
+  const skills = Array.isArray(input.skills)
+    ? input.skills.map((s) => String(s).trim()).filter(Boolean).slice(0, 40)
+    : [];
+
   const { data, error } = await supabase
     .from("vault_experiences")
     .insert({
@@ -202,6 +253,8 @@ export async function createDraftExperience(input: VaultExperienceInsert = {}): 
       company: input.company?.trim() ?? "",
       role: input.role?.trim() ?? "",
       level: input.level?.trim() || null,
+      interview_round: input.interview_round?.trim() || null,
+      skills,
       difficulty: input.difficulty ?? null,
       rounds: input.rounds ?? null,
       result: input.result ?? null,
@@ -241,6 +294,10 @@ export async function updateExperienceForSeller(
   if (input.company !== undefined) patch.company = input.company.trim();
   if (input.role !== undefined) patch.role = input.role.trim();
   if (input.level !== undefined) patch.level = input.level?.trim() || null;
+  if (input.interview_round !== undefined) patch.interview_round = input.interview_round?.trim() || null;
+  if (input.skills !== undefined) {
+    patch.skills = input.skills.map((s) => String(s).trim()).filter(Boolean).slice(0, 40);
+  }
   if (input.difficulty !== undefined) patch.difficulty = input.difficulty;
   if (input.rounds !== undefined) patch.rounds = input.rounds;
   if (input.result !== undefined) patch.result = input.result;
@@ -251,15 +308,175 @@ export async function updateExperienceForSeller(
   if (input.price_inr !== undefined) patch.price_inr = input.price_inr;
   if (input.draft_step !== undefined) patch.draft_step = input.draft_step;
   if (input.status !== undefined) {
-    patch.status = input.status;
     if (input.status === "published") {
-      patch.published_at = new Date().toISOString();
+      const attestation = requireAttestationForPublish({
+        attestationAccepted: Boolean(input.attestation_accepted),
+        attestationVersion: input.attestation_version ?? VAULT_ATTESTATION_VERSION,
+      });
+      if (!attestation.ok) {
+        throw new VaultApiError(attestation.error, 400);
+      }
+      const nowIso = new Date().toISOString();
+      patch.status = input.status;
+      patch.published_at = nowIso;
+      patch.content_confirmed_at = nowIso;
+      patch.attestation_accepted_at = nowIso;
+      patch.attestation_version = attestation.version;
+      if (!patch.interview_round && Array.isArray(input.rounds_data) && input.rounds_data[0]?.name) {
+        patch.interview_round = String(input.rounds_data[0].name).trim().slice(0, 120) || null;
+      }
+    } else {
+      patch.status = input.status;
     }
   }
 
   const { data, error } = await supabase.from("vault_experiences").update(patch).eq("id", id).select("*").single();
   if (error) throw new VaultApiError(error.message, 500);
   return mapVaultExperienceRow(data as Record<string, unknown>);
+}
+
+/** Owner-only: mark guide content as currently accurate (freshness). */
+export async function confirmExperienceContent(id: string): Promise<VaultExperience> {
+  const { user, supabase } = await requireUser();
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("vault_experiences")
+    .select("seller_id, status, removed_at")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (fetchError) throw new VaultApiError(fetchError.message, 500);
+  if (!existing || (existing as { seller_id: string }).seller_id !== user.id) {
+    throw new VaultApiError("Experience not found", 404);
+  }
+  if ((existing as { status: string }).status !== "published") {
+    throw new VaultApiError("Only published guides can be marked current.", 400);
+  }
+  if ((existing as { removed_at: string | null }).removed_at) {
+    throw new VaultApiError("This guide was removed from the marketplace.", 400);
+  }
+
+  const nowIso = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("vault_experiences")
+    .update({ content_confirmed_at: nowIso })
+    .eq("id", id)
+    .eq("seller_id", user.id)
+    .select("*")
+    .single();
+
+  if (error) throw new VaultApiError(error.message, 500);
+  return mapVaultExperienceRow(data as Record<string, unknown>);
+}
+
+export async function submitVaultGuideReport(input: {
+  experienceId: string;
+  reason: string;
+  details?: string | null;
+}): Promise<{ id: string }> {
+  const { user, supabase } = await requireUser();
+
+  if (!isVaultReportReason(input.reason)) {
+    throw new VaultApiError("Choose a valid report reason.", 400);
+  }
+  const details = input.details?.trim() || null;
+  if (details && details.length > VAULT_REPORT_DETAILS_MAX) {
+    throw new VaultApiError("Report details are too long.", 400);
+  }
+  if (details && /@/.test(details)) {
+    throw new VaultApiError("Do not include email addresses in a report.", 400);
+  }
+
+  const experience = await getExperienceById(input.experienceId);
+  if (!experience || experience.status !== "published" || experience.removed_at) {
+    throw new VaultApiError("Guide not found.", 404);
+  }
+
+  const { data, error } = await supabase
+    .from("vault_guide_reports")
+    .insert({
+      experience_id: input.experienceId,
+      reporter_id: user.id,
+      reason: input.reason as VaultReportReason,
+      details,
+      status: "open",
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    logRouteError("vault/report", error);
+    throw new VaultApiError("Could not submit report.", 500);
+  }
+
+  void recordEvent("vault_report_submitted", user.id, { reason: input.reason });
+
+  return { id: String((data as { id: string }).id) };
+}
+
+export async function adminUpdateVaultGuideReportStatus(input: {
+  reportId: string;
+  status: string;
+  actorUserId: string;
+}): Promise<{ id: string; status: VaultReportStatus; experience_id: string }> {
+  if (!isVaultReportStatus(input.status)) {
+    throw new VaultApiError("Invalid report status.", 400);
+  }
+
+  const admin = createSupabaseAdminClient();
+  if (!admin) {
+    throw new VaultApiError("Admin tools are unavailable.", 503);
+  }
+
+  const { data: report, error: fetchError } = await admin
+    .from("vault_guide_reports")
+    .select("id, experience_id, status")
+    .eq("id", input.reportId)
+    .maybeSingle();
+
+  if (fetchError) {
+    logRouteError("vault/admin-report-lookup", fetchError);
+    throw new VaultApiError("Could not update report.", 500);
+  }
+  if (!report) {
+    throw new VaultApiError("Report not found.", 404);
+  }
+
+  const nowIso = new Date().toISOString();
+  const nextStatus = input.status as VaultReportStatus;
+  const { data, error } = await admin
+    .from("vault_guide_reports")
+    .update({
+      status: nextStatus,
+      resolved_at: nextStatus === "open" ? null : nowIso,
+      resolved_by: nextStatus === "open" ? null : input.actorUserId,
+    })
+    .eq("id", input.reportId)
+    .select("id, status, experience_id")
+    .single();
+
+  if (error || !data) {
+    logRouteError("vault/admin-report-update", error ?? new Error("missing row"));
+    throw new VaultApiError("Could not update report.", 500);
+  }
+
+  if (reportStatusRemovesGuide(nextStatus)) {
+    const { error: removeError } = await admin
+      .from("vault_experiences")
+      .update({ removed_at: nowIso })
+      .eq("id", (data as { experience_id: string }).experience_id)
+      .is("removed_at", null);
+    if (removeError) {
+      logRouteError("vault/admin-remove-guide", removeError);
+      throw new VaultApiError("Report updated but the guide could not be removed.", 500);
+    }
+  }
+
+  return {
+    id: String((data as { id: string }).id),
+    status: nextStatus,
+    experience_id: String((data as { experience_id: string }).experience_id),
+  };
 }
 
 export async function getSellerDraft(userId: string): Promise<VaultExperience | null> {

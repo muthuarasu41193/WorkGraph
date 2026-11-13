@@ -17,6 +17,14 @@ function guide(partial: Partial<PrepPackGuideCandidate> & Pick<PrepPackGuideCand
     avg_rating: 4.5,
     price_inr: 499,
     roundNames: ["Phone screen", "Coding", "Hiring manager"],
+    interview_round: "Phone screen",
+    skills: [],
+    content_confirmed_at: "2026-06-01T00:00:00.000Z",
+    updated_at: "2026-06-01T00:00:00.000Z",
+    published_at: "2026-01-02T00:00:00.000Z",
+    stale: false,
+    last_confirmed_label: "Last confirmed 1 Jun 2026",
+    stale_label: null,
     ...partial,
   };
 }

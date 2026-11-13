@@ -26,6 +26,11 @@ import {
   type VaultExperience,
   type VaultRound,
 } from "@/lib/vault";
+import {
+  VAULT_ATTESTATION_COPY,
+  VAULT_ATTESTATION_VERSION,
+  VAULT_CONTRIBUTOR_GUIDANCE,
+} from "@/lib/vault/attestation";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -45,6 +50,8 @@ export default function VaultSellForm({ initialDraft }: Props) {
   const [company, setCompany] = useState(initialDraft?.company ?? "");
   const [role, setRole] = useState(initialDraft?.role ?? "");
   const [level, setLevel] = useState(initialDraft?.level ?? "");
+  const [interviewRound, setInterviewRound] = useState(initialDraft?.interview_round ?? "");
+  const [skillsText, setSkillsText] = useState((initialDraft?.skills ?? []).join(", "));
   const [difficulty, setDifficulty] = useState(initialDraft?.difficulty ?? "");
   const [rounds, setRounds] = useState(String(initialDraft?.rounds ?? ""));
   const [result, setResult] = useState(initialDraft?.result ?? "");
@@ -57,6 +64,15 @@ export default function VaultSellForm({ initialDraft }: Props) {
   const [questionsHtml, setQuestionsHtml] = useState(initialDraft?.questions_html ?? "");
   const [tipsHtml, setTipsHtml] = useState(initialDraft?.tips_html ?? "");
   const [priceInr, setPriceInr] = useState(String(initialDraft?.price_inr ?? 499));
+  const [attestationAccepted, setAttestationAccepted] = useState(false);
+
+  const parseSkills = useCallback((): string[] => {
+    return skillsText
+      .split(/[,|\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 40);
+  }, [skillsText]);
 
   const ensureDraft = useCallback(async (): Promise<string> => {
     if (draftId) return draftId;
@@ -78,6 +94,8 @@ export default function VaultSellForm({ initialDraft }: Props) {
           company,
           role,
           level: level || null,
+          interview_round: interviewRound || roundsData[0]?.name || null,
+          skills: parseSkills(),
           difficulty: difficulty || null,
           rounds: rounds ? Number(rounds) : null,
           result: result || null,
@@ -106,6 +124,8 @@ export default function VaultSellForm({ initialDraft }: Props) {
     company,
     role,
     level,
+    interviewRound,
+    parseSkills,
     difficulty,
     rounds,
     result,
@@ -132,6 +152,14 @@ export default function VaultSellForm({ initialDraft }: Props) {
       toast({ title: "Missing fields", description: "Company and role are required.", variant: "error" });
       return;
     }
+    if (!attestationAccepted) {
+      toast({
+        title: "Attestation required",
+        description: "Accept the contributor attestation before publishing.",
+        variant: "error",
+      });
+      return;
+    }
     setSaving(true);
     try {
       const id = await ensureDraft();
@@ -139,7 +167,11 @@ export default function VaultSellForm({ initialDraft }: Props) {
       const res = await fetch(`/api/vault/experiences/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "published" }),
+        body: JSON.stringify({
+          status: "published",
+          attestation_accepted: true,
+          attestation_version: VAULT_ATTESTATION_VERSION,
+        }),
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error ?? "Publish failed");
@@ -171,6 +203,11 @@ export default function VaultSellForm({ initialDraft }: Props) {
         <p className="mt-1 text-sm text-muted-foreground">
           Share your interview playbook and earn when others unlock it. Drafts auto-save every few seconds.
         </p>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+          {VAULT_CONTRIBUTOR_GUIDANCE.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
         <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
           {saving ? (
             <>
@@ -275,14 +312,34 @@ export default function VaultSellForm({ initialDraft }: Props) {
                   </Select>
                 </div>
               </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="skills">Skills (comma-separated)</Label>
+                <Input
+                  id="skills"
+                  value={skillsText}
+                  onChange={(e) => setSkillsText(e.target.value)}
+                  placeholder="e.g. React, System design, SQL"
+                />
+              </div>
             </>
           ) : null}
 
           {step === 2 ? (
             <>
-              <div className="space-y-1.5">
-                <Label htmlFor="round-count">Total rounds</Label>
-                <Input id="round-count" type="number" min={1} max={20} value={rounds} onChange={(e) => setRounds(e.target.value)} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="round-count">Total rounds</Label>
+                  <Input id="round-count" type="number" min={1} max={20} value={rounds} onChange={(e) => setRounds(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="interview-round">Primary round (for filters)</Label>
+                  <Input
+                    id="interview-round"
+                    value={interviewRound}
+                    onChange={(e) => setInterviewRound(e.target.value)}
+                    placeholder="e.g. System design"
+                  />
+                </div>
               </div>
               {roundsData.map((round, i) => (
                 <div key={i} className="space-y-2 rounded-lg border p-3">
@@ -342,7 +399,28 @@ export default function VaultSellForm({ initialDraft }: Props) {
                 />
                 <p className="text-xs text-muted-foreground">You keep 70% of each sale. Recommended: ₹299–₹999.</p>
               </div>
-              <Button type="button" onClick={() => void publish()} disabled={saving}>
+              <fieldset className="space-y-2 rounded-lg border p-3">
+                <legend className="px-1 text-sm font-medium">Contributor attestation</legend>
+                <ul className="list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+                  {VAULT_ATTESTATION_COPY.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+                <label className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    className="mt-1"
+                    checked={attestationAccepted}
+                    onChange={(e) => setAttestationAccepted(e.target.checked)}
+                    aria-required="true"
+                  />
+                  <span>
+                    I accept this attestation ({VAULT_ATTESTATION_VERSION}). Placeholder legal text is marked NEEDS
+                    COUNSEL REVIEW.
+                  </span>
+                </label>
+              </fieldset>
+              <Button type="button" onClick={() => void publish()} disabled={saving || !attestationAccepted}>
                 Publish to marketplace
               </Button>
             </>

@@ -363,6 +363,20 @@ export default function PrepPackClient({ isSignedIn, initialSaved }: Props) {
                       {guide.level ? (
                         <p className="mt-0.5 text-role-caption text-fg-tertiary">{guide.level}</p>
                       ) : null}
+                      {guide.interview_round ? (
+                        <p className="mt-0.5 text-role-caption text-fg-tertiary">{guide.interview_round}</p>
+                      ) : null}
+                      <p className="mt-2 text-role-caption text-fg-tertiary">
+                        {guide.last_confirmed_label}
+                        {guide.stale && guide.stale_label ? (
+                          <>
+                            <span aria-hidden="true"> · </span>
+                            <span className="font-medium text-caution" role="status">
+                              {guide.stale_label}
+                            </span>
+                          </>
+                        ) : null}
+                      </p>
                       <div className="mt-3">
                         <p className="text-role-caption font-medium text-fg-secondary">{m.whyHeading}</p>
                         <ul className="mt-1 list-disc space-y-1 pl-5 text-role-caption text-fg-tertiary">

@@ -22,7 +22,16 @@ function textIncludesTerm(haystack: string, term: string): boolean {
 }
 
 function guideHaystack(guide: PrepPackGuideCandidate): string {
-  return normalize([guide.role, guide.level ?? "", guide.company, ...guide.roundNames].join(" "));
+  return normalize(
+    [
+      guide.role,
+      guide.level ?? "",
+      guide.company,
+      guide.interview_round ?? "",
+      ...(guide.skills ?? []),
+      ...guide.roundNames,
+    ].join(" "),
+  );
 }
 
 /**
@@ -99,6 +108,12 @@ export function matchPrepPackGuides(input: {
       href: `/interview-vault/${guide.id}`,
       why,
       score,
+      interview_round: guide.interview_round,
+      skills: guide.skills ?? [],
+      content_confirmed_at: guide.content_confirmed_at,
+      last_confirmed_label: guide.last_confirmed_label,
+      stale: guide.stale,
+      stale_label: guide.stale_label,
     });
   }
 

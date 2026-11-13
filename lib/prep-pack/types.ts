@@ -19,6 +19,12 @@ export type PrepPackGuideMatch = {
   /** Human-readable reasons this guide was included (estimate only). */
   why: string[];
   score: number;
+  interview_round: string | null;
+  skills: string[];
+  content_confirmed_at: string | null;
+  last_confirmed_label: string;
+  stale: boolean;
+  stale_label: string | null;
 };
 
 export type PrepPackChecklistItem = {
@@ -55,6 +61,14 @@ export type PrepPackGuideCandidate = {
   price_inr: number;
   /** Round names from published guide data when present. */
   roundNames: string[];
+  interview_round: string | null;
+  skills: string[];
+  content_confirmed_at: string | null;
+  updated_at: string | null;
+  published_at: string | null;
+  stale: boolean;
+  last_confirmed_label: string;
+  stale_label: string | null;
 };
 
 export type SavedPrepPackSummary = {
