@@ -6,6 +6,8 @@ import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 import type { PrepPackSaveInput } from "@/lib/validation/prep-pack";
 
+import { projectPublicVaultGuide } from "@/lib/vault/public-guide";
+
 import { buildPrepPack } from "./build";
 import type {
   PrepPackGuideCandidate,
@@ -23,8 +25,9 @@ export class PrepPackApiError extends Error {
   }
 }
 
+/** Metadata only — never select paid body fields for prep-pack matching. */
 const GUIDE_SELECT =
-  "id,company,role,level,difficulty,rounds,rounds_data,avg_rating,price_inr,status";
+  "id,company,role,level,interview_round,skills,difficulty,rounds,rounds_data,avg_rating,price_inr,status,published_at,updated_at,content_confirmed_at,removed_at";
 
 const SAVED_SELECT =
   "id,user_id,role_id,role_label,skills,guides,checklist,estimate_notice,created_at,updated_at";
@@ -51,17 +54,43 @@ function roundNamesFromRow(roundsData: unknown): string[] {
   return names;
 }
 
-function mapGuideCandidate(row: Record<string, unknown>): PrepPackGuideCandidate {
-  return {
+function mapGuideCandidate(row: Record<string, unknown>): PrepPackGuideCandidate | null {
+  const projection = projectPublicVaultGuide({
     id: String(row.id),
     company: String(row.company ?? ""),
     role: String(row.role ?? ""),
     level: row.level != null ? String(row.level) : null,
+    interview_round: row.interview_round != null ? String(row.interview_round) : null,
+    skills: Array.isArray(row.skills) ? (row.skills as unknown[]).map((s) => String(s)) : [],
     difficulty: row.difficulty != null ? String(row.difficulty) : null,
     rounds: typeof row.rounds === "number" ? row.rounds : row.rounds != null ? Number(row.rounds) : null,
     avg_rating: row.avg_rating != null ? Number(row.avg_rating) : null,
     price_inr: Number(row.price_inr ?? 0),
+    content_confirmed_at: row.content_confirmed_at != null ? String(row.content_confirmed_at) : null,
+    updated_at: row.updated_at != null ? String(row.updated_at) : null,
+    published_at: row.published_at != null ? String(row.published_at) : null,
+    removed_at: row.removed_at != null ? String(row.removed_at) : null,
     roundNames: roundNamesFromRow(row.rounds_data),
+  });
+  if (!projection) return null;
+  return {
+    id: projection.id,
+    company: projection.company,
+    role: projection.role,
+    level: projection.level,
+    difficulty: projection.difficulty,
+    rounds: projection.rounds,
+    avg_rating: projection.avg_rating,
+    price_inr: projection.price_inr,
+    roundNames: projection.roundNames,
+    interview_round: projection.interview_round,
+    skills: projection.skills,
+    content_confirmed_at: projection.content_confirmed_at,
+    updated_at: projection.updated_at,
+    published_at: projection.published_at,
+    stale: projection.stale,
+    last_confirmed_label: projection.last_confirmed_label,
+    stale_label: projection.stale_label,
   };
 }
 
@@ -71,6 +100,7 @@ export async function listPublishedGuidesForPrep(): Promise<PrepPackGuideCandida
     .from("vault_experiences")
     .select(GUIDE_SELECT)
     .eq("status", "published")
+    .is("removed_at", null)
     .order("published_at", { ascending: false })
     .limit(PREP_PACK_GUIDE_FETCH_LIMIT);
 
@@ -79,7 +109,9 @@ export async function listPublishedGuidesForPrep(): Promise<PrepPackGuideCandida
     throw new PrepPackApiError("Could not load interview guides.", 500);
   }
 
-  return (data ?? []).map((row) => mapGuideCandidate(row as Record<string, unknown>));
+  return (data ?? [])
+    .map((row) => mapGuideCandidate(row as Record<string, unknown>))
+    .filter((row): row is PrepPackGuideCandidate => row != null);
 }
 
 export async function buildPrepPackForRequest(input: {
