@@ -147,6 +147,7 @@ describe("P0 Interview Vault entitlement", () => {
     assert.equal(listed.questions_html, "");
     assert.equal(listed.tips_html, "");
     assert.deepEqual(listed.rounds_data, []);
+    assert.deepEqual(listed.evidence_labels, []);
   });
 
   it("10. legitimate verified entitlement can access paid content", () => {

@@ -18,11 +18,22 @@ import {
   type VaultListFilters,
   type VaultReview,
 } from "@/lib/vault";
+import {
+  deriveGuideEvidenceLabels,
+  mapContributorVerificationRow,
+  publicEvidenceLabelsOnly,
+  type ContributorVerificationRecord,
+  type VaultEvidenceLabelPublic,
+} from "@/lib/vault-evidence-labels";
 import { recordEvent } from "@/lib/metrics/record";
 import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
 import { logRouteError } from "@/lib/security/log";
+import { createSupabaseAdminClient } from "@/lib/supabase-admin";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
+
+const VERIFICATION_SELECT =
+  "contributor_id,experience_id,claim_type,status,method,verified_at,expires_at";
 
 export class VaultApiError extends Error {
   constructor(
@@ -54,8 +65,60 @@ async function requireUser() {
   return { user, supabase };
 }
 
-function mapListItem(row: Record<string, unknown>): VaultExperienceListItem {
-  return publicVaultListItem(mapVaultExperienceRow(row));
+async function loadContributorVerifications(
+  contributorIds: string[],
+  experienceIds: string[] = [],
+): Promise<ContributorVerificationRecord[]> {
+  if (contributorIds.length === 0) return [];
+
+  // RLS allows contributors to read only their own rows. Marketplace derivation
+  // needs labels for every published seller, so read status fields via the
+  // service-role client (never returns evidence — none is stored). Absence or
+  // misconfiguration yields empty records → not_independently_verified.
+  const admin = createSupabaseAdminClient();
+  if (!admin) return [];
+
+  const { data, error } = await admin
+    .from("contributor_verifications")
+    .select(VERIFICATION_SELECT)
+    .in("contributor_id", contributorIds);
+
+  if (error) {
+    logRouteError("vault/verifications", error);
+    return [];
+  }
+
+  const rows = (data ?? []).map((row) => mapContributorVerificationRow(row as Record<string, unknown>));
+  if (experienceIds.length === 0) return rows;
+
+  const experienceSet = new Set(experienceIds);
+  return rows.filter(
+    (row) => row.experience_id == null || experienceSet.has(row.experience_id),
+  );
+}
+
+function labelsForGuide(
+  experience: VaultExperience,
+  records: readonly ContributorVerificationRecord[],
+): VaultEvidenceLabelPublic[] {
+  return publicEvidenceLabelsOnly(
+    deriveGuideEvidenceLabels({
+      guide: {
+        id: experience.id,
+        seller_id: experience.seller_id,
+        result: experience.result,
+      },
+      records,
+    }),
+  );
+}
+
+function mapListItem(
+  row: Record<string, unknown>,
+  records: readonly ContributorVerificationRecord[] = [],
+): VaultExperienceListItem {
+  const experience = mapVaultExperienceRow(row);
+  return publicVaultListItem(experience, labelsForGuide(experience, records));
 }
 
 export async function listPublishedExperiences(filters: VaultListFilters = {}): Promise<VaultExperienceListItem[]> {
@@ -89,7 +152,13 @@ export async function listPublishedExperiences(filters: VaultListFilters = {}): 
     throw new VaultApiError("Could not load experiences.", 500);
   }
 
-  let items = (data ?? []).map((row) => mapListItem(row as Record<string, unknown>));
+  const rows = (data ?? []) as Record<string, unknown>[];
+  const experiences = rows.map((row) => mapVaultExperienceRow(row));
+  const contributorIds = [...new Set(experiences.map((e) => e.seller_id))];
+  const experienceIds = experiences.map((e) => e.id);
+  const records = await loadContributorVerifications(contributorIds, experienceIds);
+
+  let items = rows.map((row) => mapListItem(row, records));
 
   if (filters.q?.trim()) {
     const q = filters.q.trim().toLowerCase();
@@ -156,6 +225,7 @@ export type VaultExperienceView = {
   full_content: string;
   unlocked: boolean;
   is_owner: boolean;
+  evidence_labels: VaultEvidenceLabelPublic[];
 };
 
 export async function getExperienceView(id: string): Promise<VaultExperienceView | null> {
@@ -176,12 +246,15 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
     await incrementViewCount(id);
   }
 
+  const records = await loadContributorVerifications([experience.seller_id], [experience.id]);
+  const evidence_labels = labelsForGuide(experience, records);
+
   const rawFull = buildFullContent(experience);
   const preview = buildPreviewContent(rawFull);
   const full_content = unlocked ? rawFull : "";
   const publicExperience = unlocked ? experience : redactVaultExperience(experience);
 
-  return { experience: publicExperience, preview, full_content, unlocked, is_owner };
+  return { experience: publicExperience, preview, full_content, unlocked, is_owner, evidence_labels };
 }
 
 export type VaultPurchaseResult = {
@@ -422,8 +495,15 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
     earningsByExperience.set(p.experience_id, (earningsByExperience.get(p.experience_id) ?? 0) + p.amount_inr);
   }
 
-  const mapped = (experiences ?? []).map((row) => {
-    const item = mapListItem(row as Record<string, unknown>);
+  const sellerRows = (experiences ?? []) as Record<string, unknown>[];
+  const sellerExperiences = sellerRows.map((row) => mapVaultExperienceRow(row));
+  const verificationRecords = await loadContributorVerifications(
+    [userId],
+    sellerExperiences.map((e) => e.id),
+  );
+
+  const mapped = sellerRows.map((row) => {
+    const item = mapListItem(row, verificationRecords);
     return { ...item, earnings_inr: earningsByExperience.get(item.id) ?? 0 };
   });
 
