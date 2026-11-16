@@ -118,6 +118,11 @@ export type VaultReview = {
   rating: number;
   comment: string | null;
   created_at: string;
+  updated_at: string | null;
+  purchase_id: string | null;
+  verified_purchaser: true;
+  is_own: boolean;
+  hidden: boolean;
 };
 
 export type VaultPurchase = {
@@ -263,14 +268,24 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
   };
 }
 
-export function mapVaultReviewRow(row: Record<string, unknown>): VaultReview {
+export function mapVaultReviewRow(
+  row: Record<string, unknown>,
+  options?: { viewerId?: string | null },
+): VaultReview {
+  const userId = String(row.user_id);
+  const hidden = row.hidden_at != null;
   return {
     id: String(row.id),
     experience_id: String(row.experience_id),
-    user_id: String(row.user_id),
+    user_id: userId,
     rating: Number(row.rating),
     comment: row.comment != null ? String(row.comment) : null,
     created_at: String(row.created_at),
+    updated_at: row.updated_at != null ? String(row.updated_at) : null,
+    purchase_id: row.purchase_id != null ? String(row.purchase_id) : null,
+    verified_purchaser: true,
+    is_own: Boolean(options?.viewerId && options.viewerId === userId),
+    hidden,
   };
 }
 

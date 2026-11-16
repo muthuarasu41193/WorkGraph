@@ -75,12 +75,13 @@ export default function VaultReportForm({ experienceId, isLoggedIn }: Props) {
           Report this guide
         </h2>
         <Button type="button" variant="outline" size="sm" onClick={() => setOpen((v) => !v)}>
-          {open ? "Cancel" : "Report this guide"}
+          {open ? "Cancel report" : "Report this guide"}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Signed-in users can report problems. Anonymous reporting is not available so we can limit abuse and keep
-        reports tied to an account.
+        Signed-in users can report inaccessible content, material misrepresentation, outdated information, copied or
+        unauthorized content, or confidential/personal data. Anonymous reporting is not available so we can limit abuse
+        and keep reports tied to an account.
       </p>
       {statusMessage ? (
         <p className="text-sm text-positive" role="status" aria-live="polite">
@@ -116,7 +117,7 @@ export default function VaultReportForm({ experienceId, isLoggedIn }: Props) {
             />
           </div>
           <Button type="button" onClick={() => void submitReport()} disabled={submitting || !reason}>
-            {submitting ? "Submitting…" : "Submit report"}
+            {submitting ? "Submitting report…" : "Submit report"}
           </Button>
         </div>
       ) : null}

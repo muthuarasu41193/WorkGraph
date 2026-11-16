@@ -113,12 +113,8 @@ export default function VaultAdminReportsClient({ initialReports }: Props) {
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              type="button"
-              disabled={pendingId === report.id}
-              onClick={() => void saveStatus(report.id)}
-            >
-              {pendingId === report.id ? "Saving…" : "Update status"}
+            <Button type="button" disabled={pendingId === report.id} onClick={() => void saveStatus(report.id)}>
+              {pendingId === report.id ? "Saving…" : "Update report status"}
             </Button>
           </div>
         </li>
@@ -127,5 +123,4 @@ export default function VaultAdminReportsClient({ initialReports }: Props) {
   );
 }
 
-// Keep the status type exported for future typed clients.
 export type { VaultReportStatus };

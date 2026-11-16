@@ -13,6 +13,9 @@ export const PRODUCT_EVENT_NAMES = [
   "application_added",
   "follow_up_marked",
   "vault_report_submitted",
+  "vault_refund_requested",
+  "vault_review_reported",
+
 ] as const;
 
 export type ProductEventName = (typeof PRODUCT_EVENT_NAMES)[number];

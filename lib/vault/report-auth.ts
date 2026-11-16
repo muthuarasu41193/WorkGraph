@@ -32,3 +32,23 @@ export function authorizeVaultReportStatusUpdate(input: {
   }
   return { allowed: true };
 }
+
+export function authorizeVaultReviewReportSubmit(input: {
+  userId: string | null | undefined;
+}): VaultReportAuthDecision {
+  if (!input.userId) {
+    return { allowed: false, status: 401, error: "Sign in to report a review." };
+  }
+  return { allowed: true };
+}
+
+export function authorizeVaultRefundAdminTransition(input: {
+  actorEmail: string | null | undefined;
+  adminEmailsConfigured: boolean;
+  isAdmin: boolean;
+}): VaultReportAuthDecision {
+  if (!input.adminEmailsConfigured || !input.actorEmail || !input.isAdmin) {
+    return { allowed: false, status: 404, error: "Not found" };
+  }
+  return { allowed: true };
+}

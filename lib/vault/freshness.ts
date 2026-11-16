@@ -1,5 +1,5 @@
 /**
- * Interview Vault freshness helpers.
+ * Interview Vault freshness helpers (Milestone B, reused by V4).
  * Product copy uses "confirmed" / "updated" — never "verified".
  */
 
@@ -56,4 +56,12 @@ export function vaultFreshnessDisplay(input: {
     stale,
     staleLabel: stale ? "May be outdated" : null,
   };
+}
+
+/** Interview date shown as month and year only (never day). */
+export function formatInterviewMonthYear(isoDate: string | null | undefined): string | null {
+  if (!isoDate) return null;
+  const d = new Date(isoDate);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-IN", { year: "numeric", month: "long" });
 }

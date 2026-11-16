@@ -43,10 +43,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json({
       ok: true,
       report,
-      // Purchaser refunds / continued access after removal remain an open decision.
       note:
         parsed.data.status === "removed"
-          ? "Guide removed from Vault browse and prep-pack matches. Purchaser refund policy is undecided."
+          ? "Guide removed from Vault browse and prep-pack matches. Purchaser refunds are handled separately via refund requests (manual until Milestone D)."
           : undefined,
     });
   } catch (err) {

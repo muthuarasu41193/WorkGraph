@@ -41,6 +41,11 @@ export default async function VaultExperiencePage({ params }: PageProps) {
       related={related}
       isLoggedIn={Boolean(user)}
       evidenceLabels={view.evidence_labels}
+      outline={view.outline}
+      freshness={view.freshness}
+      canReview={view.can_review}
+      canRequestRefund={view.can_request_refund}
+      refundWindowDays={view.refund_window_days}
     />
   );
 }
