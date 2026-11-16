@@ -10,7 +10,6 @@ import "./landing.css";
  * Live job index band for the landing redesign.
  * Reuses the marketing home search (`HeroSearch`) and index counts
  * (`getIndexStats`) without copying or altering their logic.
- * Intended placement: between TrustStrip and HowItWorks.
  */
 
 type StatRow = {
@@ -78,9 +77,10 @@ export async function LiveIndex() {
       <div className="wg-landing-live-index__inner">
         <h2 id="live-index-heading" className="wg-landing-live-index__heading">
           Search the live index
+          <span className="wg-accent-dot">.</span>
         </h2>
         <div className="wg-landing-live-index__layout">
-          <div className="wg-landing-live-index__search">
+          <div className="wg-landing-live-index__search wg-landing-live-index__search-panel">
             <HeroSearch />
           </div>
           <IndexStatsCard stats={stats} />
