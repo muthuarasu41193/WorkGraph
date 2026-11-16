@@ -30,8 +30,8 @@ Do not add or wire FastAPI, Ollama, MinIO, Typesense, BullMQ, SuperTokens, a sep
 | Hidden Jobs | Live discovery: `/profile?view=job-discovery`, `/api/hidden-jobs`. Dismissed catalog rows: `/profile?view=hidden-jobs` (browser storage, not the live feed) | `lib/hidden-opportunities/`, `lib/hidden-jobs-storage.ts`, `lib/dismissed-jobs.ts` | `hidden_job_analytics`, `hidden_job_saves`. Dismissed catalog ids are not a table |
 | WorkGraph Direct | `/profile?view=workgraph-direct`, `/employer/*`, `/company/[slug]`; `/api/hiring-signals`, `/api/employer/*` | `lib/employer/` | `employer_profiles`, `hiring_signals`, `signal_connections` |
 | Cover letters | `/profile?view=cover-letters`; `/api/cover-letters/generate`, `list`, `save`, `[id]` | `lib/cover-letters/service.ts`, `lib/cover-letters/session.ts`, `lib/subscription/entitlements.ts` (`canUse` before Groq) | `cover_letters`, `feature_usage` |
-| Interview Vault | Marketplace: `/interview-vault`, `/interview-vault/[id]`, `/sell`, `/dashboard`; `/api/vault/*`. `/profile?view=vault` is **local prep notes**, not the marketplace | `lib/vault-server.ts`, `lib/vault.ts`, `lib/security/vault-entitlement.ts` | `vault_experiences`, `vault_purchases`, `vault_reviews` |
-| Subscriptions | `/pricing`, homepage pricing block; cover-letter generation enforces the free monthly cap | `lib/subscription/index.ts`, `lib/subscription/entitlements.ts`, `lib/subscription/usage.ts` | `profiles.subscription_tier`, `profiles.subscription_expires_at`, `feature_usage` |
+| Interview Vault | Marketplace: `/interview-vault`, `/interview-vault/[id]`, `/sell`, `/dashboard`; `/api/vault/*`. Paid unlocks use the same Razorpay checkout as Pass (`/api/billing/razorpay/*` with `kind: "vault"`). `/profile?view=vault` is **local prep notes**, not the marketplace | `lib/vault-server.ts`, `lib/vault.ts`, `lib/security/vault-entitlement.ts`, `lib/billing/` | `vault_experiences`, `vault_purchases`, `vault_reviews`, `payments` |
+| Subscriptions | `/pricing`, homepage pricing block; Pass checkout via Razorpay; cover-letter generation enforces the free monthly cap | `lib/subscription/index.ts`, `lib/subscription/entitlements.ts`, `lib/subscription/usage.ts`, `lib/billing/` | `profiles.subscription_tier`, `profiles.subscription_expires_at`, `feature_usage`, `payments` |
 | Consent | Cookie banner; `POST /api/consent` | `lib/consent.ts`, `lib/consent-log.ts`, `lib/consent-log-server.ts` | `consent_log` (service role insert) |
 | Legal | `/legal/privacy`, `/terms`, `/cookies`, `/acceptable-use`, `/dpa` | `lib/legal.ts` | none (`testimonials` is marketing copy, not a legal store) |
 | Account export and deletion | Settings → Your data; `GET /api/account/export`; `POST /api/account/delete` | `lib/account/` | Every table in `lib/account/data-map.ts`. Storage `resumes` and `avatars` |
@@ -76,7 +76,7 @@ Service role bypasses all of these policies. “Own” means `auth.uid()` matche
 | `workgraph_embeddings` | 256-d hash vectors and content hashes. Not raw resume text | Resume-derived for user-owned rows | SELECT if `owner_user_id` is null or own. INSERT, UPDATE, DELETE only as owner (cannot insert a null owner) |
 | `cover_letters` | Saved letter, job title, company, job description | **Yes** | SELECT, INSERT, DELETE own. No UPDATE |
 | `feature_usage` | One row per cover letter, tailoring, Talent Intelligence, or ATS use. The service role inserts it after the session user is authenticated. The client never supplies `user_id` | User id and feature name | RLS on. SELECT own (`auth.uid() = user_id`). No INSERT, UPDATE, or DELETE policy for `authenticated`. **Prompt 4:** included in account delete and export in `lib/account/` |
-| `payments` | WorkGraph Pass charges. No card or UPI data. `user_id` is set null on account deletion | User id and payment ids | RLS on. SELECT own. No client write policy. Export the row. Keep it for tax and accounting |
+| `payments` | WorkGraph Pass and Interview Vault charges (`plan_id` is a pass id or `vault:<experienceId>`). No card or UPI data. `user_id` is set null on account deletion | User id and payment ids | RLS on. SELECT own. No client write policy. Export the row. Keep it for tax and accounting |
 | `testimonials` | Consented marketing quotes | Author name and title | SELECT for anon and authenticated where `consent_given_at` is not null. No client write policy |
 | `consent_log` | Consent categories, anonymous id, optional user id, ISO country. No full IP | Quasi-identifier | RLS on. `REVOKE ALL` from `anon` and `authenticated`. No policies. Service role only |
 
@@ -105,15 +105,15 @@ Node `>=20.16.0`. CI (`.github/workflows/verify-build.yml`) runs config check, t
 
 ## 7. Known gaps (checked in code)
 
-- There is still no checkout. `/pricing` displays `LIMITS` and does not sell a plan. An operator sets `subscription_tier` with the service role (see migration `20261024183000_subscription_guard_and_usage.sql`).
+- WorkGraph Pass and Interview Vault paid unlocks use Razorpay (`lib/billing/`, `/api/billing/razorpay/order|verify|webhook`). Order amounts are server-side only (Pass catalog or `vault_experiences.price_inr`). Vault content unlocks only when `vault_purchases.payment_status = 'verified'`. Seller “Sales” on the dashboard sums verified `amount_inr`; payouts are manual (no Razorpay Route).
+- An operator can still set `subscription_tier` with the service role (see migration `20261024183000_subscription_guard_and_usage.sql`).
 - **Prompt 4:** `public.feature_usage` is included in account delete and export in `lib/account/`. Rows are the session user's feature name and timestamp.
 - `lib/cover-letters/service.ts` asks Groq for a “compelling” letter and has **no** anti-invention instruction. Parse and Talent Intelligence prompts do.
 - Account export is `GET /api/account/export`. Account deletion is `POST /api/account/delete` with the confirmation `DELETE`, then sign-out and `/?accountDeleted=1`. Settings → Your data starts both. Downloads are limited to 5 per hour per account.
 - `lib/saved-searches.ts` is `localStorage` key `wg-saved-searches` only. Settings states that match, hidden-job, and application alerts are not stored and are not sent.
 - `jobCardView()` in `lib/job-feed.ts` always returns `salary: { kind: "undisclosed" }`. `public.jobs` has no salary column, so this is not hiding a stored figure.
 - Freshness thresholds differ. `lib/job-feed.ts` `STALE_AFTER_DAYS` is **60** (`days >= 60`). `lib/job-match.ts` uses a private `STALE_AFTER_DAYS` of **30** (`ageDays > 30`). `lib/job-freshness.ts` has **no** `STALE_AFTER_DAYS` constant; `formatJobFreshness` says “may no longer be open” when `days > 30`.
-- Paid Interview Vault unlock records `payment_status = 'pending'` and returns **402**. No payment provider is called. `price_inr <= 0` unlocks without payment.
-- `components/marketing/PricingTiers.tsx`, `lib/legal.ts`, and `app/legal/terms/page.tsx` name Stripe. Vault prices are `price_inr` (rupee symbol in the vault UI). There is no Stripe package and no checkout. Pricing cards say “No public price.”
+- Free Interview Vault listings (`price_inr <= 0`) unlock without payment. Paid listings create a pending `vault_purchases` intent and open Razorpay; pending never unlocks content.
 
 ## 8. Rules for future changes
 

@@ -179,6 +179,23 @@ describe("grantPass", () => {
   });
 });
 
+function unusedVaultOrderDeps() {
+  return {
+    loadVaultListing: async () => {
+      throw new Error("vault listing should not be loaded for pass orders");
+    },
+    loadVaultPurchase: async () => {
+      throw new Error("vault purchase should not be loaded for pass orders");
+    },
+    ensurePendingVaultPurchase: async () => {
+      throw new Error("vault purchase should not be created for pass orders");
+    },
+    attachVaultOrderReference: async () => {
+      throw new Error("vault reference should not be attached for pass orders");
+    },
+  };
+}
+
 describe("billing routes", () => {
   it("returns 401 for an unauthenticated order and does not create one", async () => {
     let called = false;
@@ -192,6 +209,7 @@ describe("billing routes", () => {
       insertPayment: async () => {
         called = true;
       },
+      ...unusedVaultOrderDeps(),
     });
     assert.equal(response.status, 401);
     assert.equal(called, false);
@@ -217,6 +235,7 @@ describe("billing routes", () => {
           assert.equal(row.userId, USER);
           assert.equal(row.planId, "pass_90");
         },
+        ...unusedVaultOrderDeps(),
       },
     );
     assert.equal(response.status, 200);
@@ -242,6 +261,7 @@ describe("billing routes", () => {
       insertPayment: async () => {
         called = true;
       },
+      ...unusedVaultOrderDeps(),
     });
     assert.equal(response.status, 400);
     assert.equal(called, false);

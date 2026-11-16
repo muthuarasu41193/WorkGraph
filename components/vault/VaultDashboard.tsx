@@ -103,6 +103,9 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
           <p className="mt-1 text-sm text-muted-foreground">
             Earnings from verified purchases only. Amounts below are estimates in US dollars.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Buyer unlocks use Razorpay. Contributor payouts are handled manually by WorkGraph when enabled.
+          </p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/interview-vault/sell">Create new experience</Link>
