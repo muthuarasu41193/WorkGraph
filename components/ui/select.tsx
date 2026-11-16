@@ -47,7 +47,7 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         formSelectTriggerClasses,
-        "w-fit select-none data-[size=default]:h-auto data-[size=sm]:h-8 data-[size=sm]:px-3 data-[size=sm]:py-1.5 data-[size=sm]:text-xs",
+        "w-fit select-none data-[size=default]:h-auto data-[size=sm]:h-8 data-[size=sm]:px-3 data-[size=sm]:py-1.5 data-[size=sm]:text-role-caption",
         "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5",
         WG_ICON.childInline,
         className
@@ -102,7 +102,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn("px-1.5 py-1 text-xs text-muted-foreground", className)}
+      className={cn("px-1.5 py-1 text-role-caption text-muted-foreground", className)}
       {...props}
     />
   )
@@ -117,7 +117,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-2 pr-8 pl-2 text-sm outline-hidden select-none transition-colors duration-base ease-standard focus:bg-[var(--wg-bg-secondary)] focus:text-[var(--wg-text-primary)] not-data-[variant=destructive]:focus:**:text-[var(--wg-text-primary)] data-disabled:pointer-events-none data-disabled:opacity-50 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-2 pr-8 pl-2 text-role-body outline-hidden select-none transition-colors duration-base ease-standard focus:bg-[var(--wg-bg-secondary)] focus:text-[var(--wg-text-primary)] not-data-[variant=destructive]:focus:**:text-[var(--wg-text-primary)] data-disabled:pointer-events-none data-disabled:opacity-50 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         WG_ICON.childInline,
         className
       )}

@@ -23,6 +23,7 @@ const ERROR_CODES = new Set([
   "account_storage_failed",
   "account_auth_delete_failed",
   "account_unconfigured",
+  "metrics_record_failed",
 ]);
 
 /**

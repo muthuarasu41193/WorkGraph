@@ -31,29 +31,24 @@ export default function InsightCard({
 
   const content = (
     <>
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-y-2 left-0 w-[2px] rounded-full bg-gradient-to-b from-danger to-danger"
-      />
-
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-danger-wash text-danger">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-sunken text-ink-muted">
         <Icon className={iconClass("standalone")} />
       </span>
 
       <div className="mt-2 space-y-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-role-body-small font-semibold tracking-tight text-ink">{title}</h3>
+          <h3 className="text-role-card-title text-ink">{title}</h3>
           {badge ? (
-            <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-role-caption font-medium text-ink-muted">
+            <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-role-caption text-ink-muted">
               {badge}
             </span>
           ) : null}
         </div>
-        <p className="text-role-caption leading-snug text-ink-subtle">{description}</p>
+        <p className="text-role-caption text-ink-subtle">{description}</p>
       </div>
 
       {score !== undefined ? (
-        <p className="mt-2 text-xl font-semibold tabular-nums leading-none tracking-tight text-ink">{score}</p>
+        <p className="mt-2 text-role-subheading tabular-nums text-ink">{score}</p>
       ) : null}
 
       {action ? <div className="mt-3">{action}</div> : null}
@@ -61,10 +56,9 @@ export default function InsightCard({
   );
 
   const classes = cn(
-    "relative flex flex-col overflow-hidden rounded-[10px] border border-hairline bg-surface-raised p-4 shadow-none",
-    "transition-[border-color,box-shadow] duration-base",
-    "hover:border-hairline hover:shadow-sm",
-    actionable && "cursor-pointer no-underline",
+    "relative flex flex-col gap-[var(--layout-stack-tight)] overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface-raised p-[var(--layout-card-pad-mobile)] shadow-none md:p-[var(--layout-card-pad)]",
+    "transition-colors duration-base",
+    actionable && "cursor-pointer no-underline hover:border-border-strong",
     className,
   );
 

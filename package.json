@@ -14,7 +14,7 @@
     "verify:prepush": "node scripts/pre-push-verify.mjs",
     "verify:deploy": "npm run verify:vercel-config && npm run typecheck && npm run build",
     "prepare": "node scripts/setup-githooks.mjs",
-    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts lib/talent-intelligence/__tests__/*.test.ts lib/__tests__/*.test.ts lib/validation/__tests__/*.test.ts lib/resume-intelligence/__tests__/*.test.ts lib/embeddings/__tests__/*.test.ts lib/security/__tests__/*.test.ts lib/cover-letters/__tests__/*.test.ts lib/subscription/__tests__/*.test.ts lib/billing/__tests__/*.test.ts lib/account/__tests__/*.test.ts lib/alerts/__tests__/*.test.ts lib/tailoring/__tests__/*.test.ts"
+    "test": "node --import tsx --test lib/hidden-opportunities/__tests__/*.test.ts lib/talent-intelligence/__tests__/*.test.ts lib/__tests__/*.test.ts lib/validation/__tests__/*.test.ts lib/resume-intelligence/__tests__/*.test.ts lib/embeddings/__tests__/*.test.ts lib/security/__tests__/*.test.ts lib/cover-letters/__tests__/*.test.ts lib/subscription/__tests__/*.test.ts lib/billing/__tests__/*.test.ts lib/account/__tests__/*.test.ts lib/alerts/__tests__/*.test.ts lib/tailoring/__tests__/*.test.ts lib/metrics/__tests__/*.test.ts lib/prep-pack/__tests__/*.test.ts lib/vault/__tests__/*.test.ts"
   },
   "repository": {
     "type": "git",
@@ -29,11 +29,12 @@
   },
   "homepage": "https://github.com/muthuarasu41193/WorkGraph#readme",
   "engines": {
-    "node": ">=20.16.0"
+    "node": "22.x"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "@icons-pack/react-simple-icons": "^13.15.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@supabase/ssr": "^0.10.2",

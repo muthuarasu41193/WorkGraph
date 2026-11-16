@@ -35,7 +35,7 @@ export default function JobNewsSection() {
   return (
     <section className="space-y-3" aria-labelledby="job-news-heading">
       <header>
-        <h1 id="job-news-heading" className="text-xl font-semibold tracking-tight text-fg-primary">Job News</h1>
+        <h1 id="job-news-heading" className="text-role-title">Job News</h1>
         <p className="mt-0.5 text-role-caption text-fg-secondary">
           Hiring posts and community listings from social platforms — filtered by source.
         </p>
@@ -90,7 +90,7 @@ export default function JobNewsSection() {
                     ) : null}
                     <span className="text-role-caption text-fg-secondary">{post.postedAgo}</span>
                   </div>
-                  <h2 className="mt-0.5 text-role-body-small font-semibold leading-snug tracking-tight text-fg-primary">
+                  <h2 className="mt-0.5 text-role-card-title">
                     {post.title}
                   </h2>
                   <p className="truncate text-role-caption text-fg-secondary">
@@ -101,7 +101,7 @@ export default function JobNewsSection() {
                   ) : null}
                 </div>
                 {post.applyUrl ? (
-                  <Button asChild size="sm" variant="outline" className="mt-0.5 h-7 shrink-0 px-2.5 text-role-caption">
+                  <Button asChild size="sm" variant="outline" className="mt-0.5 h-7 shrink-0 px-2.5 text-role-button">
                     <a href={post.applyUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className={iconClass()} />
                       Open post

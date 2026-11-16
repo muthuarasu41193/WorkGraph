@@ -1,16 +1,16 @@
 /* WorkGraph dashboard — premium career intelligence shell */
 .wg-dash-root {
-  --dash-radius: 10px;
-  --dash-radius-lg: 12px;
+  --dash-radius: var(--radius-card);
+  --dash-radius-lg: var(--radius-card);
   --dash-topnav-h: 52px;
   --dash-sidebar-w: 232px;
   --dash-sidebar-collapsed-w: 64px;
-  --dash-content-max: 1280px;
+  --dash-content-max: var(--layout-page-max);
   --dash-page-bg: var(--wg-bg-secondary);
   --dash-surface: var(--wg-bg);
   --dash-accent: var(--wg-primary);
   --dash-accent-soft: color-mix(in srgb, var(--wg-primary) 8%, var(--wg-bg));
-  --dash-border: var(--wg-border);
+  --dash-border: var(--hairline);
   --dash-text: var(--wg-text-primary);
   --dash-text-secondary: var(--wg-text-muted);
   height: 100dvh;
@@ -78,19 +78,24 @@
 }
 
 .wg-dash-section-card {
-  border-radius: 10px;
-  background: var(--wg-bg);
-  border: 1px solid var(--wg-border);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
   box-shadow: none;
+  padding: var(--layout-card-pad-mobile);
   transition:
-    box-shadow var(--wg-duration) var(--wg-ease),
-    border-color var(--wg-duration) var(--wg-ease),
-    background-color var(--wg-duration) var(--wg-ease);
+    border-color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .wg-dash-section-card {
+    padding: var(--layout-card-pad);
+  }
 }
 
 .wg-dash-section-card:hover {
-  border-color: var(--wg-border-hover);
-  box-shadow: var(--wg-shadow-sm);
+  border-color: var(--hairline);
 }
 
 .wg-dash-card-lift:hover {

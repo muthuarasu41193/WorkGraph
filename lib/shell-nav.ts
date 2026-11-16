@@ -15,7 +15,7 @@ export type ShellDest = {
 export const SHELL_DESTINATIONS: ShellDest[] = [
   { href: "/jobs", label: messages.shellJobs, short: messages.shellJobs, tab: true },
   { href: "/tracker", label: messages.shellTracker, short: messages.shellTracker, tab: true },
-  { href: "/interview-vault", label: messages.shellPrep, short: messages.shellPrep, tab: true },
+  { href: "/prep-pack", label: messages.shellPrep, short: messages.shellPrep, tab: true },
   { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: true },
   { href: "/profile", label: messages.shellProfile, short: messages.shellProfile, tab: true },
   { href: "/alerts", label: "Alerts", short: "Alerts", tab: false },

@@ -44,6 +44,10 @@ export default async function JobDetailPage({ params }: { params: Promise<Params
     )
   }
   const user = await getSessionUser()
+  if (user) {
+    const { recordEvent } = await import("@/lib/metrics/record")
+    await recordEvent("match_viewed", user.id)
+  }
   const profile = user ? await loadUserProfile(user.id) : null
   const skills = profile?.skills ?? []
   const job = attachMissingSkills(

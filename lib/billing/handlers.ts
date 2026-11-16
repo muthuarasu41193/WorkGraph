@@ -8,6 +8,8 @@ import {
   razorpayVerifyBodySchema,
 } from "@/lib/validation/billing";
 
+import { recordEvent } from "@/lib/metrics/record";
+
 import { BillingError, isBillingError } from "./errors";
 import type { GrantResult } from "./grant";
 import type { VaultGrantResult } from "./grant-vault";

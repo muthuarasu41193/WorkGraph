@@ -23,6 +23,8 @@ function sampleExperience(overrides: Partial<VaultExperience> = {}): VaultExperi
     company: "Acme",
     role: "Engineer",
     level: "L4",
+    interview_round: "Phone",
+    skills: [],
     difficulty: "medium",
     rounds: 3,
     result: "offer",
@@ -39,6 +41,10 @@ function sampleExperience(overrides: Partial<VaultExperience> = {}): VaultExperi
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
     published_at: "2026-01-01T00:00:00.000Z",
+    content_confirmed_at: "2026-01-01T00:00:00.000Z",
+    attestation_accepted_at: null,
+    attestation_version: null,
+    removed_at: null,
     ...overrides,
   };
 }
@@ -147,6 +153,7 @@ describe("P0 Interview Vault entitlement", () => {
     assert.equal(listed.questions_html, "");
     assert.equal(listed.tips_html, "");
     assert.deepEqual(listed.rounds_data, []);
+    assert.deepEqual(listed.evidence_labels, []);
   });
 
   it("10. legitimate verified entitlement can access paid content", () => {

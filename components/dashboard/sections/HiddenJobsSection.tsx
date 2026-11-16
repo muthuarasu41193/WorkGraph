@@ -34,7 +34,7 @@ export default function HiddenJobsSection() {
   return (
     <section className="space-y-3" aria-labelledby="hidden-jobs-heading">
       <header>
-        <h1 id="hidden-jobs-heading" className="text-xl font-semibold tracking-tight text-fg-primary">
+        <h1 id="hidden-jobs-heading" className="text-role-title">
           Hidden Jobs
         </h1>
         <p className="mt-0.5 text-role-caption text-fg-secondary">
@@ -60,7 +60,7 @@ export default function HiddenJobsSection() {
               <div className="flex flex-col gap-2 px-3.5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <h2 className="text-role-body-small font-semibold tracking-tight text-fg-primary">{job.title}</h2>
+                      <h2 className="text-role-card-title">{job.title}</h2>
                       <Badge variant="outline" className="h-5 px-1.5 text-role-caption">{job.source}</Badge>
                     </div>
                     <p className="text-role-caption text-fg-secondary">

@@ -118,7 +118,7 @@ export default function SidebarBottom({
         {profile.photo_url ? (
           <AvatarImage src={profile.photo_url} alt={displayName} />
         ) : null}
-        <AvatarFallback className="bg-surface-sunken text-xs font-medium text-ink">
+        <AvatarFallback className="bg-surface-sunken text-role-caption text-ink">
           {getInitials(profile.full_name)}
         </AvatarFallback>
       </Avatar>

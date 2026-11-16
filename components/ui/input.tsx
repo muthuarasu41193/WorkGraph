@@ -21,7 +21,7 @@ const Input = React.forwardRef<
       aria-busy={loading || preview === "loading" ? true : undefined}
       className={cn(
         formFieldClasses,
-        "h-auto file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-ink-muted",
+        "h-auto file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-role-body file:font-medium file:text-ink-muted",
         (error || preview === "error") && "border-danger bg-danger-wash",
         (loading || preview === "loading") && "cursor-progress opacity-70",
         (readOnly || preview === "readonly") && "border-dashed bg-surface-sunken",

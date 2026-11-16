@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth/session-server";
 import { resolvePreferredCurrency } from "@/lib/currency";
 import { loadWalletSnapshot } from "@/lib/home-dashboard";
 import { loadUserProfile } from "@/lib/load-profile";
+import { emptyVaultEarningsDashboard } from "@/lib/vault/earnings";
 import { getSellerDashboard } from "@/lib/vault-server";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
 
@@ -33,13 +34,7 @@ export default async function VaultDashboardPage() {
   try {
     dashboard = await getSellerDashboard(user.id);
   } catch {
-    dashboard = {
-      total_earnings_inr: 0,
-      total_views: 0,
-      total_sales: 0,
-      experiences: [],
-      sales_by_day: [],
-    };
+    dashboard = emptyVaultEarningsDashboard();
   }
 
   return <VaultDashboard dashboard={dashboard} currency={displayCurrency} />;

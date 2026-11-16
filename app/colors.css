@@ -69,6 +69,9 @@
   --wg-info-100: var(--accent-wash);
   --wg-info-foreground: var(--accent);
   --wg-accent-blue: var(--accent);
+  --wg-highlight: var(--highlight);
+  --wg-highlight-ink: var(--highlight-ink);
+  --wg-highlight-wash: var(--highlight-wash);
   --wg-error: var(--danger);
   --wg-error-50: var(--danger-wash);
   --wg-error-100: var(--danger-wash);

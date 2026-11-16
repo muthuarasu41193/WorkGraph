@@ -26,6 +26,7 @@ import { DASHBOARD_MQ } from "@/lib/dashboard-responsive";
 import { useEffect, useState } from "react";
 import { WorkGraphLogo } from "@/components/brand/WorkGraphLogo";
 import { dashboardHref } from "@/lib/dashboard-routes";
+import { toSentenceCase } from "@/lib/sentence-case";
 
 const ICON_BTN =
   "size-9 rounded-lg border-transparent enabled:hover:scale-100";
@@ -157,7 +158,7 @@ export default function TopNav() {
                     {profile.photo_url ? (
                       <AvatarImage src={profile.photo_url} alt={profile.full_name || "Account"} />
                     ) : null}
-                    <AvatarFallback className="bg-danger-wash text-xs font-semibold text-danger">
+                    <AvatarFallback className="bg-danger-wash text-role-caption font-semibold text-danger">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -169,8 +170,8 @@ export default function TopNav() {
                 className="w-56 duration-base data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100"
               >
                 <DropdownMenuLabel>
-                  <p className="font-medium">{profile.full_name || "Your account"}</p>
-                  <p className="text-xs font-normal text-muted-foreground">
+                  <p className="text-role-body font-medium text-ink">{toSentenceCase(profile.full_name || "") || "Your account"}</p>
+                  <p className="text-role-caption text-ink-muted">
                     {profile.headline || "AI Career Intelligence"}
                   </p>
                 </DropdownMenuLabel>

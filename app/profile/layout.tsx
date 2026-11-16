@@ -54,6 +54,7 @@ export default async function ProfileLayout({ children }: { children: React.Reac
       recommendedJobs={jobDashboard.recommended}
       semanticJobMatches={semanticJobMatches}
       jobPipeline={jobDashboard.pipeline}
+      matchedListings={jobDashboard.matchedListings}
       feedKind={jobDashboard.feedKind}
     />
   );

@@ -12,7 +12,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const allow = new Set(["app/tokens.css", "lib/design-tokens.ts"]);
+const allow = new Set([
+  "app/tokens.css",
+  "lib/design-tokens.ts",
+  // Isolated landing redesign palette (scoped under .wg-landing only).
+  "src/components/landing/landing.css",
+]);
 const skipDirs = new Set([
   "node_modules",
   ".next",
