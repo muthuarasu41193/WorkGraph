@@ -12,7 +12,12 @@ import {
   alertUpdateSchema,
   withAlertCreateDefaults,
 } from "../../validation/alerts.ts";
-import { AlertsApiError, assertAlertFrequencyAllowed, normalizeAlertQuery } from "../server.ts";
+import {
+  AlertsApiError,
+  assertAlertFrequencyAllowed,
+  normalizeAlertQuery,
+  rejectIfAlertLimitReached,
+} from "../server.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -38,6 +43,21 @@ describe("alert validation", () => {
   it("caps name and query length", () => {
     assert.equal(alertCreateSchema.safeParse({ name: "x".repeat(81), query: "" }).success, false);
     assert.equal(alertCreateSchema.safeParse({ name: "ok", query: "q=".padEnd(501, "a") }).success, false);
+  });
+});
+
+describe("max 10 alerts per user", () => {
+  it("rejects when the user already has 10 alerts", () => {
+    assert.doesNotThrow(() => rejectIfAlertLimitReached(0));
+    assert.doesNotThrow(() => rejectIfAlertLimitReached(9));
+    assert.throws(
+      () => rejectIfAlertLimitReached(10),
+      (err: unknown) => err instanceof AlertsApiError && err.status === 400,
+    );
+    assert.throws(
+      () => rejectIfAlertLimitReached(11),
+      (err: unknown) => err instanceof AlertsApiError && err.status === 400,
+    );
   });
 });
 
@@ -74,6 +94,7 @@ describe("alert API stays session scoped", () => {
     const item = readFileSync(join(root, "app/api/alerts/[id]/route.ts"), "utf8");
     assert.match(server, /getSessionUser/);
     assert.match(server, /\.eq\("user_id", user\.id\)/);
+    assert.match(server, /rejectIfAlertLimitReached/);
     assert.match(server, /ALERT_MAX_PER_USER/);
     assert.match(server, /assertAlertFrequencyAllowed/);
     assert.match(server, /frequency !== "daily"/);
