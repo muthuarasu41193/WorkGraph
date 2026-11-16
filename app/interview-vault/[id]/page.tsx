@@ -40,6 +40,7 @@ export default async function VaultExperiencePage({ params }: PageProps) {
       initialReviews={reviews}
       related={related}
       isLoggedIn={Boolean(user)}
+      evidenceLabels={view.evidence_labels}
     />
   );
 }

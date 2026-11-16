@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { VaultEvidenceLabelsExplainer } from "@/components/vault/VaultEvidenceLabels";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -107,12 +108,14 @@ export default function VaultMarketplace({ initialExperiences, loadError = null 
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Interview Vault</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Real interview experiences from candidates who got the offer — preview free, unlock the full playbook.
-          Match quality is an estimate, not a hiring probability.
+          Real interview experiences from candidates — preview free, unlock the full playbook.
+          Evidence labels describe limited checks when available; they do not guarantee accuracy or
+          outcomes. Match quality is an estimate, not a hiring probability.
         </p>
+        <VaultEvidenceLabelsExplainer />
       </header>
 
       {loadError ? (

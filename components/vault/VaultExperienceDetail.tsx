@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import { VaultEvidenceLabelChips } from "@/components/vault/VaultEvidenceLabels";
 import VaultFreshness from "@/components/vault/VaultFreshness";
 import VaultReportForm from "@/components/vault/VaultReportForm";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ import {
   type VaultExperienceListItem,
   type VaultReview,
 } from "@/lib/vault";
+import type { VaultEvidenceLabelPublic } from "@/lib/vault-evidence-labels";
 import { vaultFreshnessDisplay } from "@/lib/vault/freshness";
 
 type Props = {
@@ -31,6 +33,7 @@ type Props = {
   initialReviews: VaultReview[];
   related: VaultExperienceListItem[];
   isLoggedIn: boolean;
+  evidenceLabels: VaultEvidenceLabelPublic[];
 };
 
 function StarRating({ value, onChange }: { value: number; onChange?: (v: number) => void }) {
@@ -63,6 +66,7 @@ export default function VaultExperienceDetail({
   initialReviews,
   related,
   isLoggedIn,
+  evidenceLabels,
 }: Props) {
   const [unlocked, setUnlocked] = useState(initialUnlocked);
   const [purchasing, setPurchasing] = useState(false);
@@ -162,6 +166,7 @@ export default function VaultExperienceDetail({
             </Badge>
           ))}
         </div>
+        <VaultEvidenceLabelChips labels={evidenceLabels} />
         <VaultFreshness
           lastConfirmedLabel={freshness.lastConfirmedLabel ?? "Confirmation date not available"}
           stale={freshness.stale}

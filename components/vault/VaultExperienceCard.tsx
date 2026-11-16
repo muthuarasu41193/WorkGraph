@@ -6,6 +6,7 @@ import { iconClass } from "@/lib/icon-styles";
 import VaultFreshness from "@/components/vault/VaultFreshness";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { VaultEvidenceLabelChips } from "@/components/vault/VaultEvidenceLabels";
 import {
   VAULT_DIFFICULTY_LABELS,
   VAULT_RESULT_LABELS,
@@ -21,6 +22,7 @@ type Props = {
 export default function VaultExperienceCard({ experience, className }: Props) {
   const preview = experience.preview;
   const rating = experience.avg_rating;
+  const evidenceLabels = experience.evidence_labels ?? [];
 
   return (
     <Link href={`/interview-vault/${experience.id}`} className={cn("group block", className)}>
@@ -58,6 +60,12 @@ export default function VaultExperienceCard({ experience, className }: Props) {
               </Badge>
             ))}
           </div>
+
+          {evidenceLabels.length > 0 ? (
+            <div className="mt-2">
+              <VaultEvidenceLabelChips labels={evidenceLabels} showExplainer={false} />
+            </div>
+          ) : null}
 
           {preview ? (
             <p className="mt-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{preview}</p>
