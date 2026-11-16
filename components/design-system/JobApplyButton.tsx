@@ -2,6 +2,7 @@
 
 import { ExternalLink } from "lucide-react";
 import type { JobFeedSource } from "@/lib/job-dashboard";
+import { ApplySafetyNotice } from "@/components/trust/ApplySafetyNotice";
 import { trackEvent } from "@/lib/analytics";
 import { getApplyLabel } from "@/lib/job-apply";
 import { useApplyFollowupStore } from "@/stores/apply-followup-store";
@@ -59,13 +60,16 @@ export default function JobApplyButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className={cn("apply-btn wg-touch-target active:scale-[0.98]", className)}
-    >
-      <span>{label}</span>
-      <ExternalLink className="ml-1.5 size-3.5 shrink-0" aria-hidden />
-    </button>
+    <div className="flex flex-col gap-1">
+      <button
+        type="button"
+        onClick={handleClick}
+        className={cn("apply-btn wg-touch-target active:scale-[0.98] motion-reduce:active:scale-100", className)}
+      >
+        <span>{label}</span>
+        <ExternalLink className="ms-1.5 size-3.5 shrink-0" aria-hidden />
+      </button>
+      <ApplySafetyNotice />
+    </div>
   );
 }

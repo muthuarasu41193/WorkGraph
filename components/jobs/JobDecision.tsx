@@ -15,6 +15,9 @@ import type { RecommendedJobCard } from "@/lib/job-dashboard"
 import { jobCardView } from "@/lib/job-feed"
 import { AIProvenance } from "@/components/product/AIProvenance"
 import { JobTailoringPanel } from "@/components/jobs/JobTailoringPanel"
+import { ApplySafetyNotice } from "@/components/trust/ApplySafetyNotice"
+import { EmployerMark } from "@/components/trust/EmployerMark"
+import { ReportListingDialog } from "@/components/trust/ReportListingDialog"
 import { buildJobSummary, jobSummaryLabel, sanitizeJobDescription } from "@/lib/job-summary"
 import { toggleSavedJobId } from "@/lib/saved-jobs-storage"
 import { cn } from "@/lib/utils"
@@ -151,12 +154,12 @@ export function JobDecision({
       ) : null}
       <header className="space-y-2">
         <Text as="h2" role="heading">{job.title}</Text>
-        <Text role="body">{job.company} · Company not verified</Text>
+        <EmployerMark company={job.company} verified={false} />
         <SalaryDisplay salary={view.salary} />
         <Text role="body-small" className="text-ink-muted">{job.location} · {view.remoteType}</Text>
         <FreshnessIndicator {...view.freshness} />
         <MatchScore {...view.match} tailorHref={tailorHref} />
-        <div className="pt-2">
+        <div className="space-y-2 pt-2">
           {view.stale || !job.applyUrl ? (
             <Button type="button" className="min-h-11" disabled>
               {view.stale ? "Apply unavailable — posting may be closed" : "No apply link is stored"}
@@ -164,6 +167,8 @@ export function JobDecision({
           ) : (
             <Button type="button" className="min-h-11" onClick={apply}>{view.applyLabel}</Button>
           )}
+          {job.applyUrl && !view.stale ? <ApplySafetyNotice /> : null}
+          <ReportListingDialog jobId={job.id} jobTitle={job.title} jobCompany={job.company} />
         </div>
       </header>
 
@@ -240,14 +245,17 @@ export function JobDecision({
         <Button type="button" variant="outline" className="min-h-11" disabled={!next} onClick={() => go(next)}>Next</Button>
       </nav>
 
-      <div className={cn("fixed inset-x-0 bottom-16 z-sticky flex items-center gap-2 border-t border-hairline bg-surface-raised px-3 py-2 md:bottom-0", collapsed ? "md:left-16" : "md:left-56")}>
-        {view.stale || !job.applyUrl ? (
-          <Button type="button" className="min-h-11" disabled>Apply unavailable</Button>
-        ) : (
-          <Button type="button" className="min-h-11" onClick={apply}>{view.applyLabel}</Button>
-        )}
-        <Button type="button" variant="outline" className="min-h-11" onClick={save}>{saved ? "Saved" : "Save"}</Button>
-        <Button type="button" variant="outline" className="min-h-11" onClick={() => void share()}>Share</Button>
+      <div className={cn("fixed inset-x-0 bottom-16 z-sticky border-t border-hairline bg-surface-raised px-3 py-2 md:bottom-0", collapsed ? "md:start-16" : "md:start-56")}>
+        <div className="flex flex-wrap items-center gap-2">
+          {view.stale || !job.applyUrl ? (
+            <Button type="button" className="min-h-11" disabled>Apply unavailable</Button>
+          ) : (
+            <Button type="button" className="min-h-11" onClick={apply}>{view.applyLabel}</Button>
+          )}
+          <Button type="button" variant="outline" className="min-h-11" onClick={save}>{saved ? "Saved" : "Save"}</Button>
+          <Button type="button" variant="outline" className="min-h-11" onClick={() => void share()}>Share</Button>
+        </div>
+        {job.applyUrl && !view.stale ? <ApplySafetyNotice className="mt-1" /> : null}
       </div>
 
       {askTrack ? (

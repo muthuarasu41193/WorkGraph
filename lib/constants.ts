@@ -14,7 +14,7 @@ export const NAV_ITEMS = [
   { label: "How it works", href: "/#how-it-works" },
   { label: "Interview Vault", href: "/interview-vault" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 export const NAV_ANNOUNCEMENT = {
@@ -127,9 +127,11 @@ export const FOOTER_LINKS = {
     { label: "Employer signup", href: "/employer/signup" },
   ],
   company: [
-    { label: "Contact", href: "/#contact" },
-    { label: "Privacy Policy", href: "/legal/privacy" },
-    { label: "Terms of Service", href: "/legal/terms" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+    { label: "How we find and check jobs", href: "/how-we-find-jobs" },
+    { label: "Privacy", href: "/legal/privacy" },
+    { label: "Terms", href: "/legal/terms" },
     { label: "Cookie Policy", href: "/legal/cookies" },
     { label: "Acceptable Use", href: "/legal/acceptable-use" },
     { label: "Data Processing Addendum", href: "/legal/dpa" },

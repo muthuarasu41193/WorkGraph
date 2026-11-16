@@ -96,7 +96,9 @@ export function LegalDocument({
         <p className="mt-3 text-sm text-fg-tertiary">
           Version {version}
           <span aria-hidden> · </span>
-          Last updated {lastUpdated}
+          <span className="font-medium text-fg-secondary">
+            Last updated <time dateTime={lastUpdated}>{lastUpdated}</time>
+          </span>
         </p>
       </header>
 

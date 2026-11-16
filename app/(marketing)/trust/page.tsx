@@ -117,7 +117,7 @@ export default function TrustPage() {
         <Text role="body-small">
           The contact form is read by a person. A reply time is not published.
         </Text>
-        <Link href="/#contact" className="inline-flex min-h-11 items-center text-accent">Send feedback</Link>
+        <Link href="/contact" className="inline-flex min-h-11 items-center text-accent">Send feedback</Link>
       </section>
     </main>
   )
