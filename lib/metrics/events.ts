@@ -15,7 +15,13 @@ export const PRODUCT_EVENT_NAMES = [
   "vault_report_submitted",
   "vault_refund_requested",
   "vault_review_reported",
-
+  // Milestone D validation funnel (IDs/categories only — never JD/resume/PII)
+  "prep_pack_started",
+  "prep_pack_completed",
+  "vault_guide_clicked",
+  "vault_return_visit",
+  "vault_guide_freshness",
+  "vault_contributor_earnings",
 ] as const;
 
 export type ProductEventName = (typeof PRODUCT_EVENT_NAMES)[number];

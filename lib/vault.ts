@@ -137,7 +137,17 @@ export type VaultPurchase = {
 };
 
 export type VaultDashboardStats = {
+  /** Gross INR from verified purchases only. */
   total_earnings_inr: number;
+  platform_fee_rate: number;
+  platform_fee_inr: number;
+  net_earnings_inr: number;
+  /** USD display amounts (planning FX from lib/currency). */
+  gross_earnings_usd: number;
+  platform_fee_usd: number;
+  net_earnings_usd: number;
+  fee_rate_percent_label: string;
+  fee_policy_note: string;
   total_views: number;
   total_sales: number;
   experiences: Array<

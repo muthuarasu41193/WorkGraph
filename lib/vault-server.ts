@@ -31,7 +31,12 @@ import {
   type VaultBrowseItem,
 } from "@/lib/vault/filters";
 import { buildVaultGuideOutline, type VaultGuideOutlineSection } from "@/lib/vault/outline";
-import { vaultFreshnessDisplay, type VaultFreshnessDisplay } from "@/lib/vault/freshness";
+import {
+  eventSafeId,
+  vaultFreshnessDisplay,
+  vaultGuideFreshnessBucket,
+  type VaultFreshnessDisplay,
+} from "@/lib/vault/freshness";
 import {
   canTransitionRefundStatus,
   authorizeVaultRefundRequest,
@@ -52,8 +57,13 @@ import {
   type VaultReviewReportReason,
 } from "@/lib/vault/reports";
 import { authorizeVaultReviewWrite, validateVaultReviewInput } from "@/lib/vault/reviews";
+import { computeContributorEarnings } from "@/lib/vault/earnings";
+import {
+  decideVaultEntitlementGrant,
+  isIdempotentVerifiedReplay,
+} from "@/lib/vault/entitlement-grant";
 import { recordEvent } from "@/lib/metrics/record";
-import { hasVaultEntitlement, isVaultListingFree } from "@/lib/security/vault-entitlement";
+import { hasVaultEntitlement } from "@/lib/security/vault-entitlement";
 import { logRouteError } from "@/lib/security/log";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { supabaseConfigured } from "@/lib/supabase-enabled";
@@ -318,7 +328,26 @@ export async function getExperienceView(id: string): Promise<VaultExperienceView
   }
 
   if (experience.status === "published" && !experience.removed_at) {
+    const priorViews = experience.view_count;
     await incrementViewCount(id);
+
+    const guideId = eventSafeId(experience.id);
+    const ageBucket = vaultGuideFreshnessBucket(experience.interview_date);
+    await recordEvent("vault_guide_clicked", user?.id ?? null, {
+      guide_id: guideId,
+      category: "vault_guide",
+    });
+    await recordEvent("vault_guide_freshness", user?.id ?? null, {
+      guide_id: guideId,
+      age_bucket: ageBucket,
+    });
+    // Return visit: authenticated viewer with a prior purchase intent/unlock, or guide already viewed.
+    if (user && (purchase != null || priorViews > 0)) {
+      await recordEvent("vault_return_visit", user.id, {
+        guide_id: guideId,
+        category: "vault_guide",
+      });
+    }
   }
 
   const records = await loadContributorVerifications([experience.seller_id], [experience.id]);
@@ -649,8 +678,21 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
     throw new VaultApiError("You already own this experience", 400);
   }
 
-  if (isVaultListingFree(experience.price_inr)) {
-    await recordEvent("vault_purchased", user.id, { amount_inr: 0, free: true });
+  const existing = await getVaultPurchase(experienceId, user.id);
+
+  // Free listing: grant without a purchase row. Amount is always the server listing price.
+  const freeDecision = decideVaultEntitlementGrant({
+    viewerId: user.id,
+    sellerId: experience.seller_id,
+    listingPriceInr: experience.price_inr,
+    purchase: existing,
+  });
+  if (freeDecision.grant && freeDecision.reason === "free_listing") {
+    await recordEvent("vault_purchased", user.id, {
+      amount_inr: 0,
+      free: true,
+      guide_id: eventSafeId(experienceId),
+    });
     return {
       ok: true,
       unlocked: true,
@@ -660,17 +702,22 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
     };
   }
 
-  const existing = await getVaultPurchase(experienceId, user.id);
-  if (existing?.payment_status === "verified") {
+  if (isIdempotentVerifiedReplay(existing)) {
     throw new VaultApiError("Already purchased", 400);
   }
   if (existing?.payment_status === "pending") {
+    // Replay of unpaid intent — do not grant, do not insert again.
     throw new VaultApiError(
       "Payment verification is required before this content can be unlocked.",
       402,
     );
   }
 
+  // This route never accepts a client confirmation payload. Forged "verified"
+  // claims are rejected by decideVaultEntitlementGrant (covered in unit tests).
+  // Paid unlock requires a future server-verified provider path (not wired).
+
+  // Amount is taken from the published listing on the server, never from the client.
   const { error } = await supabase.from("vault_purchases").insert({
     experience_id: experienceId,
     buyer_id: user.id,
@@ -684,7 +731,7 @@ export async function purchaseExperience(experienceId: string): Promise<VaultPur
   }
 
   throw new VaultApiError(
-    "Payment verification is required before this content can be unlocked.",
+    "Payment verification is required before this content can be unlocked. Paid guide checkout is not enabled yet.",
     402,
   );
 }
@@ -1090,12 +1137,14 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
 
   const experienceIds = (experiences ?? []).map((e) => (e as { id: string }).id);
 
+  // Verified purchases only — pending intents must not inflate earnings or sales.
   let purchases: Array<{ experience_id: string; amount_inr: number; created_at: string }> = [];
   if (experienceIds.length > 0) {
     const { data, error } = await supabase
       .from("vault_purchases")
       .select("experience_id, amount_inr, created_at")
       .in("experience_id", experienceIds)
+      .eq("payment_status", "verified")
       .order("created_at", { ascending: true });
 
     if (error) throw new VaultApiError(error.message, 500);
@@ -1120,6 +1169,7 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
   });
 
   const total_earnings_inr = purchases.reduce((sum, p) => sum + p.amount_inr, 0);
+  const fee = computeContributorEarnings(total_earnings_inr);
   const total_views = mapped.reduce((sum, e) => sum + e.view_count, 0);
   const total_sales = purchases.length;
 
@@ -1137,8 +1187,25 @@ export async function getSellerDashboard(userId: string): Promise<VaultDashboard
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, stats]) => ({ date, ...stats }));
 
+  await recordEvent("vault_contributor_earnings", userId, {
+    category: "vault_earnings",
+    gross_inr: fee.grossInr,
+    fee_inr: fee.feeInr,
+    net_inr: fee.netInr,
+    fee_bps: Math.round(fee.feeRate * 10_000),
+    sales_count: total_sales,
+  });
+
   return {
     total_earnings_inr,
+    platform_fee_rate: fee.feeRate,
+    platform_fee_inr: fee.feeInr,
+    net_earnings_inr: fee.netInr,
+    gross_earnings_usd: fee.grossUsd,
+    platform_fee_usd: fee.feeUsd,
+    net_earnings_usd: fee.netUsd,
+    fee_rate_percent_label: fee.feeRatePercentLabel,
+    fee_policy_note: fee.feePolicyNote,
     total_views,
     total_sales,
     experiences: mapped,
@@ -1193,13 +1260,10 @@ export async function getVaultHomeStats(userId: string): Promise<{
   }
 }
 
-export async function requestVaultWithdrawal(userId: string): Promise<{ ok: true; message: string }> {
-  const dashboard = await getSellerDashboard(userId);
-  if (dashboard.total_earnings_inr < 500) {
-    throw new VaultApiError("Minimum withdrawal is ₹500", 400);
-  }
-  return {
-    ok: true,
-    message: `Withdrawal request for ₹${dashboard.total_earnings_inr.toLocaleString("en-IN")} submitted. Payouts are processed within 5–7 business days.`,
-  };
+export async function requestVaultWithdrawal(_userId: string): Promise<{ ok: true; message: string }> {
+  // Payout provider and fee/payout policy are undecided. Do not persist a fake request.
+  throw new VaultApiError(
+    "Contributor payouts are not available yet. Earnings shown are from verified purchases only. Payout provider and policy are undecided.",
+    503,
+  );
 }
