@@ -9,3 +9,12 @@ export function formatJobFreshness(iso: string | null | undefined, now = Date.no
   if (days > STALE_AFTER_DAYS) return `Posted ${days} days ago, may no longer be open`;
   return `Posted ${days} days ago`;
 }
+
+/** Compact caption for job cards, e.g. "Posted 2d ago". */
+export function formatJobPostedCompact(iso: string | null | undefined, now = Date.now()): string | null {
+  const days = postedAgeDays(iso, now);
+  if (days == null || days < 0) return null;
+  if (days === 0) return "Posted today";
+  if (days === 1) return "Posted 1d ago";
+  return `Posted ${days}d ago`;
+}

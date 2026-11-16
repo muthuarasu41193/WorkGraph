@@ -355,13 +355,9 @@
   color: var(--wg-brand-800);
 }
 
-/* Compact card shell */
+/* Compact card shell — padding comes from the Card primitive (20px) */
 .job-card {
-  background: var(--wg-surface);
-  border: 1px solid var(--wg-border);
-  border-radius: 10px;
   margin: 0;
-  padding: 0.75rem 0.875rem;
   max-width: 100%;
   min-width: 0;
   box-shadow: none;
@@ -394,54 +390,26 @@
   opacity: 1;
 }
 
+.job-card__logo {
+  width: 40px;
+  height: 40px;
+}
+
 .apply-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  padding: 0 12px;
-  background: var(--wg-text-primary);
-  color: var(--wg-text-inverse);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1;
-  border: none;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-base) ease-exit,
-    transform var(--duration-base) ease-exit;
-  text-decoration: none;
   white-space: nowrap;
 }
 
-.apply-btn:hover {
-  background: var(--wg-text-primary-hover);
-}
-
-.apply-btn:active {
-  transform: scale(0.98);
-}
-
-.apply-btn:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px var(--background),
-    0 0 0 4px var(--accent);
-}
-
 @media (max-width: 767px) {
-  .job-card {
-    padding: 0.75rem;
-  }
-
   .job-card__bookmark {
     opacity: 1;
   }
 
-  .apply-btn {
-    width: 100%;
-    height: 40px;
+  .job-card__aside {
+    max-width: 46%;
+  }
+
+  .job-card__actions .apply-btn {
+    width: auto;
   }
 
   .view-toggle__btn,
