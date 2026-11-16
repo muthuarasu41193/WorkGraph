@@ -43,6 +43,12 @@ function samplePack(status: PrepPackResult["status"] = "ok"): PrepPackResult {
               href: `/interview-vault/${GUIDE_ID}`,
               why: ["Role match: Frontend engineer"],
               score: 18,
+              interview_round: "Phone screen",
+              skills: ["React"],
+              content_confirmed_at: "2026-06-01T00:00:00.000Z",
+              last_confirmed_label: "Last confirmed 1 Jun 2026",
+              stale: false,
+              stale_label: null,
             },
           ]
         : [],

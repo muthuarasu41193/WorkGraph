@@ -12,6 +12,7 @@ export const PRODUCT_EVENT_NAMES = [
   "digest_unsubscribed",
   "application_added",
   "follow_up_marked",
+  "vault_report_submitted",
 ] as const;
 
 export type ProductEventName = (typeof PRODUCT_EVENT_NAMES)[number];

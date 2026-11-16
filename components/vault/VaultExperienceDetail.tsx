@@ -5,10 +5,11 @@ import Link from "next/link";
 import { Lock, Star, Unlock } from "lucide-react";
 import { iconClass } from "@/lib/icon-styles";
 import VaultExperienceCard from "@/components/vault/VaultExperienceCard";
+import VaultFreshness from "@/components/vault/VaultFreshness";
+import VaultReportForm from "@/components/vault/VaultReportForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -19,6 +20,7 @@ import {
   type VaultExperienceListItem,
   type VaultReview,
 } from "@/lib/vault";
+import { vaultFreshnessDisplay } from "@/lib/vault/freshness";
 
 type Props = {
   experience: VaultExperience;
@@ -124,6 +126,10 @@ export default function VaultExperienceDetail({
 
   const avgRating =
     reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : experience.avg_rating;
+  const freshness = vaultFreshnessDisplay({
+    updatedAt: experience.updated_at,
+    contentConfirmedAt: experience.content_confirmed_at ?? experience.published_at,
+  });
 
   return (
     <div className="space-y-8">
@@ -141,12 +147,31 @@ export default function VaultExperienceDetail({
           {experience.difficulty ? (
             <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
           ) : null}
-          {experience.rounds != null ? <Badge variant="outline">{experience.rounds} rounds</Badge> : null}
+          {experience.interview_round ? (
+            <Badge variant="outline">{experience.interview_round}</Badge>
+          ) : experience.rounds != null ? (
+            <Badge variant="outline">{experience.rounds} rounds</Badge>
+          ) : null}
           {experience.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge> : null}
           {experience.interview_date ? (
             <Badge variant="outline">{new Date(experience.interview_date).toLocaleDateString()}</Badge>
           ) : null}
+          {experience.skills.map((skill) => (
+            <Badge key={skill} variant="outline">
+              {skill}
+            </Badge>
+          ))}
         </div>
+        <VaultFreshness
+          lastConfirmedLabel={freshness.lastConfirmedLabel ?? "Confirmation date not available"}
+          stale={freshness.stale}
+          staleLabel={freshness.staleLabel}
+        />
+        {experience.removed_at ? (
+          <p className="text-sm text-caution" role="status">
+            This guide was removed from the marketplace. Existing purchaser access is under review.
+          </p>
+        ) : null}
       </header>
 
       <Card>
@@ -252,8 +277,10 @@ export default function VaultExperienceDetail({
         </section>
       ) : null}
 
+      <VaultReportForm experienceId={experience.id} isLoggedIn={isLoggedIn} />
+
       <p className="text-center text-sm text-muted-foreground">
-        <Link href="/interview-vault" className="text-primary hover:underline">
+        <Link href="/interview-vault" className="text-primary underline-offset-4 hover:underline">
           ← Back to marketplace
         </Link>
       </p>
