@@ -45,7 +45,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       report,
       note:
         parsed.data.status === "removed"
-          ? "Guide removed from Vault browse. Purchaser refunds are handled separately via refund requests (manual until Milestone D)."
+          ? "Guide removed from Vault browse and prep-pack matches. Purchaser refunds are handled separately via refund requests (manual until Milestone D)."
           : undefined,
     });
   } catch (err) {

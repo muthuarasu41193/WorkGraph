@@ -53,8 +53,8 @@ export default async function AdminVaultReportsPage() {
       <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Vault guide reports</h1>
         <p className="text-sm text-muted-foreground">
-          Set status to removed to hide a guide from the Vault browse list. Purchaser refunds are triaged separately and
-          remain manual until Milestone D.
+          Set status to removed to hide a guide from the Vault browse list and prep-pack matches. Purchaser refunds are
+          triaged separately and remain manual until Milestone D.
         </p>
       </header>
       {loadError ? (

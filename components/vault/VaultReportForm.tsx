@@ -80,7 +80,8 @@ export default function VaultReportForm({ experienceId, isLoggedIn }: Props) {
       </div>
       <p className="text-xs text-muted-foreground">
         Signed-in users can report inaccessible content, material misrepresentation, outdated information, copied or
-        unauthorized content, or confidential/personal data. Anonymous reporting is not available.
+        unauthorized content, or confidential/personal data. Anonymous reporting is not available so we can limit abuse
+        and keep reports tied to an account.
       </p>
       {statusMessage ? (
         <p className="text-sm text-positive" role="status" aria-live="polite">

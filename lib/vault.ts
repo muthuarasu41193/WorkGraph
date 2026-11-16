@@ -1,5 +1,6 @@
 import { isVaultPaymentStatus, type VaultPaymentStatus } from "@/lib/security/vault-entitlement";
 import type { VaultEvidenceLabelPublic } from "@/lib/vault-evidence-labels";
+import { vaultFreshnessDisplay } from "@/lib/vault/freshness";
 
 export const VAULT_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type VaultDifficulty = (typeof VAULT_DIFFICULTIES)[number];
@@ -30,7 +31,9 @@ export type VaultExperience = {
   company: string;
   role: string;
   level: string | null;
+  /** Primary interview round label for filtering (e.g. "System design"). */
   interview_round: string | null;
+  /** Structured skills tagged on the guide. */
   skills: string[];
   difficulty: VaultDifficulty | null;
   rounds: number | null;
@@ -48,7 +51,11 @@ export type VaultExperience = {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  /** When the contributor last confirmed the guide is still accurate. */
   content_confirmed_at: string | null;
+  attestation_accepted_at: string | null;
+  attestation_version: string | null;
+  /** Set when moderation removes the guide from Vault browse + prep-pack matches. */
   removed_at: string | null;
 };
 
@@ -79,6 +86,9 @@ export type VaultExperienceListItem = Pick<
   rounds_data: VaultRound[];
   /** Server-derived evidence labels only. Never includes verification row fields. */
   evidence_labels: VaultEvidenceLabelPublic[];
+  stale: boolean;
+  last_confirmed_label: string;
+  stale_label: string | null;
 };
 
 export type VaultExperienceInsert = {
@@ -97,6 +107,8 @@ export type VaultExperienceInsert = {
   price_inr?: number;
   status?: VaultExperienceStatus;
   draft_step?: number;
+  attestation_accepted?: boolean;
+  attestation_version?: string | null;
 };
 
 export type VaultReview = {
@@ -216,6 +228,14 @@ export function buildPreviewContent(fullHtml: string, ratio = 0.2): string {
   return preview.length < plain.length ? `${preview}…` : preview;
 }
 
+function mapSkills(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => String(item).trim())
+    .filter(Boolean)
+    .slice(0, 40);
+}
+
 export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperience {
   return {
     id: String(row.id),
@@ -224,7 +244,7 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     role: String(row.role ?? ""),
     level: row.level != null ? String(row.level) : null,
     interview_round: row.interview_round != null ? String(row.interview_round) : null,
-    skills: Array.isArray(row.skills) ? row.skills.map(String).filter(Boolean).slice(0, 40) : [],
+    skills: mapSkills(row.skills),
     difficulty: row.difficulty != null && isVaultDifficulty(String(row.difficulty)) ? (row.difficulty as VaultDifficulty) : null,
     rounds: typeof row.rounds === "number" ? row.rounds : row.rounds != null ? Number(row.rounds) : null,
     result: row.result != null && isVaultResult(String(row.result)) ? (row.result as VaultResult) : null,
@@ -242,6 +262,8 @@ export function mapVaultExperienceRow(row: Record<string, unknown>): VaultExperi
     updated_at: String(row.updated_at),
     published_at: row.published_at != null ? String(row.published_at) : null,
     content_confirmed_at: row.content_confirmed_at != null ? String(row.content_confirmed_at) : null,
+    attestation_accepted_at: row.attestation_accepted_at != null ? String(row.attestation_accepted_at) : null,
+    attestation_version: row.attestation_version != null ? String(row.attestation_version) : null,
     removed_at: row.removed_at != null ? String(row.removed_at) : null,
   };
 }
@@ -269,11 +291,15 @@ export function mapVaultReviewRow(
 
 export type VaultListFilters = {
   q?: string;
+  company?: string;
+  role?: string;
+  interview_round?: string;
   difficulty?: VaultDifficulty;
   rounds?: number;
   result?: VaultResult;
   date_from?: string;
   date_to?: string;
+  sort?: "relevance" | "freshness";
 };
 
 export function redactVaultExperience(experience: VaultExperience): VaultExperience {
@@ -290,6 +316,10 @@ export function publicVaultListItem(
   evidenceLabels: VaultEvidenceLabelPublic[] = [],
 ): VaultExperienceListItem {
   const preview = buildPreviewContent(buildFullContent(experience));
+  const freshness = vaultFreshnessDisplay({
+    updatedAt: experience.updated_at,
+    contentConfirmedAt: experience.content_confirmed_at ?? experience.published_at,
+  });
   return {
     id: experience.id,
     seller_id: experience.seller_id,
@@ -314,6 +344,9 @@ export function publicVaultListItem(
     tips_html: "",
     rounds_data: [],
     evidence_labels: evidenceLabels.map((label) => ({ id: label.id, text: label.text })),
+    stale: freshness.stale,
+    last_confirmed_label: freshness.lastConfirmedLabel ?? "Confirmation date not available",
+    stale_label: freshness.staleLabel,
   };
 }
 

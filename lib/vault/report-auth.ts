@@ -1,6 +1,8 @@
 /**
  * Authorization decisions for Interview Vault reporting.
- * Anonymous reporting is intentionally disallowed.
+ * Anonymous reporting is intentionally disallowed: reporters must be signed in
+ * so RLS can scope rows to reporter_id, rate limits can key on user id, and
+ * moderators can act on abuse without an anonymous flood surface.
  */
 
 export type VaultReportAuthDecision =

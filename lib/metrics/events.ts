@@ -15,6 +15,7 @@ export const PRODUCT_EVENT_NAMES = [
   "vault_report_submitted",
   "vault_refund_requested",
   "vault_review_reported",
+
 ] as const;
 
 export type ProductEventName = (typeof PRODUCT_EVENT_NAMES)[number];

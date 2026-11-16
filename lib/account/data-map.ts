@@ -125,11 +125,26 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Saved job search alerts, including the search query and frequency",
   },
   {
+    table: "prep_packs",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Saved interview prep packs (skills, matched guides, and checklist; no raw job description)",
+  },
+  {
     table: "signal_connections",
     ownerColumn: "seeker_id",
     export: true,
     deleteStrategy: "delete",
     label: "Connections you sent to hiring signals, including the snapshot you submitted",
+  },
+  {
+    table: "contributor_company_email_challenges",
+    ownerColumn: "contributor_id",
+    export: true,
+    deleteStrategy: "delete",
+    label:
+      "Pending work-email confirmation challenges (hashed email and code digests only; never plaintext email or code)",
   },
   {
     table: "contributor_verification_audit",

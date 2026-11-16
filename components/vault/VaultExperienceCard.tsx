@@ -62,13 +62,18 @@ export default function VaultExperienceCard({ experience, className }: Props) {
             {experience.result ? (
               <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge>
             ) : null}
+            {experience.skills.slice(0, 3).map((skill) => (
+              <Badge key={skill} variant="outline">
+                {skill}
+              </Badge>
+            ))}
           </div>
 
           <VaultFreshness
             className="mt-2"
-            lastConfirmedLabel={freshness.lastConfirmedLabel ?? "Confirmation date not available"}
-            stale={freshness.stale}
-            staleLabel={freshness.staleLabel}
+            lastConfirmedLabel={freshness.lastConfirmedLabel ?? experience.last_confirmed_label}
+            stale={freshness.stale || experience.stale}
+            staleLabel={freshness.staleLabel ?? experience.stale_label}
           />
 
           {evidenceLabels.length > 0 ? (

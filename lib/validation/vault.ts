@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { VAULT_ATTESTATION_VERSION } from "@/lib/vault/attestation";
 import {
   VAULT_REPORT_DETAILS_MAX,
   VAULT_REPORT_REASONS,
@@ -14,7 +15,16 @@ import {
   VAULT_REFUND_STATUSES,
 } from "@/lib/vault/refunds";
 import { VAULT_REVIEW_COMMENT_MAX, VAULT_REVIEW_RATING_MAX, VAULT_REVIEW_RATING_MIN } from "@/lib/vault/reviews";
-import { uuidSchema } from "@/lib/validation/primitives";
+import { LIMITS, trimmedField, uuidSchema } from "@/lib/validation/primitives";
+
+export const vaultSkillSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(LIMITS.skill)
+  .transform((value) => value.slice(0, LIMITS.skill));
+
+export const vaultSkillsSchema = z.array(vaultSkillSchema).max(40);
 
 export const vaultReportBodySchema = z
   .object({
@@ -63,6 +73,13 @@ export const vaultAdminRefundStatusSchema = z
   })
   .strict();
 
+export const vaultPublishAttestationSchema = z
+  .object({
+    attestation_accepted: z.literal(true),
+    attestation_version: z.string().trim().min(1).max(80).default(VAULT_ATTESTATION_VERSION),
+  })
+  .strict();
+
 export const vaultExperienceIdSchema = uuidSchema;
 
 export const vaultAdminHideReviewSchema = z
@@ -70,3 +87,5 @@ export const vaultAdminHideReviewSchema = z
     hidden: z.boolean(),
   })
   .strict();
+
+export const vaultInterviewRoundSchema = trimmedField(120).nullable().optional();

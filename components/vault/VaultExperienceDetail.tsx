@@ -23,9 +23,8 @@ import {
   type VaultReview,
 } from "@/lib/vault";
 import type { VaultEvidenceLabelPublic } from "@/lib/vault-evidence-labels";
-import { formatInterviewMonthYear } from "@/lib/vault/freshness";
+import { formatInterviewMonthYear, type VaultFreshnessDisplay } from "@/lib/vault/freshness";
 import type { VaultGuideOutlineSection } from "@/lib/vault/outline";
-import type { VaultFreshnessDisplay } from "@/lib/vault/freshness";
 import { VAULT_VERIFIED_PURCHASER_EXPLAINER } from "@/lib/vault/reviews";
 import { VAULT_EVIDENCE_LABELS_DISCLAIMER } from "@/lib/vault-evidence-labels";
 import {
@@ -265,9 +264,16 @@ export default function VaultExperienceDetail({
           {experience.difficulty ? (
             <Badge variant="outline">{VAULT_DIFFICULTY_LABELS[experience.difficulty]}</Badge>
           ) : null}
-          {experience.rounds != null ? <Badge variant="outline">{experience.rounds} rounds</Badge> : null}
+          {experience.rounds != null ? (
+            <Badge variant="outline">{experience.rounds} rounds</Badge>
+          ) : null}
           {experience.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[experience.result]}</Badge> : null}
           {interviewMonthYear ? <Badge variant="outline">Interview {interviewMonthYear}</Badge> : null}
+          {experience.skills.map((skill) => (
+            <Badge key={skill} variant="outline">
+              {skill}
+            </Badge>
+          ))}
         </div>
 
         <VaultFreshness
@@ -278,6 +284,12 @@ export default function VaultExperienceDetail({
 
         <VaultEvidenceLabelChips labels={evidenceLabels} />
         <p className="text-xs text-muted-foreground">{VAULT_EVIDENCE_LABELS_DISCLAIMER}</p>
+        {experience.removed_at ? (
+          <p className="text-sm text-caution" role="status">
+            This guide was removed from the marketplace. Existing purchaser access is under review. Refund requests are
+            available separately when eligible.
+          </p>
+        ) : null}
       </header>
 
       {outline.length > 0 ? (
@@ -500,8 +512,10 @@ export default function VaultExperienceDetail({
         </section>
       ) : null}
 
+      <VaultReportForm experienceId={experience.id} isLoggedIn={isLoggedIn} />
+
       <p className="text-center text-sm text-muted-foreground">
-        <Link href="/interview-vault" className="text-primary hover:underline">
+        <Link href="/interview-vault" className="text-primary underline-offset-4 hover:underline">
           ← Back to marketplace
         </Link>
       </p>

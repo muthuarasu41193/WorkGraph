@@ -60,7 +60,7 @@ export function isVaultReportStatus(value: string): value is VaultReportStatus {
   return (VAULT_REPORT_STATUSES as readonly string[]).includes(value);
 }
 
-/** Setting a report to removed should hide the guide from Vault browse. */
+/** Setting a report to removed should hide the guide from Vault browse + prep-pack matches. */
 export function reportStatusRemovesGuide(status: VaultReportStatus): boolean {
   return status === "removed";
 }

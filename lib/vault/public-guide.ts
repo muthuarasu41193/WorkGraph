@@ -2,7 +2,7 @@ import { vaultFreshnessDisplay } from "@/lib/vault/freshness";
 import type { VaultDifficulty } from "@/lib/vault";
 
 /**
- * Public metadata projection for marketplace cards and previews.
+ * Public metadata projection for marketplace cards, previews, and prep-pack matches.
  * Never includes paid body fields (questions_html, tips_html, rounds_data bodies).
  */
 
