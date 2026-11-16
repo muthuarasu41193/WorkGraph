@@ -1,0 +1,99 @@
+---
+description: Binding WorkGraph design system — identity, tokens, copy, i18n, a11y, motion, and list states for all UI.
+alwaysApply: true
+---
+
+# WorkGraph design system
+
+WorkGraph is a global job-search product on Next.js App Router, React 19, TypeScript, and Tailwind 4.
+
+**Before writing or changing UI, read this file and [`DESIGN.md`](DESIGN.md).** Prefer the smallest change that keeps the Ledger identity intact. Colors, type, spacing, radius, and motion come from Tailwind `@theme` tokens defined via `app/globals.css` (and the CSS it imports, especially `app/tokens.css`).
+
+## 1. Identity
+
+- **Surface:** warm paper background (`surface` / related surface tokens).
+- **Text:** ink (`ink`, `ink-muted`, `ink-subtle`).
+- **Accent:** one deep red (`accent` / `accent-ink`). Use it **only** for:
+  - the single primary action in a view,
+  - active filters,
+  - the verified mark.
+- Do not paint secondary buttons, links, icons, badges, charts, or backgrounds with accent by default.
+- **Type:** serif for display headings (`font-heading` / Newsreader); humanist sans for UI and body (`font-sans` / Public Sans); tabular numerals for numbers (`font-variant-numeric: tabular-nums` / numeric token classes).
+
+## 2. Visual bans and structure
+
+Never use:
+
+- gradients
+- glow
+- blur or glassmorphism
+- tinted icon tiles
+- emoji
+- identical card grids (same card chrome repeated for every content type)
+
+Prefer hairline borders and spacing over shadows. Shadows are rare; structure comes from rules and whitespace.
+
+**Radius:** at most two radius values from the token scale in a given surface family. Do not invent extra radii or use `rounded-full` on cards, inputs, and buttons alike.
+
+## 3. Tokens only
+
+All colors, sizes, spacing, radius, and motion durations must come from Tailwind `@theme` tokens wired through `app/globals.css`.
+
+- No hard-coded hex, rgb, or hsl in components.
+- No hard-coded `px` / rem literals in component classNames or inline styles for spacing, type, radius, or duration — use token utilities (`bg-surface`, `text-ink`, `border-hairline`, `rounded-control`, `p-space-*`, `duration-base`, etc.).
+- Literal color values belong only in the token source files (`app/tokens.css` and mirrors such as `lib/design-tokens.ts`), not in React components.
+
+## 4. Copy
+
+- Short, specific, plain English at about **B1** level.
+- No idioms, no marketing clichés, no hype.
+- No invented numbers, fake stats, or testimonials.
+- Every number shown in the UI must come from real data (or be omitted).
+
+## 5. Direction and layout (RTL)
+
+- Use CSS logical properties (`inline-start` / `inline-end`, `padding-inline`, `margin-inline`, `border-inline-*`, logical Tailwind equivalents such as `ps-*` / `pe-*` / `ms-*` / `me-*` / `start-*` / `end-*`).
+- Never hard-code physical `left` / `right` for layout, spacing, or borders that should flip in RTL.
+
+## 6. Formatting and locale
+
+- Format dates, numbers, currency, and lists with `Intl` APIs and **next-intl**.
+- Never show raw UTC timestamps or ISO-8601 strings to users.
+- Respect the active locale; do not assume en-US formatting.
+
+## 7. Accessibility
+
+- Target **WCAG 2.2 AA**.
+- Text contrast at least **4.5:1** for normal text.
+- Minimum **44px** touch targets on mobile (use existing touch-target patterns where available).
+- Visible focus rings; do not remove focus styles without a visible replacement from tokens.
+- Honor `prefers-reduced-motion`: disable or replace non-essential motion.
+
+## 8. Motion
+
+- Duration **150–250 ms**, easing **ease-out** (or the token ease that maps to that intent).
+- Animate **opacity** and **small translate** only.
+- No bounce, pulse-for-attention, scale pops, blur fades, or large travel distances.
+- Always gate decorative motion behind reduced-motion preferences.
+
+## 9. List states
+
+Every list, feed, table, or collection UI must implement all three:
+
+1. **Loading** — skeleton placeholders (token-based, not spinners-only).
+2. **Empty** — clear plain-language empty state with a next step when useful.
+3. **Error** — recoverable error state with a way to retry when possible.
+
+Do not ship a happy-path-only list.
+
+## Checklist before merging UI
+
+- [ ] Read this file and `DESIGN.md`
+- [ ] Accent used at most for one primary action, active filters, and verified
+- [ ] No gradients, glow, blur/glass, emoji, tinted icon tiles, or identical card grids
+- [ ] No hard-coded hex or px; tokens from `@theme` / `globals.css`
+- [ ] Logical properties for directional layout
+- [ ] Dates/numbers/currency/lists via Intl + next-intl
+- [ ] Loading, empty, and error states present
+- [ ] A11y: contrast, 44px targets, focus, reduced motion
+- [ ] Motion within 150–250 ms, opacity/translate only
