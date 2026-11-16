@@ -66,6 +66,7 @@ export const messages = {
   shellJobs: "Jobs",
   shellTracker: "Tracker",
   shellPrep: "Prep",
+  shellVault: "Vault",
   shellInsights: "Insights",
   shellProfile: "Profile",
   shellSettings: "Settings",

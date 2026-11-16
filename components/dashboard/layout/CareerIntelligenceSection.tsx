@@ -124,7 +124,7 @@ export default function CareerIntelligenceSection({
   const { markVisited, isVisited } = useNavVisitTracking();
 
   const groupActive = group.items.some((item) =>
-    item.id === "interview-vault" ? false : item.id === activeRoute,
+    item.id === "interview-vault" || item.id === "prep-pack" ? false : item.id === activeRoute,
   );
   const suggestedId = getSuggestedIntelligenceRoute(profileCompleteness, appliedCount);
 
@@ -150,7 +150,7 @@ export default function CareerIntelligenceSection({
   }
 
   function isActive(id: string): boolean {
-    if (id === "interview-vault") return false;
+    if (id === "interview-vault" || id === "prep-pack") return false;
     return activeRoute === id;
   }
 

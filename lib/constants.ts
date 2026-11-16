@@ -3,16 +3,17 @@ import { getSiteUrl } from "./site-url";
 
 export const SITE = {
   name: "WorkGraph",
-  tagline: "AI-powered job intelligence",
-  description: "Search the live job index. Match notes are estimates when a profile is available.",
+  tagline: "Interview prep and a live job index",
+  description:
+    "Build a free interview prep pack, read Interview Vault guides, and search the live job index. Match notes and skill gaps are estimates.",
   url: getSiteUrl(),
   email: "hello@getworkgraph.com",
 } as const;
 
 export const NAV_ITEMS = [
-  { label: "Features", href: "/#features" },
-  { label: "How it works", href: "/#how-it-works" },
+  { label: "Prep pack", href: "/prep-pack" },
   { label: "Interview Vault", href: "/interview-vault" },
+  { label: "Jobs", href: "/jobs" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/#contact" },
 ] as const;
@@ -24,66 +25,64 @@ export const NAV_ANNOUNCEMENT = {
 } as const;
 
 export const ANNOUNCEMENT = {
-  message: "Search the live job index",
-  cta: "See sources",
-  href: "/sources",
+  message: "Build a free interview prep pack",
+  cta: "Open prep pack",
+  href: "/prep-pack",
 } as const;
 
 export const HERO = {
-  badge: "AI Job Intelligence Platform",
-  headline: "Find jobs that never hit LinkedIn",
+  badge: "Interview prep first",
+  headline: "Prep for the interview. Then search the index.",
   subheadline:
-    "WorkGraph surfaces hidden roles from Reddit, Twitter, Discord, and private networks — then helps you prep, apply, and win.",
-  primaryCta: { label: "Start free", href: "/signup" },
-  secondaryCta: { label: "See how it works", href: "#how-it-works" },
+    "Build a free prep pack from a role or posting, open matching Interview Vault guides, and browse the live job index when you are ready.",
+  primaryCta: { label: "Build a prep pack", href: "/prep-pack" },
+  secondaryCta: { label: "Browse Interview Vault", href: "/interview-vault" },
   stats: [
-    { value: "Hidden roles", label: "From public communities" },
-    { value: "AI matching", label: "Against your resume" },
-    { value: "Interview Vault", label: "Guides you can sell" },
+    { value: "Prep pack", label: "Skills, guides, checklist" },
+    { value: "Interview Vault", label: "Firsthand guides" },
+    { value: "Job index", label: "Search when you need it" },
   ],
 } as const;
 
 export const FEATURES = [
   {
-    icon: "Radar" as const,
-    title: "Hidden Job Radar",
-    description:
-      "AI scans Reddit, Twitter, Discord, and niche communities for roles posted before they reach job boards.",
-    accent: "primary",
-  },
-  {
-    icon: "Brain" as const,
-    title: "Resume Intelligence",
-    description:
-      "Get ATS scoring, gap analysis, and tailored rewrites so every application lands with impact.",
-    accent: "blue",
-  },
-  {
     icon: "Vault" as const,
-    title: "Interview Vault",
+    title: "Interview prep pack",
     description:
-      "Access real interview experiences from candidates who've been there — and earn by sharing yours.",
+      "Paste a posting or choose a role. You get a skills estimate, matching published guides, and a checklist. Estimates only — not a hiring probability.",
     accent: "success",
   },
   {
-    icon: "TrendingUp" as const,
-    title: "Market Pulse",
+    icon: "Brain" as const,
+    title: "Interview Vault",
     description:
-      "Track hiring signals, salary trends, and company momentum so you apply at the right moment.",
+      "Read firsthand interview guides from contributors. Paid guides unlock after entitlement checks. Selling a guide does not promise income.",
+    accent: "blue",
+  },
+  {
+    icon: "Radar" as const,
+    title: "Live job index",
+    description:
+      "Search listings already in the index. Source links open the original posting. Posted dates are stored dates, not a live verification time.",
+    accent: "primary",
+  },
+  {
+    icon: "TrendingUp" as const,
+    title: "Resume Intelligence",
+    description:
+      "Compare a resume to a posting with evidence-based notes. Scores are estimates, not offer odds.",
     accent: "warning",
   },
   {
     icon: "Kanban" as const,
     title: "Application Tracker",
-    description:
-      "Kanban-style pipeline with AI nudges — never lose track of where you stand with each company.",
+    description: "Log applications and move stages on a Kanban board for roles you already applied to.",
     accent: "primary",
   },
   {
     icon: "Shield" as const,
-    title: "Career Graph",
-    description:
-      "Your skills, experience, and goals mapped into a living profile that gets smarter over time.",
+    title: "Profile",
+    description: "Keep skills and experience on your account so match notes have something to compare.",
     accent: "blue",
   },
 ] as const;
@@ -91,38 +90,39 @@ export const FEATURES = [
 export const STEPS = [
   {
     step: "01",
-    title: "Connect your profile",
-    description: "Upload your resume or build your WorkGraph profile in minutes.",
+    title: "Build a prep pack",
+    description: "Choose a role or paste a posting. The checklist and guide matches are estimates.",
   },
   {
     step: "02",
-    title: "AI scans the market",
-    description: "The index is searched with the skills on the profile. Match notes are estimates.",
+    title: "Read Interview Vault guides",
+    description: "Open published guides that match. Locked content stays locked without entitlement.",
   },
   {
     step: "03",
-    title: "Apply with confidence",
-    description: "Get tailored prep, ATS-optimized resumes, and interview intel.",
+    title: "Search the job index",
+    description: "Browse listings when you want openings. Apply links go to the original source.",
   },
 ] as const;
 
 export const CTA = {
-  headline: "Your next role is already out there",
-  subheadline: "Join WorkGraph to find opportunities others miss.",
-  primaryCta: { label: "Get started free", href: "/signup" },
+  headline: "Start with interview prep",
+  subheadline: "Build a free prep pack, then use Interview Vault and the job index as needed.",
+  primaryCta: { label: "Build a prep pack", href: "/prep-pack" },
   secondaryCta: { label: "Sign in", href: "/login" },
 } as const;
 
 export const FOOTER_LINKS = {
   product: [
-    { label: "Features", href: "/#features" },
-    { label: "How it works", href: "/#how-it-works" },
+    { label: "Prep pack", href: "/prep-pack" },
     { label: "Interview Vault", href: "/interview-vault" },
-    { label: "Pricing", href: "/#pricing" },
+    { label: "Jobs", href: "/jobs" },
+    { label: "Pricing", href: "/pricing" },
   ],
   resources: [
-    { label: "Job discovery", href: "/discovery" },
     { label: "Interview Vault", href: "/interview-vault" },
+    { label: "Prep pack", href: "/prep-pack" },
+    { label: "Job discovery", href: "/discovery" },
     { label: "Create profile", href: "/create-profile" },
     { label: "Employer signup", href: "/employer/signup" },
   ],

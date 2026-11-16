@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 
+import SharePrepPackDialog, {
+  type ShareDialogPayload,
+} from "@/components/prep-pack/SharePrepPackDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,6 +46,60 @@ export default function PrepPackClient({ isSignedIn, initialSaved }: Props) {
   const [savedList, setSavedList] = useState(initialSaved);
   const [viewingSaved, setViewingSaved] = useState<SavedPrepPack | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [sharePackId, setSharePackId] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareLabel, setShareLabel] = useState<string | null>(null);
+  const [sharePayload, setSharePayload] = useState<ShareDialogPayload | null>(null);
+  const [shareStatus, setShareStatus] = useState<
+    "idle" | "loading" | "ready" | "error" | "revoking" | "revoked"
+  >("idle");
+  const [shareError, setShareError] = useState<string | null>(null);
+
+  async function createShare(id: string, label?: string | null) {
+    setSharePackId(id);
+    setShareLabel(label ?? null);
+    setSharePayload(null);
+    setShareError(null);
+    setShareStatus("loading");
+    setShareOpen(true);
+    try {
+      const res = await fetch(`/api/prep-pack/saved/${id}/share`, { method: "POST" });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        share?: ShareDialogPayload;
+      };
+      if (!res.ok || !data.ok || !data.share) {
+        setShareStatus("error");
+        setShareError(data.error || m.shareCreateFailed);
+        return;
+      }
+      setSharePayload(data.share);
+      setShareStatus("ready");
+    } catch {
+      setShareStatus("error");
+      setShareError(m.shareCreateFailed);
+    }
+  }
+
+  async function revokeShare() {
+    if (!sharePayload) return;
+    setShareStatus("revoking");
+    try {
+      const res = await fetch(`/api/prep-pack/shares/${sharePayload.id}`, { method: "DELETE" });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        setShareStatus("ready");
+        setShareError(data.error || m.shareRevokeFailed);
+        return;
+      }
+      setSharePayload(null);
+      setShareStatus("revoked");
+    } catch {
+      setShareStatus("ready");
+      setShareError(m.shareRevokeFailed);
+    }
+  }
 
   const charCount = jobDescription.length;
   const hasInput = Boolean(roleId.trim() || jobDescription.trim());
@@ -413,24 +470,36 @@ export default function PrepPackClient({ isSignedIn, initialSaved }: Props) {
             ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
               {isSignedIn ? (
-                <Button
-                  type="button"
-                  className="min-h-11"
-                  disabled={saving || Boolean(savedId)}
-                  aria-busy={saving}
-                  onClick={() => void savePack()}
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 className="animate-spin" aria-hidden />
-                      {m.saving}
-                    </>
-                  ) : savedId ? (
-                    m.saved
-                  ) : (
-                    m.saveCta
-                  )}
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    className="min-h-11"
+                    disabled={saving || Boolean(savedId)}
+                    aria-busy={saving}
+                    onClick={() => void savePack()}
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="animate-spin" aria-hidden />
+                        {m.saving}
+                      </>
+                    ) : savedId ? (
+                      m.saved
+                    ) : (
+                      m.saveCta
+                    )}
+                  </Button>
+                  {savedId ? (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="min-h-11"
+                      onClick={() => void createShare(savedId, pack?.role?.label ?? null)}
+                    >
+                      {m.shareCta}
+                    </Button>
+                  ) : null}
+                </>
               ) : (
                 <Button asChild className="min-h-11">
                   <Link href={loginRedirectPath("/prep-pack", "save-prep-pack")}>{m.signInToSave}</Link>
@@ -470,6 +539,15 @@ export default function PrepPackClient({ isSignedIn, initialSaved }: Props) {
                     </Button>
                     <Button
                       type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="min-h-11"
+                      onClick={() => void createShare(item.id, item.role_label)}
+                    >
+                      {m.shareCta}
+                    </Button>
+                    <Button
+                      type="button"
                       variant="outline"
                       size="sm"
                       className="min-h-11"
@@ -486,6 +564,41 @@ export default function PrepPackClient({ isSignedIn, initialSaved }: Props) {
           )}
         </section>
       ) : null}
+
+      {viewingSaved ? (
+        <div className="max-w-3xl">
+          <Button
+            type="button"
+            variant="secondary"
+            className="min-h-11"
+            onClick={() => void createShare(viewingSaved.id, viewingSaved.role_label)}
+          >
+            {m.shareCta}
+          </Button>
+        </div>
+      ) : null}
+
+      <SharePrepPackDialog
+        open={shareOpen}
+        onOpenChange={(next) => {
+          setShareOpen(next);
+          if (!next) {
+            setShareStatus("idle");
+            setShareError(null);
+            setSharePayload(null);
+          }
+        }}
+        packLabel={shareLabel}
+        share={sharePayload}
+        status={shareStatus}
+        error={shareError}
+        onRevoke={revokeShare}
+        onRetry={
+          sharePackId
+            ? () => void createShare(sharePackId, shareLabel)
+            : undefined
+        }
+      />
     </PageContainer>
   );
 }

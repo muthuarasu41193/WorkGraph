@@ -30,7 +30,7 @@ const STEPS: Step[] = [
     number: "02",
     title: "AI Discovers Hidden Opportunities",
     description:
-      "Our AI continuously scans 50+ sources and surfaces relevant jobs with match scores. New jobs appear in your feed in real-time.",
+      "Search the live job index. Match notes are estimates when a profile is available. Source counts are not claimed on this page.",
     highlights: ["Reddit & Twitter", "Discord Communities", "Pro Networks", "Real-time Alerts"],
     visual: "jobs",
   },
@@ -49,10 +49,10 @@ const STEPS: Step[] = [
   },
   {
     number: "04",
-    title: "Apply Smart, Earn on the Side",
+    title: "Apply, then share a guide if you want",
     description:
-      "Use AI-assisted applications to apply faster. Then share your interview experience and earn passive income from your guides.",
-    highlights: ["AI Cover Letters", "One-click Apply", "Sell Guides", "Track Applications"],
+      "Log applications in the tracker. You can publish an Interview Vault guide; sales are not promised, and guides do not guarantee anyone a job offer.",
+    highlights: ["Cover letters", "Application tracker", "Publish guides", "Prep pack"],
     visual: "earnings",
   },
 ];

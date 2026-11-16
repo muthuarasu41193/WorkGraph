@@ -9,20 +9,24 @@ export type ShellDest = {
 }
 
 /**
- * Primary destinations. Profile, insights, prep, and settings keep their existing URLs.
- * Jobs, tracker, and onboarding are new routes inside this shell.
+ * Primary destinations. Prep pack and Interview Vault lead; jobs stay available.
+ * Profile, insights, and settings keep their existing URLs.
  */
 export const SHELL_DESTINATIONS: ShellDest[] = [
+  { href: "/prep-pack", label: messages.shellPrep, short: messages.shellPrep, tab: true },
+  { href: "/interview-vault", label: messages.shellVault, short: messages.shellVault, tab: true },
   { href: "/jobs", label: messages.shellJobs, short: messages.shellJobs, tab: true },
   { href: "/tracker", label: messages.shellTracker, short: messages.shellTracker, tab: true },
-  { href: "/prep-pack", label: messages.shellPrep, short: messages.shellPrep, tab: true },
-  { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: true },
   { href: "/profile", label: messages.shellProfile, short: messages.shellProfile, tab: true },
+  { href: "/insights", label: messages.shellInsights, short: messages.shellInsights, tab: false },
   { href: "/alerts", label: "Alerts", short: "Alerts", tab: false },
   { href: "/profile?view=settings", label: messages.shellSettings, short: messages.shellSettings, tab: false },
 ]
 
 export function shellTitle(pathname: string): string {
+  if (pathname.startsWith("/prep-pack") || pathname.startsWith("/s/prep")) return messages.shellPrep
+  if (pathname.startsWith("/interview-vault")) return messages.shellVault
+  if (pathname.startsWith("/roles/")) return messages.shellPrep
   if (pathname.startsWith("/jobs/")) return messages.shellJob
   if (pathname.startsWith("/jobs")) return messages.shellJobs
   if (pathname.startsWith("/tracker")) return messages.shellTracker

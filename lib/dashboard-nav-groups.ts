@@ -13,7 +13,7 @@ import {
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 
 export type NavItem = {
-  id: DashboardRouteId | "interview-vault" | "settings";
+  id: DashboardRouteId | "interview-vault" | "prep-pack" | "settings";
   label: string;
   icon: LucideIcon;
   href?: string;
@@ -39,6 +39,9 @@ export type NavGroup = {
 
 export const NEW_USER_PROFILE_THRESHOLD = 60;
 
+/** External href destinations that are not dashboard `?view=` routes. */
+export const DASHBOARD_EXTERNAL_NAV_IDS = new Set(["interview-vault", "prep-pack"]);
+
 export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
   {
     id: "primary",
@@ -50,6 +53,28 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         icon: LayoutDashboard,
         benefitHint: "Your job search overview",
       },
+      {
+        id: "prep-pack",
+        label: "Prep pack",
+        icon: BookOpen,
+        href: "/prep-pack",
+        benefitHint: "Build a role-specific interview checklist",
+      },
+      {
+        id: "interview-vault",
+        label: "Interview Vault",
+        icon: MessageSquare,
+        href: "/interview-vault",
+        benefitHint: "Read firsthand interview guides",
+      },
+    ],
+  },
+  {
+    id: "jobs",
+    label: "Job search",
+    subtitle: "Browse and track openings",
+    collapsible: true,
+    items: [
       {
         id: "jobs",
         label: "Find Jobs",
@@ -67,6 +92,12 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         label: "Community posts",
         icon: EyeOff,
         benefitHint: "Hiring posts from Reddit, Hacker News, and GitHub",
+      },
+      {
+        id: "applications",
+        label: "My Applications",
+        icon: Send,
+        benefitHint: "Track your progress",
       },
     ],
   },
@@ -91,34 +122,22 @@ export const DASHBOARD_NAV_GROUPS: NavGroup[] = [
         requiresProfile: true,
       },
       {
-        id: "applications",
-        label: "My Applications",
-        icon: Send,
-        benefitHint: "Track your progress",
-      },
-      {
         id: "workgraph-direct",
         label: "Career Path",
         icon: TrendingUp,
         benefitHint: "See your growth trajectory",
       },
       {
-        id: "interview-vault",
-        label: "Interview Vault",
-        icon: MessageSquare,
-        href: "/interview-vault",
-        benefitHint: "Learn from real interview experiences",
-      },
-      {
         id: "vault",
-        label: "Prep Materials",
+        label: "Local prep notes",
         icon: BookOpen,
-        benefitHint: "Practice and gain confidence",
+        benefitHint: "Private notes stored on this device",
       },
     ],
   },
 ];
 
 export function isNavRouteId(id: string): id is DashboardRouteId {
-  return id !== "interview-vault" && id !== "settings" || id === "settings";
+  if (DASHBOARD_EXTERNAL_NAV_IDS.has(id) || id === "settings") return false;
+  return true;
 }

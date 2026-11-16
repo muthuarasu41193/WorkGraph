@@ -183,6 +183,9 @@ export default function TopNav() {
                   <Link href={dashboardHref("settings")}>Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
+                  <Link href="/prep-pack">Prep pack</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/interview-vault">Interview Vault</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
