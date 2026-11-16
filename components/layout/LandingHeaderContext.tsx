@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-const STORAGE_KEY = "wg-announcement-dismissed";
+const STORAGE_KEY = "wg-announcement-dismissed-launch-v1";
 const ANNOUNCEMENT_HEIGHT = 44;
 const NAV_HEIGHT = 64;
 

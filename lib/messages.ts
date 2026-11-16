@@ -52,8 +52,8 @@ export const messages = {
   contactFailed: "The message did not send. The connection failed. Try again.",
   contactAnother: "Send another message",
 
-  announceCta: "Join the waitlist",
-  announceMessage: "The waitlist is open.",
+  announceCta: "Read the launch note",
+  announceMessage: "WorkGraph is launching the live job index.",
 
   heroSearchFailed: "Jobs did not load. The search request failed. Try the search again.",
   heroSearchEmpty: "No roles matched that search. Try a broader role or skill.",

@@ -37,6 +37,12 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
+function sectionIdFromHref(href: string): string | null {
+  if (href.startsWith("#")) return href.slice(1)
+  if (href.startsWith("/#")) return href.slice(2)
+  return null
+}
+
 function NavLink({
   href,
   label,
@@ -50,7 +56,7 @@ function NavLink({
   index: number;
   onNavigate: (href: string) => void;
 }) {
-  const isHash = href.startsWith("#");
+  const sectionId = sectionIdFromHref(href);
 
   return (
     <motion.li
@@ -61,9 +67,9 @@ function NavLink({
       <Link
         href={href}
         onClick={(e) => {
-          if (isHash) {
+          if (sectionId) {
             e.preventDefault();
-            onNavigate(href);
+            onNavigate(`#${sectionId}`);
           }
         }}
         className={cn(
@@ -96,8 +102,8 @@ export default function Navbar() {
   const isMdUp = useMediaQuery(DASHBOARD_MQ.mdUp);
 
   useEffect(() => {
-    const sectionIds = NAV_ITEMS.filter((item) => item.href.startsWith("#")).map((item) =>
-      item.href.slice(1),
+    const sectionIds = NAV_ITEMS.map((item) => sectionIdFromHref(item.href)).filter(
+      (id): id is string => Boolean(id),
     );
 
     const observers = sectionIds
@@ -155,20 +161,18 @@ export default function Navbar() {
             <Logo />
 
             <ul className="hidden items-center gap-8 md:flex" role="list">
-              {NAV_ITEMS.map((item, index) => (
+              {NAV_ITEMS.map((item, index) => {
+                const sectionId = sectionIdFromHref(item.href)
+                return (
                 <NavLink
                   key={item.href}
                   href={item.href}
                   label={item.label}
-                  active={
-                    item.href.startsWith("#")
-                      ? activeSection === item.href.slice(1)
-                      : false
-                  }
+                  active={sectionId ? activeSection === sectionId : false}
                   index={index}
                   onNavigate={handleNavigate}
                 />
-              ))}
+              )})}
             </ul>
 
             <div className="hidden items-center gap-3 md:flex">
@@ -219,7 +223,9 @@ export default function Navbar() {
             >
               <div className="flex h-full flex-col px-4 py-6 sm:px-6">
                 <ul className="flex flex-col gap-1" role="list">
-                  {NAV_ITEMS.map((item, index) => (
+                  {NAV_ITEMS.map((item, index) => {
+                    const sectionId = sectionIdFromHref(item.href)
+                    return (
                     <motion.li
                       key={item.href}
                       initial={{ opacity: 0, x: -12 }}
@@ -229,16 +235,16 @@ export default function Navbar() {
                       <Link
                         href={item.href}
                         onClick={(e) => {
-                          if (item.href.startsWith("#")) {
+                          if (sectionId) {
                             e.preventDefault();
-                            handleNavigate(item.href);
+                            handleNavigate(`#${sectionId}`);
                           } else {
                             setMobileOpen(false);
                           }
                         }}
                         className={cn(
                           "block rounded-xl px-4 py-3.5 text-lg font-medium transition-colors",
-                          item.href.startsWith("#") && activeSection === item.href.slice(1)
+                          sectionId && activeSection === sectionId
                             ? "bg-brand-50 text-brand"
                             : "text-fg-primary hover:bg-surface-active  ",
                         )}
@@ -246,7 +252,7 @@ export default function Navbar() {
                         {item.label}
                       </Link>
                     </motion.li>
-                  ))}
+                  )})}
                 </ul>
 
                 <div className="mt-auto flex flex-col gap-3 border-t border-border-default pt-6">
