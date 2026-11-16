@@ -12,6 +12,9 @@ export const PRODUCT_EVENT_NAMES = [
   "digest_unsubscribed",
   "application_added",
   "follow_up_marked",
+  "vault_report_submitted",
+  "vault_refund_requested",
+  "vault_review_reported",
   // Milestone D validation funnel (IDs/categories only — never JD/resume/PII)
   "prep_pack_started",
   "prep_pack_completed",
