@@ -2143,6 +2143,7 @@ export default function RecommendedJobsSection({
                       title={job.title}
                       applyUrl={applyHref}
                       source={job.source}
+                      variant="filled"
                       className="w-full justify-center"
                     />
                   ) : null}
@@ -2376,6 +2377,7 @@ export default function RecommendedJobsSection({
                     title={job.title}
                     applyUrl={job.applyUrl}
                     source={job.source}
+                    variant="filled"
                     className="w-full justify-center"
                   />
                 ) : null}

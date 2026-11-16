@@ -1,12 +1,14 @@
 "use client"
 
 import type { ReactNode } from "react"
+import JobCard from "@/components/design-system/JobCard"
 import { ProductJobCard } from "@/components/product/JobCard"
 import { FreshnessIndicator } from "@/components/product/FreshnessIndicator"
 import { MatchScore } from "@/components/product/MatchScore"
 import { SalaryDisplay } from "@/components/product/SalaryDisplay"
 import { SourceAttribution } from "@/components/product/SourceAttribution"
 import { TrustIndicator } from "@/components/product/TrustIndicator"
+import type { JobCardData } from "@/lib/job-card-data"
 
 const JOB = {
   title: "Operations editor, climate desk",
@@ -41,9 +43,44 @@ function Block({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
+const RECOMMENDED: JobCardData = {
+  id: "rec-1",
+  title: "Senior backend engineer",
+  company: "Northwind",
+  location: "Bengaluru",
+  workMode: "On-site",
+  employmentType: "Full-time",
+  experience: "Senior",
+  matchPercent: 82,
+  matchedSkills: ["TypeScript", "Postgres", "Redis", "Kafka", "AWS", "Go"],
+  profileSkillCount: 9,
+  postedAgo: "2d ago",
+  salaryRange: "₹18–24L",
+  applyUrl: "https://www.linkedin.com/jobs/view/1",
+  source: "linkedin",
+}
+
+const RECOMMENDED_MINIMAL: JobCardData = {
+  id: "rec-2",
+  title: "Support engineer",
+  company: "Cool Apps",
+  location: "India",
+  workMode: "Remote",
+  matchPercent: 0,
+  matchedSkills: [],
+  profileSkillCount: 9,
+  postedAgo: "Today",
+  applyUrl: "https://boards.greenhouse.io/example/jobs/1",
+  source: "greenhouse",
+}
+
 function Specimens() {
   return (
     <div>
+      <Block title="Recommended JobCard">
+        <JobCard job={RECOMMENDED} onSave={() => undefined} onClick={() => undefined} />
+        <JobCard job={RECOMMENDED_MINIMAL} onSave={() => undefined} />
+      </Block>
       <Block title="JobCard">
         <ProductJobCard {...JOB} applyLabel="Apply on Greenhouse" onSave={() => undefined} onDismiss={() => undefined} onApply={() => undefined} />
         <ProductJobCard
@@ -117,7 +154,7 @@ export function ProductGallery() {
       <header className="measure">
         <h2 className="text-role-title">Product composites</h2>
         <p className="text-role-body text-ink-muted">
-          Shown here in isolation. The live job feed still uses the existing card so save, dismiss, and apply keep their current behaviour.
+          Recommended JobCard is the live feed row (home matches and Jobs tab). Product JobCard below is the marketing/onboarding specimen.
         </p>
       </header>
       {frames.map((frame) => (
