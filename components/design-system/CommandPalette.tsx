@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Command } from "cmdk";
 import {
   Brain,
   Briefcase,
@@ -20,7 +21,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { DashboardRouteId } from "@/lib/dashboard-routes";
 
@@ -43,6 +43,10 @@ type Props = {
 export default function CommandPalette({ open, onOpenChange, onNavigate, onSearch }: Props) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    if (!open) setQuery("");
+  }, [open]);
 
   const items: CommandItem[] = [
     {
@@ -138,15 +142,7 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
     },
   ];
 
-  const filtered = query.trim()
-    ? items.filter(
-        (item) =>
-          item.label.toLowerCase().includes(query.toLowerCase()) ||
-          item.description?.toLowerCase().includes(query.toLowerCase()),
-      )
-    : items;
-
-  const groups = [...new Set(filtered.map((i) => i.group))];
+  const groups = [...new Set(items.map((i) => i.group))];
 
   useEffect(() => {
     if (query.trim() && onSearch) onSearch(query);
@@ -155,66 +151,71 @@ export default function CommandPalette({ open, onOpenChange, onNavigate, onSearc
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-lg">
-        <DialogHeader className="border-b px-4 py-3">
-          <DialogTitle className="sr-only">Command palette</DialogTitle>
-          <div className="relative">
-            <Search className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-secondary)]" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search commands, pages, jobs..."
-              className="border-0 bg-transparent pl-7 shadow-none focus-visible:ring-0"
-              autoFocus
+        <DialogHeader className="sr-only">
+          <DialogTitle>Command palette</DialogTitle>
+        </DialogHeader>
+        <Command
+          className="bg-surface-raised text-ink"
+          label="Command palette"
+          loop
+        >
+          <div className="relative border-b border-hairline px-4 py-3">
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-subtle"
+              aria-hidden
             />
-            <kbd className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded border bg-muted px-1.5 py-0.5 text-xs font-medium sm:inline">
+            <Command.Input
+              value={query}
+              onValueChange={setQuery}
+              placeholder="Search commands, pages, jobs..."
+              className="h-11 w-full border-0 bg-transparent pl-7 pr-12 text-role-body text-ink outline-none placeholder:text-ink-subtle"
+            />
+            <kbd className="absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-control border border-hairline bg-surface-sunken px-1.5 py-0.5 text-role-caption font-medium text-ink-muted sm:inline">
               ESC
             </kbd>
           </div>
-        </DialogHeader>
-        <div className="max-h-80 overflow-y-auto p-2">
-          {groups.map((group) => (
-            <div key={group} className="mb-2">
-              <p className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--dash-text-secondary)]">
-                {group}
-              </p>
-              {filtered
-                .filter((item) => item.group === group)
-                .map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={item.action}
-                      className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
-                        "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
-                      )}
-                    >
-                      <Icon className={iconClass("inline", "shrink-0 text-[var(--dash-text-secondary)]")} />
-                      <div className="min-w-0">
-                        <p className="font-medium text-[var(--dash-text)]">{item.label}</p>
-                        {item.description ? (
-                          <p className="truncate text-xs text-[var(--dash-text-secondary)]">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    </button>
-                  );
-                })}
-            </div>
-          ))}
-          {filtered.length === 0 ? (
-            <div className="flex flex-col items-center px-3 py-8 text-center">
+          <Command.List className="max-h-80 overflow-y-auto p-2">
+            <Command.Empty className="flex flex-col items-center px-3 py-8 text-center">
               <Search className="mb-2 size-6 text-ink-subtle" aria-hidden />
               <p className="text-sm font-medium text-ink">No results</p>
               <p className="mt-0.5 text-role-caption text-ink-subtle">
                 Nothing matches &ldquo;{query}&rdquo;. Try another search.
               </p>
-            </div>
-          ) : null}
-        </div>
+            </Command.Empty>
+            {groups.map((group) => (
+              <Command.Group
+                key={group}
+                heading={group}
+                className="mb-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-ink-subtle"
+              >
+                {items
+                  .filter((item) => item.group === group)
+                  .map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Command.Item
+                        key={item.id}
+                        value={`${item.label} ${item.description ?? ""} ${item.group}`}
+                        onSelect={() => item.action()}
+                        className={cn(
+                          "flex w-full cursor-pointer items-center gap-3 rounded-control px-3 py-2.5 text-left text-sm outline-none",
+                          "data-[selected=true]:bg-surface-sunken",
+                        )}
+                      >
+                        <Icon className={iconClass("inline", "shrink-0 text-ink-subtle")} />
+                        <div className="min-w-0">
+                          <p className="font-medium text-ink">{item.label}</p>
+                          {item.description ? (
+                            <p className="truncate text-xs text-ink-subtle">{item.description}</p>
+                          ) : null}
+                        </div>
+                      </Command.Item>
+                    );
+                  })}
+              </Command.Group>
+            ))}
+          </Command.List>
+        </Command>
       </DialogContent>
     </Dialog>
   );
