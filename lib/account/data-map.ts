@@ -125,6 +125,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Saved job search alerts, including the search query and frequency",
   },
   {
+    table: "prep_packs",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Saved interview prep packs (skills, matched guides, and checklist; no raw job description)",
+  },
+  {
     table: "signal_connections",
     ownerColumn: "seeker_id",
     export: true,
