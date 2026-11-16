@@ -11,6 +11,8 @@ export type SendEmailInput = {
   subject: string;
   html: string;
   text?: string;
+  /** Optional custom headers (e.g. List-Unsubscribe). Supported by Resend. */
+  headers?: Record<string, string>;
 };
 
 export type SendEmailResult = { ok: true } | { ok: false; error: string };
@@ -53,6 +55,9 @@ export async function sendWorkgraphEmail(input: SendEmailInput): Promise<SendEma
         subject: input.subject,
         html: input.html,
         text: input.text,
+        ...(input.headers && Object.keys(input.headers).length > 0
+          ? { headers: input.headers }
+          : {}),
       }),
     });
 

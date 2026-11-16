@@ -51,6 +51,7 @@ export function AlertsPageClient({
   const [previewId, setPreviewId] = useState<string | null>(null)
   const [preview, setPreview] = useState<PreviewState>(null)
   const [importing, setImporting] = useState(false)
+  const [testDigestBusy, setTestDigestBusy] = useState(false)
   const savedRaw = useSyncExternalStore(subscribeSavedSearches, savedSearchesSnapshot, () => "[]")
   const importDismissed = useSyncExternalStore(subscribeImportDismiss, importDismissedSnapshot, () => true)
   const browserSearches = (() => {
@@ -167,6 +168,24 @@ export function AlertsPageClient({
   function dismissImport() {
     window.localStorage.setItem(IMPORT_DISMISS_KEY, "1")
     window.dispatchEvent(new Event("wg-alerts-import-dismissed"))
+  }
+
+  async function sendTestDigest() {
+    setTestDigestBusy(true)
+    try {
+      const res = await fetch("/api/alerts/test-digest", { method: "POST" })
+      const json = (await res.json()) as { ok?: boolean; error?: string; jobCount?: number }
+      if (!res.ok || !json.ok) {
+        toast({ title: json.error ?? "Could not send test digest", variant: "error" })
+        return
+      }
+      toast({
+        title: `Test digest sent (${json.jobCount ?? 0} job${json.jobCount === 1 ? "" : "s"})`,
+        variant: "success",
+      })
+    } finally {
+      setTestDigestBusy(false)
+    }
   }
 
   return (
@@ -331,6 +350,28 @@ export function AlertsPageClient({
           ))}
         </ul>
       )}
+
+      <section className="rounded-card border border-hairline bg-surface-raised p-4">
+        <Text as="h2" role="subheading">
+          Send me a test digest
+        </Text>
+        <Text role="body-small" className="mt-2 text-ink-muted">
+          Emails your inbox with up to 10 matching jobs from your active alerts. Limited to once per hour. Does not
+          change your last-sent time.
+        </Text>
+        <div className="mt-3">
+          <Button
+            type="button"
+            variant="secondary"
+            className="min-h-11"
+            loading={testDigestBusy}
+            disabled={alerts.length === 0}
+            onClick={() => void sendTestDigest()}
+          >
+            Send me a test digest
+          </Button>
+        </div>
+      </section>
 
       <section className="rounded-card border border-hairline bg-surface-raised p-4">
         <Text as="h2" role="subheading">
