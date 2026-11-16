@@ -69,6 +69,22 @@
   z-index: 100;
 }
 
+.wg-account-deleted {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0.75rem auto 0;
+}
+
+.wg-account-deleted__body {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  line-height: 1.5;
+}
+
 .wg-skip:focus {
   left: 1rem;
   top: 1rem;

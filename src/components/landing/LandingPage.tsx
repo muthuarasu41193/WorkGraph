@@ -11,17 +11,26 @@ import { Trust } from "./Trust";
 import { landingFontVariables } from "./fonts";
 import "./landing.css";
 
+type LandingPageProps = {
+  accountDeletedBanner?: string | null;
+};
+
 /**
  * Stateweave-inspired WorkGraph landing — live at `/`.
  * Stamp-red Signal Stamp palette; animated product stage; honest copy only.
  */
-export function LandingPage() {
+export function LandingPage({ accountDeletedBanner = null }: LandingPageProps) {
   return (
     <div className={`wg-landing ${landingFontVariables}`}>
       <a href="#main-content" className="wg-skip">
         Skip to content
       </a>
       <Nav />
+      {accountDeletedBanner ? (
+        <div className="wg-account-deleted" role="status">
+          <p className="wg-account-deleted__body">{accountDeletedBanner}</p>
+        </div>
+      ) : null}
       <main id="main-content" tabIndex={-1}>
         <Hero />
         <LiveIndex />
