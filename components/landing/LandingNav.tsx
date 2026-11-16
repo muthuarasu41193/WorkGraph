@@ -70,7 +70,7 @@ export function LandingNav() {
             <Link href="/login">Sign in</Link>
           </Button>
           <Button size="premium" asChild>
-            <Link href="/signup">Get started</Link>
+            <Link href="/prep-pack">Build a prep pack</Link>
           </Button>
         </div>
 
@@ -118,8 +118,8 @@ export function LandingNav() {
               </Link>
             </Button>
             <Button asChild>
-              <Link href="/signup" onClick={() => setOpen(false)}>
-                Get started
+              <Link href="/prep-pack" onClick={() => setOpen(false)}>
+                Build a prep pack
               </Link>
             </Button>
           </li>

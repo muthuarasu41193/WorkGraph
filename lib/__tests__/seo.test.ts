@@ -28,14 +28,17 @@ describe("routeShareMetadata", () => {
 });
 
 describe("sitemap and robots", () => {
-  it("emits only canonical-host URLs", () => {
+  it("emits only canonical-host URLs", async () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
-    const entries = sitemap();
+    const entries = await sitemap();
     assert.ok(entries.length > 0);
     for (const entry of entries) {
       const parsed = new URL(entry.url);
       assert.equal(parsed.origin, "https://getworkgraph.com");
     }
+    assert.ok(entries.some((entry) => entry.url.endsWith("/prep-pack")));
+    assert.ok(entries.some((entry) => entry.url.endsWith("/interview-vault")));
+    assert.ok(!entries.some((entry) => entry.url.includes("/s/prep/")));
 
     const robotsTxt = robots();
     assert.equal(robotsTxt.host, "getworkgraph.com");

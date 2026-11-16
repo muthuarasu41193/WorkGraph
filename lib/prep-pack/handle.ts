@@ -14,6 +14,7 @@ import {
   prepPackIdSchema,
   prepPackSaveSchema,
 } from "@/lib/validation/prep-pack";
+import { prepPackShareIdSchema } from "@/lib/validation/prep-pack-share";
 
 import {
   PrepPackApiError,
@@ -23,6 +24,15 @@ import {
   listSavedPrepPacksForUser,
   savePrepPackForUser,
 } from "./server";
+import {
+  createPrepPackShareForUser,
+  listPrepPackSharesForPack,
+  resolvePublicPrepPackShare,
+  revokePrepPackShareForUser,
+  type CreatedPrepPackShare,
+  type PrepPackShareRecord,
+} from "./share-server";
+import type { PublicSharedPrepPack } from "./share-public";
 import type { PrepPackResult, SavedPrepPack, SavedPrepPackSummary } from "./types";
 
 export const PREP_PACK_RATE_LIMIT = 30;
@@ -167,5 +177,111 @@ export async function handlePrepPackDelete(
     return NextResponse.json({ ok: true });
   } catch (err) {
     return mapApiError(err, "Could not delete that prep pack.");
+  }
+}
+
+export type PrepPackShareCreateDeps = {
+  create?: typeof createPrepPackShareForUser;
+};
+
+export type PrepPackShareRevokeDeps = {
+  revoke?: typeof revokePrepPackShareForUser;
+};
+
+export type PrepPackShareListDeps = {
+  list?: typeof listPrepPackSharesForPack;
+};
+
+export type PrepPackShareResolveDeps = {
+  resolve?: typeof resolvePublicPrepPackShare;
+};
+
+export async function handlePrepPackShareCreate(
+  packIdRaw: string,
+  deps: PrepPackShareCreateDeps = {},
+): Promise<NextResponse> {
+  const create = deps.create ?? createPrepPackShareForUser;
+  try {
+    const packId = parseWithSchema(prepPackIdSchema, packIdRaw);
+    const share: CreatedPrepPackShare = await create(packId);
+    return NextResponse.json(
+      {
+        ok: true,
+        share: {
+          id: share.id,
+          packId: share.pack_id,
+          createdAt: share.created_at,
+          expiresAt: share.expires_at,
+          revokedAt: share.revoked_at,
+          urlPath: share.urlPath,
+          token: share.token,
+        },
+      },
+      { status: 201 },
+    );
+  } catch (err) {
+    return mapApiError(err, "Could not create a share link.");
+  }
+}
+
+export async function handlePrepPackShareRevoke(
+  shareIdRaw: string,
+  deps: PrepPackShareRevokeDeps = {},
+): Promise<NextResponse> {
+  const revoke = deps.revoke ?? revokePrepPackShareForUser;
+  try {
+    const shareId = parseWithSchema(prepPackShareIdSchema, shareIdRaw);
+    const share: PrepPackShareRecord = await revoke(shareId);
+    return NextResponse.json({
+      ok: true,
+      share: {
+        id: share.id,
+        packId: share.pack_id,
+        createdAt: share.created_at,
+        expiresAt: share.expires_at,
+        revokedAt: share.revoked_at,
+      },
+    });
+  } catch (err) {
+    return mapApiError(err, "Could not revoke that share link.");
+  }
+}
+
+export async function handlePrepPackShareList(
+  packIdRaw: string,
+  deps: PrepPackShareListDeps = {},
+): Promise<NextResponse> {
+  const list = deps.list ?? listPrepPackSharesForPack;
+  try {
+    const packId = parseWithSchema(prepPackIdSchema, packIdRaw);
+    const shares = await list(packId);
+    return NextResponse.json({
+      ok: true,
+      shares: shares.map((share) => ({
+        id: share.id,
+        packId: share.pack_id,
+        createdAt: share.created_at,
+        expiresAt: share.expires_at,
+        revokedAt: share.revoked_at,
+      })),
+    });
+  } catch (err) {
+    return mapApiError(err, "Could not load share links.");
+  }
+}
+
+export async function handlePrepPackShareResolve(
+  tokenRaw: string,
+  deps: PrepPackShareResolveDeps = {},
+): Promise<NextResponse> {
+  const resolve = deps.resolve ?? resolvePublicPrepPackShare;
+  try {
+    const pack: PublicSharedPrepPack | null = await resolve(tokenRaw);
+    if (!pack) {
+      return NextResponse.json({ ok: false, error: "Share link not found." }, { status: 404 });
+    }
+    return NextResponse.json({ ok: true, pack });
+  } catch (err) {
+    return mapApiError(err, "Could not open that share link.");
   }
 }

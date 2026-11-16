@@ -33,8 +33,8 @@ const FEATURES: Feature[] = [
     icon: Radar,
     title: "Hidden Job Discovery",
     description:
-      "AI crawls Reddit, Twitter, Discord, Slack, and 50+ private networks to surface roles posted nowhere else. Get first-mover advantage.",
-    badge: "50+ Sources",
+      "Search the live job index and community hiring posts. Source counts are not claimed here; see Sources for what is actually indexed.",
+    badge: "Job index",
     badgeClass: "bg-info-50 text-info",
     href: "#how-it-works",
     sources: ["reddit", "x", "discord", "slack"],
@@ -80,8 +80,8 @@ const FEATURES: Feature[] = [
     icon: DollarSign,
     title: "Sell Your Interview Guides",
     description:
-      "Turn your interview experience into income. Write prep guides for companies you've interviewed at and earn every time someone buys.",
-    badge: "Earn $$$",
+      "Publish an Interview Vault guide about an interview you sat. Listing a guide does not promise sales, passive income, or a job offer for readers.",
+    badge: "Guides",
     badgeClass: "bg-brand-50 text-brand",
     href: "/interview-vault/sell",
   },

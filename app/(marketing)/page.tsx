@@ -72,12 +72,32 @@ export default async function HomePage({
       ) : null}
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
-          <Text as="h1" role="display">Search the live index</Text>
+          <Text as="h1" role="display">Interview prep first</Text>
           <Text role="body" className="mt-3 max-w-xl text-ink-muted">
-            Results come from the jobs index. No account is required to look.
+            Build a free prep pack, open Interview Vault guides, then search the live job index when you need openings. Skill matches are estimates, not offer odds.
           </Text>
-          <div className="mt-4">
-            <HeroSearch />
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/prep-pack"
+              className="inline-flex min-h-11 items-center rounded-control bg-accent px-4 text-accent-foreground focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Build a prep pack
+            </Link>
+            <Link
+              href="/interview-vault"
+              className="inline-flex min-h-11 items-center rounded-control border border-hairline px-4 text-ink focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Browse Interview Vault
+            </Link>
+          </div>
+          <div className="mt-8">
+            <Text as="h2" role="subheading">Search the live index</Text>
+            <Text role="body-small" className="mt-2 text-ink-muted">
+              Optional. Results come from the jobs index. No account is required to look. Apply links open the original source. A last-checked time is not stored.
+            </Text>
+            <div className="mt-4">
+              <HeroSearch />
+            </div>
           </div>
         </div>
         <aside className="rounded-card border border-hairline bg-surface-raised p-4">
@@ -129,12 +149,14 @@ export default async function HomePage({
       <section id="how-it-works" className="mx-auto max-w-6xl space-y-3 px-4 py-8">
         <Text as="h2" role="title">How to use it</Text>
         <ol className="space-y-2 text-role-body">
-          <li>Search the index. An account is not required.</li>
-          <li>Open a role to see where it was posted and whether the date is old.</li>
-          <li>Sign in to save a role or log an application.</li>
+          <li>Build a prep pack from a role or posting. The checklist and guide matches are estimates.</li>
+          <li>Open Interview Vault guides that match. Locked content stays locked without entitlement.</li>
+          <li>Search the job index when you want openings. Apply links go to the original source. Posted dates are stored dates, not a live check.</li>
         </ol>
-        <p id="interview-vault">
-          <Link href="/interview-vault" className="inline-flex min-h-11 items-center text-accent">Interview vault</Link>
+        <p id="interview-vault" className="flex flex-wrap gap-4">
+          <Link href="/prep-pack" className="inline-flex min-h-11 items-center text-accent">Prep pack</Link>
+          <Link href="/interview-vault" className="inline-flex min-h-11 items-center text-accent">Interview Vault</Link>
+          <Link href="/jobs" className="inline-flex min-h-11 items-center text-accent">Job index</Link>
         </p>
       </section>
 

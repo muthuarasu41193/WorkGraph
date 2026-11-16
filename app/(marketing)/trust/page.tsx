@@ -87,6 +87,13 @@ export default function TrustPage() {
         </Text>
       </section>
 
+      <section id="last-checked" className="space-y-2">
+        <Text as="h2" role="heading">Last checked</Text>
+        <Text role="body-small">
+          The jobs catalog does not store a last-checked field. Cards show the stored posted date and link to the original apply URL when one exists. We do not invent a last-checked time.
+        </Text>
+      </section>
+
       <section id="verified-experience" className="space-y-2">
         <Text as="h2" role="heading">Verified experience</Text>
         <Text role="body-small">

@@ -185,7 +185,7 @@ export default function Navbar() {
                 className="h-10 rounded-full bg-brand px-5 text-accent-ink hover:bg-brand-700"
                 asChild
               >
-                <Link href="/signup">Get early access</Link>
+                <Link href="/prep-pack">Build a prep pack</Link>
               </Button>
             </div>
 
@@ -260,8 +260,8 @@ export default function Navbar() {
                     className="h-12 w-full rounded-full bg-brand text-accent-ink hover:bg-brand-700"
                     asChild
                   >
-                    <Link href="/signup" onClick={() => setMobileOpen(false)}>
-                      Get early access
+                    <Link href="/prep-pack" onClick={() => setMobileOpen(false)}>
+                      Build a prep pack
                     </Link>
                   </Button>
                 </div>

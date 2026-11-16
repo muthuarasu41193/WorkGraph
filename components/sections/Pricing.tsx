@@ -65,7 +65,7 @@ const TIERS: PricingTier[] = [
       { text: "Full Interview Vault access", included: true },
       { text: "Public career profile + analytics", included: true },
       { text: "Real-time job alerts (instant)", included: true },
-      { text: "All 50+ hidden job sources", included: true },
+      { text: "Search the live job index", included: true },
       { text: "AI cover letter generator", included: true },
       { text: "Application tracker", included: true },
       { text: "Sell interview guides (keep 80%)", included: true },
@@ -93,7 +93,7 @@ const TIERS: PricingTier[] = [
       { text: "API access", included: true },
       { text: "Custom job source integration", included: true },
       { text: "Dedicated account manager", included: true },
-      { text: "SLA guarantee", included: true },
+      { text: "Support via the contact form", included: true },
       { text: "Custom invoicing", included: true },
     ],
   },
@@ -106,23 +106,23 @@ const FAQ_ITEMS = [
       "Yes. Our Starter plan is completely free with no credit card required. You get 50 job discoveries per month and basic features to test the platform.",
   },
   {
-    question: "How does the hidden job discovery work?",
+    question: "How does the job index work?",
     answer:
-      "Our AI monitors 50+ sources including Reddit communities, Twitter/X job threads, Discord servers, Slack groups, and private professional networks — all in real-time.",
+      "Listings come from the jobs index and community posts the product already stores. See /sources for what is indexed. A last-checked time is not stored.",
   },
   {
-    question: "Can I really earn money selling interview guides?",
+    question: "Do Interview Vault guides pay sellers?",
     answer:
-      "Pro users can publish interview guides for companies they've interviewed at. You keep 80% of every sale. We don't publish typical-seller earnings because they depend on what you write and how it sells.",
+      "Sellers can list guides. Checkout and payouts depend on what is actually wired in production. Listing a guide does not promise sales or passive income, and guides do not guarantee a job offer.",
   },
   {
     question: "What's your refund policy?",
-    answer: "We offer a 14-day money-back guarantee, no questions asked.",
+    answer: "Refund terms are published with checkout when a paid product is offered. This unmounted marketing block does not invent a money-back promise.",
   },
   {
     question: "How is WorkGraph different from LinkedIn Premium?",
     answer:
-      "LinkedIn shows you the same public jobs everyone sees. WorkGraph surfaces jobs never posted on LinkedIn — from Reddit, Discord, Twitter, and private networks — and gives you AI-powered match scores and interview prep.",
+      "WorkGraph centers interview prep packs and Interview Vault guides, then the live job index. Match notes are estimates when a profile is available.",
   },
 ] as const;
 

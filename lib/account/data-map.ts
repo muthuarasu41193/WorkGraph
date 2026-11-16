@@ -132,6 +132,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Saved interview prep packs (skills, matched guides, and checklist; no raw job description)",
   },
   {
+    table: "prep_pack_shares",
+    ownerColumn: "owner_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Share links you created for saved prep packs (token hashes only; raw tokens are not stored)",
+  },
+  {
     table: "signal_connections",
     ownerColumn: "seeker_id",
     export: true,

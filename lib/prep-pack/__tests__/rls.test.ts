@@ -33,3 +33,30 @@ describe("prep_packs RLS and account deletion wiring", () => {
     assert.equal(entry?.export, true);
   });
 });
+
+describe("prep_pack_shares RLS and account deletion wiring", () => {
+  const shareMigration = join(root, "supabase/migrations/20261116120000_prep_pack_shares.sql");
+
+  it("migration stores hashed tokens only with owner RLS", () => {
+    const sql = readFileSync(shareMigration, "utf8");
+    assert.match(sql, /create table if not exists public\.prep_pack_shares/i);
+    assert.match(sql, /token_hash/);
+    assert.match(sql, /enable row level security/i);
+    assert.match(sql, /prep_pack_shares_select_own/);
+    assert.match(sql, /prep_pack_shares_insert_own/);
+    assert.match(sql, /prep_pack_shares_update_own/);
+    assert.match(sql, /auth\.uid\(\)\s*=\s*owner_id/);
+    assert.match(sql, /revoke all on table public\.prep_pack_shares from public, anon/i);
+    assert.equal(/\braw_token\b/i.test(sql), false);
+    assert.equal(/create table[\s\S]*\btoken text/i.test(sql), false);
+  });
+
+  it("lists prep_pack_shares in the account deletion/export map", () => {
+    const entry = ACCOUNT_TABLES.find((row) => row.table === "prep_pack_shares");
+    assert.ok(entry);
+    assert.equal(entry?.ownerColumn, "owner_id");
+    assert.equal(entry?.deleteStrategy, "delete");
+    assert.equal(entry?.export, true);
+  });
+});
+
