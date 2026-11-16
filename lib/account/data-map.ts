@@ -125,6 +125,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     label: "Saved job search alerts, including the search query and frequency",
   },
   {
+    table: "prep_packs",
+    ownerColumn: "user_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Saved interview prep packs (skills, matched guides, and checklist; no raw job description)",
+  },
+  {
     table: "signal_connections",
     ownerColumn: "seeker_id",
     export: true,
@@ -144,6 +151,13 @@ export const ACCOUNT_TABLES: readonly AccountTable[] = [
     export: true,
     deleteStrategy: "delete",
     label: "Interview Vault evidence-label records (status, method, and dates only; no evidence contents)",
+  },
+  {
+    table: "vault_guide_reports",
+    ownerColumn: "reporter_id",
+    export: true,
+    deleteStrategy: "delete",
+    label: "Interview Vault guide reports you submitted",
   },
   {
     table: "vault_reviews",

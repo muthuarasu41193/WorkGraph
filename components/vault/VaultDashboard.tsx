@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { convertInrToCurrency, formatCurrencyAmount, type SupportedCurrency } from "@/lib/currency";
+import VaultFreshness from "@/components/vault/VaultFreshness";
 import { VAULT_RESULT_LABELS, type VaultDashboardStats } from "@/lib/vault";
 
 type Props = {
@@ -19,7 +20,45 @@ type Props = {
 
 export default function VaultDashboard({ dashboard, currency }: Props) {
   const [withdrawing, setWithdrawing] = useState(false);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [experiences, setExperiences] = useState(dashboard.experiences);
   const totalEarningsDisplay = convertInrToCurrency(dashboard.total_earnings_inr, currency);
+
+  async function markGuideCurrent(id: string) {
+    setConfirmingId(id);
+    try {
+      const res = await fetch(`/api/vault/experiences/${id}/confirm`, { method: "POST" });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        experience?: { content_confirmed_at?: string | null; updated_at?: string };
+      };
+      if (!res.ok || !data.ok) throw new Error(data.error ?? "Could not mark guide as current");
+      setExperiences((prev) =>
+        prev.map((exp) =>
+          exp.id === id
+            ? {
+                ...exp,
+                content_confirmed_at: data.experience?.content_confirmed_at ?? new Date().toISOString(),
+                updated_at: data.experience?.updated_at ?? exp.updated_at,
+                stale: false,
+                stale_label: null,
+                last_confirmed_label: "Last confirmed just now",
+              }
+            : exp,
+        ),
+      );
+      toast({ title: "Guide marked as current", variant: "success" });
+    } catch (err) {
+      toast({
+        title: "Could not update guide",
+        description: err instanceof Error ? err.message : "Try again",
+        variant: "error",
+      });
+    } finally {
+      setConfirmingId(null);
+    }
+  }
 
   async function requestWithdrawal() {
     setWithdrawing(true);
@@ -99,24 +138,44 @@ export default function VaultDashboard({ dashboard, currency }: Props) {
           </Button>
         </CardHeader>
         <CardContent>
-          {dashboard.experiences.length > 0 ? (
+          {experiences.length > 0 ? (
             <ul className="divide-y">
-              {dashboard.experiences.map((exp) => (
+              {experiences.map((exp) => (
                 <li key={exp.id} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                  <div>
+                  <div className="min-w-0 space-y-1">
                     <Link href={`/interview-vault/${exp.id}`} className="font-medium hover:text-primary">
                       {exp.company || "Untitled"} — {exp.role || "Draft"}
                     </Link>
-                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                       <span>{exp.view_count} views</span>
                       <span>{exp.sales_count} sales</span>
                       <span>{formatCurrencyAmount(convertInrToCurrency(exp.earnings_inr, currency), currency)} earned</span>
                       {exp.result ? <Badge variant="outline">{VAULT_RESULT_LABELS[exp.result]}</Badge> : null}
                     </div>
+                    {exp.published_at ? (
+                      <VaultFreshness
+                        lastConfirmedLabel={exp.last_confirmed_label}
+                        stale={exp.stale}
+                        staleLabel={exp.stale_label}
+                      />
+                    ) : null}
                   </div>
-                  <Badge variant={exp.published_at ? "default" : "secondary"}>
-                    {exp.published_at ? "Published" : "Draft"}
-                  </Badge>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {exp.published_at ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={confirmingId === exp.id}
+                        onClick={() => void markGuideCurrent(exp.id)}
+                      >
+                        {confirmingId === exp.id ? "Updating…" : "Mark guide as current"}
+                      </Button>
+                    ) : null}
+                    <Badge variant={exp.published_at ? "default" : "secondary"}>
+                      {exp.published_at ? "Published" : "Draft"}
+                    </Badge>
+                  </div>
                 </li>
               ))}
             </ul>
